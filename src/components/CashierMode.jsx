@@ -993,7 +993,14 @@ export default function CashierMode({ userId, tenantId }) {
       if (product) {
         addToCart(product, 1);
       } else {
-        alert(`Product with barcode "${barcode}" not found`);
+        // Elite Flow: Instead of alert, show a professional "Add New" prompt
+        if (confirm(`Product with barcode "${barcode}" not found. Would you like to register it as a new product?`)) {
+          setNewProductName('');
+          setNewProductPrice('');
+          setNewProductCategory('General');
+          setNewProductBarcode(barcode); // Pre-fill barcode
+          setShowAddProductModal(true);
+        }
       }
     } catch (error) {
       console.error('Error searching product:', error);
@@ -1087,7 +1094,7 @@ export default function CashierMode({ userId, tenantId }) {
                 placeholder="Search products or scan..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full h-12 bg-slate-50 border border-slate-200 rounded-2xl pl-11 pr-11 text-sm font-bold focus:bg-white focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-300 transition-all outline-none shadow-sm"
+                className="w-full h-12 bg-white border border-slate-200 rounded-2xl pl-11 pr-11 text-sm font-bold text-slate-900 placeholder:text-slate-400 focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-400 transition-all outline-none shadow-sm"
               />
               <button
                 onClick={() => setShowBarcodeScanner(true)}
@@ -1146,7 +1153,7 @@ export default function CashierMode({ userId, tenantId }) {
         </div>
 
         {/* Main Content Area: Conditional Rendering (Grid vs Cart) */}
-        <div className="flex-1 pt-[185px] pb-2 overflow-hidden bg-white/50">
+        <div className="flex-[2.5] pt-[185px] pb-2 overflow-hidden bg-white/50">
           <div className="h-full overflow-y-auto px-4 pb-20 overscroll-contain no-scrollbar">
 
             {mobileViewMode === 'grid' ? (
@@ -1214,12 +1221,19 @@ export default function CashierMode({ userId, tenantId }) {
                         </div>
 
                         {/* Text Info */}
-                        <div className="w-full pt-1.5 flex flex-col items-center">
-                          <div className="text-[10px] font-extrabold text-slate-700 w-full text-center leading-tight tracking-tight px-1">
+                        <div className="w-full pt-1 flex flex-col items-center">
+                          <div className="text-[10px] font-black text-slate-900 w-full text-center leading-tight tracking-tight px-1 truncate">
                             {product.name}
                           </div>
-                          <div className="text-[12px] font-black text-slate-900 mt-1 tabular-nums">
-                            ₱{Math.round(product.price)}
+                          <div className="flex items-center gap-1.5 mt-0.5">
+                             <div className="text-[11px] font-black text-indigo-600 tabular-nums">
+                              ₱{Math.round(product.price)}
+                             </div>
+                             {product.barcode && (
+                               <div className="text-[8px] font-black text-slate-300 font-mono tracking-tighter uppercase tabular-nums">
+                                 ..{product.barcode.slice(-4)}
+                               </div>
+                             )}
                           </div>
                         </div>
                       </button>
@@ -1322,7 +1336,7 @@ export default function CashierMode({ userId, tenantId }) {
         </div>
 
         {/* Control Console: Optimized Thumb Zone */}
-        <div className="flex-[2] bg-white border-t border-slate-200 shadow-[0_-8px_30px_rgb(0,0,0,0.04)] relative z-10 p-4 flex flex-col gap-3">
+        <div className="flex-1 bg-white border-t border-slate-200 shadow-[0_-8px_30px_rgb(0,0,0,0.04)] relative z-10 p-4 flex flex-col gap-3">
 
           {/* Status Row: Customer Info & Compact Change */}
           <div className="flex gap-2">
@@ -1347,7 +1361,7 @@ export default function CashierMode({ userId, tenantId }) {
                     readOnly
                     type="text"
                     placeholder="0"
-                    className="bg-transparent text-xl font-black text-slate-900 outline-none w-full tabular-nums"
+                    className="bg-transparent text-xl font-black text-slate-900 placeholder:text-slate-300 outline-none w-full tabular-nums"
                     value={cashReceived}
                   />
                   {change > 0 && (
@@ -1695,12 +1709,23 @@ export default function CashierMode({ userId, tenantId }) {
                             </div>
 
                             {/* Product Info - Larger text on mobile */}
-                            <div className="flex-1 min-w-0 text-center md:text-left">
-                              <div className="text-sm md:text-xs font-semibold text-zinc-900 truncate leading-tight mb-1 md:mb-0.5">
+                            <div className="flex-1 min-w-0 text-center md:text-left mt-1 md:mt-0">
+                              <div className="text-[11px] md:text-xs font-semibold text-zinc-900 truncate leading-tight">
                                 {productName}
                               </div>
-                              <div className="text-sm md:text-xs font-mono font-bold text-indigo-600" style={{ fontVariantNumeric: 'tabular-nums' }}>
-                                ₱{productPrice.toFixed(2)}
+                              <div className="flex items-center justify-center md:justify-start gap-1">
+                                <span className="text-[12px] md:text-xs font-mono font-bold text-indigo-600">
+                                  ₱{productPrice.toFixed(2)}
+                                </span>
+                                {product.barcode && (
+                                  <span className="hidden md:inline text-[8px] font-black text-slate-400 font-mono tracking-tighter uppercase">
+                                    {product.barcode.slice(-4)}
+                                  </span>
+                                )}
+                              </div>
+                              {/* Always show SKU on mobile for better ID */}
+                              <div className="md:hidden text-[9px] font-black text-slate-300 font-mono tracking-tighter uppercase truncate px-1">
+                                SKU: {product.barcode || 'N/A'}
                               </div>
                             </div>
                           </button>
@@ -2193,7 +2218,7 @@ export default function CashierMode({ userId, tenantId }) {
                   type="text"
                   value={customItemName}
                   onChange={(e) => setCustomItemName(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold text-slate-900 focus:ring-2 focus:ring-indigo-500 outline-none"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-indigo-500 outline-none"
                   placeholder={t('cashier.customItem')}
                 />
               </div>
@@ -2203,7 +2228,7 @@ export default function CashierMode({ userId, tenantId }) {
                   type="number"
                   value={customItemPrice}
                   onChange={(e) => setCustomItemPrice(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold text-slate-900 focus:ring-2 focus:ring-indigo-500 outline-none"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-indigo-500 outline-none"
                   placeholder="0.00"
                 />
               </div>
@@ -2244,7 +2269,7 @@ export default function CashierMode({ userId, tenantId }) {
                 id="manualQtyInput"
                 autoFocus
                 type="number"
-                className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-lg font-bold tabular-nums"
+                className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-lg font-bold text-slate-900 placeholder:text-slate-400 tabular-nums outline-none focus:ring-2 focus:ring-indigo-500"
                 placeholder={t('cashier.custom')}
               />
               <button
@@ -2274,11 +2299,11 @@ export default function CashierMode({ userId, tenantId }) {
               </div>
               <div>
                 <label className="text-[10px] font-bold text-slate-400 uppercase mb-1 block">{t('cashier.reason')}</label>
-                <input id="cashReason" type="text" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm" placeholder={t('cashier.searchPlaceholder')} />
+                <input id="cashReason" type="text" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold text-slate-900 placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-indigo-500" placeholder={t('cashier.searchPlaceholder')} />
               </div>
               <div>
                 <label className="text-[10px] font-bold text-slate-400 uppercase mb-1 block">{t('cashier.amount')} (₱)</label>
-                <input id="cashAmount" type="number" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm" placeholder="0.00" />
+                <input id="cashAmount" type="number" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold text-slate-900 placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-indigo-500" placeholder="0.00" />
               </div>
               <button
                 onClick={() => {
