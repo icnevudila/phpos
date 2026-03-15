@@ -11,6 +11,7 @@ import { createTenantQuery } from '../utils/tenantIsolation.js';
 import { generateTransactionRef } from '../utils/paymentLogic.js';
 import { db, getDeviceId } from '../db/dexie-schema.js';
 import BarcodeScanner from './BarcodeScanner.jsx';
+import ManagerDashboard from './ManagerDashboard.jsx';
 import { getProductIcon } from '../utils/productIcons.jsx';
 
 // Get product color for visual identification
@@ -215,7 +216,7 @@ export default function CashierMode({ userId, tenantId }) {
   const [cashBreakdown, setCashBreakdown] = useState([]); // Sequence of cash added (e.g. [500, 200])
   const [terminalId, setTerminalId] = useState('....'); // State to fix async getDeviceId() crash
   const [showSalesHistory, setShowSalesHistory] = useState(false); // Full history overlay
-  const [showModeInfo, setShowModeInfo] = useState(null); // 'audit' or 'refund'
+  const [activeTab, setActiveTab] = useState('pos'); // 'pos' or 'management'
 
   const showToast = useCallback((message, type = 'success') => {
     const id = Date.now();
@@ -1033,250 +1034,240 @@ export default function CashierMode({ userId, tenantId }) {
       {/* MOBILE & TABLET: Premium POS Architecture */}
       <div className="lg:hidden h-[100dvh] w-screen flex flex-col overflow-hidden bg-[#f8f9fa] selection:bg-indigo-100">
         {/* Mobile Header: Elite v2.5 Symmetric Perfection */}
-        <div className="bg-white fixed top-0 inset-x-0 z-50 px-4 pt-3 pb-4 flex flex-col gap-3 shadow-md border-b border-slate-200/60 backdrop-blur-md bg-white/95 h-[145px]">
-          <div className="flex items-center justify-between">
-            {/* Left: Branding & Total */}
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => setShowSalesHistory(true)}
-                className="w-11 h-11 bg-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-100 transition-transform active:scale-110 relative group"
-              >
-                <img src="/logo.png" className="w-6 h-6 object-contain brightness-0 invert" alt="Logo" />
-                <div className="absolute -bottom-1 -right-1 bg-white rounded-full p-0.5 shadow-sm">
-                  <HistoryIcon className="w-2.5 h-2.5 text-indigo-600" />
-                </div>
-              </button>
-              <div className="flex flex-col">
-                <div className="flex items-center gap-1.5">
-                  <div className={`w-1.5 h-1.5 rounded-full ${isOnline ? 'bg-emerald-500' : 'bg-red-500'} animate-pulse`} />
-                  <span className="text-[9px] font-black text-slate-400 tracking-[0.2em] leading-none uppercase">Filipin POS</span>
-                </div>
-                <div
-                  className={`text-xl font-black text-slate-900 tracking-tighter tabular-nums leading-none mt-1.5 ${cartFlash ? 'animate-pop' : ''}`}
-                  onClick={() => setMobileViewMode('cart')}
+        <div className="bg-white fixed top-0 inset-x-0 z-50 px-4 pt-3 pb-2 flex flex-col shadow-md border-b border-slate-200/60 backdrop-blur-md bg-white/95 transition-all">
+          <div className="px-4 pt-3 pb-2 flex flex-col gap-2">
+            <div className="flex items-center justify-between">
+              {/* Left: Branding & Total */}
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setShowSalesHistory(true)}
+                  className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center shadow-md active:scale-110 relative group"
                 >
-                  ₱{total.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                  <img src="/logo.png" className="w-5 h-5 object-contain brightness-0 invert" alt="Logo" />
+                </button>
+                <div className="flex flex-col">
+                  <div className="flex items-center gap-1">
+                    <div className={`w-1 h-1 rounded-full ${isOnline ? 'bg-emerald-400' : 'bg-red-400'} animate-pulse`} />
+                    <span className="text-[8px] font-black text-slate-400 tracking-[0.2em] leading-none uppercase">Filipin POS</span>
+                  </div>
+                  <div
+                    className={`text-lg font-black text-slate-900 tracking-tighter tabular-nums leading-none mt-1 ${cartFlash ? 'animate-pop' : ''}`}
+                    onClick={() => {
+                      if (activeTab === 'pos') setMobileViewMode('cart');
+                    }}
+                  >
+                    ₱{total.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                  </div>
                 </div>
+              </div>
+
+              {/* Premium Segmented Tab Switcher */}
+              <div className="flex items-center bg-slate-100 p-1 rounded-2xl border border-slate-200">
+                  <button
+                    onClick={() => { setActiveTab('pos'); if (navigator.vibrate) navigator.vibrate(10); }}
+                    className={`px-3 py-2 rounded-xl text-[9px] font-black uppercase tracking-tighter transition-all flex flex-col items-center gap-0.5 min-w-[64px]
+                          ${activeTab === 'pos' ? 'bg-white text-indigo-600 shadow-sm border border-slate-200' : 'text-slate-400'}`}
+                  >
+                    <ScanIcon className="w-3 h-3" />
+                    Kasa
+                  </button>
+
+                  <button
+                    onClick={() => { setActiveTab('management'); if (navigator.vibrate) navigator.vibrate(10); }}
+                    className={`px-3 py-2 rounded-xl text-[9px] font-black uppercase tracking-tighter transition-all flex flex-col items-center gap-0.5 min-w-[64px]
+                          ${activeTab === 'management' ? 'bg-white text-indigo-600 shadow-sm border border-slate-200' : 'text-slate-400'}`}
+                  >
+                    <ClearIcon className="w-3 h-3" />
+                    Yönetim
+                  </button>
               </div>
             </div>
 
-            {/* Right: Consolidated Mode Toggles */}
-            <div className="flex items-center bg-slate-50 p-1 rounded-2xl border border-slate-100 shadow-inner">
+            {/* Search Row */}
+            <div className="flex items-center gap-1.5">
+              <div className="relative flex-1 group">
+                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+                  <SearchIcon className="w-4 h-4" />
+                </div>
+                <input
+                  ref={searchInputRef}
+                  type="text"
+                  placeholder="Ürün ara veya tara..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full h-10 bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-9 text-xs font-bold text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 transition-all outline-none"
+                />
                 <button
-                  onClick={() => { setIsAuditMode(!isAuditMode); setIsRefundMode(false); if (navigator.vibrate) navigator.vibrate(10); }}
-                  className={`px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-tighter transition-all flex flex-col items-center gap-0.5 min-w-[72px]
-                        ${isAuditMode ? 'bg-amber-500 text-white shadow-lg shadow-amber-200' : 'text-slate-400'}`}
+                  onClick={() => setShowBarcodeScanner(true)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 active:scale-125"
                 >
-                  <ScanIcon className="w-3.5 h-3.5" />
-                  Audit
+                  <ScanIcon className="w-4 h-4" />
                 </button>
-
-                <button
-                  onClick={() => { setIsRefundMode(!isRefundMode); setIsAuditMode(false); if (navigator.vibrate) navigator.vibrate(10); }}
-                  className={`px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-tighter transition-all flex flex-col items-center gap-0.5 min-w-[72px]
-                        ${isRefundMode ? 'bg-red-500 text-white shadow-lg shadow-red-200' : 'text-slate-400'}`}
-                >
-                  <ClearIcon className="w-3.5 h-3.5" />
-                  Refund
-                </button>
-            </div>
-          </div>
-
-          {/* Full Width Search with Tools */}
-          <div className="flex items-center gap-2">
-            <div className="relative flex-1 group">
-              <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors">
-                <SearchIcon />
               </div>
-              <input
-                ref={searchInputRef}
-                type="text"
-                placeholder="Search products or scan..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full h-12 bg-white border border-slate-200 rounded-2xl pl-11 pr-11 text-sm font-bold text-slate-900 placeholder:text-slate-400 focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-400 transition-all outline-none shadow-sm"
-              />
+
               <button
-                onClick={() => setShowBarcodeScanner(true)}
-                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-indigo-600 transition-all active:scale-125"
+                onClick={() => setShowInvoiceScanner(true)}
+                className="w-10 h-10 bg-white border border-slate-200 rounded-xl flex items-center justify-center text-slate-600 active:scale-90 transition-all shadow-sm"
               >
-                <ScanIcon className="w-5 h-5" />
+                <PlusIcon className="w-4 h-4" />
               </button>
             </div>
 
-            <button
-              onClick={() => setShowInvoiceScanner(true)}
-              className="w-12 h-12 bg-white border border-slate-200 rounded-2xl flex items-center justify-center text-slate-600 active:scale-90 transition-all shadow-sm group"
-            >
-              <PlusIcon className="w-5 h-5 group-active:text-indigo-600" />
-            </button>
+            {/* Integrated Sales History Bar */}
+            <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1 mt-1 border-t border-slate-50">
+              <span className="text-[7px] font-black text-slate-300 uppercase shrink-0">SON:</span>
+              {recentTransactions.length === 0 ? (
+                <span className="text-[7px] font-bold text-slate-200 uppercase italic">Henüz yok</span>
+              ) : (
+                recentTransactions.map(tx => (
+                  <button
+                    key={tx.id}
+                    onClick={() => {
+                      setLastTransaction(tx);
+                      setShowReceiptOverlay(true);
+                    }}
+                    className="shrink-0 bg-white border border-slate-100 rounded-full px-2 py-0.5 flex items-center gap-1 active:scale-95 transition-all shadow-sm"
+                  >
+                    <div className="w-1 h-1 bg-emerald-400 rounded-full" />
+                    <span className="text-[8px] font-black text-slate-600 tabular-nums">₱{(tx.total || 0).toFixed(0)}</span>
+                  </button>
+                ))
+              )}
+            </div>
           </div>
-        </div>
 
-        {/* Resumable Orders Strip */}
-        {heldOrders.length > 0 && (
-          <div className="fixed top-[140px] inset-x-0 z-40 flex gap-2 px-4 py-2 bg-amber-50/80 backdrop-blur overflow-x-auto no-scrollbar border-b border-amber-200 shadow-sm">
-            <span className="text-[10px] font-black text-amber-600 uppercase flex-shrink-0 flex items-center">{t('cashier.heldOrders')}:</span>
-            {heldOrders.map((hold) => (
-              <button
-                key={hold.id}
-                onClick={() => handleResumeOrder(hold.id)}
-                className="bg-white px-3 py-1 rounded-full border border-amber-300 text-[10px] font-bold text-amber-700 whitespace-nowrap shadow-sm active:bg-amber-100"
-              >
-                ₱{hold.total.toFixed(0)} • {new Date(hold.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-              </button>
-            ))}
-          </div>
-        )}
-
-        {/* Mobile Recent Transactions Bar */}
-        <div className="fixed top-[145px] inset-x-0 z-40 flex gap-2 px-4 py-2 bg-slate-50/80 backdrop-blur overflow-x-auto no-scrollbar border-b border-slate-200 shadow-sm">
-          <span className="text-[10px] font-black text-slate-400 uppercase flex-shrink-0 flex items-center">Recent:</span>
-          {recentTransactions.length === 0 ? (
-            <span className="text-[10px] font-bold text-slate-300 uppercase italic">No recent history</span>
-          ) : (
-            recentTransactions.map(tx => (
-              <button
-                key={tx.id}
-                onClick={() => {
-                  setLastTransaction(tx);
-                  setShowReceiptOverlay(true);
-                }}
-                className="shrink-0 bg-white border border-slate-200 rounded-full px-3 py-1 flex items-center gap-2 active:scale-95 transition-all shadow-sm"
-              >
-                <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
-                <span className="text-[10px] font-black text-slate-700 tabular-nums">₱{(tx.total || 0).toFixed(0)}</span>
-                <span className="text-[9px] font-bold text-slate-400">{tx.timestamp ? new Date(tx.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}</span>
-              </button>
-            ))
+          {/* Resumable Orders Strip - Integrated below header */}
+          {heldOrders.length > 0 && (
+            <div className="bg-amber-50/80 backdrop-blur flex gap-2 px-4 py-1.5 overflow-x-auto no-scrollbar border-t border-amber-200 animate-slide-down">
+              <span className="text-[8px] font-black text-amber-600 uppercase flex-shrink-0 flex items-center">BEKLEYEN:</span>
+              {heldOrders.map((hold) => (
+                <button
+                  key={hold.id}
+                  onClick={() => handleResumeOrder(hold.id)}
+                  className="bg-white px-2 py-0.5 rounded-full border border-amber-300 text-[8px] font-bold text-amber-700 whitespace-nowrap active:bg-amber-100"
+                >
+                  ₱{hold.total.toFixed(0)}
+                </button>
+              ))}
+            </div>
           )}
         </div>
 
-        {/* Main Content Area: Conditional Rendering (Grid vs Cart) */}
-        <div className="flex-[2.5] pt-[185px] pb-2 overflow-hidden bg-white/50">
-          <div className="h-full overflow-y-auto px-4 pb-20 overscroll-contain no-scrollbar">
-
-            {mobileViewMode === 'grid' ? (
-              <div className="grid grid-cols-3 gap-3">
-                {/* Feature Buttons - Subdued Elite v2.1 */}
-                <button
-                  onClick={() => { setShowCustomItemModal(true); if (navigator.vibrate) navigator.vibrate(10); }}
-                  className="bg-orange-50/50 rounded-2xl p-2.5 flex flex-col items-center justify-center gap-2 border border-orange-100 ring-1 ring-orange-200/50 active:scale-95 transition-all aspect-[4/5]"
-                >
-                  <div className="text-orange-500">
-                    <ScanIcon className="w-7 h-7" />
-                  </div>
-                  <div className="text-[10px] font-black uppercase text-orange-900 leading-tight text-center tracking-tighter">Custom Price</div>
-                </button>
-
-                <button
-                  onClick={() => { setShowELoadModal(true); if (navigator.vibrate) navigator.vibrate(10); }}
-                  className="bg-sky-50/50 rounded-2xl p-2.5 flex flex-col items-center justify-center gap-2 border border-sky-100 ring-1 ring-sky-200/50 active:scale-95 transition-all aspect-[4/5]"
-                >
-                  <div className="text-sky-500">
-                    <SmartphoneIcon className="w-7 h-7" />
-                  </div>
-                  <div className="text-[10px] font-black uppercase text-sky-900 leading-tight text-center tracking-tighter">E-Load</div>
-                </button>
-
-                {filteredProducts.map((product) => {
-                  const cartItemIndex = cart.findIndex(it => it.productId === product.id);
-                  const cartItem = cartItemIndex > -1 ? cart[cartItemIndex] : null;
-                  const { Icon, color: productColor } = getProductIcon(product.name);
-
-                  return (
-                    <div key={product.id} className="relative aspect-[4/5]">
-                      <button
-                        onClick={() => handleProductClick(product)}
-                        className={`group bg-white rounded-2xl p-2.5 flex flex-col items-center justify-between border border-slate-200/60 active:scale-95 transition-all h-full w-full relative
-                          ${poppedProductId === product.id ? 'animate-scale-pop' : ''}`}
-                      >
-                        {/* Product Visual - Large Modern Rendering */}
-                        <div className="flex-1 flex items-center justify-center w-full p-1 overflow-hidden">
-                          {product.imageUrl ? (
-                            <img
-                              src={product.imageUrl}
-                              alt={product.name}
-                              className="w-full h-full object-contain group-active:scale-110 transition-transform duration-500 ease-out"
-                              onError={(e) => {
-                                e.target.onerror = null;
-                                e.target.style.display = 'none';
-                                e.target.nextSibling.style.display = 'flex';
-                              }}
-                            />
-                          ) : null}
-                          <div
-                            className="flex items-center justify-center"
-                            style={{
-                              color: productColor,
-                              display: product.imageUrl ? 'none' : 'flex'
-                            }}
-                          >
-                            {Icon && <Icon className="w-12 h-12 opacity-80" />}
-                          </div>
-
-                          {(product.stockQuantity || 0) < 5 && (
-                            <div className="absolute top-2 right-2 w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse" title="Low Stock" />
-                          )}
-                        </div>
-
-                        {/* Text Info */}
-                        <div className="w-full pt-1 flex flex-col items-center">
-                          <div className="text-[10px] font-black text-slate-900 w-full text-center leading-tight tracking-tight px-1 truncate">
-                            {product.name}
-                          </div>
-                          <div className="flex items-center gap-1.5 mt-0.5">
-                             <div className="text-[11px] font-black text-indigo-600 tabular-nums">
-                              ₱{Math.round(product.price)}
-                             </div>
-                             {product.barcode && (
-                               <div className="text-[8px] font-black text-slate-300 font-mono tracking-tighter uppercase tabular-nums">
-                                 ..{product.barcode.slice(-4)}
-                               </div>
-                             )}
-                          </div>
-                        </div>
-                      </button>
-
-                      {/* Quantity Badge Tooltip */}
-                      {cartItem && (
-                        <div className="absolute -top-1 -right-1 bg-indigo-600 text-white text-[9px] font-black w-5 h-5 rounded-full flex items-center justify-center border-2 border-white shadow-sm">
-                          {cartItem.quantity}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            ) : (
-              /* Mobile Cart View - Redesigned v2.1 */
-              <div className="space-y-3 animate-scale-in">
-                <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">{t('cashier.heldOrders')} ({cart.length})</h3>
+        {/* Main Content Area: Conditional Rendering (Grid vs Hub) */}
+        <div className={`flex-1 pt-[125px] ${heldOrders.length > 0 ? 'pt-[155px]' : ''} pb-1 overflow-hidden bg-white/50 relative`}>
+          {activeTab === 'pos' ? (
+             /* POS View */
+             <div className="h-full overflow-y-auto px-4 pb-4 overscroll-contain no-scrollbar">
+              {mobileViewMode === 'grid' ? (
+                <div className="grid grid-cols-3 gap-3">
+                  {/* Feature Buttons - Subdued Elite v2.1 */}
                   <button
-                    onClick={clearCart}
-                    className="text-[10px] font-bold text-red-500 bg-red-50 px-3 py-1.5 rounded-xl border border-red-100 active:bg-red-500 active:text-white transition-all"
+                    onClick={() => { setShowCustomItemModal(true); if (navigator.vibrate) navigator.vibrate(10); }}
+                    className="bg-orange-50/50 rounded-2xl p-2.5 flex flex-col items-center justify-center gap-2 border border-orange-100 ring-1 ring-orange-200/50 active:scale-95 transition-all aspect-[4/5]"
                   >
-                    {t('cashier.clearAll')}
+                    <div className="text-orange-500">
+                      <ScanIcon className="w-7 h-7" />
+                    </div>
+                    <div className="text-[10px] font-black uppercase text-orange-900 leading-tight text-center tracking-tighter">Custom Price</div>
                   </button>
-                </div>
 
-                {cart.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center py-20 text-slate-300">
-                    <svg className="w-12 h-12 mb-3 opacity-20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                    </svg>
-                    <span className="text-[10px] font-bold uppercase tracking-widest">{t('cashier.noItems')}</span>
-                  </div>
-                ) : (
-                  cart.map((item, index) => (
-                    <div key={`${item.productId}-${index}`} className="group relative overflow-hidden bg-white rounded-3xl border border-slate-100 shadow-sm animate-scale-in">
-                      {/* Swipe Visual Cue (Background) */}
-                      <div className="absolute inset-0 bg-red-500 flex items-center justify-end px-6 text-white opacity-0 group-hover:opacity-10 transition-opacity">
-                        <XIcon className="w-6 h-6" />
+                  <button
+                    onClick={() => { setShowELoadModal(true); if (navigator.vibrate) navigator.vibrate(10); }}
+                    className="bg-sky-50/50 rounded-2xl p-2.5 flex flex-col items-center justify-center gap-2 border border-sky-100 ring-1 ring-sky-200/50 active:scale-95 transition-all aspect-[4/5]"
+                  >
+                    <div className="text-sky-500">
+                      <SmartphoneIcon className="w-7 h-7" />
+                    </div>
+                    <div className="text-[10px] font-black uppercase text-sky-900 leading-tight text-center tracking-tighter">E-Load</div>
+                  </button>
+
+                  {filteredProducts.map((product) => {
+                    const cartItemIndex = cart.findIndex(it => it.productId === product.id);
+                    const cartItem = cartItemIndex > -1 ? cart[cartItemIndex] : null;
+                    const { Icon, color: productColor } = getProductIcon(product.name);
+
+                    return (
+                      <div key={product.id} className="relative aspect-[4/5]">
+                        <button
+                          onClick={() => handleProductClick(product)}
+                          className={`group bg-white rounded-2xl p-2.5 flex flex-col items-center justify-between border border-slate-200/60 active:scale-95 transition-all h-full w-full relative
+                            ${poppedProductId === product.id ? 'animate-scale-pop' : ''}`}
+                        >
+                          <div className="flex-1 flex items-center justify-center w-full p-1 overflow-hidden">
+                            {product.imageUrl ? (
+                              <img
+                                src={product.imageUrl}
+                                alt={product.name}
+                                className="w-full h-full object-contain group-active:scale-110 transition-transform duration-500 ease-out"
+                                onError={(e) => {
+                                  e.target.onerror = null;
+                                  e.target.style.display = 'none';
+                                  e.target.nextSibling.style.display = 'flex';
+                                }}
+                              />
+                            ) : null}
+                            <div
+                              className="flex items-center justify-center"
+                              style={{
+                                color: productColor,
+                                display: product.imageUrl ? 'none' : 'flex'
+                              }}
+                            >
+                              {Icon && <Icon className="w-12 h-12 opacity-80" />}
+                            </div>
+
+                            {(product.stockQuantity || 0) < 5 && (
+                              <div className="absolute top-2 right-2 w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse" title="Low Stock" />
+                            )}
+                          </div>
+
+                          <div className="w-full pt-1 flex flex-col items-center">
+                            <div className="text-[10px] font-black text-slate-900 w-full text-center leading-tight tracking-tight px-1 truncate">
+                              {product.name}
+                            </div>
+                            <div className="flex items-center gap-1.5 mt-0.5">
+                               <div className="text-[11px] font-black text-indigo-600 tabular-nums">
+                                ₱{Math.round(product.price)}
+                               </div>
+                               {product.barcode && (
+                                 <div className="text-[8px] font-black text-slate-300 font-mono tracking-tighter uppercase tabular-nums">
+                                   ..{product.barcode.slice(-4)}
+                                 </div>
+                               )}
+                            </div>
+                          </div>
+                        </button>
+                        {cartItem && (
+                          <div className="absolute -top-1 -right-1 bg-indigo-600 text-white text-[9px] font-black w-5 h-5 rounded-full flex items-center justify-center border-2 border-white shadow-sm">
+                            {cartItem.quantity}
+                          </div>
+                        )}
                       </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                /* Mobile Cart View */
+                <div className="space-y-3 animate-scale-in">
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">Sepet ({cart.length})</h3>
+                    <button
+                      onClick={clearCart}
+                      className="text-[10px] font-bold text-red-500 bg-red-50 px-3 py-1.5 rounded-xl border border-red-100 active:bg-red-500 active:text-white transition-all"
+                    >
+                      {t('cashier.clearAll')}
+                    </button>
+                  </div>
 
-                      <div className="relative bg-white p-4 flex items-center justify-between">
+                  {cart.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center py-20 text-slate-300">
+                      <ScanIcon className="w-12 h-12 mb-3 opacity-20" />
+                      <span className="text-[10px] font-bold uppercase tracking-widest">{t('cashier.noItems')}</span>
+                      <button onClick={() => setMobileViewMode('grid')} className="mt-4 text-[10px] font-black text-indigo-600 uppercase border border-indigo-100 px-4 py-2 rounded-xl">Ürünlere Dön</button>
+                    </div>
+                  ) : (
+                    cart.map((item, index) => (
+                      <div key={`${item.productId}-${index}`} className="bg-white rounded-3xl border border-slate-100 shadow-sm p-4 flex items-center justify-between">
                         <div className="flex flex-col">
                           <span className="text-xs font-black text-slate-900 truncate max-w-[140px] leading-tight">{item.productName}</span>
                           <span className="text-[11px] font-bold text-indigo-600 tabular-nums">₱{item.unitPrice.toFixed(2)} / ea</span>
@@ -1285,239 +1276,154 @@ export default function CashierMode({ userId, tenantId }) {
                           <div className="flex items-center bg-slate-50 rounded-2xl p-1 gap-1">
                             <button
                               onClick={() => updateQuantity(index, item.quantity - 1)}
-                              className="w-8 h-8 flex items-center justify-center bg-white rounded-xl text-slate-600 shadow-sm border border-slate-100 active:bg-red-50 active:text-red-500 transition-all"
+                              className="w-8 h-8 flex items-center justify-center bg-white rounded-xl text-slate-600 shadow-sm border border-slate-100 active:bg-red-50 active:text-red-500 transition-all font-black"
                             >
-                              <span className="text-sm font-black">-</span>
+                              -
                             </button>
-                            <button
-                              onClick={() => setShowManualQtyModal({ cartIndex: index, product: { name: item.productName } })}
-                              className="px-2 min-w-[30px] text-center"
-                            >
-                              <span className="text-xs font-black text-slate-900 tabular-nums">{item.quantity}</span>
-                            </button>
+                            <span className="w-8 text-center text-xs font-black text-slate-900 tabular-nums">{item.quantity}</span>
                             <button
                               onClick={() => updateQuantity(index, item.quantity + 1)}
-                              className="w-8 h-8 flex items-center justify-center bg-white rounded-xl text-slate-600 shadow-sm border border-slate-100 active:bg-green-50 active:text-green-500 transition-all"
+                              className="w-8 h-8 flex items-center justify-center bg-white rounded-xl text-slate-600 shadow-sm border border-slate-100 active:bg-green-50 active:text-green-500 transition-all font-black"
                             >
-                              <span className="text-sm font-black">+</span>
+                              +
                             </button>
                           </div>
-                          <div className="text-right flex flex-col min-w-[60px]">
-                            <span className="text-xs font-black text-slate-900 tabular-nums">₱{item.subtotal.toFixed(2)}</span>
-                            <button
-                              onClick={() => removeFromCart(index)}
-                              className="text-[9px] font-bold text-red-400 mt-0.5"
-                            >
-                              {t('cashier.remove')}
-                            </button>
-                          </div>
+                          <button onClick={() => removeFromCart(index)} className="p-2 text-slate-300 active:text-red-500"><XIcon className="w-4 h-4" /></button>
                         </div>
                       </div>
-                    </div>
-                  ))
-                )}
-
-                {cart.length > 0 && (
-                  <div className="pt-4 space-y-3">
-                    <div className="flex items-center justify-between px-2">
-                      <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('cashier.promotionDiscount')}</span>
-                      <button
-                        onClick={() => setShowDiscountInput(true)}
-                        className="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-xl border border-indigo-100"
-                      >
-                        {discount > 0 ? `-₱${discount.toFixed(2)}` : `+ ${t('cashier.addDiscount')}`}
-                      </button>
-                    </div>
-                  </div>
-                )}
+                    ))
+                  )}
+                </div>
+              )}
+             </div>
+           ) : (
+              /* Management Hub View */
+              <div className="h-full animate-scale-in">
+                <ManagerDashboard 
+                  userId={userId} 
+                  tenantId={tenantId} 
+                  isEmbedded={true} 
+                />
               </div>
-            )}
-          </div>
+           )}
         </div>
 
         {/* Control Console: Optimized Thumb Zone */}
-        <div className="flex-1 bg-white border-t border-slate-200 shadow-[0_-8px_30px_rgb(0,0,0,0.04)] relative z-10 p-4 flex flex-col gap-3">
-
-          {/* Status Row: Customer Info & Compact Change */}
-          <div className="flex gap-2">
-            {selectedCustomer && (
-              <div className="flex-1 bg-amber-50 border border-amber-100 rounded-2xl px-4 py-2 flex items-center justify-between shadow-sm animate-scale-in">
-                <div className="flex flex-col">
-                  <span className="text-[8px] font-black text-amber-600 uppercase tracking-widest">{t('cashier.currentCustomer')}</span>
-                  <span className="text-xs font-black text-amber-900 truncate max-w-[120px]">{selectedCustomer.name}</span>
-                </div>
-                <NotebookIcon className="w-4 h-4 text-amber-400" />
-              </div>
-            )}
-          </div>
-
-          <div className="flex gap-4 flex-1 overflow-hidden">
-            {/* Numpad Section: Minimalist Circle Buttons */}
-            <div className="flex-1 flex flex-col gap-2">
-              <div className="flex-1 flex flex-col justify-center gap-1">
-                <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">{t('cashier.enterAmount')}</span>
-                <div className="flex items-center gap-2">
+        {activeTab === 'pos' && (
+          <div className="flex-shrink-0 min-h-[260px] bg-white border-t border-slate-200 shadow-[0_-8px_30px_rgb(0,0,0,0.06)] relative z-10 p-4 flex flex-col gap-3">
+            <div className="flex gap-6 flex-1 overflow-hidden">
+              {/* Numpad Section: Large Accessible Buttons */}
+              <div className="flex-1 flex flex-col gap-4">
+                <div className="flex items-center justify-between px-2 py-2 bg-slate-50 rounded-2xl border border-slate-100">
+                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-2">{t('cashier.enterAmount')}</span>
                   <input
                     readOnly
                     type="text"
                     placeholder="0"
-                    className="bg-transparent text-xl font-black text-slate-900 placeholder:text-slate-300 outline-none w-full tabular-nums"
+                    className="bg-transparent text-right text-2xl font-black text-slate-900 outline-none w-full tabular-nums pr-2"
                     value={cashReceived}
                   />
-                  {change > 0 && (
-                    <div
-                      onClick={() => setCashReceived('')}
-                      className="shrink-0 bg-emerald-500 text-white text-[10px] font-black px-3 py-1.5 rounded-xl animate-scale-in cursor-pointer active:scale-95 flex items-center gap-1"
-                    >
-                      <span>CHANGE: ₱{change.toFixed(0)}</span>
-                      <XIcon className="w-2.5 h-2.5 opacity-50" />
-                    </div>
-                  )}
-                  {cashReceived && (
+                </div>
+
+                <div className="grid grid-cols-3 gap-3 flex-1">
+                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, 'C', 0, '⌫'].map((btn) => {
+                    const isAction = btn === 'C' || btn === '⌫';
+                    return (
+                      <button
+                        key={btn}
+                        onClick={() => {
+                          if (navigator.vibrate) navigator.vibrate(10);
+                          if (btn === 'C') handleNumpadInput('clear');
+                          else if (btn === '⌫') handleNumpadInput('backspace');
+                          else handleNumpadInput(btn.toString());
+                        }}
+                        className={`flex items-center justify-center rounded-[1.25rem] text-xl font-black transition-all shadow-sm active:scale-90
+                          ${isAction
+                            ? 'bg-slate-100 text-slate-400 active:bg-slate-200'
+                            : 'bg-slate-50 text-slate-800 active:bg-indigo-600 active:text-white border border-slate-100'
+                          }`}
+                        style={{ height: '54px' }}
+                      >
+                        {btn}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                <div className="grid grid-cols-6 gap-2 mt-2">
+                  {[20, 50, 100, 200, 500, 1000].map((amt) => (
                     <button
+                      key={amt}
                       onClick={() => {
-                        const val = parseFloat(cashReceived) || 0;
-                        const sub = parseFloat(pendingQuantity) || 500;
-                        setCashReceived(Math.max(0, val - sub).toString());
                         if (navigator.vibrate) navigator.vibrate(10);
+                        setCashReceived(prev => {
+                          const current = parseFloat(prev || 0);
+                          return (current + amt).toString();
+                        });
+                        setPaymentMethod('cash');
                       }}
-                      className="bg-slate-100 text-slate-400 text-[10px] font-black px-2 py-1.5 rounded-xl hover:bg-red-50 hover:text-red-500 transition-all font-mono"
+                      className="bg-emerald-50 border border-emerald-100 text-emerald-700 text-[11px] font-black py-3 rounded-2xl active:bg-emerald-600 active:text-white transition-all shadow-sm"
                     >
-                      -{pendingQuantity || '500'}
+                      ₱{amt}
                     </button>
-                  )}
+                  ))}
                 </div>
               </div>
 
-              <div className="flex-1 grid grid-cols-3 gap-2 pb-1">
-                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 'C', 0, '⌫'].map((btn) => {
-                  const isAction = btn === 'C' || btn === '⌫';
-                  return (
-                    <button
-                      key={btn}
-                      onClick={() => {
-                        if (navigator.vibrate) navigator.vibrate(10);
-                        if (btn === 'C') handleNumpadInput('clear');
-                        else if (btn === '⌫') handleNumpadInput('backspace');
-                        else handleNumpadInput(btn.toString());
-                      }}
-                      className={`flex items-center justify-center aspect-square rounded-full text-lg font-bold transition-all
-                        ${isAction
-                          ? 'bg-slate-100 text-slate-400 active:bg-slate-200'
-                          : 'bg-slate-50 text-slate-700 active:bg-indigo-50 active:text-indigo-600 active:ring-2 active:ring-indigo-100'
-                        }`}
-                    >
-                      {btn}
-                    </button>
-                  );
-                })}
-              </div>
-
-              {/* Filipino Cash Shortcuts */}
-              <div className="grid grid-cols-6 gap-1 mt-auto">
-                {[20, 50, 100, 200, 500, 1000].map((amt) => (
-                  <button
-                    key={amt}
-                    onClick={() => {
-                      if (navigator.vibrate) navigator.vibrate(10);
-                      setCashReceived(prev => {
-                        const current = parseFloat(prev || 0);
-                        return (current + amt).toString();
-                      });
+              {/* Payment Controls - Massive Buttons */}
+              <div className="w-1/3 flex flex-col gap-3">
+                <button
+                  onClick={() => {
+                    if (navigator.vibrate) navigator.vibrate(20);
+                    if (total > 0) {
+                      setCashReceived(total.toFixed(0));
                       setPaymentMethod('cash');
-                    }}
-                    className="bg-emerald-50 border border-emerald-100 text-emerald-700 text-[9px] font-black py-2 rounded-xl active:bg-emerald-600 active:text-white transition-all shadow-sm"
-                  >
-                    ₱{amt}
-                  </button>
-                ))}
+                    }
+                  }}
+                  className={`flex-1 rounded-[2.5rem] flex flex-col items-center justify-center gap-2 transition-all shadow-sm active:scale-90
+                    ${(cashReceived && parseFloat(cashReceived) === total)
+                      ? 'bg-indigo-600 text-white ring-8 ring-indigo-50'
+                      : 'bg-slate-50 text-slate-400 border border-slate-200'
+                    }`}
+                >
+                  <BanknoteIcon className="w-8 h-8" />
+                  <span className="text-[11px] font-black uppercase tracking-tighter text-center">EXACT</span>
+                </button>
+
+                <button
+                  onClick={() => {
+                    setPaymentMethod('gcash');
+                    setShowGCashQR(true);
+                    if (navigator.vibrate) navigator.vibrate(10);
+                  }}
+                  className={`flex-1 rounded-[2.5rem] flex flex-col items-center justify-center gap-2 transition-all shadow-sm active:scale-90
+                    ${paymentMethod === 'gcash'
+                      ? 'bg-blue-600 text-white ring-8 ring-blue-50'
+                      : 'bg-slate-50 text-slate-400 border border-slate-200'
+                    }`}
+                >
+                  <SmartphoneIcon className="w-8 h-8" />
+                  <span className="text-[11px] font-black uppercase tracking-widest">GCash</span>
+                </button>
+
+                <button
+                  onClick={() => {
+                    if (navigator.vibrate) navigator.vibrate(30);
+                    handleCheckout();
+                  }}
+                  className={`flex-[1.5] rounded-[2.5rem] flex flex-col items-center justify-center gap-2 transition-all shadow-2xl active:scale-95
+                    ${cart.length === 0
+                      ? 'bg-slate-100 text-slate-300 cursor-not-allowed'
+                      : 'bg-slate-900 text-white'
+                    }`}
+                >
+                  <CheckoutIcon className="w-10 h-10" />
+                  <span className="text-[13px] font-black uppercase tracking-[0.2em] animate-pulse">DONE</span>
+                </button>
               </div>
-            </div>
-
-            {/* Payment Controls - Thumb Zone Optimized */}
-            <div className="w-1/3 flex flex-col gap-2">
-              <button
-                onClick={() => {
-                  if (navigator.vibrate) navigator.vibrate(20);
-                  if (total > 0) {
-                    setCashReceived(total.toFixed(0));
-                    setPaymentMethod('cash');
-                  }
-                }}
-                className={`h-9 border rounded-xl text-[9px] font-black uppercase tracking-tighter flex items-center justify-center shadow-sm transition-all active:scale-95
-                  ${cashReceived && parseFloat(cashReceived) === total && total > 0
-                    ? 'bg-indigo-600 text-white border-indigo-700 animate-glow'
-                    : 'bg-indigo-50 text-indigo-700 border-indigo-100'
-                  }`}
-              >
-                {t('cashier.exactAmount')}
-              </button>
-
-              <button
-                onClick={() => {
-                  if (navigator.vibrate) navigator.vibrate(10);
-                  setPaymentMethod('cash');
-                  if (total > 0 && !cashReceived) setCashReceived(total.toFixed(0));
-                }}
-                className={`flex-1 rounded-2xl flex flex-col items-center justify-center gap-1 transition-all shadow-sm
-                  ${paymentMethod === 'cash'
-                    ? 'bg-indigo-600 text-white ring-4 ring-indigo-100'
-                    : 'bg-slate-50 text-slate-400 border border-slate-200'
-                  }`}
-              >
-                <BanknoteIcon className="w-5 h-5" />
-                <span className="text-[9px] font-black uppercase tracking-widest">{t('cashier.cash')}</span>
-              </button>
-
-              <button
-                onClick={() => {
-                  setPaymentMethod('utang');
-                  setShowUtangModal(true);
-                  if (navigator.vibrate) navigator.vibrate(10);
-                }}
-                className={`flex-1 rounded-2xl flex flex-col items-center justify-center gap-1 transition-all shadow-sm
-                  ${paymentMethod === 'utang'
-                    ? 'bg-amber-600 text-white ring-4 ring-amber-100'
-                    : 'bg-slate-50 text-slate-400 border border-slate-200'
-                  }`}
-              >
-                <NotebookIcon className="w-5 h-5" />
-                <span className="text-[9px] font-black uppercase tracking-widest">{t('cashier.utangMode')}</span>
-              </button>
-
-              <button
-                onClick={() => {
-                  setPaymentMethod('gcash');
-                  setShowGCashQR(true);
-                }}
-                className={`flex-1 rounded-2xl flex flex-col items-center justify-center gap-1 transition-all shadow-sm
-                  ${paymentMethod === 'gcash'
-                    ? 'bg-blue-500 text-white ring-4 ring-blue-100'
-                    : 'bg-slate-50 text-slate-400 border border-slate-200'
-                  }`}
-              >
-                <SmartphoneIcon className="w-5 h-5" />
-                <span className="text-[9px] font-black uppercase tracking-widest">{t('cashier.gcash')}</span>
-              </button>
-
-              {/* Checkout Trigger */}
-              <button
-                onClick={() => {
-                  if (navigator.vibrate) navigator.vibrate(20);
-                  handleCheckout();
-                }}
-                className={`w-full py-4 rounded-2xl font-black text-base flex items-center justify-center gap-2 transition-all active:scale-95 shadow-lg
-                  ${cart.length === 0
-                    ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
-                    : 'bg-slate-900 text-white'
-                  }`}
-              >
-                <CheckoutIcon className="w-5 h-5" />
-                <span className="uppercase tracking-widest leading-none">DONE</span>
-              </button>
             </div>
           </div>
-        </div>
+        )}
       </div>
       {/* End Mobile Shell */}
 

@@ -21,7 +21,7 @@ import ZReport from './ZReport.jsx';
 import UtangTracker from './UtangTracker.jsx';
 import Inventory from './Inventory.jsx';
 
-export default function ManagerDashboard({ userId, tenantId }) {
+export default function ManagerDashboard({ userId, tenantId, isEmbedded = false }) {
   const { t, changeLanguage, language } = useI18n();
   const { currentTenant, currentUser } = useGlobalStore();
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -114,62 +114,62 @@ export default function ManagerDashboard({ userId, tenantId }) {
     }
   }
 
-  return (
-    <div className="h-screen w-screen bg-zinc-100 text-zinc-900 overflow-hidden flex flex-col" style={{ fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif' }}>
-      {/* Header */}
-      <div className="bg-white shadow-sm border-b border-zinc-200 px-6 py-4 flex-shrink-0">
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="text-xs text-zinc-500 mb-1 uppercase tracking-wider font-medium">
-              {t('manager.dashboard')}
+  const content = (
+    <div className={`${isEmbedded ? 'h-full flex flex-col' : 'h-screen w-screen bg-zinc-100 text-zinc-900 overflow-hidden flex flex-col'}`} style={{ fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif' }}>
+      {!isEmbedded && (
+        <div className="bg-white shadow-sm border-b border-zinc-200 px-6 py-4 flex-shrink-0">
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="text-xs text-zinc-500 mb-1 uppercase tracking-wider font-medium">
+                {t('manager.dashboard')}
+              </div>
+              <div className="text-xl font-bold text-zinc-900">
+                {currentTenant?.businessName || currentTenant?.name || "JANE'S SARI-SARI"}
+              </div>
             </div>
-            <div className="text-xl font-bold text-zinc-900">
-              {currentTenant?.businessName || currentTenant?.name || "JANE'S SARI-SARI"}
-            </div>
-          </div>
-          <div className="flex items-center gap-3">
-            {/* Language Selector */}
-            <div className="flex gap-1 bg-zinc-100 rounded-full px-1 py-1 shadow-sm">
-              <button
-                onClick={() => changeLanguage('en')}
-                className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
-                  language === 'en' 
-                    ? 'bg-indigo-600 text-white shadow-md' 
-                    : 'text-zinc-600 hover:text-zinc-900'
-                }`}
-                title="English"
-              >
-                EN
-              </button>
-              <button
-                onClick={() => changeLanguage('tl')}
-                className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
-                  language === 'tl' 
-                    ? 'bg-indigo-600 text-white shadow-md' 
-                    : 'text-zinc-600 hover:text-zinc-900'
-                }`}
-                title="Tagalog"
-              >
-                TL
-              </button>
-              <button
-                onClick={() => changeLanguage('tr')}
-                className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
-                  language === 'tr' 
-                    ? 'bg-indigo-600 text-white shadow-md' 
-                    : 'text-zinc-600 hover:text-zinc-900'
-                }`}
-                title="Türkçe"
-              >
-                TR
-              </button>
-            </div>
-            <div className="w-10 h-10 bg-zinc-100 rounded-full flex items-center justify-center shadow-sm">
-              <div className="w-2 h-2 bg-emerald-600 rounded-full"></div>
+            <div className="flex items-center gap-3">
+              <div className="flex gap-1 bg-zinc-100 rounded-full px-1 py-1 shadow-sm">
+                <button
+                  onClick={() => changeLanguage('en')}
+                  className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+                    language === 'en' 
+                      ? 'bg-indigo-600 text-white shadow-md' 
+                      : 'text-zinc-600 hover:text-zinc-900'
+                  }`}
+                  title="English"
+                >
+                  EN
+                </button>
+                <button
+                  onClick={() => changeLanguage('tl')}
+                  className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+                    language === 'tl' 
+                      ? 'bg-indigo-600 text-white shadow-md' 
+                      : 'text-zinc-600 hover:text-zinc-900'
+                  }`}
+                  title="Tagalog"
+                >
+                  TL
+                </button>
+                <button
+                  onClick={() => changeLanguage('tr')}
+                  className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+                    language === 'tr' 
+                      ? 'bg-indigo-600 text-white shadow-md' 
+                      : 'text-zinc-600 hover:text-zinc-900'
+                  }`}
+                  title="Türkçe"
+                >
+                  TR
+                </button>
+              </div>
+              <div className="w-10 h-10 bg-zinc-100 rounded-full flex items-center justify-center shadow-sm">
+                <div className="w-2 h-2 bg-emerald-600 rounded-full"></div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Tabs */}
       <div className="bg-white border-b border-zinc-200 shadow-sm">
@@ -379,6 +379,8 @@ export default function ManagerDashboard({ userId, tenantId }) {
       </div>
     </div>
   );
+
+  return content;
 }
 
 // Recent Transactions - Minimalist Table
