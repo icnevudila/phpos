@@ -1337,12 +1337,12 @@ export default function CashierMode({ userId, tenantId }) {
                           else if (btn === '⌫') handleNumpadInput('backspace');
                           else handleNumpadInput(btn.toString());
                         }}
-                        className={`flex items-center justify-center rounded-[1.25rem] text-xl font-black transition-all shadow-sm active:scale-90
+                        className={`flex items-center justify-center rounded-[1.125rem] text-lg font-black transition-all shadow-sm active:scale-90
                           ${isAction
                             ? 'bg-slate-100 text-slate-400 active:bg-slate-200'
                             : 'bg-slate-50 text-slate-800 active:bg-indigo-600 active:text-white border border-slate-100'
                           }`}
-                        style={{ height: '54px' }}
+                        style={{ height: '48px' }}
                       >
                         {btn}
                       </button>
@@ -1386,8 +1386,8 @@ export default function CashierMode({ userId, tenantId }) {
                       : 'bg-slate-50 text-slate-400 border border-slate-200'
                     }`}
                 >
-                  <BanknoteIcon className="w-8 h-8" />
-                  <span className="text-[11px] font-black uppercase tracking-tighter text-center">EXACT</span>
+                  <BanknoteIcon className="w-7 h-7" />
+                  <span className="text-[8px] font-black uppercase tracking-tight text-center">EXACT</span>
                 </button>
 
                 <button
@@ -1402,8 +1402,8 @@ export default function CashierMode({ userId, tenantId }) {
                       : 'bg-slate-50 text-slate-400 border border-slate-200'
                     }`}
                 >
-                  <SmartphoneIcon className="w-8 h-8" />
-                  <span className="text-[11px] font-black uppercase tracking-widest">GCash</span>
+                  <SmartphoneIcon className="w-7 h-7" />
+                  <span className="text-[8px] font-black uppercase tracking-widest">GCash</span>
                 </button>
 
                 <button
@@ -1417,8 +1417,8 @@ export default function CashierMode({ userId, tenantId }) {
                       : 'bg-slate-900 text-white'
                     }`}
                 >
-                  <CheckoutIcon className="w-10 h-10" />
-                  <span className="text-[13px] font-black uppercase tracking-[0.2em] animate-pulse">DONE</span>
+                  <CheckoutIcon className="w-9 h-9" />
+                  <span className="text-[11px] font-black uppercase tracking-[0.15em]">DONE</span>
                 </button>
               </div>
             </div>
