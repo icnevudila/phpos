@@ -1,0 +1,914 @@
+// DentEase PH — PostgreSQL (proje kurulum / sıfır aşama)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Enums ───────────────────────────────────────────────────────────
+
+enum SubscriptionPlan {
+  STARTER
+  PRO
+  ENTERPRISE
+}
+
+enum UserRole {
+  ADMIN
+  DENTIST
+  RECEPTIONIST
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum BloodType {
+  A_POS
+  A_NEG
+  B_POS
+  B_NEG
+  AB_POS
+  AB_NEG
+  O_POS
+  O_NEG
+  UNKNOWN
+}
+
+enum CivilStatus {
+  SINGLE
+  MARRIED
+  WIDOWED
+  SEPARATED
+  DIVORCED
+}
+
+enum LifestyleFrequency {
+  NEVER
+  OCCASIONAL
+  REGULAR
+  FORMER
+}
+
+enum ToothCondition {
+  HEALTHY
+  DECAY
+  FILLED
+  EXTRACTED
+  CROWN
+  MISSING
+  ROOT_CANAL
+}
+
+enum AppointmentStatus {
+  PENDING
+  CONFIRMED
+  CHECKED_IN
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+}
+
+/// Randevu yokluğunda sıraya alınan hasta talepleri (resepsiyon bekleme listesi).
+enum WaitlistStatus {
+  WAITING
+  FULFILLED
+  CANCELLED
+}
+
+/// PH HMO / insurance claim yaşam döngüsü
+enum HmoClaimStatus {
+  DRAFT
+  SUBMITTED
+  APPROVED
+  PARTIAL_APPROVED
+  REJECTED
+  PAID
+}
+
+enum InvoiceStatus {
+  UNPAID
+  PARTIAL
+  PAID
+}
+
+enum PaymentMethod {
+  CASH
+  GCASH
+  MAYA
+  CREDIT_CARD
+  CHEQUE
+  PHILHEALTH
+}
+
+enum NotificationChannel {
+  SMS
+  EMAIL
+  PUSH
+}
+
+enum NotificationDeliveryStatus {
+  PENDING
+  SENT
+  FAILED
+}
+
+enum NotificationKind {
+  APPOINTMENT_REMINDER
+  APPOINTMENT_REMINDER_SOON
+  APPOINTMENT_CONFIRMED
+  APPOINTMENT_CANCELLED
+  APPOINTMENT_RESCHEDULED
+  PAYMENT_RECEIVED
+  BALANCE_DUE
+  GENERIC
+}
+
+/// Periodontal muayene için diş başına 6 site kodu.
+/// MB=Mesio-Buccal, B=Mid-Buccal, DB=Disto-Buccal,
+/// ML=Mesio-Lingual, L=Mid-Lingual, DL=Disto-Lingual
+enum PerioSiteCode {
+  MB
+  B
+  DB
+  ML
+  L
+  DL
+}
+
+// ─── Models ───────────────────────────────────────────────────────────
+
+model Clinic {
+  id               String           @id @default(cuid())
+  /// URL slug (portal & white-label). Örn: "pasig-smile"
+  slug             String           @unique
+  name             String
+  address          String?
+  city             String?
+  phone            String?
+  logoUrl          String?
+  /// BIR TIN (Taxpayer Identification Number) — zorunlu resmi belge
+  tin              String?
+  /// BIR Permit to Use (PTU) no. — OR geçerliliği için
+  birPtuNo         String?
+  /// BIR Accreditation no.
+  birAccreditationNo String?
+  subscriptionPlan SubscriptionPlan @default(STARTER)
+  createdAt        DateTime         @default(now())
+
+  users               User[]
+  patients            Patient[]
+  patientFiles        PatientFile[]
+  toothAuditLogs      ToothAuditLog[]
+  appointments        Appointment[]
+  inventory           Inventory[]
+  invoices            Invoice[]
+  notifications       Notification[]
+  otpCodes            OtpCode[]
+  perioExams          PerioExam[]
+  hmoProviders        HmoProvider[]
+  hmoClaims           HmoClaim[]
+  hmoClaimAttachments HmoClaimAttachment[]
+  auditLogs           AuditLog[]
+  phiAccessLogs       PhiAccessLog[]
+  waitlistEntries     WaitlistEntry[]
+  prescriptions       Prescription[]
+
+  @@index([createdAt])
+}
+
+/// Global audit — DPA / iç denetim (GAP-009); çoğunlukla mutasyon istekleri
+model AuditLog {
+  id         String   @id @default(cuid())
+  clinicId   String
+  userId     String?
+  method     String
+  path       String
+  action     String
+  statusCode Int
+  ip         String?
+  userAgent  String?
+  meta       Json?
+  createdAt  DateTime @default(now())
+
+  clinic Clinic @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  user   User?  @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([clinicId, createdAt])
+  @@index([userId, createdAt])
+}
+
+/// PHI / DPA — personel hastaya ait veriye erişim (GET) izi (GAP-010)
+model PhiAccessLog {
+  id         String   @id @default(cuid())
+  clinicId   String
+  userId     String
+  patientId  String?
+  method     String
+  path       String
+  statusCode Int
+  ip         String?
+  userAgent  String?
+  createdAt  DateTime @default(now())
+
+  clinic  Clinic   @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  patient Patient? @relation(fields: [patientId], references: [id], onDelete: SetNull)
+
+  @@index([clinicId, createdAt])
+  @@index([patientId, createdAt])
+  @@index([userId, createdAt])
+}
+
+model User {
+  id               String   @id @default(cuid())
+  clinicId         String
+  /// Giriş e-postası (tenant genelinde tekil — /auth/login için)
+  email            String   @unique
+  passwordHash     String
+  role             UserRole
+  firstName        String
+  lastName         String
+  phone            String?
+  isActive         Boolean  @default(true)
+  prcNumber        String?
+  ptrNumber        String?
+  s2License        String?
+  tinNumber        String?
+  /// Refresh JWT içindeki `sid` ile eşleşir; logout’ta temizlenir
+  refreshSessionId String?  @unique @map("refresh_session_id")
+  createdAt        DateTime @default(now())
+
+  clinic Clinic @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+
+  dentistAppointments      Appointment[]    @relation("AppointmentDentist")
+  treatments               Treatment[]      @relation("TreatmentDentist")
+  prescriptions            Prescription[]   @relation("PrescriptionDentist")
+  notifications            Notification[]
+  toothAuditLogs           ToothAuditLog[]
+  recordedMedicalHistories MedicalHistory[] @relation("MedicalHistoryRecorder")
+  perioExams               PerioExam[]      @relation("PerioExamExaminer")
+  auditLogs                AuditLog[]
+  phiAccessLogs            PhiAccessLog[]
+
+  @@index([clinicId])
+  @@index([phone])
+}
+
+model Patient {
+  id                     String       @id @default(cuid())
+  clinicId               String
+  firstName              String
+  middleName             String?
+  lastName               String
+  nickname               String?
+  birthDate              DateTime?
+  gender                 Gender?
+  civilStatus            CivilStatus?
+  religion               String?
+  nationality            String?      @default("Filipino")
+  occupation             String?
+  phone                  String
+  email                  String?
+  address                String?
+  city                   String?
+  province               String?
+  /// Minör hastalar için veli bilgisi
+  guardianName           String?
+  guardianRelation       String?
+  guardianPhone          String?
+  /// Klinik geçmişi
+  referralSource         String?
+  previousDentist        String?
+  lastDentalVisit        DateTime?
+  reasonForVisit         String?
+  /// Vital signs (intake anında alınır)
+  bloodPressureSystolic  Int?
+  bloodPressureDiastolic Int?
+  pulseRate              Int?
+  emergencyContactName   String?
+  emergencyContactPhone  String?
+  bloodType              BloodType?
+  allergies              String[]     @default([])
+  /// DEPRECATED: yeni veri `medicalHistory` tablosuna yazılır. Geriye uyumluluk için saklı.
+  medicalHistory         Json?
+  philhealthNo           String?
+  /// RA 9994 — şube OSCA doğrulaması sonrası işaretlenir
+  isSeniorCitizen        Boolean      @default(false)
+  oscaIdNo               String?
+  /// RA 10754 — PWD ID no. dolu ise indirim uygulanır
+  pwdIdNo                String?
+  isActive               Boolean      @default(true)
+  createdAt              DateTime     @default(now())
+
+  clinic          Clinic          @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  teeth           Tooth[]
+  appointments    Appointment[]
+  treatments      Treatment[]
+  invoices        Invoice[]
+  files           PatientFile[]
+  notifications   Notification[]
+  toothAuditLogs  ToothAuditLog[]
+  medicalRecord   MedicalHistory?
+  perioExams      PerioExam[]
+  hmoMemberships  PatientHmo[]
+  hmoClaims       HmoClaim[]
+  phiAccessLogs   PhiAccessLog[]
+  waitlistEntries WaitlistEntry[]
+  prescriptions   Prescription[]
+
+  @@index([clinicId])
+  @@index([phone])
+  @@index([lastName, firstName])
+  @@index([philhealthNo])
+  @@index([isActive])
+}
+
+/// PDA standart tıbbi geçmiş formu — her hasta için tek kayıt, versiyonlu.
+model MedicalHistory {
+  id           String   @id @default(cuid())
+  patientId    String   @unique
+  /// Her güncellemede artar
+  version      Int      @default(1)
+  /// Son kaydı yapan kullanıcı
+  recordedById String?
+  recordedAt   DateTime @default(now())
+
+  /// Genel sağlık durumu
+  underPhysicianCare       Boolean @default(false)
+  underPhysicianCareReason String?
+  hospitalized             Boolean @default(false)
+  hospitalizedReason       String?
+  hospitalizedYear         Int?
+  takingMedications        Boolean @default(false)
+  medicationsList          String?
+  seriousIllness           Boolean @default(false)
+  seriousIllnessDetails    String?
+
+  /// 28 standart hastalık — seçilenler kod olarak eklenir.
+  /// Kodlar: HEART_DISEASE, CONGENITAL_HEART, RHEUMATIC_FEVER, ANGINA, HBP, LBP,
+  /// DIABETES, ASTHMA, TB, BRONCHITIS, EMPHYSEMA, SINUSITIS, HAY_FEVER, KIDNEY,
+  /// LIVER_HEPATITIS, JAUNDICE, ULCERS, THYROID, EPILEPSY, FAINTING, STROKE,
+  /// ANEMIA, HEMOPHILIA, HIV_AIDS, CANCER, ARTHRITIS, PSYCHIATRIC, VENEREAL
+  conditions      String[] @default([])
+  conditionsOther String?
+
+  /// Detaylı alerji bayrakları (PDA formu için)
+  allergyAnesthetic Boolean @default(false)
+  allergyPenicillin Boolean @default(false)
+  allergySulfa      Boolean @default(false)
+  allergyAspirin    Boolean @default(false)
+  allergyLatex      Boolean @default(false)
+  allergyOther      String?
+
+  /// Yaşam tarzı
+  smoker           LifestyleFrequency @default(NEVER)
+  alcohol          LifestyleFrequency @default(NEVER)
+  recreationalDrug LifestyleFrequency @default(NEVER)
+
+  /// Kadın-özgü (gender=FEMALE için UI aktif)
+  isPregnant        Boolean @default(false)
+  pregnancyMonths   Int?
+  isBreastfeeding   Boolean @default(false)
+  usesContraceptive Boolean @default(false)
+
+  notes     String?
+  updatedAt DateTime @updatedAt
+
+  patient    Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  recordedBy User?   @relation("MedicalHistoryRecorder", fields: [recordedById], references: [id], onDelete: SetNull)
+
+  @@index([patientId])
+  @@index([recordedById])
+}
+
+/// Hasta dosyaları (X-ray vb.) — S3 veya Supabase Storage
+model PatientFile {
+  id          String   @id @default(cuid())
+  clinicId    String
+  patientId   String
+  fileName    String
+  mimeType    String
+  sizeBytes   Int
+  storageKey  String
+  publicUrl   String?
+  annotations Json?
+  createdAt   DateTime @default(now())
+
+  clinic  Clinic  @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  patient Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
+  @@index([clinicId])
+  @@index([patientId])
+  @@index([createdAt])
+}
+
+model Tooth {
+  id          String         @id @default(cuid())
+  patientId   String
+  toothNumber Int
+  surfaces    String[]       @default([])
+  condition   ToothCondition @default(HEALTHY)
+  notes       String?
+  updatedAt   DateTime       @updatedAt
+
+  patient Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
+  @@unique([patientId, toothNumber])
+  @@index([patientId])
+  @@index([toothNumber])
+}
+
+/// Diş durumu değişiklik geçmişi (audit)
+model ToothAuditLog {
+  id           String   @id @default(cuid())
+  clinicId     String
+  patientId    String
+  toothNumber  Int
+  userId       String
+  oldCondition String?
+  newCondition String
+  oldSurfaces  String?
+  newSurfaces  String?
+  changedAt    DateTime @default(now())
+
+  clinic  Clinic  @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  patient Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  @@index([clinicId])
+  @@index([patientId])
+  @@index([userId])
+  @@index([changedAt])
+}
+
+model Appointment {
+  id           String            @id @default(cuid())
+  clinicId     String
+  patientId    String
+  dentistId    String
+  scheduledAt  DateTime
+  duration     Int               @default(30)
+  status       AppointmentStatus @default(PENDING)
+  type         String?
+  /// Klinik içi koltuk/istasyon etiketi (örn: Chair 1, Room A)
+  chairNo      String?
+  notes        String?
+  /// Operasyonel akış zaman damgaları (klinik queue görünümü için)
+  arrivedAt    DateTime?
+  inProgressAt DateTime?
+  completedAt  DateTime?
+  createdAt    DateTime          @default(now())
+
+  clinic  Clinic  @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  patient Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  dentist User    @relation("AppointmentDentist", fields: [dentistId], references: [id], onDelete: Restrict)
+
+  treatments    Treatment[]
+  invoice       Invoice?
+  notifications Notification[]
+  Prescription  Prescription[]
+
+  @@index([clinicId])
+  @@index([patientId])
+  @@index([dentistId])
+  @@index([scheduledAt])
+  @@index([status])
+}
+
+/// Boş slot bekleyen hasta — resepsiyon sırası (GAP-037 MVP).
+model WaitlistEntry {
+  id        String         @id @default(cuid())
+  clinicId  String
+  patientId String
+  notes     String?
+  status    WaitlistStatus @default(WAITING)
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+
+  clinic  Clinic  @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  patient Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
+  @@index([clinicId, status, createdAt])
+  @@index([patientId])
+}
+
+model Treatment {
+  id            String   @id @default(cuid())
+  appointmentId String
+  patientId     String
+  dentistId     String
+  toothIds      String[] @default([])
+  procedure     String
+  quantity      Int      @default(1)
+  unitPrice     Decimal  @db.Decimal(12, 2)
+  notes         String?
+  createdAt     DateTime @default(now())
+
+  appointment   Appointment    @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  patient       Patient        @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  dentist       User           @relation("TreatmentDentist", fields: [dentistId], references: [id], onDelete: Restrict)
+  hmoClaimLines HmoClaimLine[]
+
+  @@index([appointmentId])
+  @@index([patientId])
+  @@index([dentistId])
+  @@index([createdAt])
+}
+
+model Invoice {
+  id            String        @id @default(cuid())
+  clinicId      String
+  patientId     String
+  appointmentId String?       @unique
+  orNumber      String?       @unique
+  subtotal      Decimal       @db.Decimal(12, 2)
+  discount      Decimal       @default(0) @db.Decimal(12, 2)
+  /// VAT rate (e.g. 0.12 for 12%). 0 for VAT-exempt (Senior/PWD).
+  vatRate       Decimal       @default(0.12) @db.Decimal(5, 4)
+  vatAmount     Decimal       @default(0) @db.Decimal(12, 2)
+  /// RA 9994 Senior Citizen 20% discount
+  seniorDiscount Decimal      @default(0) @db.Decimal(12, 2)
+  /// RA 10754 PWD 20% discount
+  pwdDiscount   Decimal       @default(0) @db.Decimal(12, 2)
+  /// VAT exempt flag (Senior/PWD transactions)
+  vatExempt     Boolean       @default(false)
+  total         Decimal       @db.Decimal(12, 2)
+  status        InvoiceStatus @default(UNPAID)
+  notes         String?
+  dueDate       DateTime?
+  paidAt        DateTime?
+  /// PayMongo checkout link id (provider-side reference)
+  externalRef   String?
+  createdAt     DateTime      @default(now())
+
+  clinic      Clinic       @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  patient     Patient      @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  appointment Appointment? @relation(fields: [appointmentId], references: [id], onDelete: SetNull)
+
+  payments      Payment[]
+  notifications Notification[]
+  hmoClaims     HmoClaim[]
+
+  @@index([clinicId])
+  @@index([patientId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+/// Klinik bazlı yıllık OR (Official Receipt) sıra sayacı
+model OrSequence {
+  id         String @id @default(cuid())
+  clinicId   String
+  year       Int
+  lastNumber Int    @default(0)
+
+  @@unique([clinicId, year])
+  @@index([clinicId])
+}
+
+model Payment {
+  id          String        @id @default(cuid())
+  invoiceId   String
+  amount      Decimal       @db.Decimal(12, 2)
+  method      PaymentMethod
+  referenceNo String?
+  notes       String?
+  createdBy   String?
+  paidAt      DateTime      @default(now())
+
+  invoice Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  @@index([invoiceId])
+  @@index([paidAt])
+  @@index([method])
+}
+
+model Inventory {
+  id           String    @id @default(cuid())
+  clinicId     String
+  itemName     String
+  category     String
+  unit         String
+  quantity     Int       @default(0)
+  minimumStock Int       @default(0)
+  unitCost     Decimal   @db.Decimal(12, 2)
+  supplier     String?
+  expiryDate   DateTime?
+  updatedAt    DateTime  @updatedAt
+
+  clinic Clinic @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+
+  @@index([clinicId])
+  @@index([category])
+  @@index([itemName])
+}
+
+/// Portal telefon-OTP kodları. Kod `bcrypt` ile hashlenir.
+model OtpCode {
+  id         String    @id @default(cuid())
+  clinicId   String
+  phone      String
+  codeHash   String
+  purpose    String    @default("PORTAL_LOGIN")
+  attempts   Int       @default(0)
+  expiresAt  DateTime
+  consumedAt DateTime?
+  createdAt  DateTime  @default(now())
+
+  clinic Clinic @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+
+  @@index([clinicId, phone, purpose])
+  @@index([expiresAt])
+}
+
+model Notification {
+  id            String                     @id @default(cuid())
+  clinicId      String?
+  userId        String?
+  patientId     String?
+  appointmentId String?
+  invoiceId     String?
+  channel       NotificationChannel        @default(SMS)
+  kind          NotificationKind           @default(GENERIC)
+  recipient     String?
+  message       String
+  status        NotificationDeliveryStatus @default(PENDING)
+  errorMessage  String?
+  providerRef   String?
+  retryCount    Int                        @default(0)
+  scheduledFor  DateTime?
+  sentAt        DateTime?
+  createdAt     DateTime                   @default(now())
+
+  clinic      Clinic?      @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  user        User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
+  patient     Patient?     @relation(fields: [patientId], references: [id], onDelete: SetNull)
+  appointment Appointment? @relation(fields: [appointmentId], references: [id], onDelete: SetNull)
+  invoice     Invoice?     @relation(fields: [invoiceId], references: [id], onDelete: SetNull)
+
+  @@index([clinicId, createdAt])
+  @@index([appointmentId, kind])
+  @@index([userId])
+  @@index([patientId])
+  @@index([status])
+  @@index([scheduledFor])
+}
+
+/// Periodontal muayene başlığı — her muayene hasta için yeni bir tarihli kayıttır.
+/// Karşılaştırma & zaman içinde trend takibi için kasıtlı olarak çoklu kayıt tutuluyor.
+model PerioExam {
+  id            String   @id @default(cuid())
+  clinicId      String
+  patientId     String
+  examinedById  String
+  examDate      DateTime @default(now())
+  /// Bleeding-on-probing yüzdesi — kayıtta hesaplanıp saklanır (rapor için hızlı erişim).
+  bopPercent    Decimal? @db.Decimal(5, 2)
+  /// Plak indeksi yüzdesi.
+  plaquePercent Decimal? @db.Decimal(5, 2)
+  notes         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  clinic     Clinic       @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  patient    Patient      @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  examinedBy User         @relation("PerioExamExaminer", fields: [examinedById], references: [id], onDelete: Restrict)
+  teeth      PerioTooth[]
+
+  @@index([clinicId])
+  @@index([patientId, examDate])
+  @@index([examinedById])
+}
+
+/// Muayene içinde bir diş için toplu veriler (mobility, furcation, missing).
+/// Her muayenede her diş için en fazla 1 kayıt.
+model PerioTooth {
+  id          String  @id @default(cuid())
+  examId      String
+  toothNumber Int // Universal numbering 1-32
+  /// Mobility 0-3 (Miller Classification)
+  mobility    Int?
+  /// Furcation involvement 0-3 (Glickman Classification)
+  furcation   Int?
+  /// Diş eksikse/yoksa ölçüm yapılmaz
+  missing     Boolean @default(false)
+  notes       String?
+
+  exam  PerioExam   @relation(fields: [examId], references: [id], onDelete: Cascade)
+  sites PerioSite[]
+
+  @@unique([examId, toothNumber])
+  @@index([examId])
+}
+
+/// Bir dişin 6 periodontal bölgesinden biri için ölçüm kaydı.
+model PerioSite {
+  id          String        @id @default(cuid())
+  toothId     String
+  siteCode    PerioSiteCode
+  /// Pocket depth (mm) 0-15
+  pocketDepth Int
+  /// Gingival recession (mm) — CAL hesabı için
+  recession   Int           @default(0)
+  /// Bleeding on probing
+  bleeding    Boolean       @default(false)
+  /// Suppuration (iltihap/drenaj)
+  suppuration Boolean       @default(false)
+  /// Plaque (plak varlığı)
+  plaque      Boolean       @default(false)
+
+  tooth PerioTooth @relation(fields: [toothId], references: [id], onDelete: Cascade)
+
+  @@unique([toothId, siteCode])
+  @@index([toothId])
+}
+
+/// HMO / sigorta sağlayıcısı — klinik bazlı (PH: Maxicare, Intellicare, PhilHealth, Medicard vs.)
+model HmoProvider {
+  id           String   @id @default(cuid())
+  clinicId     String
+  name         String
+  /// Kısa kod (ör: MAXI, INTL, PHIC, MEDI)
+  code         String
+  /// Kurum irtibat bilgileri
+  contactPhone String?
+  contactEmail String?
+  /// Klinik özel kontrat / tarife notları
+  notes        String?
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+
+  clinic      Clinic       @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  memberships PatientHmo[]
+  claims      HmoClaim[]
+
+  @@unique([clinicId, code])
+  @@index([clinicId])
+}
+
+/// Bir hastanın belirli bir HMO'daki üyeliği — kart bilgisi / geçerlilik.
+model PatientHmo {
+  id             String    @id @default(cuid())
+  patientId      String
+  providerId     String
+  memberNumber   String
+  cardholderName String?
+  /// Sponsoring company (maaş bordrosu üzerinden sigorta yaygındır)
+  sponsor        String?
+  validFrom      DateTime?
+  validUntil     DateTime?
+  isPrimary      Boolean   @default(true)
+  createdAt      DateTime  @default(now())
+
+  patient  Patient     @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  provider HmoProvider @relation(fields: [providerId], references: [id], onDelete: Restrict)
+  claims   HmoClaim[]
+
+  @@unique([patientId, providerId])
+  @@index([patientId])
+  @@index([providerId])
+}
+
+/// Fatura karşılığı HMO'ya gönderilen iddia.
+/// Bir fatura için birden fazla iddia olabilir (birden fazla HMO'ya submit edilebilir).
+model HmoClaim {
+  id              String         @id @default(cuid())
+  clinicId        String
+  patientId       String
+  invoiceId       String
+  providerId      String
+  /// İddianın bağlandığı hasta üyelik kaydı (opsiyonel; doğrulama için)
+  patientHmoId    String?
+  /// Klinik-içi iddia numarası (otomatik: CLM-YYYY-0001)
+  claimNumber     String         @unique
+  status          HmoClaimStatus @default(DRAFT)
+  /// İstenen / onaylanan tutarlar
+  requestedAmount Decimal        @db.Decimal(12, 2)
+  approvedAmount  Decimal?       @db.Decimal(12, 2)
+  patientCopay    Decimal        @default(0) @db.Decimal(12, 2)
+  /// HMO tarafı referans numarası
+  externalRef     String?
+  submittedAt     DateTime?
+  decidedAt       DateTime?
+  paidAt          DateTime?
+  notes           String?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  clinic      Clinic               @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  patient     Patient              @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  invoice     Invoice              @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  provider    HmoProvider          @relation(fields: [providerId], references: [id], onDelete: Restrict)
+  patientHmo  PatientHmo?          @relation(fields: [patientHmoId], references: [id], onDelete: SetNull)
+  lines       HmoClaimLine[]
+  attachments HmoClaimAttachment[]
+
+  @@index([clinicId, status])
+  @@index([patientId])
+  @@index([invoiceId])
+  @@index([providerId])
+  @@index([patientHmoId])
+  @@index([createdAt])
+}
+
+/// İddia kapsamındaki fatura tedavi satırları (tutar anlık görüntüsü).
+model HmoClaimLine {
+  id          String   @id @default(cuid())
+  claimId     String
+  treatmentId String
+  /// İddia oluşturulurken satır toplamı (quantity × unitPrice)
+  lineAmount  Decimal  @db.Decimal(12, 2)
+  createdAt   DateTime @default(now())
+
+  claim     HmoClaim  @relation(fields: [claimId], references: [id], onDelete: Cascade)
+  treatment Treatment @relation(fields: [treatmentId], references: [id], onDelete: Restrict)
+
+  @@unique([claimId, treatmentId])
+  @@index([claimId])
+  @@index([treatmentId])
+}
+
+/// HMO talebine eklenen LOA / ön onay / diğer PDF veya görüntü dosyaları.
+model HmoClaimAttachment {
+  id         String   @id @default(cuid())
+  clinicId   String
+  claimId    String
+  fileName   String
+  mimeType   String
+  sizeBytes  Int
+  storageKey String
+  /// LOA | PREAUTH | OTHER
+  kind       String   @default("OTHER")
+  createdAt  DateTime @default(now())
+
+  clinic Clinic   @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  claim  HmoClaim @relation(fields: [claimId], references: [id], onDelete: Cascade)
+
+  @@index([claimId])
+  @@index([clinicId])
+}
+
+/// Klinik bazlı yıllık HMO claim sıra sayacı (CLM-YYYY-XXXX)
+model HmoClaimSequence {
+  id         String @id @default(cuid())
+  clinicId   String
+  year       Int
+  lastNumber Int    @default(0)
+
+  @@unique([clinicId, year])
+  @@index([clinicId])
+}
+
+// ─── Prescription Module ──────────────────────────────────────────────
+
+enum PrescriptionStatus {
+  DRAFT
+  FINALIZED
+  CANCELLED
+}
+
+model Prescription {
+  id               String             @id @default(cuid())
+  clinicId         String
+  patientId        String
+  dentistId        String
+  appointmentId    String?
+  prescriptionDate DateTime           @default(now())
+  notes            String?
+  status           PrescriptionStatus @default(DRAFT)
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+
+  clinic      Clinic             @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  patient     Patient            @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  dentist     User               @relation("PrescriptionDentist", fields: [dentistId], references: [id], onDelete: Restrict)
+  appointment Appointment?       @relation(fields: [appointmentId], references: [id], onDelete: SetNull)
+  items       PrescriptionItem[]
+
+  @@index([clinicId])
+  @@index([patientId])
+  @@index([dentistId])
+  @@index([prescriptionDate])
+}
+
+model PrescriptionItem {
+  id                  String  @id @default(cuid())
+  prescriptionId      String
+  medicineName        String
+  dosage              String
+  frequency           String
+  quantity            Int
+  specialInstructions String?
+
+  prescription Prescription @relation(fields: [prescriptionId], references: [id], onDelete: Cascade)
+
+  @@index([prescriptionId])
+}

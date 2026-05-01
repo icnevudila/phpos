@@ -1,0 +1,28 @@
+{
+  "agedReceivables": {
+    "loading": "Nilo-load ang A/R aging…",
+    "noData": "Walang data",
+    "loadFailed": "Hindi ma-load",
+    "title": "A/R aging",
+    "subtitle": "Outstanding ayon sa araw mula sa invoice · as of {{asOf}} (Asia/Manila)",
+    "refresh": "I-refresh",
+    "totalOutstanding": "Kabuuang outstanding",
+    "invoiceCount": "{{count}} invoice(s)",
+    "colPatient": "Pasyente",
+    "colOr": "OR",
+    "colDays": "Araw",
+    "colBucket": "Bucket",
+    "colBalance": "Balanse",
+    "empty": "Walang outstanding invoice.",
+    "emptyTitle": "Walang overdue",
+    "emptyHint": "Kapag may bukas na balanse paglipas ng petsa ng invoice, lalabas dito ayon sa bucket.",
+    "emptyCtaInvoices": "Tingnan lahat ng invoice",
+    "open": "Buksan",
+    "bucket": {
+      "0_30": "0–30 araw",
+      "31_60": "31–60 araw",
+      "61_90": "61–90 araw",
+      "91_plus": "91+ araw"
+    }
+  }
+}

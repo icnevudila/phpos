@@ -1,188 +1,72 @@
-# Filipin POS - B2B SaaS POS System
+# DentEase PH (MVP)
 
-A complete Offline-First PWA POS system tailored for small businesses in the Philippines (Sari-Sari stores and local shops).
+Klinik yönetimi: randevu, hasta, odontogram, fatura / PayMongo, HMO talepleri, hasta portalı (OTP), stok, raporlar.
 
-## Features
+**İlerleme listesi:** [CHECKLIST.md](CHECKLIST.md)
 
-### Cashier Mode (3-Second Checkout)
-- **Quick-Tap Grid**: Large, color-coded buttons for top-selling items
-- **Giant Numpad**: Manual price entry for unlisted items
-- **Smart Change Calculator**: Instant change calculation
-- **Quick Utang**: One-tap debt assignment
+## Hızlı çalıştırma
 
-### Manager Dashboard
-- **Z-Report**: Daily revenue split by Cash, GCash/Maya, and Utang
-- **Utang Tracker**: Detailed debt ledger with overdue tracking
-- **Inventory Management**: Product management with low-stock alerts
-- **Quick-Tap Configuration**: Set up quick-tap buttons for fast checkout
+Kök dizinde (isteğe bağlı): `npm run install:all` → her iki uygulamada `npm install`; `npm run build:all` → backend + frontend üretim derlemesi; `npm run lint:all` → TypeScript kontrolleri.
 
-### Technical Features
-- **Offline-First**: Works completely offline using IndexedDB (Dexie.js)
-- **Multi-Device Sync**: Conflict-free synchronization when internet is restored
-- **Multi-Tenant**: Strict SQL schema with tenant_id isolation
-- **Multi-Language**: English, Tagalog (Filipino), and Turkish support
-- **Dark Mode**: Optimized for low-end Android devices
-- **PWA**: Installable Progressive Web App
-
-## Tech Stack
-
-- **Frontend**: React + Vite + Tailwind CSS
-- **Local DB**: Dexie.js (IndexedDB wrapper)
-- **Backend**: Node.js + Express + PostgreSQL
-- **Sync**: Timestamp-based with Last-Write-Wins (LWW) + Conflict Resolution
-
-## Setup Instructions
-
-### 1. Database Setup
-
-```bash
-# Create PostgreSQL database
-createdb filipin_pos
-
-# Run schema
-psql -d filipin_pos -f database/schema.sql
-```
-
-### 2. Environment Variables
-
-Create `.env` file:
-
-```env
-DB_HOST=localhost
-DB_PORT=5432
-DB_NAME=filipin_pos
-DB_USER=postgres
-DB_PASSWORD=your_password
-PORT=3001
-```
-
-### 3. Install Dependencies
+**Backend** — klasör: `backend/`
 
 ```bash
 npm install
+cp .env.example .env
 ```
 
-### 4. Run Development Server
+`.env` içinde en azından `DATABASE_URL`, `JWT_ACCESS_SECRET`, `JWT_REFRESH_SECRET` doldur. Sonra:
 
 ```bash
-# Frontend (port 3000)
+npm run db:generate   # Prisma Client şemayla aynı olmalı; lint/build öncesi şema değiştiyse tekrar çalıştırın
+npm run db:push
+npm run db:seed
 npm run dev
-
-# Backend (port 3001)
-npm run server
 ```
 
-### 5. Build for Production
+`npm run build` (CI dahil) çalıştığında `prebuild` adımı otomatik olarak `prisma generate` çalıştırır; yine de şema değişikliğinden sonra `npm run db:generate` ile doğrulamak faydalıdır.
+
+İsteğe bağlı doğrulama: `npm run db:smoke` — PostgreSQL’e bağlanıp klinik / kullanıcı / hasta / randevu sayılarını listeler (şema + bağlantı hızlı kontrol).
+
+API varsayılanı: `http://localhost:4000` (`PORT` ile değişir). HTTP prefix: `API_PREFIX` (varsayılan `/api`).
+
+## Supabase'a taşıma
+
+Supabase geçişi için adım adım runbook: [`docs/SUPABASE_MIGRATION.md`](docs/SUPABASE_MIGRATION.md)
+
+Hızlı başlangıç:
+
+1. `backend/.env.supabase.example` dosyasını `backend/.env` olarak kopyalayın.
+2. Supabase proje değerlerini (`DATABASE_URL`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`) doldurun.
+3. `backend` içinde:
+   - `npm run db:generate`
+   - `npm run db:push`
+   - `npm run db:seed`
+   - `npm run db:smoke`
+
+**Frontend** — klasör: `frontend/`
 
 ```bash
-npm run build
+npm install
+npm run dev
 ```
 
-## Architecture
+Vite adresi terminal çıktısında (genelde `http://localhost:5173`).
 
-### Database Schema
+İsteğe bağlı `frontend/.env`: `VITE_API_URL` — backend API kökü (varsayılan `http://localhost:4000/api`, sonunda `/api` olmalı). `backend` `PORT` veya `API_PREFIX` değiştiyse burayı hizala.
 
-The system uses a strict multi-tenant architecture with `tenant_id` on every table:
+## Kiosk (resepsiyon tableti / bekleme salonu)
 
-- `tenants` - Store/tenant information
-- `users` - RBAC users (cashier, manager, owner)
-- `products` - Product catalog with quick-tap configuration
-- `customers` - Customer information for Utang tracking
-- `transactions` - Sales transactions
-- `transaction_items` - Transaction line items
-- `utang_ledger` - Debt tracking ledger
-- `z_reports` - Daily sales summaries
-- `sync_metadata` - Conflict resolution metadata
+- Giriş URL’si: `http://localhost:5173/kiosk/{klinik-slug}` — klinik doğrulanır; **Hasta** → portal OTP (`?kiosk=1` ile daha geniş tip); **Personel** → staff girişi → randevular.
+- Örnek görsel (mockup): [docs/kiosk-home-mockup.png](docs/kiosk-home-mockup.png)
 
-### Sync Algorithm
+## Hasta portalı (OTP)
 
-**Conflict Resolution Strategy:**
+- URL şablonu: `http://localhost:5173/{klinik-slug}/portal/login` (slug, seed’deki klinik `slug` alanı ile aynı olmalı).
+- Akış: telefon → `POST …/portal/request-otp` → SMS veya geliştirici ortamında API yanıtındaki `devCode` ile kod adımı → `POST …/portal/verify-otp` → JWT saklanır, `/{slug}/portal/home` yönlendirmesi.
+- Üretimde gerçek SMS için backend `.env` içinde Semaphore / ilgili anahtarlar; geliştirmede `devCode` ile doğrulama yapılabilir.
 
-1. **Timestamp-Based (LWW)**: For most entities, last modified timestamp wins
-2. **Additive for Transactions**: Transactions are never overwritten, only appended
-3. **Conflict Detection**: Automatic detection and resolution with audit trail
+## Uzun iş / gece listesi
 
-**Sync Flow:**
-1. Local operations are queued with `local_id` + `device_id` + timestamp
-2. On sync, push local changes to server
-3. Pull server changes and merge intelligently
-4. Resolve conflicts using timestamp comparison
-5. Update local entities with server IDs
-
-### i18n Implementation
-
-Translations are stored in `src/i18n/translations.js` with support for:
-- English (en)
-- Tagalog/Filipino (tl)
-- Turkish (tr)
-
-Language is detected from browser settings or localStorage preference.
-
-## Project Structure
-
-```
-filipin-pos-system/
-├── database/
-│   └── schema.sql              # PostgreSQL DDL
-├── server/
-│   ├── index.js               # Express API server
-│   └── api-client.js          # Frontend API client
-├── src/
-│   ├── db/
-│   │   └── dexie-schema.js    # IndexedDB schema
-│   ├── sync/
-│   │   └── sync-algorithm.js  # Conflict-free sync logic
-│   ├── i18n/
-│   │   ├── translations.js    # Translation strings
-│   │   └── i18n-context.jsx   # React context
-│   ├── components/
-│   │   ├── CashierMode.jsx    # Cashier interface
-│   │   ├── ManagerDashboard.jsx
-│   │   ├── ZReport.jsx
-│   │   ├── UtangTracker.jsx
-│   │   ├── Inventory.jsx
-│   │   └── Login.jsx
-│   ├── App.jsx
-│   ├── main.jsx
-│   └── index.css
-├── package.json
-├── vite.config.js
-└── tailwind.config.js
-```
-
-## Usage
-
-### Demo Login
-
-- Username: `cashier` (Cashier Mode)
-- Username: `manager` (Manager Dashboard)
-- Password: Any (for demo purposes)
-
-### Cashier Mode Workflow
-
-1. Tap quick-tap buttons to add items to cart
-2. Or use numpad to enter manual amounts
-3. Enter cash received to see instant change calculation
-4. Select payment method (Cash, GCash, Maya, Utang, Mixed)
-5. For Utang, select customer before checkout
-6. Complete transaction (saved offline, synced when online)
-
-### Manager Dashboard
-
-- **Dashboard**: View today's sales, revenue breakdown, low stock alerts
-- **Z-Report**: Generate daily reports with payment method split
-- **Utang Tracker**: View and manage customer debts
-- **Inventory**: Add/edit products, configure quick-tap items
-
-## Performance Optimizations
-
-- Minimal re-renders with React hooks
-- IndexedDB for fast local storage
-- Dark mode to save battery on low-end devices
-- Optimized for 3-second checkout workflow
-- Large touch targets for mobile use
-
-## License
-
-MIT
-
+- [`docs/OVERNIGHT_AGENT_TODO.md`](docs/OVERNIGHT_AGENT_TODO.md) — blok blok agent görevleri.
+- [`CHECKLIST.md`](CHECKLIST.md) — ürün modül durumu ve öncelikler.

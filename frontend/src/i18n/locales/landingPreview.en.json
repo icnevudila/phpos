@@ -1,0 +1,130 @@
+{
+  "landingPreview": {
+    "appointments": {
+      "calendarLabel": "Calendar",
+      "headerSub": "Apr 13 – 17 · Dr. dela Cruz",
+      "badge": "8 appointments",
+      "dayLabels": ["Mon", "Tue", "Wed", "Thu", "Fri"],
+      "events": [
+        { "name": "Maria S.", "type": "Check-up" },
+        { "name": "Juan R.", "type": "Root canal" },
+        { "name": "Anna L.", "type": "Cleaning" },
+        { "name": "Paolo C.", "type": "Filling" },
+        { "name": "Grace D.", "type": "New patient exam" },
+        { "name": "Ramon P.", "type": "Check-up" },
+        { "name": "Clara M.", "type": "Scaling" },
+        { "name": "Dr. Reyes ↔ Andrea", "type": "Consultation" }
+      ]
+    },
+    "odontogram": {
+      "chartTitle": "Dental chart",
+      "subtitle": "Patient: Maria Santos · FDI · 5 surfaces",
+      "status": {
+        "healthy": "Healthy",
+        "decay": "Decay",
+        "filled": "Filling",
+        "rct": "Root canal",
+        "crown": "Crown"
+      },
+      "fieldLastUpdate": "Last updated",
+      "fieldLastUpdateValue": "Apr 12, 2026",
+      "fieldDoctor": "Dentist",
+      "fieldDoctorValue": "Dr. dela Cruz",
+      "fieldCompleted": "Completed",
+      "fieldCompletedValue": "4 / 7 procedures"
+    },
+    "patient": {
+      "metaLine": "F · 34 y · Pasig City",
+      "philhealthBadge": "PhilHealth · 12-3456-789",
+      "allergyBadge": "Penicillin allergy",
+      "tabs": ["Overview", "History", "Allergies", "X-rays"],
+      "visitLabel": "Last visit",
+      "visitLine": "Apr 3, 2026 · Root canal",
+      "visitDr": "Dr. Reyes · Main branch",
+      "nextLabel": "Next",
+      "nextLine": "Apr 24 · Check-up",
+      "nextTime": "10:30 · Dr. dela Cruz",
+      "notesLabel": "Medical notes",
+      "notesBody": "Hypertension on Losartan 50 mg. Anesthesiologist to be contacted before surgery."
+    },
+    "billing": {
+      "title": "Invoice",
+      "invLine": "INV-2026-0421 · Maria Santos",
+      "hmoPill": "HMO: Maxicare",
+      "qty": "Qty {{n}}",
+      "items": [
+        { "name": "Root canal (26)" },
+        { "name": "Filling (14)" },
+        { "name": "Panoramic X-ray" },
+        { "name": "Consultation" }
+      ],
+      "subtotal": "Subtotal",
+      "hmoLine": "HMO coverage (Maxicare)",
+      "net": "Amount due",
+      "payMethods": ["GCash", "Maya", "PayMongo", "Cash"]
+    },
+    "inventory": {
+      "title": "Inventory",
+      "subtitle": "128 items · 2 critical alerts",
+      "reorderBadge": "Reorder needed",
+      "minPrefix": "min",
+      "status": {
+        "ok": "OK",
+        "low": "Low",
+        "critical": "Critical"
+      },
+      "rows": [
+        { "name": "Lidocaine 2% ampule", "unit": "box" },
+        { "name": "Composite resin A2", "unit": "syringe" },
+        { "name": "Sterile gloves M", "unit": "box" },
+        { "name": "FFP2 mask", "unit": "box" },
+        { "name": "Diamond bur round", "unit": "pc" }
+      ]
+    },
+    "beforeAfter": {
+      "paperTitle": "Patient sheet · 04/14",
+      "coffeeStain": "* coffee stain",
+      "excelTitle": "Patients.xlsx",
+      "excelHeaders": ["Name", "Phone", "Last", "HMO"],
+      "excelRow1": ["Maria", "917…", "Apr 3", "Max"],
+      "excelRow2": ["Juan", "???", "unk.", "?"],
+      "stickyNote": "Out of lidocaine? — ask",
+      "tileCalendar": "Calendar",
+      "tileHmo": "HMO",
+      "tileStock": "Stock",
+      "row1Left": "Maria Santos · 10:30",
+      "row1Pill": "Confirmed",
+      "row2Left": "HMO claim · Maxicare",
+      "row2Pill": "Submitted",
+      "pill1": "Single source of truth",
+      "pill2": "Automatic backup",
+      "pill3": "Every device",
+      "pill4": "EN · TR · PH"
+    },
+    "devices": {
+      "phoneMyAppointments": "My appointments",
+      "phoneNextEyebrow": "Next · Apr 24",
+      "phoneNextLine": "10:30 · Check-up",
+      "phonePastLabel": "Past",
+      "phonePastLine": "Apr 3 · Root canal",
+      "phonePastPaid": "₱ 8,000 · Paid",
+      "phoneBtnBook": "Book",
+      "phoneBtnInvoices": "Invoices",
+      "phoneGcash": "GCash · Pay now",
+      "tabletHeader": "Maria Santos · Dental chart",
+      "tabletFdi": "FDI · 32 teeth",
+      "tabletLegendDecay": "Decay",
+      "tabletLegendFill": "Filling",
+      "tabletLegendRct": "Root canal",
+      "tabletLegendHealthy": "Healthy",
+      "tabletNoteEyebrow": "Treatment note",
+      "tabletNoteLine": "26 · Root canal plan · 2 sessions",
+      "deskToday": "Today",
+      "deskAppts": "Appts",
+      "deskHmo": "HMO",
+      "deskStock": "Stock !",
+      "deskRevenue": "Weekly revenue",
+      "deskDentists": "Dentists"
+    }
+  }
+}

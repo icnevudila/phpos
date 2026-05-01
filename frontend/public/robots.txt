@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+Disallow: /api/
+Disallow: /admin/
+Disallow: /login
+Disallow: /app/
+
+Sitemap: https://dentease.ph/sitemap.xml
+Host: https://dentease.ph

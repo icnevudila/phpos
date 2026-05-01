@@ -1,0 +1,13 @@
+{
+  "common": {
+    "empty": "—",
+    "retry": "Subukan muli",
+    "loading": "Naglo-load…",
+    "drPrefix": "Dr.",
+    "minSuffix": "min",
+    "refPrefix": "ref",
+    "qtySuffix": "dami",
+    "general": "Pangkalahatan",
+    "consultationDefault": "Konsultasyon"
+  }
+}

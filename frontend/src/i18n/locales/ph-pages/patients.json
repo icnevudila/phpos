@@ -1,0 +1,23 @@
+{
+  "patients": {
+    "title": "Mga pasyente",
+    "total": "{{count}} kabuuan",
+    "newPatient": "+ Bagong pasyente",
+    "searchPlaceholder": "Maghanap: pangalan, telepono, PhilHealth…",
+    "colName": "Pangalan",
+    "colPhone": "Telepono",
+    "colBirth": "Kaarawan",
+    "colLastVisit": "Huling bisita",
+    "colHmo": "HMO",
+    "hmoNone": "Wala",
+    "colActions": "Aksyon",
+    "loading": "Naglo-load…",
+    "empty": "Walang nahanap na pasyente.",
+    "emptyTitle": "Walang pasyente pa",
+    "emptyHint": "Magdagdag ng record o baguhin ang search.",
+    "view": "Tingnan",
+    "pagination": "Pahina {{page}} ng {{totalPages}} · {{total}} kabuuan",
+    "previous": "Nakaraan",
+    "next": "Susunod"
+  }
+}

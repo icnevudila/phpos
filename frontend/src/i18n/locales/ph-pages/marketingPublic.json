@@ -1,0 +1,81 @@
+{
+  "marketingShell": {
+    "navAria": "Pangunahing nabigasyon ng site",
+    "navHome": "Home",
+    "navFeatures": "Mga feature",
+    "navPricing": "Presyo",
+    "navHow": "Paano gumagana",
+    "navFaq": "FAQ",
+    "navAbout": "Tungkol",
+    "navContact": "Contact",
+    "menuOpen": "Buksan ang menu",
+    "menuClose": "Isara ang menu",
+    "footerTagline": "DentEase — operasyon ng klinika, billing, at karanasan ng pasyente sa iisang lugar."
+  },
+  "about": {
+    "title": "Tungkol sa DentEase",
+    "subtitle": "Software na hinubog sa tunay na dental clinics sa Pilipinas at iba pa.",
+    "lead": "Ginawa namin ang DentEase para magkaroon ang may-ari, dentista, at front desk ng iisang source of truth — mula unang tawag hanggang huling bayad.",
+    "missionTitle": "Aming misyon",
+    "missionBody": "Bawasan ang admin load at clinical risk gamit ang modernong, DPA-aware platform na tumutugma sa totoong takbo ng klinika: busy mornings, walk-ins, HMO paperwork, at mga pasyenteng umaasang handa ang GCash.",
+    "pillarsTitle": "Pinapahalagahan namin",
+    "pillar1Title": "Linaw sa operasyon",
+    "pillar1Body": "Nakakonekta ang pila, appointment, inventory, at billing para walang mahulog sa spreadsheet.",
+    "pillar2Title": "Handa sa lokal",
+    "pillar2Body": "PhilHealth fields, HMO flows, OR-friendly invoices, at SMS na nakaayos sa PH numbers.",
+    "pillar3Title": "Accessible na UX",
+    "pillar3Body": "Malalaking touch target, tablet-first odontogram, at EN · TR · PH staff UI.",
+    "trustTitle": "Compliance posture",
+    "trustBody": "Role-based access, audit-friendly flows, at privacy summaries na puwede palawakin kasama ang legal counsel bago production.",
+    "ctaTitle": "Tingnan kasama ang team",
+    "ctaBody": "Magsimula sa staff login, galugarin ang demo data, o magpadala ng detalyadong request sa contact page.",
+    "ctaStaff": "Staff sign in",
+    "ctaContact": "Humiling ng quote"
+  },
+  "faqPublic": {
+    "title": "Mga madalas itanong",
+    "subtitle": "Parehong sagot gaya sa home page — puwedeng i-bookmark ng team."
+  },
+  "contact": {
+    "title": "Contact at quote request",
+    "subtitle": "Ikwento ang klinika ninyo. Tumatugon kami sa demo at partnership inquiries habang beta, hangga’t maaari.",
+    "fieldClinic": "Pangalan ng klinika / practice",
+    "fieldName": "Buong pangalan",
+    "fieldRole": "Role",
+    "rolePlaceholder": "May-ari, dentista, IT…",
+    "fieldEmail": "Work email",
+    "fieldPhone": "Mobile (OK ang PH format)",
+    "fieldChairs": "Mga treatment chair (approx.)",
+    "chairs1": "1 chair",
+    "chairs2": "2–3 chairs",
+    "chairs4": "4–6 chairs",
+    "chairs7": "7+ chairs",
+    "fieldMessage": "Ano ang dapat naming malaman?",
+    "messagePlaceholder": "Lokasyon, kasalukuyang tools, timeline…",
+    "privacyCheck": "Sumasang-ayon akong kontakin tungkol sa DentEase at nabasa ko ang privacy summary.",
+    "submit": "Ipadala ang request",
+    "submitting": "Ipinapadala…",
+    "successTitle": "Natanggap ang request",
+    "successBody": "Salamat. Ire-review namin ang mensahe at sasagot sa email kapag may kapasidad.",
+    "errorRequired": "Punan ang required fields at i-check ang privacy notice.",
+    "finePrint": "Hindi binding contract ang form na ito. Para sa legal agreements, dapat suriin ng counsel ang terms at DPA docs."
+  },
+  "pricingFull": {
+    "title": "Mga plan at presyo",
+    "subtitle": "Transparent tiers ayon sa laki ng klinika. Puwedeng magbago ang commercial pricing bago ang GA.",
+    "afterCardsTitle": "Kailangan ng custom bundle?",
+    "afterCardsBody": "Multi-branch groups, training days, o on-prem discussion — magpadala ng konteksto sa contact form.",
+    "ctaContact": "Makipag-usap",
+    "ctaHome": "Bumalik sa product tour"
+  },
+  "cookies": {
+    "title": "Cookies at katulad na teknolohiya",
+    "intro": "Ipinaliliwanag ng paalaalang ito kung paano maaaring gumamit ang DentEase marketing at app surfaces ng cookies o local storage sa device mo.",
+    "s1Title": "Essential",
+    "s1Body": "Naka-store nang lokal ang auth tokens, language preference, at theme para gumana ang product pagkatapos mag-refresh.",
+    "s2Title": "Analytics (opsyonal)",
+    "s2Body": "Maaari naming paganahin ang privacy-preserving analytics sa hinaharap. Aabisuhan ka bago magdagdag ng non-essential trackers.",
+    "s3Title": "Mga pagpipilian mo",
+    "s3Body": "Maaari mong i-clear ang site data mula sa browser settings anumang oras. Ang staff accounts ay nangangailangan ng cookies o katumbas na storage para sa secure sessions."
+  }
+}

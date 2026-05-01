@@ -1,0 +1,21 @@
+{
+  "kiosk": {
+    "documentTitleSuffix": "Kiosk",
+    "badge": "Clinic check-in",
+    "loading": "Nilo-load ang klinika…",
+    "errorTitle": "Hindi mahanap ang klinika",
+    "errorBody": "Hindi tumugma ang kiosk URL sa rehistradong klinika. Hingin sa staff ang tamang link o QR code.",
+    "backMarketing": "Marketing site",
+    "title": "Maligayang pagdating",
+    "subtitle": "Piliin kung paano magpapatuloy. Ang pasyente ay OTP sa telepono. Ang staff ay clinic account.",
+    "patientKicker": "Pasyente",
+    "patientTitle": "Mag-book o pamahalaan ang bisita",
+    "patientDesc": "Humiling ng appointment, tingnan ang mga bisita, o magpatuloy pagkatapos i-register ng front desk.",
+    "patientCta": "Magpatuloy bilang pasyente",
+    "staffKicker": "Staff",
+    "staffTitle": "Clinic workstation",
+    "staffDesc": "Mag-sign in gamit ang staff email para buksan ang schedule at reception tools.",
+    "staffCta": "Staff sign in",
+    "footerHint": "Isang klinika lang ang device na ito. Huwag ibahagi ang OTP. Mag-log out bago umalis sa desk."
+  }
+}

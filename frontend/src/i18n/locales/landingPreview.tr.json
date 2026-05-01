@@ -1,0 +1,130 @@
+{
+  "landingPreview": {
+    "appointments": {
+      "calendarLabel": "Takvim",
+      "headerSub": "13 – 17 Nisan · Dr. dela Cruz",
+      "badge": "8 randevu",
+      "dayLabels": ["Pzt", "Sal", "Çar", "Per", "Cum"],
+      "events": [
+        { "name": "Maria S.", "type": "Kontrol" },
+        { "name": "Juan R.", "type": "Kanal tedavisi" },
+        { "name": "Anna L.", "type": "Temizlik" },
+        { "name": "Paolo C.", "type": "Dolgu" },
+        { "name": "Grace D.", "type": "İlk muayene" },
+        { "name": "Ramon P.", "type": "Kontrol" },
+        { "name": "Clara M.", "type": "Diş taşı" },
+        { "name": "Dr. Reyes ↔ Andrea", "type": "Konsültasyon" }
+      ]
+    },
+    "odontogram": {
+      "chartTitle": "Diş şeması",
+      "subtitle": "Hasta: Maria Santos · FDI · 5 yüzey",
+      "status": {
+        "healthy": "Sağlıklı",
+        "decay": "Çürük",
+        "filled": "Dolgu",
+        "rct": "Kanal",
+        "crown": "Kaplama"
+      },
+      "fieldLastUpdate": "Son güncelleme",
+      "fieldLastUpdateValue": "12 Nisan 2026",
+      "fieldDoctor": "Hekim",
+      "fieldDoctorValue": "Dr. dela Cruz",
+      "fieldCompleted": "Tamamlanan",
+      "fieldCompletedValue": "4 / 7 işlem"
+    },
+    "patient": {
+      "metaLine": "K · 34 y · Pasig City",
+      "philhealthBadge": "PhilHealth · 12-3456-789",
+      "allergyBadge": "Penisilin alerjisi",
+      "tabs": ["Genel bakış", "Geçmiş", "Alerji", "Röntgen"],
+      "visitLabel": "Son ziyaret",
+      "visitLine": "3 Nisan 2026 · Kanal tedavisi",
+      "visitDr": "Dr. Reyes · Ana şube",
+      "nextLabel": "Sonraki",
+      "nextLine": "24 Nisan · Kontrol",
+      "nextTime": "10:30 · Dr. dela Cruz",
+      "notesLabel": "Tıbbi notlar",
+      "notesBody": "Hipertansiyon tedavisi görüyor (Losartan 50 mg). Cerrahi öncesi anestezist ile iletişime geçilecek."
+    },
+    "billing": {
+      "title": "Fatura",
+      "invLine": "INV-2026-0421 · Maria Santos",
+      "hmoPill": "HMO: Maxicare",
+      "qty": "Adet {{n}}",
+      "items": [
+        { "name": "Kanal tedavisi (26)" },
+        { "name": "Dolgu (14)" },
+        { "name": "Panoramik röntgen" },
+        { "name": "Konsültasyon" }
+      ],
+      "subtotal": "Ara toplam",
+      "hmoLine": "HMO kapsaması (Maxicare)",
+      "net": "Ödenecek",
+      "payMethods": ["GCash", "Maya", "PayMongo", "Nakit"]
+    },
+    "inventory": {
+      "title": "Envanter",
+      "subtitle": "128 kalem · 2 kritik uyarı",
+      "reorderBadge": "Yeniden sipariş gerekli",
+      "minPrefix": "min",
+      "status": {
+        "ok": "Normal",
+        "low": "Düşük",
+        "critical": "Kritik"
+      },
+      "rows": [
+        { "name": "Lidokain %2 ampul", "unit": "kutu" },
+        { "name": "Kompozit dolgu A2", "unit": "tüp" },
+        { "name": "Steril eldiven M", "unit": "kutu" },
+        { "name": "Maske FFP2", "unit": "kutu" },
+        { "name": "Frez elmas yuvarlak", "unit": "adet" }
+      ]
+    },
+    "beforeAfter": {
+      "paperTitle": "Hasta çizelgesi · 14/04",
+      "coffeeStain": "* kahve lekesi",
+      "excelTitle": "Hastalar.xlsx",
+      "excelHeaders": ["Ad", "Tel", "Son", "HMO"],
+      "excelRow1": ["Maria", "917…", "3 Nis", "Max"],
+      "excelRow2": ["Juan", "???", "bil.", "?"],
+      "stickyNote": "Lidokain bitmiş? — sor",
+      "tileCalendar": "Takvim",
+      "tileHmo": "HMO",
+      "tileStock": "Stok",
+      "row1Left": "Maria Santos · 10:30",
+      "row1Pill": "Onaylı",
+      "row2Left": "HMO talebi · Maxicare",
+      "row2Pill": "İletildi",
+      "pill1": "Tek kaynak",
+      "pill2": "Otomatik yedek",
+      "pill3": "Her cihaz",
+      "pill4": "EN · TR · PH"
+    },
+    "devices": {
+      "phoneMyAppointments": "Randevularım",
+      "phoneNextEyebrow": "Bir sonraki · 24 Nisan",
+      "phoneNextLine": "10:30 · Kontrol",
+      "phonePastLabel": "Geçmiş",
+      "phonePastLine": "3 Nisan · Kanal",
+      "phonePastPaid": "₱ 8.000 · Ödendi",
+      "phoneBtnBook": "Yeni randevu",
+      "phoneBtnInvoices": "Faturalar",
+      "phoneGcash": "GCash · Ödeme yap",
+      "tabletHeader": "Maria Santos · Odontogram",
+      "tabletFdi": "FDI · 32 diş",
+      "tabletLegendDecay": "Çürük",
+      "tabletLegendFill": "Dolgu",
+      "tabletLegendRct": "Kanal",
+      "tabletLegendHealthy": "Sağlıklı",
+      "tabletNoteEyebrow": "Tedavi notu",
+      "tabletNoteLine": "26 · Kanal tedavisi planı 2 seans",
+      "deskToday": "Bugün",
+      "deskAppts": "Randevu",
+      "deskHmo": "HMO",
+      "deskStock": "Stok !",
+      "deskRevenue": "Haftalık ciro",
+      "deskDentists": "Hekim"
+    }
+  }
+}

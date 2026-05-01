@@ -1,0 +1,1945 @@
+{
+  "meta": {
+    "schemaVersion": 1,
+    "updatedAt": "2026-04-19T01:28:50.340Z",
+    "source": "scripts/gap-data.mjs"
+  },
+  "tasks": {
+    "GAP-001": {
+      "title": "Signed URL for patient files",
+      "kind": "gap",
+      "files": "backend/src/app.ts + patientFileStorage.ts",
+      "priority": "Kritik",
+      "done": true,
+      "completedAt": "2026-04-18T13:21:02.638Z",
+      "updatedBy": "cursor",
+      "summary": "JWT ile dosya indirme; public static kaldırıldı",
+      "filesTouched": [
+        "backend/src/app.ts",
+        "backend/src/controllers/patient.controller.ts"
+      ],
+      "testNote": "",
+      "history": [
+        {
+          "at": "2026-04-18T13:21:02.638Z",
+          "action": "complete",
+          "by": "cursor",
+          "summary": "JWT ile dosya indirme; public static kaldırıldı",
+          "files": [
+            "backend/src/app.ts",
+            "backend/src/controllers/patient.controller.ts"
+          ]
+        }
+      ]
+    },
+    "GAP-002": {
+      "title": "PayMongo webhook HMAC imza",
+      "kind": "gap",
+      "files": "backend/src/services/invoice.service.ts",
+      "priority": "Kritik",
+      "done": true,
+      "completedAt": "2026-04-18T13:21:02.780Z",
+      "updatedBy": "cursor",
+      "summary": "Paymongo-Signature + PAYMONGO_WEBHOOK_SECRET (prod zorunlu)",
+      "filesTouched": [
+        "backend/src/utils/paymongoWebhook.ts",
+        "backend/src/controllers/invoice.controller.ts"
+      ],
+      "testNote": "",
+      "history": [
+        {
+          "at": "2026-04-18T13:21:02.780Z",
+          "action": "complete",
+          "by": "cursor",
+          "summary": "Paymongo-Signature + PAYMONGO_WEBHOOK_SECRET (prod zorunlu)",
+          "files": [
+            "backend/src/utils/paymongoWebhook.ts",
+            "backend/src/controllers/invoice.controller.ts"
+          ]
+        }
+      ]
+    },
+    "GAP-003": {
+      "title": "`/auth/register` kilitle",
+      "kind": "gap",
+      "files": "backend/src/routes/auth.routes.ts",
+      "priority": "Yüksek",
+      "done": true,
+      "completedAt": "2026-04-18T13:21:02.998Z",
+      "updatedBy": "cursor",
+      "summary": "Kayıt yalnızca ALLOW_PUBLIC_REGISTER=true",
+      "filesTouched": [
+        "backend/src/controllers/auth.controller.ts"
+      ],
+      "testNote": "",
+      "history": [
+        {
+          "at": "2026-04-18T13:21:02.998Z",
+          "action": "complete",
+          "by": "cursor",
+          "summary": "Kayıt yalnızca ALLOW_PUBLIC_REGISTER=true",
+          "files": [
+            "backend/src/controllers/auth.controller.ts"
+          ]
+        }
+      ]
+    },
+    "GAP-004": {
+      "title": "Rate limiting (express-rate-limit)",
+      "kind": "gap",
+      "files": "backend/src/app.ts",
+      "priority": "Yüksek",
+      "done": true,
+      "completedAt": "2026-04-18T13:21:03.200Z",
+      "updatedBy": "cursor",
+      "summary": "API prefix altında express-rate-limit",
+      "filesTouched": [
+        "backend/src/app.ts"
+      ],
+      "testNote": "",
+      "history": [
+        {
+          "at": "2026-04-18T13:21:03.200Z",
+          "action": "complete",
+          "by": "cursor",
+          "summary": "API prefix altında express-rate-limit",
+          "files": [
+            "backend/src/app.ts"
+          ]
+        }
+      ]
+    },
+    "GAP-005": {
+      "title": "CORS allowlist",
+      "kind": "gap",
+      "files": "backend/src/app.ts",
+      "priority": "Yüksek",
+      "done": true,
+      "completedAt": "2026-04-18T13:21:03.384Z",
+      "updatedBy": "cursor",
+      "summary": "CORS_ORIGIN allowlist; prod boşta reddet",
+      "filesTouched": [
+        "backend/src/app.ts"
+      ],
+      "testNote": "",
+      "history": [
+        {
+          "at": "2026-04-18T13:21:03.384Z",
+          "action": "complete",
+          "by": "cursor",
+          "summary": "CORS_ORIGIN allowlist; prod boşta reddet",
+          "files": [
+            "backend/src/app.ts"
+          ]
+        }
+      ]
+    },
+    "GAP-006": {
+      "title": "Refresh token rotation",
+      "kind": "gap",
+      "files": "backend/src/services/auth.service.ts",
+      "priority": "Orta",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-007": {
+      "title": "Dev OTP yanıtta",
+      "kind": "gap",
+      "files": "backend/src/controllers/portal.controller.ts",
+      "priority": "Orta",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-008": {
+      "title": "Event log hassas veri",
+      "kind": "gap",
+      "files": "backend/src/events/*.ts",
+      "priority": "Orta",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-009": {
+      "title": "Global audit log middleware",
+      "kind": "gap",
+      "files": "backend/src/middleware/ (yeni)",
+      "priority": "Yüksek",
+      "done": true,
+      "completedAt": "2026-04-18T13:01:02.795Z",
+      "updatedBy": "composer",
+      "summary": "auditTrailMiddleware + Prisma AuditLog; apiRouter üzerinde mutasyonlar req.user ile kaydediliyor.",
+      "filesTouched": [
+        "backend/prisma/schema.prisma",
+        "backend/src/middleware/auditTrailMiddleware.ts",
+        "backend/src/routes/index.ts"
+      ],
+      "testNote": "",
+      "history": [
+        {
+          "at": "2026-04-18T13:01:02.795Z",
+          "action": "complete",
+          "by": "composer",
+          "summary": "auditTrailMiddleware + Prisma AuditLog; apiRouter üzerinde mutasyonlar req.user ile kaydediliyor.",
+          "files": [
+            "backend/prisma/schema.prisma",
+            "backend/src/middleware/auditTrailMiddleware.ts",
+            "backend/src/routes/index.ts"
+          ]
+        }
+      ]
+    },
+    "GAP-010": {
+      "title": "Access log (DPA)",
+      "kind": "gap",
+      "files": "backend/src/middleware/ (yeni)",
+      "priority": "Orta",
+      "done": true,
+      "completedAt": "2026-04-18T13:10:06.941Z",
+      "updatedBy": "composer",
+      "summary": "PhiAccessLog + phiAccessLogMiddleware: /patients* GET erişimleri (DPA izi), patientId param varsa FK.",
+      "filesTouched": [
+        "backend/prisma/schema.prisma",
+        "backend/src/middleware/phiAccessLogMiddleware.ts",
+        "backend/src/routes/patient.routes.ts"
+      ],
+      "testNote": "",
+      "history": [
+        {
+          "at": "2026-04-18T13:10:06.941Z",
+          "action": "complete",
+          "by": "composer",
+          "summary": "PhiAccessLog + phiAccessLogMiddleware: /patients* GET erişimleri (DPA izi), patientId param varsa FK.",
+          "files": [
+            "backend/prisma/schema.prisma",
+            "backend/src/middleware/phiAccessLogMiddleware.ts",
+            "backend/src/routes/patient.routes.ts"
+          ]
+        }
+      ]
+    },
+    "GAP-011": {
+      "title": "`GET /api/auth/me`",
+      "kind": "gap",
+      "files": "backend + frontend",
+      "priority": "Yüksek",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-012": {
+      "title": "Forgot + reset password",
+      "kind": "gap",
+      "files": "backend + frontend",
+      "priority": "Yüksek",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-013": {
+      "title": "MFA / 2FA",
+      "kind": "gap",
+      "files": "backend + frontend",
+      "priority": "Düşük",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-014": {
+      "title": "Staff / user management",
+      "kind": "gap",
+      "files": "backend + frontend",
+      "priority": "Yüksek",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-015": {
+      "title": "Clinic settings API",
+      "kind": "gap",
+      "files": "backend + frontend",
+      "priority": "Yüksek",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-016": {
+      "title": "404 sayfası",
+      "kind": "gap",
+      "files": "frontend/src/App.tsx",
+      "priority": "Yüksek",
+      "done": true,
+      "completedAt": "2026-04-18T13:21:03.570Z",
+      "updatedBy": "cursor",
+      "summary": "NotFoundPage ve catch-all route",
+      "filesTouched": [
+        "frontend/src/App.tsx"
+      ],
+      "testNote": "",
+      "history": [
+        {
+          "at": "2026-04-18T13:21:03.570Z",
+          "action": "complete",
+          "by": "cursor",
+          "summary": "NotFoundPage ve catch-all route",
+          "files": [
+            "frontend/src/App.tsx"
+          ]
+        }
+      ]
+    },
+    "GAP-017": {
+      "title": "ProtectedRoute `roles` kullan",
+      "kind": "gap",
+      "files": "frontend/src/App.tsx",
+      "priority": "Yüksek",
+      "done": true,
+      "completedAt": "2026-04-18T13:21:03.766Z",
+      "updatedBy": "cursor",
+      "summary": "Inventory RoleGuard ile korunuyor",
+      "filesTouched": [
+        "frontend/src/App.tsx"
+      ],
+      "testNote": "",
+      "history": [
+        {
+          "at": "2026-04-18T13:21:03.766Z",
+          "action": "complete",
+          "by": "cursor",
+          "summary": "Inventory RoleGuard ile korunuyor",
+          "files": [
+            "frontend/src/App.tsx"
+          ]
+        }
+      ]
+    },
+    "GAP-018": {
+      "title": "LoginPage i18n",
+      "kind": "gap",
+      "files": "frontend/src/pages/LoginPage.tsx",
+      "priority": "Orta",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-019": {
+      "title": "Staff UI full i18n",
+      "kind": "gap",
+      "files": "tüm frontend/src",
+      "priority": "Yüksek",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-020": {
+      "title": "Theme switcher UI",
+      "kind": "gap",
+      "files": "frontend",
+      "priority": "Düşük",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-021": {
+      "title": "HmoProvider CRUD UI",
+      "kind": "gap",
+      "files": "frontend (yeni)",
+      "priority": "Kritik",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-022": {
+      "title": "HmoClaim workflow UI",
+      "kind": "gap",
+      "files": "frontend (yeni)",
+      "priority": "Kritik",
+      "done": true,
+      "completedAt": "2026-04-18T13:21:03.953Z",
+      "updatedBy": "cursor",
+      "summary": "HmoClaimsPage workflow",
+      "filesTouched": [
+        "frontend/src/pages/HmoClaimsPage.tsx"
+      ],
+      "testNote": "",
+      "history": [
+        {
+          "at": "2026-04-18T13:21:03.953Z",
+          "action": "complete",
+          "by": "cursor",
+          "summary": "HmoClaimsPage workflow",
+          "files": [
+            "frontend/src/pages/HmoClaimsPage.tsx"
+          ]
+        }
+      ]
+    },
+    "GAP-023": {
+      "title": "PatientHmo tab",
+      "kind": "gap",
+      "files": "PatientDetailPage",
+      "priority": "Kritik",
+      "done": true,
+      "completedAt": "2026-04-18T13:21:04.273Z",
+      "updatedBy": "cursor",
+      "summary": "PatientHmoPanel sekmesi",
+      "filesTouched": [
+        "frontend/src/components/patient/PatientHmoPanel.tsx"
+      ],
+      "testNote": "",
+      "history": [
+        {
+          "at": "2026-04-18T13:21:04.273Z",
+          "action": "complete",
+          "by": "cursor",
+          "summary": "PatientHmoPanel sekmesi",
+          "files": [
+            "frontend/src/components/patient/PatientHmoPanel.tsx"
+          ]
+        }
+      ]
+    },
+    "GAP-024": {
+      "title": "Invoice HMO rozeti",
+      "kind": "gap",
+      "files": "InvoicePage",
+      "priority": "Kritik",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-025": {
+      "title": "Dashboard HMO Pending widget",
+      "kind": "gap",
+      "files": "DashboardPage",
+      "priority": "Yüksek",
+      "done": true,
+      "completedAt": "2026-04-18T13:21:04.504Z",
+      "updatedBy": "cursor",
+      "summary": "Dashboard pending HMO + link",
+      "filesTouched": [
+        "frontend/src/pages/DashboardPage.tsx"
+      ],
+      "testNote": "",
+      "history": [
+        {
+          "at": "2026-04-18T13:21:04.504Z",
+          "action": "complete",
+          "by": "cursor",
+          "summary": "Dashboard pending HMO + link",
+          "files": [
+            "frontend/src/pages/DashboardPage.tsx"
+          ]
+        }
+      ]
+    },
+    "GAP-026": {
+      "title": "Senior Citizen %20 + VAT muafiyet",
+      "kind": "gap",
+      "files": "invoice.service + PatientForm",
+      "priority": "Kritik",
+      "done": true,
+      "completedAt": "2026-04-18T13:01:26.084Z",
+      "updatedBy": "composer",
+      "summary": "Senior: hasta isSeniorCitizen/oscaIdNo + invoice.service statutory %20 tabanı (create/update/finalize).",
+      "filesTouched": [
+        "backend/src/services/invoice.service.ts",
+        "backend/src/services/patient.service.ts",
+        "backend/src/validation/patient.schemas.ts"
+      ],
+      "testNote": "",
+      "history": [
+        {
+          "at": "2026-04-18T13:01:26.084Z",
+          "action": "complete",
+          "by": "composer",
+          "summary": "Senior: hasta isSeniorCitizen/oscaIdNo + invoice.service statutory %20 tabanı (create/update/finalize).",
+          "files": [
+            "backend/src/services/invoice.service.ts",
+            "backend/src/services/patient.service.ts",
+            "backend/src/validation/patient.schemas.ts"
+          ]
+        }
+      ]
+    },
+    "GAP-027": {
+      "title": "PWD %20 + VAT muafiyet",
+      "kind": "gap",
+      "files": "invoice.service + PatientForm",
+      "priority": "Kritik",
+      "done": true,
+      "completedAt": "2026-04-18T13:01:26.544Z",
+      "updatedBy": "composer",
+      "summary": "PWD: hasta pwdIdNo + invoice.service ile aynı statutory %20 tabanı.",
+      "filesTouched": [
+        "backend/src/services/invoice.service.ts",
+        "backend/src/validation/patient.schemas.ts"
+      ],
+      "testNote": "",
+      "history": [
+        {
+          "at": "2026-04-18T13:01:26.544Z",
+          "action": "complete",
+          "by": "composer",
+          "summary": "PWD: hasta pwdIdNo + invoice.service ile aynı statutory %20 tabanı.",
+          "files": [
+            "backend/src/services/invoice.service.ts",
+            "backend/src/validation/patient.schemas.ts"
+          ]
+        }
+      ]
+    },
+    "GAP-028": {
+      "title": "TIN alanı patient + clinic",
+      "kind": "gap",
+      "files": "Prisma migration",
+      "priority": "Yüksek",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-029": {
+      "title": "BIR PTU no. invoice PDF",
+      "kind": "gap",
+      "files": "invoicePdf.ts + Clinic",
+      "priority": "Yüksek",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-030": {
+      "title": "BIR journal export",
+      "kind": "gap",
+      "files": "reports (yeni)",
+      "priority": "Orta",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-031": {
+      "title": "PhilHealth üyelik tipi",
+      "kind": "gap",
+      "files": "Patient + UI",
+      "priority": "Orta",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-032": {
+      "title": "PhilHealth Claim Form 1-2",
+      "kind": "gap",
+      "files": "patientFormsPdf.ts",
+      "priority": "Düşük",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-033": {
+      "title": "Invoice Maya seçim UI",
+      "kind": "gap",
+      "files": "InvoicePage",
+      "priority": "Orta",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-034": {
+      "title": "Aged receivables raporu",
+      "kind": "gap",
+      "files": "reports (yeni)",
+      "priority": "Orta",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-035": {
+      "title": "Refunds",
+      "kind": "gap",
+      "files": "backend + UI",
+      "priority": "Düşük",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-036": {
+      "title": "Recalls (6 ay check-up)",
+      "kind": "gap",
+      "files": "backend + UI",
+      "priority": "Orta",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-037": {
+      "title": "Waitlist",
+      "kind": "gap",
+      "files": "backend + UI",
+      "priority": "Orta",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-038": {
+      "title": "Treatment Plan multi-visit",
+      "kind": "gap",
+      "files": "backend + UI",
+      "priority": "Orta",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-039": {
+      "title": "Prescription (Rx)",
+      "kind": "gap",
+      "files": "backend + UI",
+      "priority": "Yüksek",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-040": {
+      "title": "Consent e-sign",
+      "kind": "gap",
+      "files": "backend + UI",
+      "priority": "Yüksek",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-041": {
+      "title": "X-ray + intraoral galeri",
+      "kind": "gap",
+      "files": "PatientDetailPage",
+      "priority": "Yüksek",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-042": {
+      "title": "Patient photo/avatar",
+      "kind": "gap",
+      "files": "PatientForm",
+      "priority": "Orta",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-043": {
+      "title": "Family linking",
+      "kind": "gap",
+      "files": "backend + UI",
+      "priority": "Düşük",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-044": {
+      "title": "Referral (sevk)",
+      "kind": "gap",
+      "files": "backend + UI",
+      "priority": "Düşük",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-045": {
+      "title": "Lab orders (tplab ref)",
+      "kind": "gap",
+      "files": "backend + UI",
+      "priority": "Düşük",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-046": {
+      "title": "Calendar week/month view",
+      "kind": "gap",
+      "files": "AppointmentsPage",
+      "priority": "Orta",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-047": {
+      "title": "Room/chair assignment",
+      "kind": "gap",
+      "files": "Prisma + UI",
+      "priority": "Düşük",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-048": {
+      "title": "Drag-drop reschedule",
+      "kind": "gap",
+      "files": "AppointmentsPage",
+      "priority": "Orta",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-049": {
+      "title": "Appointment conflict UI",
+      "kind": "gap",
+      "files": "AppointmentsPage",
+      "priority": "Orta",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-050": {
+      "title": "Dentist self-filter",
+      "kind": "gap",
+      "files": "appointment.service",
+      "priority": "Orta",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-051": {
+      "title": "Perio recession+suppuration UI",
+      "kind": "gap",
+      "files": "PeriodontalChart",
+      "priority": "Orta",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-052": {
+      "title": "Perio edit (update çağır)",
+      "kind": "gap",
+      "files": "PeriodontalChart",
+      "priority": "Orta",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-053": {
+      "title": "MedicalHistoryForm hata yutma",
+      "kind": "gap",
+      "files": "MedicalHistoryForm",
+      "priority": "Yüksek",
+      "done": true,
+      "completedAt": "2026-04-19T01:28:50.340Z",
+      "updatedBy": "composer",
+      "summary": "MedicalHistoryForm: reset on null API data; apiFetch central network/offline and HTTP 500 i18n; ph/tl/hil errors.networkOffline+serverError",
+      "filesTouched": [
+        "frontend/src/services/api.ts",
+        "frontend/src/components/patient/MedicalHistoryForm.tsx",
+        "frontend/src/i18n/locales/ph.json",
+        "frontend/src/i18n/locales/tl.json",
+        "frontend/src/i18n/locales/hil.json"
+      ],
+      "testNote": "",
+      "history": [
+        {
+          "at": "2026-04-19T01:28:50.340Z",
+          "action": "complete",
+          "by": "composer",
+          "summary": "MedicalHistoryForm: reset on null API data; apiFetch central network/offline and HTTP 500 i18n; ph/tl/hil errors.networkOffline+serverError",
+          "files": [
+            "frontend/src/services/api.ts",
+            "frontend/src/components/patient/MedicalHistoryForm.tsx",
+            "frontend/src/i18n/locales/ph.json",
+            "frontend/src/i18n/locales/tl.json",
+            "frontend/src/i18n/locales/hil.json"
+          ]
+        }
+      ]
+    },
+    "GAP-054": {
+      "title": "CSV patient bulk import",
+      "kind": "gap",
+      "files": "backend + UI",
+      "priority": "Orta",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-055": {
+      "title": "CSV patient bulk export",
+      "kind": "gap",
+      "files": "PatientList",
+      "priority": "Düşük",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-056": {
+      "title": "Bulk SMS",
+      "kind": "gap",
+      "files": "PatientList",
+      "priority": "Düşük",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-057": {
+      "title": "FDI notation toggle",
+      "kind": "gap",
+      "files": "DentalChart",
+      "priority": "Düşük",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-058": {
+      "title": "Treatment toothIds etiket",
+      "kind": "gap",
+      "files": "PatientDetailPage",
+      "priority": "Orta",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-059": {
+      "title": "Birthday greeting",
+      "kind": "gap",
+      "files": "Scheduler",
+      "priority": "Düşük",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-060": {
+      "title": "Feedback / NPS",
+      "kind": "gap",
+      "files": "backend + UI",
+      "priority": "Düşük",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-061": {
+      "title": "Patient Queue widget",
+      "kind": "gap",
+      "files": "DashboardPage",
+      "priority": "Yüksek",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-062": {
+      "title": "Düşük stok widget",
+      "kind": "gap",
+      "files": "DashboardPage",
+      "priority": "Orta",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-063": {
+      "title": "Doğum günü listesi",
+      "kind": "gap",
+      "files": "DashboardPage",
+      "priority": "Düşük",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-064": {
+      "title": "Alerts merkezi",
+      "kind": "gap",
+      "files": "DashboardPage",
+      "priority": "Orta",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-065": {
+      "title": "Standalone ReportsPage",
+      "kind": "gap",
+      "files": "frontend (yeni)",
+      "priority": "Orta",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-066": {
+      "title": "Revenue aging raporu",
+      "kind": "gap",
+      "files": "reports",
+      "priority": "Orta",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-067": {
+      "title": "Procedure frequency raporu",
+      "kind": "gap",
+      "files": "reports",
+      "priority": "Düşük",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-068": {
+      "title": "HMO reconciliation",
+      "kind": "gap",
+      "files": "reports",
+      "priority": "Yüksek",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-069": {
+      "title": "Recall compliance",
+      "kind": "gap",
+      "files": "reports",
+      "priority": "Düşük",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-070": {
+      "title": "CSV export (tüm raporlar)",
+      "kind": "gap",
+      "files": "reports",
+      "priority": "Orta",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-076": {
+      "title": "Email kanalı (Resend)",
+      "kind": "gap",
+      "files": "backend/src/lib/resend.ts (yeni)",
+      "priority": "Yüksek",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-077": {
+      "title": "SMS şablon düzenleme UI",
+      "kind": "gap",
+      "files": "NotificationSettingsPage",
+      "priority": "Orta",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-078": {
+      "title": "Quiet hours (sessiz saat)",
+      "kind": "gap",
+      "files": "scheduler",
+      "priority": "Orta",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-079": {
+      "title": "Klinik-bazlı bildirim ayarı",
+      "kind": "gap",
+      "files": "backend + UI",
+      "priority": "Orta",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-080": {
+      "title": "`services/notifications.ts` refactor",
+      "kind": "gap",
+      "files": "frontend (yeni)",
+      "priority": "Orta",
+      "done": true,
+      "completedAt": "2026-04-18T13:21:04.689Z",
+      "updatedBy": "cursor",
+      "summary": "services/notifications.ts + sayfa refactor",
+      "filesTouched": [
+        "frontend/src/services/notifications.ts",
+        "frontend/src/pages/NotificationsPage.tsx"
+      ],
+      "testNote": "",
+      "history": [
+        {
+          "at": "2026-04-18T13:21:04.689Z",
+          "action": "complete",
+          "by": "cursor",
+          "summary": "services/notifications.ts + sayfa refactor",
+          "files": [
+            "frontend/src/services/notifications.ts",
+            "frontend/src/pages/NotificationsPage.tsx"
+          ]
+        }
+      ]
+    },
+    "GAP-081": {
+      "title": "SMS multi-provider",
+      "kind": "gap",
+      "files": "backend/src/services/notification/",
+      "priority": "Düşük",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-082": {
+      "title": "Portal register akışı",
+      "kind": "gap",
+      "files": "portal (yeni)",
+      "priority": "Orta",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-091": {
+      "title": "Tablolarda overflow-x-auto",
+      "kind": "gap",
+      "files": "4 staff sayfası",
+      "priority": "Yüksek",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-092": {
+      "title": "Dokunma hedefi 44px",
+      "kind": "gap",
+      "files": "Tüm ikon butonları",
+      "priority": "Yüksek",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-093": {
+      "title": "AppointmentsPage mobile özet",
+      "kind": "gap",
+      "files": "AppointmentsPage",
+      "priority": "Orta",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-094": {
+      "title": "FullCalendar mobile liste view",
+      "kind": "gap",
+      "files": "AppointmentsPage",
+      "priority": "Orta",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-095": {
+      "title": "Fluid tipografi",
+      "kind": "gap",
+      "files": "index.css",
+      "priority": "Düşük",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-096": {
+      "title": "ARIA label sistematik",
+      "kind": "gap",
+      "files": "tüm UI",
+      "priority": "Orta",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-097": {
+      "title": "role=alert hata kutuları",
+      "kind": "gap",
+      "files": "LoginPage + Portal",
+      "priority": "Orta",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-098": {
+      "title": "role=tablist portal sekmeleri",
+      "kind": "gap",
+      "files": "PortalAppointmentsPage",
+      "priority": "Düşük",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-099": {
+      "title": "aria-pressed seçili butonlar",
+      "kind": "gap",
+      "files": "PortalBookPage",
+      "priority": "Düşük",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-100": {
+      "title": "Klavye kısayolları",
+      "kind": "gap",
+      "files": "global",
+      "priority": "Düşük",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-101": {
+      "title": "Pricing enum ↔ landing",
+      "kind": "gap",
+      "files": "schema.prisma + HomePage",
+      "priority": "Yüksek",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-102": {
+      "title": "Footer Privacy link",
+      "kind": "gap",
+      "files": "HomePage + yeni /privacy",
+      "priority": "Kritik",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-103": {
+      "title": "Footer Terms link",
+      "kind": "gap",
+      "files": "HomePage + yeni /terms",
+      "priority": "Yüksek",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-104": {
+      "title": "About/Contact/Pricing/Features sayfaları",
+      "kind": "gap",
+      "files": "frontend (yeni)",
+      "priority": "Orta",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-105": {
+      "title": "Mockup illustrative etiket",
+      "kind": "gap",
+      "files": "DeviceMockups",
+      "priority": "Orta",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-106": {
+      "title": "Mockup gerçek screenshot",
+      "kind": "gap",
+      "files": "DeviceMockups",
+      "priority": "Düşük",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-107": {
+      "title": "f6 Reports kartı",
+      "kind": "gap",
+      "files": "HomePage",
+      "priority": "Düşük",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-108": {
+      "title": "Fake testimonial etiketle",
+      "kind": "gap",
+      "files": "HomePage",
+      "priority": "Orta",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-109": {
+      "title": "Offline PWA vaadi",
+      "kind": "gap",
+      "files": "landing + service worker",
+      "priority": "Orta",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-110": {
+      "title": "Multi-branch vaadi",
+      "kind": "gap",
+      "files": "landing",
+      "priority": "Orta",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-111": {
+      "title": "CSV import vaadi",
+      "kind": "gap",
+      "files": "landing",
+      "priority": "Orta",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-112": {
+      "title": "Waitlist vaadi",
+      "kind": "gap",
+      "files": "landing",
+      "priority": "Orta",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-113": {
+      "title": "Google Calendar entegrasyonu",
+      "kind": "gap",
+      "files": "landing",
+      "priority": "Düşük",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-114": {
+      "title": "DeviceMockups Türkçe karışımı",
+      "kind": "gap",
+      "files": "DeviceMockups",
+      "priority": "Düşük",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-115": {
+      "title": "Newsletter backend bağla",
+      "kind": "gap",
+      "files": "HomePage",
+      "priority": "Düşük",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-116": {
+      "title": "Nav HMO + Staff + Settings",
+      "kind": "gap",
+      "files": "navItems.tsx",
+      "priority": "Yüksek",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-117": {
+      "title": "Patient Queue (mockup vs dashboard)",
+      "kind": "gap",
+      "files": "DashboardPage",
+      "priority": "Yüksek",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-118": {
+      "title": "Staff UI i18n (mockup 3 dil)",
+      "kind": "gap",
+      "files": "tüm sayfalar",
+      "priority": "Yüksek",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-119": {
+      "title": "Mobile-first metni ile uyumluluk",
+      "kind": "gap",
+      "files": "tablolar + dokunma",
+      "priority": "Yüksek",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-120": {
+      "title": "pages/index.ts barrel",
+      "kind": "gap",
+      "files": "frontend/src/pages/index.ts",
+      "priority": "Düşük",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-121": {
+      "title": "Tailwind marka tema token",
+      "kind": "gap",
+      "files": "tailwind.config.js",
+      "priority": "Düşük",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-122": {
+      "title": "Dark mode toggler header",
+      "kind": "gap",
+      "files": "AppTopbar",
+      "priority": "Düşük",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-123": {
+      "title": "PWA / service worker",
+      "kind": "gap",
+      "files": "vite PWA plugin",
+      "priority": "Orta",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-124": {
+      "title": "ClinicGroup / Multi-branch",
+      "kind": "gap",
+      "files": "Prisma + UI",
+      "priority": "Düşük",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-125": {
+      "title": "Split payment",
+      "kind": "gap",
+      "files": "backend + UI",
+      "priority": "Düşük",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-126": {
+      "title": "QR Ph ödeme",
+      "kind": "gap",
+      "files": "backend + UI",
+      "priority": "Orta",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-127": {
+      "title": "GrabPay ödeme",
+      "kind": "gap",
+      "files": "backend + UI",
+      "priority": "Düşük",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-128": {
+      "title": "BPI/BDO direct",
+      "kind": "gap",
+      "files": "backend + UI",
+      "priority": "Düşük",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-129": {
+      "title": "Intl.DateTimeFormat TZ Manila",
+      "kind": "gap",
+      "files": "PortalHomePage",
+      "priority": "Orta",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "GAP-130": {
+      "title": "PHP ₱ format tutarlılığı",
+      "kind": "gap",
+      "files": "tüm UI",
+      "priority": "Orta",
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "PKG-A": {
+      "title": "Bölüm 17 Paket A — PH Yasal + Güvenlik",
+      "kind": "package",
+      "files": null,
+      "priority": null,
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "PKG-B": {
+      "title": "Bölüm 17 Paket B — HMO tam akış",
+      "kind": "package",
+      "files": null,
+      "priority": null,
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "PKG-C": {
+      "title": "Bölüm 17 Paket C — Staff deneyimi",
+      "kind": "package",
+      "files": null,
+      "priority": null,
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "PKG-D": {
+      "title": "Bölüm 17 Paket D — Klinik akışı",
+      "kind": "package",
+      "files": null,
+      "priority": null,
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "PKG-E": {
+      "title": "Bölüm 17 Paket E — Dashboard+",
+      "kind": "package",
+      "files": null,
+      "priority": null,
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "PKG-F": {
+      "title": "Bölüm 17 Paket F — Kanal + ödeme",
+      "kind": "package",
+      "files": null,
+      "priority": null,
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "EXT-18": {
+      "title": "Bölüm 18 — Kararların kodlanması",
+      "kind": "ext",
+      "files": null,
+      "priority": null,
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "EXT-19": {
+      "title": "Bölüm 19 — Login rework",
+      "kind": "ext",
+      "files": null,
+      "priority": null,
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "EXT-20": {
+      "title": "Bölüm 20 — Landing rework",
+      "kind": "ext",
+      "files": null,
+      "priority": null,
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "EXT-21": {
+      "title": "Bölüm 21 — PDF/Excel",
+      "kind": "ext",
+      "files": null,
+      "priority": null,
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "EXT-22": {
+      "title": "Bölüm 22 — i18n 5 dil",
+      "kind": "ext",
+      "files": null,
+      "priority": null,
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "EXT-23": {
+      "title": "Bölüm 23 — Design system + PDF görsel",
+      "kind": "ext",
+      "files": null,
+      "priority": null,
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "EXT-24": {
+      "title": "Bölüm 24 — Otomasyon + event bus",
+      "kind": "ext",
+      "files": null,
+      "priority": null,
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "RES-071-075": {
+      "title": "Rezerve GAP-071–075 (tabloda satır yok)",
+      "kind": "reserved",
+      "files": null,
+      "priority": null,
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    },
+    "RES-083-090": {
+      "title": "Rezerve GAP-083–090 (tabloda satır yok)",
+      "kind": "reserved",
+      "files": null,
+      "priority": null,
+      "done": false,
+      "completedAt": null,
+      "updatedBy": null,
+      "summary": "",
+      "filesTouched": [],
+      "testNote": "",
+      "history": []
+    }
+  }
+}

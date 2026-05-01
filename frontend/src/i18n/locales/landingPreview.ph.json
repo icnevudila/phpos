@@ -1,0 +1,130 @@
+{
+  "landingPreview": {
+    "appointments": {
+      "calendarLabel": "Kalendaryo",
+      "headerSub": "Abr 13 – 17 · Dr. dela Cruz",
+      "badge": "8 appointments",
+      "dayLabels": ["Lun", "Mar", "Miy", "Huw", "Biy"],
+      "events": [
+        { "name": "Maria S.", "type": "Check-up" },
+        { "name": "Juan R.", "type": "Root canal" },
+        { "name": "Anna L.", "type": "Cleaning" },
+        { "name": "Paolo C.", "type": "Filling" },
+        { "name": "Grace D.", "type": "Bagong pasyente" },
+        { "name": "Ramon P.", "type": "Check-up" },
+        { "name": "Clara M.", "type": "Scaling" },
+        { "name": "Dr. Reyes ↔ Andrea", "type": "Konsultasyon" }
+      ]
+    },
+    "odontogram": {
+      "chartTitle": "Dental chart",
+      "subtitle": "Pasyente: Maria Santos · FDI · 5 surfaces",
+      "status": {
+        "healthy": "Malusog",
+        "decay": "Sira",
+        "filled": "Pasta",
+        "rct": "Root canal",
+        "crown": "Crown"
+      },
+      "fieldLastUpdate": "Huling update",
+      "fieldLastUpdateValue": "Abr 12, 2026",
+      "fieldDoctor": "Dentista",
+      "fieldDoctorValue": "Dr. dela Cruz",
+      "fieldCompleted": "Tapos na",
+      "fieldCompletedValue": "4 / 7 procedure"
+    },
+    "patient": {
+      "metaLine": "B · 34 taon · Pasig City",
+      "philhealthBadge": "PhilHealth · 12-3456-789",
+      "allergyBadge": "Alergya sa penisilin",
+      "tabs": ["Overview", "Kasaysayan", "Alergya", "X-ray"],
+      "visitLabel": "Huling bisita",
+      "visitLine": "Abr 3, 2026 · Root canal",
+      "visitDr": "Dr. Reyes · Main branch",
+      "nextLabel": "Susunod",
+      "nextLine": "Abr 24 · Check-up",
+      "nextTime": "10:30 · Dr. dela Cruz",
+      "notesLabel": "Medical notes",
+      "notesBody": "Hypertension, Losartan 50 mg. Makipag-ugnayan sa anesthesiologist bago mag-surgery."
+    },
+    "billing": {
+      "title": "Invoice",
+      "invLine": "INV-2026-0421 · Maria Santos",
+      "hmoPill": "HMO: Maxicare",
+      "qty": "Dami {{n}}",
+      "items": [
+        { "name": "Root canal (26)" },
+        { "name": "Pasta (14)" },
+        { "name": "Panoramic X-ray" },
+        { "name": "Konsultasyon" }
+      ],
+      "subtotal": "Subtotal",
+      "hmoLine": "HMO coverage (Maxicare)",
+      "net": "Babayaran",
+      "payMethods": ["GCash", "Maya", "PayMongo", "Cash"]
+    },
+    "inventory": {
+      "title": "Imbentaryo",
+      "subtitle": "128 items · 2 critical alert",
+      "reorderBadge": "Kailangan mag-reorder",
+      "minPrefix": "min",
+      "status": {
+        "ok": "OK",
+        "low": "Mababa",
+        "critical": "Kritikal"
+      },
+      "rows": [
+        { "name": "Lidocaine 2% ampule", "unit": "kahon" },
+        { "name": "Composite resin A2", "unit": "syringe" },
+        { "name": "Sterile gloves M", "unit": "kahon" },
+        { "name": "FFP2 mask", "unit": "kahon" },
+        { "name": "Diamond bur round", "unit": "pc" }
+      ]
+    },
+    "beforeAfter": {
+      "paperTitle": "Patient sheet · 04/14",
+      "coffeeStain": "* kape stain",
+      "excelTitle": "Patients.xlsx",
+      "excelHeaders": ["Pangalan", "Tel", "Huli", "HMO"],
+      "excelRow1": ["Maria", "917…", "Abr 3", "Max"],
+      "excelRow2": ["Juan", "???", "di alam", "?"],
+      "stickyNote": "Naubusan ng lidocaine? — tanungin",
+      "tileCalendar": "Kalendaryo",
+      "tileHmo": "HMO",
+      "tileStock": "Stock",
+      "row1Left": "Maria Santos · 10:30",
+      "row1Pill": "Confirmed",
+      "row2Left": "HMO claim · Maxicare",
+      "row2Pill": "Naipadala na",
+      "pill1": "Isang source of truth",
+      "pill2": "Auto backup",
+      "pill3": "Lahat ng device",
+      "pill4": "EN · TR · PH"
+    },
+    "devices": {
+      "phoneMyAppointments": "Mga appointment ko",
+      "phoneNextEyebrow": "Susunod · Abr 24",
+      "phoneNextLine": "10:30 · Check-up",
+      "phonePastLabel": "Nakaraan",
+      "phonePastLine": "Abr 3 · Root canal",
+      "phonePastPaid": "₱ 8,000 · Bayad na",
+      "phoneBtnBook": "Mag-book",
+      "phoneBtnInvoices": "Mga invoice",
+      "phoneGcash": "GCash · Magbayad na",
+      "tabletHeader": "Maria Santos · Dental chart",
+      "tabletFdi": "FDI · 32 ngipin",
+      "tabletLegendDecay": "Sira",
+      "tabletLegendFill": "Pasta",
+      "tabletLegendRct": "Root canal",
+      "tabletLegendHealthy": "Malusog",
+      "tabletNoteEyebrow": "Treatment note",
+      "tabletNoteLine": "26 · Root canal plan · 2 session",
+      "deskToday": "Ngayon",
+      "deskAppts": "Appt",
+      "deskHmo": "HMO",
+      "deskStock": "Stock !",
+      "deskRevenue": "Lingguhang kita",
+      "deskDentists": "Mga dentista"
+    }
+  }
+}

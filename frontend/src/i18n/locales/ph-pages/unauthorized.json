@@ -1,0 +1,8 @@
+{
+  "unauthorized": {
+    "title": "Walang access",
+    "message": "Wala kang pahintulot sa page na ito.",
+    "goHome": "Pumunta sa home",
+    "backToLogin": "Staff sign in"
+  }
+}

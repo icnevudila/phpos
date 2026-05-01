@@ -1,0 +1,10 @@
+{
+  "privacy": {
+    "backHome": "← Home",
+    "title": "Patakaran sa privacy",
+    "intro": "Pinoproseso ng DentEase PH ang personal at health data alinsunod sa Data Privacy Act ng Pilipinas. Buod ito at placeholder; dapat mag-publish ang klinik ng pinal na patakaran bago production.",
+    "bullet1": "Ginagamit ang data para sa appointment, billing, at mga notification na naka-configure mo.",
+    "bullet2": "Limitado sa authenticated staff ng klinik ang access.",
+    "bullet3": "Makipag-ugnayan sa clinic admin para sa access, correction, o deletion."
+  }
+}

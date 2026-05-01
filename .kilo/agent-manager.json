@@ -1,0 +1,21 @@
+{
+  "worktrees": {},
+  "sessions": {
+    "ses_2332e2fb7ffeWbPNVF4HjusyGW": {
+      "worktreeId": null,
+      "createdAt": "2026-04-27T02:43:18.672Z"
+    },
+    "ses_232959cfcffeH7FgI2Ji61I5qe": {
+      "worktreeId": null,
+      "createdAt": "2026-04-27T05:29:55.737Z"
+    }
+  },
+  "tabOrder": {
+    "local": [
+      "pending:1",
+      "ses_233810019ffehWZlW13mFhKoOK",
+      "ses_2332e2fb7ffeWbPNVF4HjusyGW",
+      "ses_232959cfcffeH7FgI2Ji61I5qe"
+    ]
+  }
+}
