@@ -16,6 +16,8 @@ import {
 } from "../controllers/invoice.controller.js";
 import { authenticate } from "../middleware/authMiddleware.js";
 import { roleGuard } from "../middleware/roleGuard.js";
+import { paymongoIpGuard } from "../middleware/webhookIpGuard.js";
+import { verifyPaymongoSignature } from "../middleware/paymongoSignature.js";
 import { prisma } from "../lib/prisma.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { AppError } from "../utils/errors.js";
@@ -55,9 +57,15 @@ invoiceRouter.post(
   asyncHandler(simulatePaymongoPaidHandler),
 );
 
+
 // Webhook — public; GAP-002: production'da PAYMONGO_WEBHOOK_SECRET + Paymongo-Signature zorunlu
 export const webhookRouter = Router();
-webhookRouter.post("/paymongo", asyncHandler(paymongoWebhookHandler));
+webhookRouter.post(
+  "/paymongo",
+  paymongoIpGuard,
+  verifyPaymongoSignature,
+  asyncHandler(paymongoWebhookHandler)
+);
 
 // Hızlı uygunluk: appointment'a bağlı invoice var mı? (frontend için)
 export const appointmentInvoiceRouter = Router();

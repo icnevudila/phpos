@@ -613,7 +613,7 @@ async function resolveDownloadedSource(candidate: unknown, fallbackSource: strin
   return fallbackSource;
 }
 
-export default function XrayWorkspace(props: XrayWorkspaceProps) {
+export function XrayWorkspace(props: XrayWorkspaceProps) {
   const patientId = props.patientId;
   const canWriteDental = props.canWriteDental ?? true;
   const className = props.className;

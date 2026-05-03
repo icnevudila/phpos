@@ -327,7 +327,7 @@ function ToothRenderer({
   );
 }
 
-export default function AdvancedPerioVisualizer({
+export function AdvancedPerioVisualizer({
   teeth = [],
   selectedToothId,
   onToothSelect,

@@ -18,6 +18,7 @@ import {
   updateHmoProvider,
   updatePatientHmo,
 } from "../services/hmo.service.js";
+import { generatePhilhealthXml } from "../services/philhealth.service.js";
 import { AppError } from "../utils/errors.js";
 import {
   createHmoClaimSchema,
@@ -161,4 +162,15 @@ export async function deleteHmoClaimAttachmentHandler(req: Request, res: Respons
   const attachmentId = z.string().min(1).parse(req.params.attachmentId);
   await deleteHmoClaimAttachment(clinicId(req), claimId, attachmentId);
   res.json({ success: true, data: { id: attachmentId } });
+}
+
+export async function downloadHmoClaimXmlHandler(req: Request, res: Response): Promise<void> {
+  const id = z.string().min(1).parse(req.params.id);
+  // Verify ownership via getHmoClaim
+  await getHmoClaim(clinicId(req), id);
+  
+  const xml = await generatePhilhealthXml(id);
+  res.setHeader("Content-Type", "application/xml");
+  res.setHeader("Content-Disposition", `attachment; filename="philhealth-claim-${id}.xml"`);
+  res.send(xml);
 }

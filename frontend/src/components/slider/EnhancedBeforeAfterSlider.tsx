@@ -13,7 +13,7 @@ export interface EnhancedBeforeAfterSliderProps {
   className?: string;
 }
 
-export default function EnhancedBeforeAfterSlider({
+export function EnhancedBeforeAfterSlider({
   beforeImage,
   afterImage,
   beforeLabel = 'Before',

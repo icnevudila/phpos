@@ -24,6 +24,8 @@ import {
 import { staffUserRouter } from "./staffUser.routes.js";
 import { waitlistRouter } from "./waitlist.routes.js";
 import { prescriptionRouter } from "./prescription.routes.js";
+import { analyticsRouter } from "./analytics.routes.js";
+import { eodRouter } from "./eod.routes.js";
 
 export const apiRouter = Router();
 
@@ -47,5 +49,7 @@ apiRouter.use("/notifications", notificationRouter);
 apiRouter.use("/reports", reportsRouter);
 apiRouter.use("/perio-exams", perioRouter);
 apiRouter.use("/prescriptions", prescriptionRouter);
+apiRouter.use("/analytics", analyticsRouter);
+apiRouter.use("/reports/eod", eodRouter);
 apiRouter.use("/portal", portalRouter);
 apiRouter.use("/webhooks", webhookRouter);

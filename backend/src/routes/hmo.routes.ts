@@ -18,6 +18,7 @@ import {
   updateHmoProviderHandler,
   updatePatientHmoHandler,
   uploadHmoClaimAttachmentHandler,
+  downloadHmoClaimXmlHandler,
 } from "../controllers/hmo.controller.js";
 import { authenticate } from "../middleware/authMiddleware.js";
 import { roleGuard } from "../middleware/roleGuard.js";
@@ -57,6 +58,7 @@ hmoRouter.delete(
   asyncHandler(deleteHmoClaimAttachmentHandler),
 );
 hmoRouter.get("/claims/:id", asyncHandler(getHmoClaimHandler));
+hmoRouter.get("/claims/:id/xml", asyncHandler(downloadHmoClaimXmlHandler));
 hmoRouter.post("/claims", roleGuard(writeRoles), asyncHandler(createHmoClaimHandler));
 hmoRouter.put("/claims/:id", roleGuard(writeRoles), asyncHandler(updateHmoClaimHandler));
 

@@ -24,9 +24,9 @@ async function main(): Promise<void> {
       address: "123 Rizal Street",
       city: "Iloilo City",
       phone: "+639171234567",
-      tin: "123-456-789-000",
-      birPtuNo: "PTU-2024-001",
-      birAccreditationNo: "BIR-ACC-2024-001",
+      // tin: "123-456-789-000",
+      // birPtuNo: "PTU-2024-001",
+      // birAccreditationNo: "BIR-ACC-2024-001",
       subscriptionPlan: SubscriptionPlan.PRO,
     },
   });

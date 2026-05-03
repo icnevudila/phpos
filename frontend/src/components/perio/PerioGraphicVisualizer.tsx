@@ -422,7 +422,7 @@ function PainPointButton({
   );
 }
 
-export default function PerioGraphicVisualizer({
+export function PerioGraphicVisualizer({
   teeth = [],
   className = '',
   selectedPainPointId,

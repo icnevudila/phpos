@@ -128,7 +128,15 @@ export interface DashboardResponse {
   };
   topProcedures: Array<{ name: string; count: number; revenue: string }>;
   revenueByDay: Array<{ date: string; amount: string }>;
+  revenueByMonth: Array<{ month: string; amount: string }>;
   appointmentsByStatus: DashboardStatusCounts;
+  recentTreatments: Array<{
+    id: string;
+    procedure: string;
+    patientName: string;
+    dentistName: string;
+    createdAt: string;
+  }>;
 }
 
 export async function buildDashboard(clinicId: string): Promise<DashboardResponse> {
@@ -152,6 +160,7 @@ export async function buildDashboard(clinicId: string): Promise<DashboardRespons
     inventoryRows,
     activePlan,
     waitlistRowsRaw,
+    last12MonthsPayments,
   ] = await Promise.all([
     prisma.appointment.count({
       where: { clinicId, scheduledAt: { gte: today.gte, lt: today.lt } },
@@ -187,6 +196,13 @@ export async function buildDashboard(clinicId: string): Promise<DashboardRespons
       where: {
         invoice: { clinicId },
         paidAt: { gte: last30.gte, lt: last30.lt },
+      },
+      select: { amount: true, paidAt: true },
+    }),
+    prisma.payment.findMany({
+      where: {
+        invoice: { clinicId },
+        paidAt: { gte: new Date(new Date().getUTCFullYear(), 0, 1) }, // Year to date
       },
       select: { amount: true, paidAt: true },
     }),
@@ -257,6 +273,18 @@ export async function buildDashboard(clinicId: string): Promise<DashboardRespons
         patient: { select: { firstName: true, lastName: true } },
       },
     }),
+    prisma.treatment.findMany({
+      where: { patient: { clinicId } },
+      orderBy: { createdAt: "desc" },
+      take: 10,
+      select: {
+        id: true,
+        procedure: true,
+        createdAt: true,
+        patient: { select: { firstName: true, lastName: true } },
+        dentist: { select: { firstName: true, lastName: true } },
+      },
+    }),
   ]);
 
   const statusCounts: DashboardStatusCounts = {
@@ -286,6 +314,25 @@ export async function buildDashboard(clinicId: string): Promise<DashboardRespons
     date,
     amount: (byDayMap.get(date) ?? 0).toFixed(2),
   }));
+
+  // revenueByMonth - Son 12 ayın toplamı
+  const byMonthMap = new Map<string, number>();
+  for (let i = 0; i < 12; i++) {
+    const d = new Date();
+    d.setUTCMonth(d.getUTCMonth() - i);
+    const key = `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}`;
+    byMonthMap.set(key, 0);
+  }
+  for (const p of last12MonthsPayments) {
+    const d = new Date(p.paidAt);
+    const key = `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}`;
+    if (byMonthMap.has(key)) {
+      byMonthMap.set(key, (byMonthMap.get(key) ?? 0) + Number(p.amount));
+    }
+  }
+  const revenueByMonth = Array.from(byMonthMap.entries())
+    .map(([month, amount]) => ({ month, amount: amount.toFixed(2) }))
+    .reverse();
 
   // Prosedür bazlı istatistik — quantity dahil edilmesi için ayrı sorgu
   const procedureDetails = await prisma.treatment.groupBy({
@@ -415,7 +462,15 @@ export async function buildDashboard(clinicId: string): Promise<DashboardRespons
     },
     topProcedures: topProceduresDto,
     revenueByDay,
+    revenueByMonth,
     appointmentsByStatus: statusCounts,
+    recentTreatments: last10Treatments.map((t) => ({
+      id: t.id,
+      procedure: t.procedure,
+      patientName: `${t.patient.firstName} ${t.patient.lastName}`.trim(),
+      dentistName: `${t.dentist.firstName} ${t.dentist.lastName}`.trim(),
+      createdAt: t.createdAt.toISOString(),
+    })),
   };
 }
 
@@ -778,4 +833,98 @@ export async function buildAgedReceivables(clinicId: string): Promise<AgedReceiv
     buckets,
     rows,
   };
+}
+
+export interface QueueItem {
+  id: string;
+  patientName: string;
+  type: "WAITLIST" | "APPOINTMENT";
+  status: string;
+  appointmentTime?: string;
+  arrivalTime: string;
+  waitTime: number;
+  dentistName: string;
+  procedure: string;
+  room: string;
+  priority: "NORMAL" | "URGENT";
+  notes?: string;
+}
+
+export async function getLiveQueue(clinicId: string): Promise<QueueItem[]> {
+  const now = new Date();
+
+  // Fetch appointments that are CHECKED_IN or IN_PROGRESS
+  const [appointments, waitlist] = await Promise.all([
+    prisma.appointment.findMany({
+      where: { 
+        clinicId, 
+        status: { in: ["CHECKED_IN", "IN_PROGRESS"] } 
+      },
+      include: {
+        patient: { select: { firstName: true, lastName: true } },
+        dentist: { select: { firstName: true, lastName: true } },
+        treatments: { select: { procedure: true }, take: 1 }, // Take the primary procedure
+      },
+      orderBy: { arrivedAt: "asc" },
+    }),
+    prisma.waitlistEntry.findMany({
+      where: { clinicId, status: "WAITING" },
+      include: { 
+        patient: { select: { firstName: true, lastName: true } } 
+      },
+      orderBy: { createdAt: "asc" },
+    }),
+  ]);
+
+  const queue: QueueItem[] = [];
+
+  const formatTime = (d: Date) => d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: true });
+
+  appointments.forEach((a) => {
+    const arrivedAt = a.arrivedAt || a.scheduledAt;
+    const waitTime = Math.round((now.getTime() - arrivedAt.getTime()) / 60000);
+    
+    // Determine priority
+    const lowerNotes = (a.notes || "").toLowerCase();
+    const isUrgent = lowerNotes.includes("urgent") || lowerNotes.includes("emergency") || lowerNotes.includes("pain") || lowerNotes.includes("acil");
+
+    queue.push({
+      id: a.id,
+      patientName: `${a.patient.firstName} ${a.patient.lastName}`,
+      type: "APPOINTMENT",
+      status: a.status,
+      appointmentTime: formatTime(a.scheduledAt),
+      arrivalTime: formatTime(arrivedAt),
+      waitTime: Math.max(0, waitTime),
+      dentistName: `Dr. ${a.dentist.lastName}`,
+      procedure: a.treatments[0]?.procedure || a.type || "Check-up",
+      room: a.chairNo || "TBD",
+      priority: isUrgent ? "URGENT" : "NORMAL",
+      notes: a.notes || undefined
+    });
+  });
+
+  waitlist.forEach((w) => {
+    const waitTime = Math.round((now.getTime() - w.createdAt.getTime()) / 60000);
+    
+    const lowerNotes = (w.notes || "").toLowerCase();
+    const isUrgent = lowerNotes.includes("urgent") || lowerNotes.includes("emergency") || lowerNotes.includes("pain") || lowerNotes.includes("acil");
+
+    queue.push({
+      id: w.id,
+      patientName: `${w.patient.firstName} ${w.patient.lastName}`,
+      type: "WAITLIST",
+      status: "WAITING",
+      arrivalTime: formatTime(w.createdAt),
+      waitTime: Math.max(0, waitTime),
+      dentistName: "General Dentist",
+      procedure: "Walk-in Consultation",
+      room: "Waiting Area",
+      priority: isUrgent ? "URGENT" : "NORMAL",
+      notes: w.notes || undefined
+    });
+  });
+
+  // Sort by wait time (longest first)
+  return queue.sort((a, b) => b.waitTime - a.waitTime);
 }

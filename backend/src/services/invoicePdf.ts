@@ -19,7 +19,7 @@ export async function generateInvoicePdf(clinicId: string, invoiceId: string): P
 
   const money = (v: string | number): string => {
     const num = typeof v === "string" ? Number(v) : v;
-    return `PHP ${num.toLocaleString("en-PH", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    return `₱${num.toLocaleString("en-PH", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   };
 
   const invDate = new Date(invoice.createdAt).toLocaleString("en-PH", {
@@ -161,10 +161,12 @@ export async function generateInvoicePdf(clinicId: string, invoiceId: string): P
   });
 
   let watermarkOpts: any = undefined;
-  if (invoice.status === "UNPAID") {
-    watermarkOpts = { text: "UNPAID", color: "red", opacity: 0.1, bold: true, italics: false };
-  } else if (invoice.status === "VOID" || invoice.status === "CANCELLED") {
-    watermarkOpts = { text: invoice.status, color: "red", opacity: 0.2, bold: true, italics: false };
+  if (invoice.status === "UNPAID" || invoice.status === "PARTIAL") {
+    watermarkOpts = { text: "DRAFT / UNPAID", color: "#ef4444", opacity: 0.08, bold: true };
+  } else if (invoice.status === "VOID") {
+    watermarkOpts = { text: "VOID / CANCELLED", color: "#64748b", opacity: 0.1, bold: true };
+  } else if (invoice.status === "PAID") {
+    watermarkOpts = { text: "OFFICIAL RECEIPT - PAID", color: "#10b981", opacity: 0.05, bold: true };
   }
 
   const doc: TDocumentDefinitions = {

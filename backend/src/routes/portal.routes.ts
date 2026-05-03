@@ -5,6 +5,7 @@ import {
   availabilityHandler,
   bookHandler,
   cancelAppointmentHandler,
+  chartHandler,
   dentistsHandler,
   historyHandler,
   homeHandler,
@@ -65,6 +66,7 @@ portalRouter.get("/availability", asyncHandler(availabilityHandler));
 portalRouter.post("/appointments", asyncHandler(bookHandler));
 portalRouter.get("/appointments", asyncHandler(myAppointmentsHandler));
 portalRouter.post("/appointments/:id/cancel", asyncHandler(cancelAppointmentHandler));
+portalRouter.get("/chart", asyncHandler(chartHandler));
 portalRouter.get("/history", asyncHandler(historyHandler));
 portalRouter.get("/medical-history", asyncHandler(medicalHistoryGetHandler));
 portalRouter.put("/medical-history", asyncHandler(medicalHistoryUpdateHandler));

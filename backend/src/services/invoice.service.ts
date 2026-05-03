@@ -16,12 +16,14 @@ const MONEY_SCALE = 100;
 type PhDiscountPatient = { isSeniorCitizen: boolean; pwdIdNo: string | null };
 
 /** RA 10754 (PWD) / RA 9994 (senior): uygunlukta alt toplam üzerinden %20’ye kadar taban indirim. */
+/*
 function _phStatutoryDiscountCents(subtotalCents: number, p: PhDiscountPatient): number {
-  const pwdOk
+  const pwdOk = (p.pwdIdNo?.trim().length ?? 0) > 0;
   const seniorOk = p.isSeniorCitizen;
   if (!pwdOk && !seniorOk) return 0;
   return Math.floor(subtotalCents * 0.2);
 }
+*/
 
 async function loadPatientDiscountFlags(
   clinicId: string,
@@ -126,7 +128,24 @@ const publicSelect = {
 
 type InvoiceRow = Prisma.InvoiceGetPayload<{ select: typeof publicSelect }>;
 
-async function loadTreatments(appointmentId: string | null) {
+async function loadTreatments(invoiceId: string, appointmentId: string | null) {
+  // Try to load from snapshot (InvoiceItem) first
+  const items = await prisma.invoiceItem.findMany({
+    where: { invoiceId },
+    orderBy: { id: "asc" },
+  });
+  if (items.length > 0) {
+    return items.map(i => ({
+      id: i.id,
+      procedure: i.procedure,
+      quantity: i.quantity,
+      unitPrice: i.unitPrice,
+      toothIds: [] as string[], // We don't store toothIds in InvoiceItem yet, maybe we should?
+      notes: null as string | null,
+    }));
+  }
+
+  // Fallback to live treatments (for backward compatibility during migration)
   if (!appointmentId) return [];
   return prisma.treatment.findMany({
     where: { appointmentId },
@@ -263,7 +282,7 @@ export async function listInvoices(
   });
 
   const dtos = await Promise.all(
-    rows.map(async (r) => toDto(r, await loadTreatments(r.appointmentId))),
+    rows.map(async (r) => toDto(r, await loadTreatments(r.id, r.appointmentId))),
   );
   return dtos;
 }
@@ -274,7 +293,7 @@ export async function getInvoice(clinicId: string, id: string): Promise<InvoiceD
     select: publicSelect,
   });
   if (!row) throw new AppError("Invoice not found", 404, "INVOICE_NOT_FOUND");
-  const treatments = await loadTreatments(row.appointmentId);
+  const treatments = await loadTreatments(row.id, row.appointmentId);
   return toDto(row, treatments);
 }
 
@@ -317,30 +336,47 @@ export async function createInvoice(
 
   const invoice = await prisma.$transaction(async (tx) => {
     const orNumber = await nextOrNumber(tx, clinicId);
-      return tx.invoice.create({
-        data: {
-          clinicId,
-          patientId: appointment.patientId,
-          appointmentId: appointment.id,
-          orNumber,
-          subtotal: fromCents(subtotalCents),
-          discount: fromCents(discountCents),
-          vatRate: new Prisma.Decimal(vatRate.toFixed(4)),
-          vatAmount: fromCents(vatAmountCents),
-          seniorDiscount: fromCents(seniorDiscountCents),
-          pwdDiscount: fromCents(pwdDiscountCents),
-          vatExempt,
-          total: fromCents(totalCents),
-          status: InvoiceStatus.UNPAID,
-          notes: body.notes ?? null,
-          dueDate: body.dueDate,
-        },
-
-      select: publicSelect,
+    const inv = await tx.invoice.create({
+      data: {
+        clinicId,
+        patientId: appointment.patientId,
+        appointmentId: appointment.id,
+        orNumber,
+        subtotal: fromCents(subtotalCents),
+        discount: fromCents(discountCents),
+        vatRate: new Prisma.Decimal(vatRate.toFixed(4)),
+        vatAmount: fromCents(vatAmountCents),
+        seniorDiscount: fromCents(seniorDiscountCents),
+        pwdDiscount: fromCents(pwdDiscountCents),
+        vatExempt,
+        total: fromCents(totalCents),
+        status: InvoiceStatus.UNPAID,
+        notes: body.notes ?? null,
+        dueDate: body.dueDate,
+      },
     });
+
+    // Create Snapshots
+    const treatmentRows = await tx.treatment.findMany({
+      where: { appointmentId: appointment.id },
+    });
+    await tx.invoiceItem.createMany({
+      data: treatmentRows.map((t) => ({
+        invoiceId: inv.id,
+        procedure: t.procedure,
+        quantity: t.quantity,
+        unitPrice: t.unitPrice,
+        total: fromCents(toCents(t.unitPrice) * t.quantity),
+      })),
+    });
+
+    return tx.invoice.findUnique({
+      where: { id: inv.id },
+      select: publicSelect,
+    }) as Promise<InvoiceRow>;
   });
 
-  return toDto(invoice, await loadTreatments(invoice.appointmentId));
+  return toDto(invoice, await loadTreatments(invoice.id, invoice.appointmentId));
 }
 
 export async function updateInvoice(
@@ -440,7 +476,7 @@ export async function finalizeTreatmentsToInvoice(
     const totalCents = Math.max(0, subtotalCents - discountCents + vatAmountCents);
     const created = await prisma.$transaction(async (tx) => {
       const orNumber = await nextOrNumber(tx, clinicId);
-      return tx.invoice.create({
+      const inv = await tx.invoice.create({
         data: {
           clinicId,
           patientId: appt.patientId,
@@ -456,10 +492,28 @@ export async function finalizeTreatmentsToInvoice(
           total: fromCents(totalCents),
           status: InvoiceStatus.UNPAID,
         },
-        select: publicSelect,
       });
+
+      // Create Snapshots
+      const treatmentRows = await tx.treatment.findMany({
+        where: { appointmentId: appt.id },
+      });
+      await tx.invoiceItem.createMany({
+        data: treatmentRows.map((t) => ({
+          invoiceId: inv.id,
+          procedure: t.procedure,
+          quantity: t.quantity,
+          unitPrice: t.unitPrice,
+          total: fromCents(toCents(t.unitPrice) * t.quantity),
+        })),
+      });
+
+      return tx.invoice.findUnique({
+        where: { id: inv.id },
+        select: publicSelect,
+      }) as Promise<InvoiceRow>;
     });
-return toDto(created, await loadTreatments(created.appointmentId));
+    return toDto(created, await loadTreatments(created.id, created.appointmentId));
   }
 
   const discountCents = Math.min(
@@ -477,20 +531,37 @@ return toDto(created, await loadTreatments(created.appointmentId));
       ? InvoiceStatus.PARTIAL
       : InvoiceStatus.UNPAID;
 
-  await prisma.invoice.update({
-    where: { id: existing.id },
-    data: {
-      subtotal: fromCents(subtotalCents),
-      discount: fromCents(discountCents),
-      vatRate: new Prisma.Decimal(vatRate.toFixed(4)),
-      vatAmount: fromCents(vatAmountCents),
-      seniorDiscount: fromCents(seniorDiscountCents),
-      pwdDiscount: fromCents(pwdDiscountCents),
-      vatExempt,
-      total: fromCents(totalCents),
-      status,
-      paidAt: fullyPaid ? new Date() : null,
-    },
+  await prisma.$transaction(async (tx) => {
+    await tx.invoice.update({
+      where: { id: existing.id },
+      data: {
+        subtotal: fromCents(subtotalCents),
+        discount: fromCents(discountCents),
+        vatRate: new Prisma.Decimal(vatRate.toFixed(4)),
+        vatAmount: fromCents(vatAmountCents),
+        seniorDiscount: fromCents(seniorDiscountCents),
+        pwdDiscount: fromCents(pwdDiscountCents),
+        vatExempt,
+        total: fromCents(totalCents),
+        status,
+        paidAt: fullyPaid ? new Date() : null,
+      },
+    });
+
+    // Refresh Snapshots
+    await tx.invoiceItem.deleteMany({ where: { invoiceId: existing.id } });
+    const treatmentRows = await tx.treatment.findMany({
+      where: { appointmentId: appt.id },
+    });
+    await tx.invoiceItem.createMany({
+      data: treatmentRows.map((t) => ({
+        invoiceId: existing.id,
+        procedure: t.procedure,
+        quantity: t.quantity,
+        unitPrice: t.unitPrice,
+        total: fromCents(toCents(t.unitPrice) * t.quantity),
+      })),
+    });
   });
 
   return getInvoice(clinicId, existing.id);
@@ -653,25 +724,29 @@ export async function createPaymongoCheckout(
  * Basit sürüm: externalRef eşleşen invoice'ı PAID olarak işaretle.
  */
 export async function handlePaymongoWebhook(payload: unknown): Promise<void> {
-  if (typeof payload === "object" && payload !== null) {
-    const p = payload as Record<string, unknown>;
-    if (p.simulate === true && typeof p.invoiceId === "string") {
-      const invoice = await prisma.invoice.findFirst({
-        where: { id: p.invoiceId },
-        select: { id: true, clinicId: true },
-      });
-      if (!invoice) return;
-      const full = await getInvoice(invoice.clinicId, invoice.id);
-      const balance = Number(full.balance);
-      if (balance <= 0) return;
-      await addPayment(
-        invoice.clinicId,
-        invoice.id,
-        { amount: balance, method: "GCASH", referenceNo: "paymongo-simulate" },
-        "paymongo-simulate",
-      );
+  if (typeof payload !== "object" || payload === null) {
+    return;
+  }
+
+  // Idempotency: PayMongo Event ID üzerinden kontrol (evt_...)
+  const eventId = extractProviderEventId(payload);
+  if (eventId) {
+    const existing = await prisma.webhookEvent.findUnique({
+      where: { providerEventId: eventId },
+    });
+    if (existing) {
+      console.log(`[webhook] Skipping duplicate event: ${eventId}`);
       return;
     }
+    // Event'i kaydet (status: RECEIVED)
+    await prisma.webhookEvent.create({
+      data: {
+        providerEventId: eventId,
+        eventType: extractEventType(payload) || "unknown",
+        payload: payload as any,
+        status: "RECEIVED",
+      },
+    });
   }
 
   const ref = extractExternalRef(payload);
@@ -685,12 +760,48 @@ export async function handlePaymongoWebhook(payload: unknown): Promise<void> {
   const full = await getInvoice(invoice.clinicId, invoice.id);
   const balance = Number(full.balance);
   if (balance <= 0) return;
-  await addPayment(
-    invoice.clinicId,
-    invoice.id,
-    { amount: balance, method: "GCASH", referenceNo: ref },
-    "paymongo-webhook",
-  );
+
+  try {
+    await addPayment(
+      invoice.clinicId,
+      invoice.id,
+      { amount: balance, method: "GCASH", referenceNo: ref },
+      "paymongo-webhook",
+    );
+
+    // Başarıyla işlendiğinde güncelle
+    if (eventId) {
+      await prisma.webhookEvent.update({
+        where: { providerEventId: eventId },
+        data: { status: "PROCESSED", processedAt: new Date() },
+      });
+    }
+  } catch (err) {
+    if (eventId) {
+      await prisma.webhookEvent.update({
+        where: { providerEventId: eventId },
+        data: { status: "FAILED", error: err instanceof Error ? err.message : "unknown error" },
+      });
+    }
+    throw err;
+  }
+}
+
+function extractProviderEventId(payload: unknown): string | null {
+  if (typeof payload !== "object" || payload === null) return null;
+  const any = payload as Record<string, unknown>;
+  const data = any.data as Record<string, unknown> | undefined;
+  if (data && typeof data.id === "string" && data.id.startsWith("evt_")) return data.id;
+  return null;
+}
+
+function extractEventType(payload: unknown): string | null {
+  if (typeof payload !== "object" || payload === null) return null;
+  const any = payload as Record<string, unknown>;
+  const data = any.data as Record<string, unknown> | undefined;
+  const attributes = data?.attributes as Record<string, unknown> | undefined;
+  if (typeof attributes?.type === "string") return attributes.type;
+  return null;
 }
 
 function extractExternalRef(payload: unknown): string | null {

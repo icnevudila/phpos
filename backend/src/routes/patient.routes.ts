@@ -16,6 +16,7 @@ import {
   listPatientsHandler,
   updatePatientHandler,
   uploadFileHandler,
+  uploadFileSupabaseMetadataHandler,
   updatePatientFileAnnotationsHandler,
 } from "../controllers/patient.controller.js";
 import {
@@ -69,6 +70,7 @@ patientRouter.put(
   asyncHandler(upsertToothHandler),
 );
 
+patientRouter.post("/:id/files/supabase", asyncHandler(uploadFileSupabaseMetadataHandler));
 patientRouter.post("/:id/files", upload.single("file"), asyncHandler(uploadFileHandler));
 
 patientRouter.get("/:id/medical-history", asyncHandler(getMedicalHistoryHandler));

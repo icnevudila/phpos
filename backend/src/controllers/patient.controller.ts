@@ -3,6 +3,7 @@ import { z } from "zod";
 
 import {
   addPatientFile,
+  addPatientFileFromSupabase,
   createPatient,
   getPatientById,
   getPatientFileDownload,
@@ -107,6 +108,22 @@ export async function uploadFileHandler(req: Request, res: Response): Promise<vo
     mimetype: file.mimetype,
     size: file.size,
   });
+  const payload: ApiSuccess<typeof created> = { success: true, data: created };
+  res.status(201).json(payload);
+}
+
+export async function uploadFileSupabaseMetadataHandler(req: Request, res: Response): Promise<void> {
+  const id = z.string().min(1).parse(req.params.id);
+  const bodySchema = z.object({
+    fileName: z.string().min(1),
+    mimeType: z.string().min(1),
+    sizeBytes: z.number().int().positive(),
+    storageKey: z.string().min(1),
+    publicUrl: z.string().url(),
+  });
+
+  const parsed = bodySchema.parse(req.body);
+  const created = await addPatientFileFromSupabase(clinicId(req), id, parsed);
   const payload: ApiSuccess<typeof created> = { success: true, data: created };
   res.status(201).json(payload);
 }

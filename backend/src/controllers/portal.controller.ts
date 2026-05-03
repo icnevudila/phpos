@@ -11,6 +11,7 @@ import {
   bookPortalAppointment,
   cancelPortalAppointment,
   getPortalAvailability,
+  getPortalChart,
   getPortalHistory,
   getPortalHome,
   getPortalMe,
@@ -222,6 +223,12 @@ export async function cancelAppointmentHandler(req: Request, res: Response): Pro
 export async function historyHandler(req: Request, res: Response): Promise<void> {
   const { patientId } = bearerPatient(req);
   const data = await getPortalHistory(patientId);
+  res.json({ success: true, data });
+}
+
+export async function chartHandler(req: Request, res: Response): Promise<void> {
+  const { patientId } = bearerPatient(req);
+  const data = await getPortalChart(patientId);
   res.json({ success: true, data });
 }
 

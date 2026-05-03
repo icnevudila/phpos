@@ -264,7 +264,7 @@ function PhaseCard({
   );
 }
 
-export default function TreatmentTimeline({
+export function TreatmentTimeline({
   phases = [],
   onPhaseUpdate,
   onPhaseReorder,

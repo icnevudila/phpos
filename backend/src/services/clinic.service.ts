@@ -9,6 +9,9 @@ export interface ClinicPublic {
   city: string | null;
   phone: string | null;
   logoUrl: string | null;
+  tin: string | null;
+  birPtuNo: string | null;
+  birAccreditationNo: string | null;
   subscriptionPlan: string;
   createdAt: Date;
 }
@@ -24,6 +27,9 @@ export async function getClinicById(clinicId: string): Promise<ClinicPublic> {
       city: true,
       phone: true,
       logoUrl: true,
+      tin: true,
+      birPtuNo: true,
+      birAccreditationNo: true,
       subscriptionPlan: true,
       createdAt: true,
     },
@@ -40,6 +46,9 @@ export async function updateClinic(
     city?: string | null;
     phone?: string | null;
     logoUrl?: string | null;
+    tin?: string | null;
+    birPtuNo?: string | null;
+    birAccreditationNo?: string | null;
   },
 ): Promise<ClinicPublic> {
   const c = await prisma.clinic.update({
@@ -50,6 +59,9 @@ export async function updateClinic(
       ...(data.city !== undefined ? { city: data.city?.trim() || null } : {}),
       ...(data.phone !== undefined ? { phone: data.phone?.trim() || null } : {}),
       ...(data.logoUrl !== undefined ? { logoUrl: data.logoUrl?.trim() || null } : {}),
+      ...(data.tin !== undefined ? { tin: data.tin?.trim() || null } : {}),
+      ...(data.birPtuNo !== undefined ? { birPtuNo: data.birPtuNo?.trim() || null } : {}),
+      ...(data.birAccreditationNo !== undefined ? { birAccreditationNo: data.birAccreditationNo?.trim() || null } : {}),
     },
     select: {
       id: true,
@@ -59,6 +71,9 @@ export async function updateClinic(
       city: true,
       phone: true,
       logoUrl: true,
+      tin: true,
+      birPtuNo: true,
+      birAccreditationNo: true,
       subscriptionPlan: true,
       createdAt: true,
     },

@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import PerioGraphicVisualizer, { type PerioPainPointId } from './PerioGraphicVisualizer';
+import { PerioGraphicVisualizer, type PerioPainPointId } from './PerioGraphicVisualizer';
 import type { PerioSiteDto, PerioToothDto } from '../../services/perio';
 
 export interface PeriodontalChartProps {
@@ -223,7 +223,7 @@ function toothMatchesSelection(
   return String(selectedToothId) === toothKey;
 }
 
-export default function PeriodontalChart(props: PeriodontalChartProps): JSX.Element {
+export function PeriodontalChart(props: PeriodontalChartProps): JSX.Element {
   const teeth = resolveTeeth(props);
   const className = typeof props.className === 'string' ? props.className : '';
   const selectedToothId = props.selectedToothId as string | number | null | undefined;

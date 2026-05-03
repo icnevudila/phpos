@@ -129,6 +129,8 @@ enum NotificationKind {
   PAYMENT_RECEIVED
   BALANCE_DUE
   GENERIC
+  MARKETING
+  BROADCAST
 }
 
 /// Periodontal muayene için diş başına 6 site kodu.
@@ -160,6 +162,10 @@ model Clinic {
   birPtuNo         String?
   /// BIR Accreditation no.
   birAccreditationNo String?
+  /// PhilHealth Accreditation No. (HCI)
+  philhealthAccreditationNo String?
+  /// UI Theme color (Tailwind color name or hex)
+  themeColor       String?  @default("emerald")
   subscriptionPlan SubscriptionPlan @default(STARTER)
   createdAt        DateTime         @default(now())
 
@@ -232,6 +238,8 @@ model User {
   clinicId         String
   /// Giriş e-postası (tenant genelinde tekil — /auth/login için)
   email            String   @unique
+  /// Supabase Auth ID eşleşmesi için (UUID)
+  supabaseId       String?  @unique @map("supabase_id")
   passwordHash     String
   role             UserRole
   firstName        String
@@ -242,6 +250,7 @@ model User {
   ptrNumber        String?
   s2License        String?
   tinNumber        String?
+  philhealthAccreditationNo String?
   /// Refresh JWT içindeki `sid` ile eşleşir; logout’ta temizlenir
   refreshSessionId String?  @unique @map("refresh_session_id")
   createdAt        DateTime @default(now())
@@ -257,6 +266,7 @@ model User {
   perioExams               PerioExam[]      @relation("PerioExamExaminer")
   auditLogs                AuditLog[]
   phiAccessLogs            PhiAccessLog[]
+  inventoryTransactions    InventoryTransaction[]
 
   @@index([clinicId])
   @@index([phone])
@@ -276,6 +286,8 @@ model Patient {
   nationality            String?      @default("Filipino")
   occupation             String?
   phone                  String
+  /// Supabase Auth ID eşleşmesi için (UUID)
+  supabaseId             String?      @unique @map("supabase_id")
   email                  String?
   address                String?
   city                   String?
@@ -509,6 +521,8 @@ model Treatment {
   procedure     String
   quantity      Int      @default(1)
   unitPrice     Decimal  @db.Decimal(12, 2)
+  icd10Code     String?  @db.VarChar(10)
+  rvuCode       String?  @db.VarChar(10)
   notes         String?
   createdAt     DateTime @default(now())
 
@@ -554,6 +568,7 @@ model Invoice {
   appointment Appointment? @relation(fields: [appointmentId], references: [id], onDelete: SetNull)
 
   payments      Payment[]
+  items         InvoiceItem[]
   notifications Notification[]
   hmoClaims     HmoClaim[]
 
@@ -572,6 +587,19 @@ model OrSequence {
 
   @@unique([clinicId, year])
   @@index([clinicId])
+}
+
+model InvoiceItem {
+  id        String  @id @default(cuid())
+  invoiceId String
+  procedure String
+  quantity  Int
+  unitPrice Decimal @db.Decimal(12, 2)
+  total     Decimal @db.Decimal(12, 2)
+
+  invoice Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  @@index([invoiceId])
 }
 
 model Payment {
@@ -604,7 +632,8 @@ model Inventory {
   expiryDate   DateTime?
   updatedAt    DateTime  @updatedAt
 
-  clinic Clinic @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  clinic       Clinic                 @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  transactions InventoryTransaction[]
 
   @@index([clinicId])
   @@index([category])
@@ -911,4 +940,37 @@ model PrescriptionItem {
   prescription Prescription @relation(fields: [prescriptionId], references: [id], onDelete: Cascade)
 
   @@index([prescriptionId])
+}
+
+model WebhookEvent {
+  id              String   @id @default(cuid())
+  provider        String // e.g., PAYMONGO
+  providerEventId String   @unique
+  status          String // PENDING, PROCESSED, FAILED
+  payload         Json
+  processedAt     DateTime?
+  createdAt       DateTime  @default(now())
+}
+
+enum InventoryTransactionType {
+  IN
+  OUT
+  ADJUSTMENT
+}
+
+model InventoryTransaction {
+  id          String                   @id @default(cuid())
+  inventoryId String
+  userId      String?
+  type        InventoryTransactionType
+  quantity    Int
+  reason      String?
+  referenceId String?
+  createdAt   DateTime                 @default(now())
+
+  inventory Inventory @relation(fields: [inventoryId], references: [id], onDelete: Cascade)
+  user      User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([inventoryId])
+  @@index([userId])
 }

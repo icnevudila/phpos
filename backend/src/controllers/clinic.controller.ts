@@ -17,6 +17,9 @@ const patchSchema = z.object({
   city: z.string().max(120).nullable().optional(),
   phone: z.string().max(40).nullable().optional(),
   logoUrl: z.union([z.string().url().max(2000), z.literal("")]).nullable().optional(),
+  tin: z.string().max(30).nullable().optional(),
+  birPtuNo: z.string().max(50).nullable().optional(),
+  birAccreditationNo: z.string().max(50).nullable().optional(),
 });
 
 export async function getClinicHandler(req: Request, res: Response): Promise<void> {

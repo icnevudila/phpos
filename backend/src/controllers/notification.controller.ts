@@ -7,6 +7,7 @@ import {
   runDailyReminderNow,
   runSoonReminderNow,
 } from "../services/notification/scheduler.js";
+import { sendBulkSms } from "../services/notification/bulkSms.service.js";
 import { AppError } from "../utils/errors.js";
 
 function clinicId(req: Request): string {
@@ -29,6 +30,8 @@ const listQuerySchema = z.object({
       "PAYMENT_RECEIVED",
       "BALANCE_DUE",
       "GENERIC",
+      "MARKETING",
+      "BROADCAST",
     ])
     .optional(),
   limit: z.coerce.number().int().min(1).max(200).default(50),
@@ -92,4 +95,21 @@ export async function triggerSoonReminderHandler(req: Request, res: Response): P
   void clinicId(req);
   const summary = await runSoonReminderNow();
   res.json({ success: true, data: summary });
+}
+
+const sendBulkSchema = z.object({
+  message: z.string().min(1).max(1000),
+  patientIds: z.array(z.string()).optional(),
+  kind: z.enum(["MARKETING", "BROADCAST"]).default("MARKETING"),
+});
+
+export async function sendBulkSmsHandler(req: Request, res: Response): Promise<void> {
+  const body = sendBulkSchema.parse(req.body);
+  const result = await sendBulkSms({
+    clinicId: clinicId(req),
+    message: body.message,
+    patientIds: body.patientIds,
+    kind: body.kind as any,
+  });
+  res.json({ success: true, data: result });
 }

@@ -8,8 +8,10 @@ import {
   getInventoryAlerts,
   getInventoryItem,
   listInventory,
+  listInventory,
   updateInventoryItem,
 } from "../services/inventory.service.js";
+import { listInventoryHistory, logInventoryTransaction } from "../services/inventoryAudit.service.js";
 import { AppError } from "../utils/errors.js";
 import {
   adjustInventoryBodySchema,
@@ -63,6 +65,21 @@ export async function deleteInventoryHandler(req: Request, res: Response): Promi
 export async function adjustInventoryHandler(req: Request, res: Response): Promise<void> {
   const id = z.string().min(1).parse(req.params.id);
   const body = adjustInventoryBodySchema.parse(req.body);
-  const item = await adjustInventory(clinicId(req), id, body);
-  res.json({ success: true, data: item });
+  
+  // Use auditing service instead of basic adjust
+  const { inventory } = await logInventoryTransaction({
+    inventoryId: id,
+    userId: req.user?.id,
+    type: body.quantity >= 0 ? "IN" : "OUT",
+    quantity: body.quantity,
+    reason: body.reason || "Manual Adjustment",
+  });
+
+  res.json({ success: true, data: inventory });
+}
+
+export async function getInventoryHistoryHandler(req: Request, res: Response): Promise<void> {
+  const id = z.string().min(1).parse(req.params.id);
+  const history = await listInventoryHistory(id);
+  res.json({ success: true, data: history });
 }

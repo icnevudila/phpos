@@ -162,7 +162,7 @@ function PainMarker({
   );
 }
 
-export default function TMJFaceAnatomy({
+export function TMJFaceAnatomy({
   selectedPoints = [],
   onPointSelect,
   onPointClear,

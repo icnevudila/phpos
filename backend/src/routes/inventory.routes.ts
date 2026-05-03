@@ -9,6 +9,7 @@ import {
   getInventoryHandler,
   listInventoryHandler,
   updateInventoryHandler,
+  getInventoryHistoryHandler,
 } from "../controllers/inventory.controller.js";
 import { authenticate } from "../middleware/authMiddleware.js";
 import { roleGuard } from "../middleware/roleGuard.js";
@@ -36,3 +37,4 @@ inventoryRouter.post(
   roleGuard(writeRoles),
   asyncHandler(adjustInventoryHandler),
 );
+inventoryRouter.get("/:id/history", asyncHandler(getInventoryHistoryHandler));

@@ -29,11 +29,9 @@ export async function getPortalMedicalHistory(patientId: string) {
       smoker: true,
       alcohol: true,
       recreationalDrug: true,
-      womenIsPregnant: true,
-      womenIsNursing: true,
-      womenTakingBirthControl: true,
-      bleedingIssues: true,
-      bleedingIssuesDetails: true,
+      isPregnant: true,
+      isBreastfeeding: true,
+      usesContraceptive: true,
     },
   });
   return row;
@@ -566,4 +564,19 @@ export async function getPortalHistory(patientId: string): Promise<PortalHistory
       outstanding: outstanding.toFixed(2),
     },
   };
+}
+
+export async function getPortalChart(patientId: string) {
+  const teeth = await prisma.tooth.findMany({
+    where: { patientId },
+    select: {
+      toothNumber: true,
+      condition: true,
+      surfaces: true,
+      notes: true,
+      updatedAt: true,
+    },
+    orderBy: { toothNumber: "asc" },
+  });
+  return teeth;
 }

@@ -331,6 +331,34 @@ export async function updatePatientFileAnnotations(
   });
 }
 
+export async function addPatientFileFromSupabase(
+  clinicId: string,
+  patientId: string,
+  data: { fileName: string; mimeType: string; sizeBytes: number; storageKey: string; publicUrl: string }
+) {
+  await assertPatientInClinic(clinicId, patientId);
+
+  return prisma.patientFile.create({
+    data: {
+      clinicId,
+      patientId,
+      fileName: data.fileName,
+      mimeType: data.mimeType,
+      sizeBytes: data.sizeBytes,
+      storageKey: data.storageKey,
+      publicUrl: data.publicUrl,
+    },
+    select: {
+      id: true,
+      fileName: true,
+      mimeType: true,
+      sizeBytes: true,
+      publicUrl: true,
+      createdAt: true,
+    },
+  });
+}
+
 export async function addPatientFile(
   clinicId: string,
   patientId: string,

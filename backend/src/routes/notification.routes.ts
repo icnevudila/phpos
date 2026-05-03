@@ -6,6 +6,7 @@ import {
   sendTestSmsHandler,
   triggerDailyReminderHandler,
   triggerSoonReminderHandler,
+  sendBulkSmsHandler,
 } from "../controllers/notification.controller.js";
 import { authenticate } from "../middleware/authMiddleware.js";
 import { roleGuard } from "../middleware/roleGuard.js";
@@ -32,4 +33,10 @@ notificationRouter.post(
   "/cron/soon",
   roleGuard([UserRole.ADMIN]),
   asyncHandler(triggerSoonReminderHandler),
+);
+
+notificationRouter.post(
+  "/bulk",
+  roleGuard([UserRole.ADMIN]),
+  asyncHandler(sendBulkSmsHandler),
 );

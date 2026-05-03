@@ -10,7 +10,7 @@ export const auditLogMiddleware = async (req: Request, res: Response, next: Next
       if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method)) {
         try {
           const userId = (req as any).user?.id;
-          const _clinicId = (req as any).user?.clinicId;
+          // const _clinicId = (req as any).user?.clinicId;
           const statusCode = res.statusCode;
 
           // Not: İleride Prisma şemasına AuditLog tablosunu (GAP-009) eklediğimizde
