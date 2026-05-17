@@ -1,19 +1,9 @@
 import { expect, test } from "@playwright/test";
 
-const email = process.env.E2E_EMAIL;
-const password = process.env.E2E_PASSWORD;
-const patientId = process.env.E2E_PATIENT_ID;
-const hasCreds = Boolean(email && password && patientId);
+const patientId = process.env.E2E_PATIENT_ID ?? "demo-patient-1";
 
 test.describe("Perio chart ↔ grid sync", () => {
-  test.skip(!hasCreds, "Set E2E_EMAIL, E2E_PASSWORD, and E2E_PATIENT_ID");
-
   test.beforeEach(async ({ page }) => {
-    await page.goto("/login");
-    await page.getByTestId("login-email").fill(email!);
-    await page.getByTestId("login-password").fill(password!);
-    await page.getByTestId("login-submit").click();
-    await page.waitForURL(/\/(dashboard|appointments)/, { timeout: 30_000 });
     await page.goto(`/patients/${patientId}?tab=perio`);
     await page.getByTestId("perio-tooth-btn-3").waitFor({ timeout: 20_000 });
   });

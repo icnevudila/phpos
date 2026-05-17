@@ -1,7 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
 
-const ADMIN_EMAIL = process.env.E2E_EMAIL ?? "admin@dentease.ph";
-const ADMIN_PASSWORD = process.env.E2E_PASSWORD ?? "admin123";
 const PORTAL_SLUG = process.env.E2E_PORTAL_SLUG ?? "iloilo-demo";
 const DEMO_PATIENT_ID = process.env.E2E_PATIENT_ID ?? "demo-patient-1";
 const DEMO_INVOICE_ID = process.env.E2E_INVOICE_ID ?? "demo-inv-1";
@@ -68,9 +66,9 @@ async function assertPageHealthy(page: Page, path: string, allowLoginRedirect = 
   };
   page.on("console", onConsole);
 
-  const response = await page.goto(path, { waitUntil: "domcontentloaded", timeout: 45_000 });
-  await page.waitForLoadState("networkidle", { timeout: 20_000 }).catch(() => undefined);
-  await page.waitForTimeout(400);
+  const response = await page.goto(path, { waitUntil: "domcontentloaded", timeout: 60_000 });
+  await page.locator("body").waitFor({ state: "visible", timeout: 15_000 });
+  await page.waitForTimeout(600);
 
   const status = response?.status() ?? 0;
   expect(status, `${path} HTTP`).toBeLessThan(500);
@@ -97,26 +95,21 @@ async function assertPageHealthy(page: Page, path: string, allowLoginRedirect = 
   page.off("console", onConsole);
 }
 
-async function loginAsAdmin(page: Page): Promise<void> {
-  await page.goto("/login");
-  await page.getByTestId("login-email").fill(ADMIN_EMAIL);
-  await page.getByTestId("login-password").fill(ADMIN_PASSWORD);
-  await page.getByTestId("login-submit").click();
-  await page.waitForURL(/\/(dashboard|appointments|patients)/, { timeout: 45_000 });
-}
-
 test.describe("A–Z page audit — public", () => {
+  test.use({ storageState: { cookies: [], origins: [] } });
+  test.describe.configure({ mode: "parallel" });
+
   for (const { path, label } of PUBLIC_PAGES) {
     test(label, async ({ page }) => {
+      test.setTimeout(60_000);
       await assertPageHealthy(page, path, true);
     });
   }
 });
 
 test.describe("A–Z page audit — staff (admin)", () => {
-  test.beforeEach(async ({ page }) => {
-    await loginAsAdmin(page);
-  });
+  test.describe.configure({ mode: "serial" });
+  test.setTimeout(120_000);
 
   for (const { path, label } of STAFF_PAGES) {
     test(label, async ({ page }) => {
@@ -125,8 +118,8 @@ test.describe("A–Z page audit — staff (admin)", () => {
   }
 
   test("HMO claim detail (first from list)", async ({ page }) => {
-    await page.goto("/hmo-claims");
-    await page.waitForLoadState("networkidle", { timeout: 20_000 }).catch(() => undefined);
+    await page.goto("/hmo-claims", { waitUntil: "domcontentloaded" });
+    await page.locator("body").waitFor({ state: "visible" });
     const link = page.locator('a[href^="/hmo-claims/"]').first();
     const count = await link.count();
     test.skip(count === 0, "No HMO claims in seed data");

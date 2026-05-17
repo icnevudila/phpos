@@ -5,7 +5,8 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  workers: process.env.CI ? 1 : process.env.E2E_PAGES_AUDIT ? 1 : undefined,
+  timeout: process.env.E2E_PAGES_AUDIT ? 120_000 : 30_000,
   reporter: "list",
   use: {
     baseURL:
@@ -13,7 +14,18 @@ export default defineConfig({
       (process.env.CI ? "http://127.0.0.1:4173" : "http://localhost:5173"),
     trace: "on-first-retry",
   },
-  projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
+  projects: [
+    { name: "setup", testMatch: /auth\.setup\.ts/ },
+    {
+      name: "chromium",
+      testIgnore: /auth\.setup\.ts/,
+      use: {
+        ...devices["Desktop Chrome"],
+        storageState: "e2e/.auth/admin.json",
+      },
+      dependencies: ["setup"],
+    },
+  ],
   webServer: process.env.CI
     ? {
         command: "npm run preview -- --host 127.0.0.1 --port 4173",
