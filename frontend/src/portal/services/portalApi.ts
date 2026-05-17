@@ -1,7 +1,34 @@
+import axios from "axios";
 import { apiBaseUrl } from "../../services";
 
 const PORTAL_TOKEN_KEY = "dentease_portal_token";
 const PORTAL_PATIENT_KEY = "dentease_portal_patient";
+
+const portalApi = axios.create({
+  baseURL: `${apiBaseUrl}/portal`,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
+portalApi.interceptors.request.use((config) => {
+  const token = localStorage.getItem(PORTAL_TOKEN_KEY);
+  if (token && config.headers) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+portalApi.interceptors.response.use(
+  (response) => response.data.data,
+  (error) => {
+    const data = error.response?.data;
+    const message = data?.error || data?.message || error.message;
+    const code = data?.code || "PORTAL_ERROR";
+    const status = error.response?.status || 500;
+    throw new PortalApiError(message, code, status);
+  }
+);
 
 export interface PortalPatient {
   id: string;
@@ -116,42 +143,6 @@ export function hasPortalToken(): boolean {
   return Boolean(localStorage.getItem(PORTAL_TOKEN_KEY));
 }
 
-interface ApiEnvelopeSuccess<T> {
-  success: true;
-  data: T;
-}
-interface ApiEnvelopeFailure {
-  success: false;
-  error: string;
-  code: string;
-}
-
-async function portalFetch<T>(
-  path: string,
-  init: RequestInit = {},
-  auth = true,
-): Promise<T> {
-  const headers = new Headers(init.headers);
-  headers.set("Content-Type", "application/json");
-  if (auth) {
-    const token = localStorage.getItem(PORTAL_TOKEN_KEY);
-    if (token) headers.set("Authorization", `Bearer ${token}`);
-  }
-  const res = await fetch(`${apiBaseUrl}/portal${path}`, { ...init, headers });
-  const json = (await res.json().catch(() => ({}))) as
-    | ApiEnvelopeSuccess<T>
-    | ApiEnvelopeFailure;
-  if (!res.ok || !("success" in json) || !json.success) {
-    const err = json as ApiEnvelopeFailure;
-    throw new PortalApiError(
-      err?.error ?? `Request failed: ${res.status}`,
-      err?.code ?? "PORTAL_ERROR",
-      res.status,
-    );
-  }
-  return json.data;
-}
-
 export class PortalApiError extends Error {
   readonly code: string;
   readonly status: number;
@@ -164,7 +155,7 @@ export class PortalApiError extends Error {
 
 // Public
 export function resolveClinic(slug: string): Promise<PortalClinic> {
-  return portalFetch<PortalClinic>(`/clinics/${encodeURIComponent(slug)}`, {}, false);
+  return portalApi.get(`/clinics/${encodeURIComponent(slug)}`);
 }
 
 export interface RequestOtpResponse {
@@ -176,11 +167,20 @@ export interface RequestOtpResponse {
 }
 
 export function requestOtp(slug: string, phone: string): Promise<RequestOtpResponse> {
-  return portalFetch<RequestOtpResponse>(
-    "/auth/request-otp",
-    { method: "POST", body: JSON.stringify({ slug, phone }) },
-    false,
-  );
+  return portalApi.post("/auth/request-otp", { slug, phone });
+}
+
+export function registerPortalPatient(
+  slug: string,
+  body: {
+    phone: string;
+    firstName: string;
+    lastName: string;
+    email?: string;
+    birthDate?: string;
+  },
+): Promise<RequestOtpResponse> {
+  return portalApi.post("/auth/register", { slug, ...body });
 }
 
 export async function verifyOtp(
@@ -188,30 +188,28 @@ export async function verifyOtp(
   phone: string,
   code: string,
 ): Promise<{ token: string; patient: PortalPatient }> {
-  const data = await portalFetch<{ token: string; patient: PortalPatient }>(
+  const data = await portalApi.post<{ token: string; patient: PortalPatient }>(
     "/auth/verify-otp",
-    { method: "POST", body: JSON.stringify({ slug, phone, code }) },
-    false,
-  );
+    { slug, phone, code },
+  ) as any;
   savePortalSession(data.token, data.patient);
   return data;
 }
 
 // Protected
 export function fetchPortalHome(): Promise<PortalHome> {
-  return portalFetch<PortalHome>("/home");
+  return portalApi.get("/home");
 }
 
 export function fetchPortalDentists(): Promise<PortalDentist[]> {
-  return portalFetch<PortalDentist[]>("/dentists");
+  return portalApi.get("/dentists");
 }
 
 export function fetchPortalAvailability(
   dentistId: string,
   date: string,
 ): Promise<PortalAvailability> {
-  const q = new URLSearchParams({ dentistId, date }).toString();
-  return portalFetch<PortalAvailability>(`/availability?${q}`);
+  return portalApi.get("/availability", { params: { dentistId, date } });
 }
 
 export interface BookResult {
@@ -226,24 +224,19 @@ export function bookAppointment(body: {
   type?: string;
   notes?: string;
 }): Promise<BookResult> {
-  return portalFetch<BookResult>("/appointments", {
-    method: "POST",
-    body: JSON.stringify(body),
-  });
+  return portalApi.post("/appointments", body);
 }
 
 export function fetchPortalAppointments(): Promise<PortalAppointment[]> {
-  return portalFetch<PortalAppointment[]>("/appointments");
+  return portalApi.get("/appointments");
 }
 
 export function cancelPortalAppointment(id: string): Promise<{ cancelled: boolean }> {
-  return portalFetch<{ cancelled: boolean }>(`/appointments/${id}/cancel`, {
-    method: "POST",
-  });
+  return portalApi.post(`/appointments/${id}/cancel`);
 }
 
 export function fetchPortalHistory(): Promise<PortalHistory> {
-  return portalFetch<PortalHistory>("/history");
+  return portalApi.get("/history");
 }
 
 export interface PortalPatientFile {
@@ -256,19 +249,27 @@ export interface PortalPatientFile {
 }
 
 export function fetchPortalFiles(): Promise<PortalPatientFile[]> {
-  return portalFetch<PortalPatientFile[]>("/files");
+  return portalApi.get("/files");
 }
 
 export function getPortalInvoicePdfUrl(invoiceId: string): string {
   const token = localStorage.getItem(PORTAL_TOKEN_KEY);
-  const baseUrl = import.meta.env.VITE_API_URL ?? "http://localhost:3001/api";
-  return `${baseUrl}/portal/invoices/${invoiceId}/pdf?portalToken=${token}`;
+  return `${apiBaseUrl}/portal/invoices/${invoiceId}/pdf?portalToken=${token}`;
 }
 
 export function getPortalFileDownloadUrl(fileId: string): string {
   const token = localStorage.getItem(PORTAL_TOKEN_KEY);
-  const baseUrl = import.meta.env.VITE_API_URL ?? "http://localhost:3001/api";
-  return `${baseUrl}/portal/files/${fileId}/download?portalToken=${token}`;
+  return `${apiBaseUrl}/portal/files/${fileId}/download?portalToken=${encodeURIComponent(token ?? "")}`;
+}
+
+export interface PortalFileSignedUrl {
+  downloadUrl: string;
+  expiresAt: string;
+}
+
+/** Süre sınırlı HMAC indirme bağlantısı (img src / paylaşım). */
+export function fetchPortalFileSignedUrl(fileId: string): Promise<PortalFileSignedUrl> {
+  return portalApi.get(`/files/${encodeURIComponent(fileId)}/signed-url`);
 }
 
 /** PayMongo checkout — staff `/invoices` değil, portal JWT ile `/portal/invoices/...` */
@@ -280,18 +281,13 @@ export interface PortalPaymongoCheckout {
 }
 
 export function startPortalInvoicePaymongo(invoiceId: string): Promise<PortalPaymongoCheckout> {
-  return portalFetch<PortalPaymongoCheckout>(`/invoices/${encodeURIComponent(invoiceId)}/paymongo`, {
-    method: "POST",
-  });
+  return portalApi.post(`/invoices/${encodeURIComponent(invoiceId)}/paymongo`);
 }
 
 export function fetchPortalMedicalHistory(): Promise<any> {
-  return portalFetch<any>("/medical-history");
+  return portalApi.get("/medical-history");
 }
 
 export function updatePortalMedicalHistory(data: any): Promise<any> {
-  return portalFetch<any>("/medical-history", {
-    method: "PUT",
-    body: JSON.stringify(data),
-  });
+  return portalApi.put("/medical-history", data);
 }

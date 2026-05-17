@@ -1,5 +1,6 @@
 import { AppointmentStatus, Prisma } from "@prisma/client";
 
+import { dbTasks } from "../../lib/dbTasks.js";
 import { prisma } from "../../lib/prisma.js";
 import { AppError } from "../../utils/errors.js";
 
@@ -159,36 +160,38 @@ export async function getPortalHome(patientId: string): Promise<PortalHomeDto> {
 
   const now = manilaNow();
 
-  const [next, lastInvoice, unpaidCount] = await Promise.all([
-    prisma.appointment.findFirst({
-      where: {
-        patientId,
-        scheduledAt: { gte: now },
-        status: { in: [AppointmentStatus.PENDING, AppointmentStatus.CONFIRMED] },
-      },
-      orderBy: { scheduledAt: "asc" },
-      select: {
-        id: true,
-        scheduledAt: true,
-        type: true,
-        status: true,
-        dentist: { select: { firstName: true, lastName: true } },
-      },
-    }),
-    prisma.invoice.findFirst({
-      where: { patientId },
-      orderBy: { createdAt: "desc" },
-      select: {
-        id: true,
-        orNumber: true,
-        total: true,
-        status: true,
-        createdAt: true,
-        payments: { select: { amount: true } },
-      },
-    }),
-    prisma.invoice.count({ where: { patientId, status: { in: ["UNPAID", "PARTIAL"] } } }),
-  ]);
+  const [next, lastInvoice, unpaidCount] = await dbTasks([
+    () =>
+      prisma.appointment.findFirst({
+        where: {
+          patientId,
+          scheduledAt: { gte: now },
+          status: { in: [AppointmentStatus.PENDING, AppointmentStatus.CONFIRMED] },
+        },
+        orderBy: { scheduledAt: "asc" },
+        select: {
+          id: true,
+          scheduledAt: true,
+          type: true,
+          status: true,
+          dentist: { select: { firstName: true, lastName: true } },
+        },
+      }),
+    () =>
+      prisma.invoice.findFirst({
+        where: { patientId },
+        orderBy: { createdAt: "desc" },
+        select: {
+          id: true,
+          orNumber: true,
+          total: true,
+          status: true,
+          createdAt: true,
+          payments: { select: { amount: true } },
+        },
+      }),
+    () => prisma.invoice.count({ where: { patientId, status: { in: ["UNPAID", "PARTIAL"] } } }),
+  ] as const);
 
   const unpaidRemaining = (inv: typeof lastInvoice): string => {
     if (!inv) return "0";
@@ -494,37 +497,40 @@ export interface PortalHistoryDto {
 }
 
 export async function getPortalHistory(patientId: string): Promise<PortalHistoryDto> {
-  const [treatments, invoices, paidAllTimeAgg] = await Promise.all([
-    prisma.treatment.findMany({
-      where: { patientId },
-      orderBy: { createdAt: "desc" },
-      select: {
-        id: true,
-        createdAt: true,
-        procedure: true,
-        quantity: true,
-        unitPrice: true,
-        appointmentId: true,
-        dentist: { select: { firstName: true, lastName: true } },
-      },
-    }),
-    prisma.invoice.findMany({
-      where: { patientId },
-      orderBy: { createdAt: "desc" },
-      select: {
-        id: true,
-        orNumber: true,
-        status: true,
-        total: true,
-        createdAt: true,
-        payments: { select: { amount: true } },
-      },
-    }),
-    prisma.payment.aggregate({
-      where: { invoice: { patientId } },
-      _sum: { amount: true },
-    }),
-  ]);
+  const [treatments, invoices, paidAllTimeAgg] = await dbTasks([
+    () =>
+      prisma.treatment.findMany({
+        where: { patientId },
+        orderBy: { createdAt: "desc" },
+        select: {
+          id: true,
+          createdAt: true,
+          procedure: true,
+          quantity: true,
+          unitPrice: true,
+          appointmentId: true,
+          dentist: { select: { firstName: true, lastName: true } },
+        },
+      }),
+    () =>
+      prisma.invoice.findMany({
+        where: { patientId },
+        orderBy: { createdAt: "desc" },
+        select: {
+          id: true,
+          orNumber: true,
+          status: true,
+          total: true,
+          createdAt: true,
+          payments: { select: { amount: true } },
+        },
+      }),
+    () =>
+      prisma.payment.aggregate({
+        where: { invoice: { patientId } },
+        _sum: { amount: true },
+      }),
+  ] as const);
 
   const outstanding = invoices
     .filter((i) => i.status !== "PAID")

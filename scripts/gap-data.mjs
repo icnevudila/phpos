@@ -1,7 +1,7 @@
 /** Paylaşılan GAP / paket / EXT listesi — checklist + AGENT_STATUS.json için */
 export const GAPS = [
   { id: "GAP-001", title: "Signed URL for patient files", files: "backend/src/app.ts + patientFileStorage.ts", priority: "Kritik" },
-  { id: "GAP-002", title: "PayMongo webhook HMAC imza", files: "backend/src/utils/paymongoWebhook.ts + invoice.controller.ts", priority: "Kritik" },
+  { id: "GAP-002", title: "PayMongo webhook HMAC imza", files: "backend/src/services/invoice.service.ts", priority: "Kritik" },
   { id: "GAP-003", title: "`/auth/register` kilitle", files: "backend/src/routes/auth.routes.ts", priority: "Yüksek" },
   { id: "GAP-004", title: "Rate limiting (express-rate-limit)", files: "backend/src/app.ts", priority: "Yüksek" },
   { id: "GAP-005", title: "CORS allowlist", files: "backend/src/app.ts", priority: "Yüksek" },
@@ -119,14 +119,6 @@ export const GAPS = [
   { id: "GAP-130", title: "PHP ₱ format tutarlılığı", files: "tüm UI", priority: "Orta" },
 ];
 
-const SHARED_APP = new Set(["GAP-001", "GAP-004", "GAP-005"]);
-const SHARED_INVOICE_SVC = new Set(["GAP-002", "GAP-026", "GAP-027", "GAP-033"]);
-const SHARED_PATIENT_DETAIL = new Set(["GAP-023", "GAP-041", "GAP-058"]);
-const SHARED_APPOINTMENTS = new Set(["GAP-046", "GAP-048", "GAP-049", "GAP-093", "GAP-094"]);
-const SHARED_DASHBOARD = new Set(["GAP-025", "GAP-061", "GAP-062", "GAP-063", "GAP-064", "GAP-117"]);
-const SHARED_INVOICE_PAGE = new Set(["GAP-024", "GAP-033"]);
-const SHARED_HOME = new Set(["GAP-101", "GAP-102", "GAP-103", "GAP-104", "GAP-107", "GAP-108", "GAP-115"]);
-const SHARED_DEVICE = new Set(["GAP-105", "GAP-106", "GAP-114"]);
 
 export function parallelNote(id) {
   if (SHARED_APP.has(id)) return "`app.ts` — GAP-001,004,005 aynı dosya; **tek agent sırayla** veya tek PR.";
@@ -142,7 +134,7 @@ export function parallelNote(id) {
   return "**İzole** — diğer GAP ile dosya çakışması düşük (yine de merge öncesi `git pull`).";
 }
 
-export function promptFor(g) {
+function promptFor(g) {
   return [
     `Repo: filipin mvp. Görev: **${g.id}** — ${g.title}.`,
     `Kaynak: docs/GAP_ANALYSIS.md Bölüm 13 (satır tablosu). Hedef dosyalar: ${g.files}.`,

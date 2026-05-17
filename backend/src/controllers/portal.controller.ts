@@ -20,9 +20,44 @@ import {
   listPortalDentists,
   updatePortalMedicalHistory,
 } from "../services/portal/portalService.js";
+import { createPatient } from "../services/patient.service.js";
 import { createOtp, verifyOtp } from "../services/portal/otpService.js";
 import { AppError } from "../utils/errors.js";
-import { signPortalToken } from "../utils/portalJwt.js";
+import { createPortalFileDownloadToken, verifyPortalFileDownloadToken } from "../utils/portalFileToken.js";
+import { signPortalToken, verifyPortalToken } from "../utils/portalJwt.js";
+
+async function sendPortalOtpForPatient(
+  clinic: { id: string; name: string },
+  patient: { id: string },
+  phoneE164: string,
+): Promise<{
+  sent: boolean;
+  phone: string;
+  expiresAt: string;
+  provider: string;
+  cooldownSec: number;
+  devCode?: string;
+}> {
+  const { code, expiresAt } = await createOtp(clinic.id, phoneE164);
+  const message = `${clinic.name}: OTP ${code}. Valid for 5 minutes. Do not share.`;
+  const smsResult = await sendSMS({
+    clinicId: clinic.id,
+    patientId: patient.id,
+    kind: "GENERIC",
+    to: phoneE164,
+    message,
+  });
+  const debugExposeOtp =
+    process.env.NODE_ENV !== "production" && !process.env.SEMAPHORE_API_KEY;
+  return {
+    sent: true,
+    phone: phoneE164,
+    expiresAt: expiresAt.toISOString(),
+    provider: smsResult.status,
+    cooldownSec: 30,
+    ...(debugExposeOtp ? { devCode: code } : {}),
+  };
+}
 
 function bearerPatient(req: Request): { patientId: string; clinicId: string } {
   if (!req.portal) throw new AppError("Unauthorized", 401, "UNAUTHORIZED");
@@ -63,30 +98,55 @@ export async function requestOtpHandler(req: Request, res: Response): Promise<vo
     return;
   }
 
-  const { code, expiresAt } = await createOtp(clinic.id, normalized.e164);
-  const message = `${clinic.name}: OTP ${code}. Valid for 5 minutes. Do not share.`;
-  const smsResult = await sendSMS({
-    clinicId: clinic.id,
-    patientId: patient.id,
-    kind: "GENERIC",
-    to: normalized.e164,
-    message,
+  const data = await sendPortalOtpForPatient(clinic, patient, normalized.e164);
+  res.json({ success: true, data });
+}
+
+const portalRegisterSchema = z.object({
+  slug: z.string().min(1),
+  phone: z.string().min(1),
+  firstName: z.string().trim().min(2),
+  lastName: z.string().trim().min(2),
+  email: z.string().email().optional().or(z.literal("")),
+  birthDate: z.string().optional(),
+});
+
+export async function registerPortalHandler(req: Request, res: Response): Promise<void> {
+  const body = portalRegisterSchema.parse(req.body);
+  const normalized = normalizePhPhone(body.phone);
+  if (!normalized) {
+    throw new AppError("Invalid PH mobile number", 400, "INVALID_PHONE");
+  }
+
+  const clinic = await prisma.clinic.findUnique({
+    where: { slug: body.slug },
+    select: { id: true, name: true },
+  });
+  if (!clinic) throw new AppError("Clinic not found", 404, "CLINIC_NOT_FOUND");
+
+  const existing = await prisma.patient.findFirst({
+    where: { clinicId: clinic.id, phone: normalized.e164, isActive: true },
+    select: { id: true },
+  });
+  if (existing) {
+    throw new AppError(
+      "This phone is already registered. Sign in with OTP instead.",
+      409,
+      "PHONE_IN_USE",
+    );
+  }
+
+  const patient = await createPatient(clinic.id, {
+    firstName: body.firstName,
+    lastName: body.lastName,
+    phone: normalized.e164,
+    email: body.email && body.email.length > 0 ? body.email : undefined,
+    birthDate: body.birthDate ? new Date(body.birthDate) : undefined,
+    allergies: [],
   });
 
-  const debugExposeOtp =
-    process.env.NODE_ENV !== "production" && !process.env.SEMAPHORE_API_KEY;
-
-  res.json({
-    success: true,
-    data: {
-      sent: true,
-      phone: normalized.e164,
-      expiresAt: expiresAt.toISOString(),
-      provider: smsResult.status,
-      cooldownSec: 30,
-      ...(debugExposeOtp ? { devCode: code } : {}),
-    },
-  });
+  const data = await sendPortalOtpForPatient(clinic, patient, normalized.e164);
+  res.status(201).json({ success: true, data });
 }
 
 const verifyOtpSchema = z.object({
@@ -252,12 +312,67 @@ export async function portalPatientFilesHandler(req: Request, res: Response): Pr
   res.json({ success: true, data });
 }
 
-export async function portalDownloadPatientFileHandler(req: Request, res: Response): Promise<void> {
+export async function portalFileSignedUrlHandler(req: Request, res: Response): Promise<void> {
   const { patientId, clinicId } = bearerPatient(req);
   const fileId = String(req.params.fileId);
+  await getPatientFileDownload(clinicId, patientId, fileId);
+  const ttlSec = Number(process.env.PORTAL_FILE_TOKEN_TTL_SEC ?? 300);
+  const token = createPortalFileDownloadToken(patientId, fileId, ttlSec);
+  const prefix = process.env.API_PREFIX ?? "/api";
+  const apiOrigin =
+    process.env.API_PUBLIC_URL?.replace(/\/$/, "") ??
+    `${req.protocol}://${req.get("host") ?? "localhost"}`;
+  const expiresAt = new Date(Date.now() + ttlSec * 1000).toISOString();
+  res.json({
+    success: true,
+    data: {
+      downloadUrl: `${apiOrigin}${prefix}/portal/files/${fileId}/download?token=${encodeURIComponent(token)}`,
+      expiresAt,
+    },
+  });
+}
+
+/** JWT veya süre sınırlı `?token=` ile portal dosya indirme */
+export async function portalDownloadPatientFileHandler(req: Request, res: Response): Promise<void> {
+  const fileId = String(req.params.fileId);
+  const tokenQ = typeof req.query.token === "string" ? req.query.token : undefined;
+  const portalJwtQ =
+    typeof req.query.portalToken === "string" ? req.query.portalToken : undefined;
+
+  if (!req.portal && portalJwtQ) {
+    try {
+      req.portal = verifyPortalToken(portalJwtQ);
+    } catch {
+      throw new AppError("Invalid or expired portal token", 401, "PORTAL_TOKEN_EXPIRED");
+    }
+  }
+
+  let patientId: string;
+  let clinicId: string;
+
+  if (tokenQ) {
+    const verified = verifyPortalFileDownloadToken(tokenQ);
+    if (verified.fileId !== fileId) {
+      throw new AppError("Token does not match file", 403, "PORTAL_FILE_TOKEN_MISMATCH");
+    }
+    patientId = verified.patientId;
+    const patient = await prisma.patient.findUnique({
+      where: { id: patientId },
+      select: { clinicId: true },
+    });
+    if (!patient) throw new AppError("Patient not found", 404, "PATIENT_NOT_FOUND");
+    clinicId = patient.clinicId;
+  } else if (req.portal) {
+    patientId = req.portal.sub;
+    clinicId = req.portal.clinicId;
+  } else {
+    throw new AppError("Unauthorized", 401, "UNAUTHORIZED");
+  }
+
   const { buffer, mimeType, fileName } = await getPatientFileDownload(clinicId, patientId, fileId);
   res.setHeader("Content-Type", mimeType);
   res.setHeader("Content-Disposition", `inline; filename="${encodeURIComponent(fileName)}"`);
+  res.setHeader("Cache-Control", "private, max-age=60");
   res.end(buffer);
 }
 

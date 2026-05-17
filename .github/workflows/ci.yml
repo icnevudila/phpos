@@ -38,4 +38,9 @@ jobs:
           cache-dependency-path: frontend/package-lock.json
       - run: npm ci
       - run: npm run lint
+      - run: node ../scripts/sync-i18n-pages.mjs --strict
       - run: npm run build
+      - run: npx playwright install chromium --with-deps
+      - run: npm run test:e2e
+        env:
+          CI: "true"

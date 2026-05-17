@@ -1,9 +1,9 @@
-import { motion, useMotionValue, useReducedMotion, useSpring, useTransform } from "framer-motion";
+import { AnimatePresence, motion, useMotionValue, useReducedMotion, useSpring, useTransform } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
-import { LaptopDashboardMock, PhonesStack } from "./DeviceMockups";
+import { LaptopDashboardMock, LaptopInventoryMock, PhonesStack } from "./DeviceMockups";
 import {
   IconTrustCloud,
   IconTrustDevice,
@@ -89,65 +89,29 @@ export function ParallaxHero(): JSX.Element {
           duration: reduce ? 0.2 : 0.6,
           ease: [0.22, 1, 0.36, 1],
         }}
-        className={`inline-block pr-1 sm:pr-2 ${brand ? "bg-gradient-to-r from-emerald-500 via-sky-500 to-violet-500 bg-clip-text text-transparent" : ""}`}
+        className={`inline-block pr-1 sm:pr-2 ${brand ? "text-emerald-600" : ""}`}
       >
         {w}
       </motion.span>
     ));
 
+  const [scene, setScene] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setScene((s) => (s + 1) % 3);
+    }, 6000);
+    return () => clearInterval(timer);
+  }, []);
+
   return (
     <section ref={ref} className="relative overflow-hidden pb-12 pt-8 sm:pb-20 sm:pt-12 lg:pt-20">
-      {/* gradient mesh — slowly rotating radial orbs */}
-      {heavyMotion && (
-        <>
-          <motion.div
-            aria-hidden
-            className="pointer-events-none absolute -left-40 -top-40 h-[36rem] w-[36rem] rounded-full opacity-50 blur-3xl"
-            style={{
-              background:
-                "radial-gradient(circle at 30% 30%, rgba(16,185,129,0.45), transparent 60%)",
-            }}
-            animate={{ rotate: 360 }}
-            transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
-          />
-          <motion.div
-            aria-hidden
-            className="pointer-events-none absolute -right-40 top-10 h-[34rem] w-[34rem] rounded-full opacity-40 blur-3xl"
-            style={{
-              background:
-                "radial-gradient(circle at 70% 30%, rgba(139,92,246,0.35), transparent 60%)",
-            }}
-            animate={{ rotate: -360 }}
-            transition={{ duration: 80, repeat: Infinity, ease: "linear" }}
-          />
-          <motion.div
-            aria-hidden
-            className="pointer-events-none absolute bottom-0 left-1/3 h-[30rem] w-[30rem] rounded-full opacity-30 blur-3xl"
-            style={{
-              background:
-                "radial-gradient(circle at 50% 50%, rgba(56,189,248,0.45), transparent 60%)",
-            }}
-            animate={{ scale: [1, 1.12, 1] }}
-            transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-          />
-        </>
-      )}
 
-      <motion.div style={{ x: blobX1, y: blobY1 }} className="absolute -left-24 -top-10 h-80 w-80">
-        <LeafBlob className="h-full w-full" />
-      </motion.div>
-      <motion.div style={{ x: blobX2, y: blobY2 }} className="absolute -right-24 top-20 h-80 w-80">
-        <LeafBlob className="h-full w-full" flip />
-      </motion.div>
-      <motion.div
-        style={{ x: blobX2, y: blobY1 }}
-        className="absolute left-0 top-[55%] h-[28rem] w-[28rem] opacity-40"
-      >
-        <LeafBlob className="h-full w-full" />
-      </motion.div>
+
+
 
       <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:gap-12 sm:px-6 lg:grid-cols-[1.05fr_1fr] lg:items-center">
-        <div className="relative z-10">
+        <div className="relative z-10 flex flex-col items-center text-center lg:items-start lg:text-left">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
@@ -156,7 +120,7 @@ export function ParallaxHero(): JSX.Element {
           >
             <a
               href="#cta"
-              className="group inline-flex max-w-full items-center gap-2 rounded-full border border-slate-200/80 bg-white/90 py-1 pl-1 pr-2 text-[11px] font-medium text-slate-700 shadow-[0_1px_2px_rgba(15,23,42,0.06),0_1px_3px_rgba(15,23,42,0.04)] backdrop-blur-md transition hover:shadow-[0_2px_8px_rgba(16,185,129,0.12),0_1px_3px_rgba(15,23,42,0.06)] sm:pr-3 sm:text-xs dark:border-slate-800 dark:bg-slate-900/70 dark:text-slate-300"
+              className="group inline-flex max-w-full items-center gap-2 rounded-full border border-slate-200/80 bg-white/90 py-1 pl-1 pr-2 text-[11px] font-medium text-slate-700 shadow-sm backdrop-blur-md transition hover:shadow-md sm:pr-3 sm:text-xs dark:border-slate-800 dark:bg-slate-900/70 dark:text-slate-300"
             >
               <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 py-0.5 pl-1.5 pr-2 text-[10px] font-bold uppercase tracking-widest text-emerald-700 ring-1 ring-emerald-100 dark:bg-emerald-950/60 dark:text-emerald-300 dark:ring-emerald-900/60">
                 <span className="relative flex h-1.5 w-1.5">
@@ -166,16 +130,6 @@ export function ParallaxHero(): JSX.Element {
                 {t("landing.heroMetaStatus")}
               </span>
               <span className="truncate">{t("landing.heroMetaText")}</span>
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={2}
-                className="h-3 w-3 -translate-x-0.5 text-slate-400 transition group-hover:translate-x-0 group-hover:text-emerald-600 dark:group-hover:text-emerald-400"
-                aria-hidden
-              >
-                <path d="m9 18 6-6-6-6" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
             </a>
           </motion.div>
 
@@ -191,7 +145,7 @@ export function ParallaxHero(): JSX.Element {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.5 }}
-            className="mt-5 max-w-xl text-base leading-relaxed text-slate-600 sm:text-lg"
+            className="mt-5 max-w-xl text-base leading-relaxed text-slate-600 sm:text-lg dark:text-slate-400"
           >
             {t("landing.heroSubtitle")}
           </motion.p>
@@ -204,40 +158,20 @@ export function ParallaxHero(): JSX.Element {
           >
             <Link
               to="/login"
-              className="group relative inline-flex min-h-11 w-full items-center justify-center gap-2.5 overflow-hidden rounded-xl bg-gradient-to-br from-emerald-500 to-sky-500 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-500/30 transition hover:-translate-y-0.5 hover:shadow-xl sm:w-auto"
+              className="group relative inline-flex min-h-11 w-full items-center justify-center gap-2.5 overflow-hidden rounded-xl bg-slate-900 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-slate-900/10 transition hover:-translate-y-0.5 hover:shadow-xl sm:w-auto dark:bg-emerald-600 dark:shadow-emerald-500/20"
             >
-              <span
-                aria-hidden
-                className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/40 to-transparent transition-transform duration-1000 group-hover:translate-x-full"
-              />
-              <span className="relative flex h-2 w-2 shrink-0">
-                <span className="absolute inset-0 animate-ping rounded-full bg-white/80" />
-                <span className="relative h-2 w-2 rounded-full bg-white" />
-              </span>
               <span className="relative">{t("landing.heroCtaPrimary")}</span>
-              <span className="relative rounded-full bg-white/20 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest ring-1 ring-white/30">
-                {t("landing.heroCtaDot")}
-              </span>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="relative h-4 w-4 transition group-hover:translate-x-0.5">
                 <path d="M5 12h14m-7-7 7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </Link>
             <a
               href="#cta"
-              className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-800 shadow-sm transition hover:-translate-y-0.5 hover:bg-slate-50 sm:w-auto"
+              className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-800 shadow-sm transition hover:-translate-y-0.5 hover:bg-slate-50 dark:bg-slate-900 dark:border-slate-800 dark:text-slate-200 sm:w-auto"
             >
               <Trans i18nKey="landing.heroCtaSecondaryAlt" defaults="Book a demo" />
             </a>
           </motion.div>
-
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.85 }}
-            className="mt-4 text-xs font-medium uppercase tracking-wider text-slate-500"
-          >
-            {t("landing.heroTrustLine")}
-          </motion.p>
 
           <motion.div
             initial={{ opacity: 0, y: 12 }}
@@ -253,7 +187,7 @@ export function ParallaxHero(): JSX.Element {
             ].map((b) => (
               <span
                 key={b.label}
-                className="group inline-flex items-center gap-1.5 rounded-full border border-slate-200/80 bg-white/80 py-1 pl-1 pr-3 text-[11px] font-semibold text-slate-700 shadow-[0_1px_2px_rgba(15,23,42,0.04)] backdrop-blur-md transition hover:-translate-y-0.5 hover:shadow-[0_4px_10px_-2px_rgba(15,23,42,0.08)] dark:border-slate-800 dark:bg-slate-900/60 dark:text-slate-200"
+                className="group inline-flex items-center gap-1.5 rounded-full border border-slate-200/80 bg-white/80 py-1 pl-1 pr-3 text-[11px] font-semibold text-slate-700 shadow-sm backdrop-blur-md transition hover:-translate-y-0.5 dark:border-slate-800 dark:bg-slate-900/60 dark:text-slate-200"
               >
                 <span className={`inline-flex h-5 w-5 items-center justify-center rounded-full bg-gradient-to-br ${b.gradient} text-white shadow-sm ring-1 ring-white/40`}>
                   <b.Icon className="h-3 w-3" />
@@ -265,46 +199,55 @@ export function ParallaxHero(): JSX.Element {
         </div>
 
         <div className="relative">
-          <motion.div
-            className="absolute -inset-10 rounded-[3rem] bg-gradient-to-br from-emerald-200/50 via-white/60 to-sky-200/40 blur-3xl"
-            animate={reduce ? undefined : { opacity: [0.6, 0.9, 0.6] }}
-            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-          />
-          <motion.div
-            style={{ rotateY: reduce ? 0 : laptopTilt, rotateX: reduce ? 0 : laptopTiltY }}
-            className="relative"
-          >
+          <AnimatePresence mode="wait">
             <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+              key={scene}
+              initial={{ opacity: 0, x: 20, scale: 0.95 }}
+              animate={{ opacity: 1, x: 0, scale: 1 }}
+              exit={{ opacity: 0, x: -20, scale: 1.05 }}
+              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+              style={{ rotateY: reduce ? 0 : laptopTilt, rotateX: reduce ? 0 : laptopTiltY }}
+              className="relative"
             >
-              <motion.div
-                animate={heavyMotion ? { y: [0, -8, 0] } : undefined}
-                transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-              >
-                <LaptopDashboardMock />
-              </motion.div>
+              {scene === 0 && (
+                <div className="relative">
+                  <LaptopDashboardMock />
+                  <div className="absolute -bottom-10 -right-4 hidden lg:block scale-75 origin-bottom-right">
+                    <PhonesStack />
+                  </div>
+                </div>
+              )}
+              {scene === 1 && (
+                <div className="relative">
+                  <LaptopInventoryMock />
+                  <div className="absolute -bottom-10 -right-4 hidden lg:block scale-75 origin-bottom-right">
+                    <PhonesStack variant={1} />
+                  </div>
+                </div>
+              )}
+              {scene === 2 && (
+                <div className="relative">
+                  <div className="scale-90 opacity-40 blur-[2px] transition-all">
+                    <LaptopDashboardMock />
+                  </div>
+                  <div className="absolute inset-0 flex items-center justify-center pt-8">
+                    <div className="scale-110 shadow-2xl transition-all hover:scale-115">
+                      <PhonesStack variant={0} />
+                    </div>
+                  </div>
+                </div>
+              )}
             </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 60, scale: 0.9 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ duration: 0.7, delay: 0.6, ease: [0.22, 1, 0.36, 1] }}
-              className="pointer-events-none absolute -bottom-10 -right-4 hidden lg:block"
-            >
-              <motion.div
-                animate={heavyMotion ? { y: [0, -6, 0] } : undefined}
-                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
-                className="origin-bottom-right scale-75"
-              >
-                <PhonesStack />
-              </motion.div>
-            </motion.div>
-          </motion.div>
-
-          <div className="mt-8 flex justify-center lg:hidden">
-            <PhonesStack />
+          </AnimatePresence>
+          
+          <div className="absolute -bottom-16 left-1/2 flex -translate-x-1/2 gap-3">
+             {[0, 1, 2].map(i => (
+               <button 
+                key={i} 
+                onClick={() => setScene(i)}
+                className={`h-1.5 transition-all duration-300 rounded-full ${scene === i ? 'w-8 bg-emerald-500' : 'w-2 bg-slate-300 dark:bg-slate-800'}`}
+               />
+             ))}
           </div>
         </div>
       </div>

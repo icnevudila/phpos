@@ -3,14 +3,29 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import FullCalendar from "@fullcalendar/react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { motion, AnimatePresence } from "framer-motion";
+import { 
+  Calendar as CalendarIcon, 
+  ChevronLeft, 
+  ChevronRight, 
+  Plus, 
+  LayoutGrid,
+  List,
+  CalendarDays,
+  Download,
+} from "lucide-react";
+import { toast } from "sonner";
+import { downloadCsv, rowsToCsv } from "../utils/downloadCsv";
 
+import { ListEmptyState } from "../components/ListEmptyState";
 import { AppointmentDetailSidebar } from "../components/appointments/AppointmentDetailSidebar";
 import { DentistSelect } from "../components/appointments/DentistSelect";
 import { NewAppointmentModal } from "../components/appointments/NewAppointmentModal";
 import { fetchAppointments, fetchDentists } from "../services/appointments";
-import type { AppointmentDto, DentistRow } from "../types/appointment";
+import type { AppointmentDto } from "../types/appointment";
 import { APPOINTMENT_STATUS_STYLES } from "../types/appointment";
 
 type CalView = "timeGridDay" | "timeGridWeek" | "dayGridMonth";
@@ -57,10 +72,13 @@ function CalendarEventContent({ arg }: { arg: EventContentArg }): JSX.Element {
   const { t } = useTranslation();
   const a = arg.event.extendedProps.appointment as AppointmentDto;
   return (
-    <div className="flex flex-col gap-0.5 overflow-hidden px-1 py-0.5 text-[11px] leading-tight">
-      <span className="truncate font-semibold">{arg.timeText}</span>
-      <span className="truncate">{a.patient.fullName}</span>
-      <span className="truncate opacity-75">
+    <div className="flex flex-col gap-0.5 overflow-hidden px-2 py-1.5 text-[10px] leading-tight group">
+      <div className="flex items-center justify-between gap-1">
+         <span className="truncate font-black uppercase tracking-tighter opacity-80">{arg.timeText}</span>
+         <div className="h-1.5 w-1.5 rounded-full bg-white opacity-40 group-hover:opacity-100 transition-opacity" />
+      </div>
+      <span className="truncate font-black text-xs uppercase tracking-tighter leading-none mb-0.5">{a.patient.fullName}</span>
+      <span className="truncate font-bold opacity-60 uppercase tracking-[0.05em] text-[8px]">
         {t("pages.appointments.eventDentist", { lastName: a.dentist.lastName })}
       </span>
     </div>
@@ -69,16 +87,13 @@ function CalendarEventContent({ arg }: { arg: EventContentArg }): JSX.Element {
 
 export function AppointmentsPage(): JSX.Element {
   const { t } = useTranslation();
-  const [dentists, setDentists] = useState<DentistRow[]>([]);
+  const queryClient = useQueryClient();
   const [dentistFilter, setDentistFilter] = useState("");
   const [fcView, setFcView] = useState<CalView>("timeGridDay");
   const [range, setRange] = useState<{ from: string; to: string }>(() => {
     const k = manilaDateKey(new Date());
     return { from: k, to: k };
   });
-  const [appointments, setAppointments] = useState<AppointmentDto[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [selected, setSelected] = useState<AppointmentDto | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<AppointmentDto | null>(null);
@@ -87,34 +102,21 @@ export function AppointmentsPage(): JSX.Element {
   const calendarRef = useRef<FullCalendar>(null);
   const rangeLabel = useMemo(() => formatRangeLabel(range.from, range.to), [range.from, range.to]);
 
-  useEffect(() => {
-    fetchDentists()
-      .then(setDentists)
-      .catch((e) =>
-        setError(e instanceof Error ? e.message : t("pages.appointments.loadDentistsFailed")),
-      );
-  }, [t]);
+  const { data: dentists = [] } = useQuery({
+    queryKey: ["dentists"],
+    queryFn: fetchDentists,
+  });
 
-  const load = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const items = await fetchAppointments({
-        from: range.from,
-        to: range.to,
-        dentistId: dentistFilter || undefined,
-      });
-      setAppointments(items);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : t("pages.appointments.loadFailed"));
-    } finally {
-      setLoading(false);
-    }
-  }, [range.from, range.to, dentistFilter, t]);
+  const { data: appointments = [], isFetched, isFetching } = useQuery({
+    queryKey: ["appointments", range.from, range.to, dentistFilter],
+    queryFn: () => fetchAppointments({
+      from: range.from,
+      to: range.to,
+      dentistId: dentistFilter || undefined,
+    }),
+  });
 
-  useEffect(() => {
-    void load();
-  }, [load]);
+  // loading/error removed
 
   const onDatesSet = useCallback((arg: DatesSetArg) => {
     const start = arg.start;
@@ -139,7 +141,7 @@ export function AppointmentsPage(): JSX.Element {
           start: a.scheduledAt,
           end: a.endsAt,
           extendedProps: { appointment: a, styleClasses: style },
-          classNames: [style.bg, style.border, style.text, "border", "!rounded-lg", "!shadow-sm"],
+          classNames: [style.bg, style.border, style.text, "border", "!rounded-2xl", "!shadow-sm", "!mx-0.5", "!cursor-pointer", "hover:brightness-95", "transition-all"],
         };
       }),
     [appointments],
@@ -162,27 +164,18 @@ export function AppointmentsPage(): JSX.Element {
   function onSaved(saved: AppointmentDto): void {
     setModalOpen(false);
     setEditing(null);
-    setAppointments((prev) => {
-      const idx = prev.findIndex((p) => p.id === saved.id);
-      if (idx >= 0) {
-        const next = [...prev];
-        next[idx] = saved;
-        return next;
-      }
-      return [...prev, saved];
-    });
     setSelected(saved);
-    void load();
+    void queryClient.invalidateQueries({ queryKey: ["appointments"] });
   }
 
   function onStatusChanged(updated: AppointmentDto): void {
-    setAppointments((prev) => prev.map((p) => (p.id === updated.id ? updated : p)));
     setSelected(updated);
+    void queryClient.invalidateQueries({ queryKey: ["appointments"] });
   }
 
-  function onDeleted(id: string): void {
-    setAppointments((prev) => prev.filter((p) => p.id !== id));
+  function onDeleted(_id: string): void {
     setSelected(null);
+    void queryClient.invalidateQueries({ queryKey: ["appointments"] });
   }
 
   const counts = useMemo(() => {
@@ -203,238 +196,238 @@ export function AppointmentsPage(): JSX.Element {
     [appointments],
   );
 
-  function goPrev(): void {
-    calendarRef.current?.getApi().prev();
-  }
-  function goNext(): void {
-    calendarRef.current?.getApi().next();
-  }
-  function goToday(): void {
-    calendarRef.current?.getApi().today();
-  }
-
+  function goPrev(): void { calendarRef.current?.getApi().prev(); }
+  function goNext(): void { calendarRef.current?.getApi().next(); }
+  function goToday(): void { calendarRef.current?.getApi().today(); }
   function changeView(v: CalView): void {
     setFcView(v);
     calendarRef.current?.getApi().changeView(v);
   }
 
-  const calendarHeight =
-    fcView === "dayGridMonth" ? "auto" : ("100%" as const);
-  const calendarAspect = fcView === "dayGridMonth" ? 1.45 : undefined;
+  function onExportCsv(): void {
+    if (!appointments.length) return;
+    const headers = [
+      t("pages.appointments.csvHeaders.patient"),
+      t("pages.appointments.csvHeaders.phone"),
+      t("pages.appointments.csvHeaders.dentist"),
+      t("pages.appointments.csvHeaders.scheduledAt"),
+      t("pages.appointments.csvHeaders.status"),
+      t("pages.appointments.csvHeaders.type"),
+    ];
+    const rows = appointments.map((a) => [
+      a.patient.fullName,
+      a.patient.phone,
+      `Dr. ${a.dentist.lastName}`,
+      new Date(a.scheduledAt).toLocaleString(),
+      a.status,
+      a.type ?? "",
+    ]);
+    const stamp = new Date().toISOString().slice(0, 10);
+    downloadCsv(`appointments-${range.from}-${stamp}.csv`, rowsToCsv(headers, rows));
+    toast.success(t("pages.appointments.exportReady", { count: appointments.length }));
+  }
 
   return (
-    <div className="space-y-4">
-      <div className="rounded-2xl border border-slate-200/80 bg-white/90 p-4 shadow-sm">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-emerald-700">Schedule Desk</p>
-          <h1 className="text-xl font-semibold text-slate-900">{t("pages.appointments.title")}</h1>
-          <p className="text-xs text-slate-500">{t("pages.appointments.subtitle")}</p>
-        </div>
-        <button
-          type="button"
-          onClick={() => openNew()}
-          className="inline-flex min-h-11 items-center gap-2 self-start rounded-lg bg-gradient-to-br from-emerald-500 to-sky-500 px-4 py-2 text-sm font-semibold text-white shadow hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-950"
-        >
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} className="h-4 w-4">
-            <path d="M12 5v14m-7-7h14" strokeLinecap="round" />
-          </svg>
-          {t("pages.appointments.new")}
-        </button>
-      </div>
-      </div>
+    <div className="min-h-screen w-full pb-24 bg-[#fafbfc] dark:bg-slate-950">
+      <div className="mx-auto max-w-[1500px] px-4 sm:px-6 lg:px-10 space-y-12 pt-10">
+        
+        {/* Header */}
+        <header className="flex flex-col lg:flex-row lg:items-center justify-between gap-10">
+           <div className="space-y-4">
+              <div className="flex items-center gap-3">
+                 <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                 <span className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400">{t("pages.appointments.deskKicker")}</span>
+              </div>
+              <h1 className="text-5xl lg:text-7xl font-black tracking-tighter text-slate-900 dark:text-white">
+                {t("pages.appointments.heroTitle")}<span className="text-emerald-500">.</span>
+              </h1>
+              <p className="text-lg font-medium text-slate-400 max-w-xl">{t("pages.appointments.subtitle")}</p>
+           </div>
 
-      <div className="flex flex-wrap gap-2 rounded-xl border border-slate-200 bg-white px-2 py-2 shadow-sm sm:px-3">
-        <div className="flex flex-wrap gap-1">
-          {(
-            [
-              ["timeGridDay", t("pages.appointments.viewDay")] as const,
-              ["timeGridWeek", t("pages.appointments.viewWeek")] as const,
-              ["dayGridMonth", t("pages.appointments.viewMonth")] as const,
-            ] as const
-          ).map(([v, label]) => (
-            <button
-              key={v}
-              type="button"
-              onClick={() => changeView(v)}
-              className={`min-h-11 rounded-lg px-3 py-2 text-xs font-semibold transition duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 sm:text-sm dark:focus-visible:ring-offset-slate-950 ${
-                fcView === v
-                  ? "bg-emerald-600 text-white shadow"
-                  : "border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100"
-              }`}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className="flex flex-wrap items-center gap-2 gap-y-2 rounded-xl border border-slate-200 bg-white px-3 py-3 shadow-sm sm:gap-3 sm:px-4">
-        <div className="flex w-full flex-wrap items-center gap-1 sm:w-auto sm:flex-nowrap">
-          <button
-            type="button"
-            onClick={() => goPrev()}
-            className="inline-flex h-11 w-11 items-center justify-center rounded-lg border border-slate-300 text-slate-600 transition duration-200 hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 active:scale-[0.98] dark:focus-visible:ring-offset-slate-950"
-            aria-label={t("pages.appointments.ariaPrevPeriod")}
-          >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="h-4 w-4">
-              <path d="m15 18-6-6 6-6" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </button>
-          <button
-            type="button"
-            onClick={() => goToday()}
-            className="min-h-11 rounded-lg border border-slate-300 px-3 py-2 text-xs font-semibold text-slate-700 transition duration-200 hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 active:scale-[0.98] dark:focus-visible:ring-offset-slate-950"
-          >
-            {t("pages.appointments.today")}
-          </button>
-          <button
-            type="button"
-            onClick={() => goNext()}
-            className="inline-flex h-11 w-11 items-center justify-center rounded-lg border border-slate-300 text-slate-600 transition duration-200 hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 active:scale-[0.98] dark:focus-visible:ring-offset-slate-950"
-            aria-label={t("pages.appointments.ariaNextPeriod")}
-          >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="h-4 w-4">
-              <path d="m9 18 6-6-6-6" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </button>
-          <input
-            type="date"
-            value={range.from}
-            onChange={(e) => {
-              const v = e.target.value;
-              if (v) calendarRef.current?.getApi().gotoDate(`${v}T12:00:00+08:00`);
-            }}
-            className="min-h-11 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 sm:ml-2 sm:w-auto dark:focus-visible:ring-offset-slate-950"
-          />
-        </div>
-
-        <span className="w-full text-center text-xs font-semibold leading-snug text-slate-900 sm:w-auto sm:min-w-[12rem] sm:flex-1 sm:text-left sm:text-sm">
-          {rangeLabel}
-        </span>
-
-        <div className="hidden flex-1 lg:block" />
-
-        <div className="w-full sm:w-auto">
-          <DentistSelect
-            dentists={dentists}
-            value={dentistFilter}
-            onChange={setDentistFilter}
-            includeAll
-          />
-        </div>
-
-        <div className="flex w-full flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[11px] text-slate-600 sm:w-auto sm:justify-end sm:text-xs">
-          <span>
-            <strong className="text-slate-900">{counts.total}</strong> {t("pages.appointments.countsTotalLabel")}
-          </span>
-          <span>
-            <strong className="text-sky-700">{counts.confirmed}</strong>{" "}
-            {t("pages.appointments.countsConfirmedLabel")}
-          </span>
-          <span>
-            <strong className="text-amber-700">{counts.pending}</strong>{" "}
-            {t("pages.appointments.countsPendingLabel")}
-          </span>
-          <span>
-            <strong className="text-emerald-700">{counts.completed}</strong>{" "}
-            {t("pages.appointments.countsDoneLabel")}
-          </span>
-        </div>
-      </div>
-
-      {queueItems.length > 0 ? (
-        <div className="rounded-xl border border-indigo-200 bg-gradient-to-r from-indigo-50 to-white px-3 py-3 shadow-sm">
-          <p className="text-[10px] font-bold uppercase tracking-wider text-indigo-800">
-            {t("pages.appointments.queueStripTitle")}
-          </p>
-          <p className="text-[11px] text-indigo-700/80">{t("pages.appointments.queueStripHint")}</p>
-          <div className="mt-2 flex flex-wrap gap-2">
-            {queueItems.map((a) => (
+           <div className="flex items-center gap-4">
               <button
-                key={a.id}
                 type="button"
-                onClick={() => setSelected(a)}
-                className="inline-flex min-h-10 max-w-full items-center gap-2 rounded-lg border border-indigo-200 bg-white px-3 py-1.5 text-left text-xs font-semibold text-indigo-950 shadow-sm hover:bg-indigo-50"
+                disabled={!appointments.length}
+                onClick={onExportCsv}
+                className="flex h-16 items-center gap-2 rounded-[1.5rem] border border-slate-200 bg-white px-6 text-slate-700 shadow-sm transition-all hover:bg-slate-50 disabled:opacity-40 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
               >
-                <span
-                  className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] uppercase ${
-                    a.status === "IN_PROGRESS" ? "bg-fuchsia-100 text-fuchsia-900" : "bg-sky-100 text-sky-900"
-                  }`}
-                >
-                  {a.status === "IN_PROGRESS"
-                    ? t("pages.appointments.queueBadgeChair")
-                    : t("pages.appointments.queueBadgeDesk")}
-                </span>
-                <span className="truncate">
-                  {new Date(a.scheduledAt).toLocaleTimeString("en-PH", {
-                    timeZone: "Asia/Manila",
-                    hour: "numeric",
-                    minute: "2-digit",
-                  })}{" "}
-                  · {a.patient.fullName}
-                </span>
+                <Download size={18} />
+                <span className="text-[10px] font-black uppercase tracking-widest">{t("pages.appointments.exportCsv")}</span>
               </button>
-            ))}
-          </div>
+              <button 
+                onClick={() => openNew()}
+                className="flex h-16 items-center gap-3 rounded-[1.5rem] bg-slate-900 px-8 text-white shadow-2xl transition-all hover:scale-105 active:scale-95 dark:bg-white dark:text-slate-900"
+              >
+                 <Plus size={20} />
+                 <span className="text-[10px] font-black uppercase tracking-widest">{t("pages.appointments.new")}</span>
+              </button>
+           </div>
+        </header>
+
+        {/* Calendar Intelligence Strip */}
+        <div className="grid gap-8 grid-cols-1 lg:grid-cols-12">
+           
+           {/* View Selection & Filters */}
+           <div className="lg:col-span-8 flex flex-wrap items-center gap-4 bg-white dark:bg-slate-900 p-4 rounded-[2.5rem] shadow-xl ring-1 ring-slate-100 dark:ring-slate-800">
+              <div className="flex gap-1 p-1 bg-slate-50 dark:bg-slate-800 rounded-2xl">
+                {[
+                  { key: "timeGridDay", label: t("pages.appointments.viewDay"), icon: List },
+                  { key: "timeGridWeek", label: t("pages.appointments.viewWeek"), icon: LayoutGrid },
+                  { key: "dayGridMonth", label: t("pages.appointments.viewMonth"), icon: CalendarDays }
+                ].map((v) => (
+                   <button
+                     key={v.key}
+                     onClick={() => changeView(v.key as CalView)}
+                     className={`flex items-center gap-2 px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${fcView === v.key ? 'bg-white dark:bg-slate-950 text-emerald-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                   >
+                     <v.icon size={14} />
+                     {v.label}
+                   </button>
+                ))}
+              </div>
+
+              <div className="h-10 w-px bg-slate-100 dark:bg-slate-800 mx-2 hidden md:block" />
+
+              <div className="flex-1 flex items-center gap-4">
+                 <div className="flex items-center gap-1">
+                    <button onClick={goPrev} className="h-12 w-12 flex items-center justify-center rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-400 hover:bg-slate-900 hover:text-white transition-all"><ChevronLeft size={18} /></button>
+                    <button onClick={goToday} className="h-12 px-6 rounded-xl bg-slate-50 dark:bg-slate-800 text-[10px] font-black uppercase tracking-widest text-slate-600 dark:text-slate-300 hover:bg-slate-900 hover:text-white transition-all">{t("pages.appointments.today")}</button>
+                    <button onClick={goNext} className="h-12 w-12 flex items-center justify-center rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-400 hover:bg-slate-900 hover:text-white transition-all"><ChevronRight size={18} /></button>
+                 </div>
+                 
+                 <div className="relative flex-1">
+                    <CalendarIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={16} />
+                    <input 
+                      type="date" 
+                      value={range.from}
+                      onChange={(e) => {
+                        const v = e.target.value;
+                        if (v) calendarRef.current?.getApi().gotoDate(`${v}T12:00:00+08:00`);
+                      }}
+                      className="h-12 w-full pl-12 pr-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 text-[10px] font-black uppercase outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
+                    />
+                 </div>
+              </div>
+           </div>
+
+           {/* Metrics & Provider Selection */}
+           <div className="lg:col-span-4 flex items-center justify-between bg-white dark:bg-slate-900 p-4 rounded-[2.5rem] shadow-xl ring-1 ring-slate-100 dark:ring-slate-800">
+              <div className="flex-1 px-4">
+                 <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-1">{t("pages.appointments.countsTotalLabel")}</p>
+                 <div className="flex items-baseline gap-2">
+                    <span className="text-3xl font-black text-slate-900 dark:text-white tabular-nums">{counts.total}</span>
+                    <span className="text-[10px] font-bold text-emerald-500">+{counts.confirmed} OK</span>
+                 </div>
+              </div>
+              <div className="h-10 w-px bg-slate-100 dark:bg-slate-800 mx-4" />
+              <div className="flex-1">
+                 <DentistSelect
+                   dentists={dentists}
+                   value={dentistFilter}
+                   onChange={setDentistFilter}
+                   includeAll
+                 />
+              </div>
+           </div>
         </div>
-      ) : null}
 
-      {error ? (
-        <div className="rounded-lg border border-rose-200 bg-rose-50 px-4 py-2 text-sm text-rose-700">
-          {error}
-        </div>
-      ) : null}
+        {/* Live Queue Strip (Conditional) */}
+        <AnimatePresence>
+          {queueItems.length > 0 && (
+            <motion.div 
+               initial={{ opacity: 0, y: 20 }}
+               animate={{ opacity: 1, y: 0 }}
+               className="rounded-[2.5rem] bg-indigo-500/5 border border-indigo-500/10 p-6 backdrop-blur-sm"
+            >
+               <div className="flex items-center gap-4 mb-4">
+                  <div className="h-2 w-2 rounded-full bg-indigo-500 animate-pulse" />
+                  <p className="text-[10px] font-black uppercase tracking-[0.3em] text-indigo-500">{t("pages.appointments.queueStripTitle")}</p>
+               </div>
+               <div className="flex flex-wrap gap-3">
+                  {queueItems.map((a) => (
+                    <button
+                      key={a.id}
+                      type="button"
+                      aria-label={a.patient.fullName}
+                      onClick={() => setSelected(a)}
+                      className="group relative flex items-center gap-4 bg-white dark:bg-slate-900 pl-4 pr-6 py-3 rounded-2xl shadow-sm ring-1 ring-indigo-500/10 hover:ring-indigo-500 transition-all active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+                    >
+                      <div className={`h-8 px-3 rounded-xl flex items-center justify-center text-[8px] font-black uppercase tracking-tighter ${a.status === "IN_PROGRESS" ? "bg-fuchsia-50 text-fuchsia-600" : "bg-sky-50 text-sky-600"}`}>
+                         {a.status === "IN_PROGRESS"
+                           ? t("pages.appointments.queueBadgeChair")
+                           : t("pages.appointments.queueBadgeLobby")}
+                      </div>
+                      <div className="text-left">
+                         <p className="text-xs font-black text-slate-900 dark:text-white uppercase leading-none">{a.patient.fullName}</p>
+                         <p className="text-[10px] font-bold text-slate-400 mt-0.5">
+                            {new Date(a.scheduledAt).toLocaleTimeString("en-PH", { hour: 'numeric', minute: '2-digit' })}
+                         </p>
+                      </div>
+                    </button>
+                  ))}
+               </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-      {fcView === "dayGridMonth" ? (
-        <p className="text-xs text-slate-500">{t("pages.appointments.monthSelectHint")}</p>
-      ) : null}
+        {/* Main Workspace */}
+        <div className="relative">
+           {/* Date Display Sidebar Floating */}
+           <div className="absolute -left-10 top-0 h-full hidden xl:block">
+              <div className="sticky top-10 flex flex-col items-center gap-1 py-4">
+                 <span className="[writing-mode:vertical-lr] rotate-180 text-[10px] font-black uppercase tracking-[0.5em] text-slate-200">{rangeLabel}</span>
+              </div>
+           </div>
 
-      <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm">
-        {loading ? (
-          <div className="border-b border-slate-100 bg-slate-50 px-3 py-2 text-center text-xs font-medium text-slate-500">
-            {t("pages.appointments.loading")}
-          </div>
-        ) : null}
-        <div
-          className={`px-2 py-2 ${
-            fcView === "dayGridMonth" ? "min-h-[480px]" : "h-[52vh] min-h-[380px] sm:h-[calc(100vh-280px)] sm:min-h-[500px]"
-          }`}
-        >
-          <FullCalendar
-            ref={calendarRef}
-            plugins={[timeGridPlugin, dayGridPlugin, interactionPlugin]}
-            initialView="timeGridDay"
-            initialDate={`${range.from}T12:00:00+08:00`}
-            timeZone="Asia/Manila"
-            headerToolbar={false}
-            firstDay={1}
-            allDaySlot={false}
-            slotMinTime="07:00:00"
-            slotMaxTime="19:00:00"
-            slotDuration="00:15:00"
-            slotLabelInterval="01:00"
-            businessHours={{
-              daysOfWeek: [1, 2, 3, 4, 5, 6],
-              startTime: "08:00",
-              endTime: "18:00",
-            }}
-            height={calendarHeight}
-            aspectRatio={calendarAspect}
-            selectable={fcView === "timeGridDay" || fcView === "timeGridWeek"}
-            selectMirror
-            nowIndicator
-            dayMaxEventRows={3}
-            events={events}
-            datesSet={onDatesSet}
-            eventClick={onEventClick}
-            select={(arg) => openNew(arg)}
-            eventContent={(arg) => <CalendarEventContent arg={arg} />}
-          />
+           <div className="relative rounded-[3.5rem] bg-white dark:bg-slate-900 shadow-2xl p-8 lg:p-10 ring-1 ring-slate-100 dark:ring-slate-800">
+              <div className={`calendar-diagnostic-hub ${fcView === "dayGridMonth" ? "min-h-[600px]" : "h-[70vh] min-h-[600px]"}`}>
+                 <FullCalendar
+                   ref={calendarRef}
+                   plugins={[timeGridPlugin, dayGridPlugin, interactionPlugin]}
+                   initialView="timeGridDay"
+                   initialDate={`${range.from}T12:00:00+08:00`}
+                   timeZone="Asia/Manila"
+                   headerToolbar={false}
+                   firstDay={1}
+                   allDaySlot={false}
+                   slotMinTime="07:00:00"
+                   slotMaxTime="19:00:00"
+                   slotDuration="00:15:00"
+                   slotLabelInterval="01:00"
+                   businessHours={{
+                     daysOfWeek: [1, 2, 3, 4, 5, 6],
+                     startTime: "08:00",
+                     endTime: "18:00",
+                   }}
+                   height="100%"
+                   selectable={fcView === "timeGridDay" || fcView === "timeGridWeek"}
+                   selectMirror
+                   nowIndicator
+                   dayMaxEventRows={3}
+                   events={events}
+                   datesSet={onDatesSet}
+                   eventClick={onEventClick}
+                   select={(arg) => openNew(arg)}
+                   eventContent={(arg) => <CalendarEventContent arg={arg} />}
+                 />
+              </div>
+              {isFetched && !isFetching && appointments.length === 0 ? (
+                <div className="pointer-events-none absolute inset-8 flex items-center justify-center rounded-[2.5rem] bg-white/80 backdrop-blur-sm dark:bg-slate-900/85">
+                  <div className="pointer-events-auto">
+                    <ListEmptyState
+                      icon="chart"
+                      title={t("pages.appointments.emptyRangeTitle")}
+                      description={t("pages.appointments.emptyRangeDescription", { range: rangeLabel })}
+                      primary={{ kind: "button", onClick: () => openNew(), label: t("pages.appointments.new") }}
+                    />
+                  </div>
+                </div>
+              ) : null}
+           </div>
         </div>
       </div>
 
-      {selected ? (
+      {selected && (
         <AppointmentDetailSidebar
           appointment={selected}
           onClose={() => setSelected(null)}
@@ -445,7 +438,7 @@ export function AppointmentsPage(): JSX.Element {
           }}
           onDeleted={onDeleted}
         />
-      ) : null}
+      )}
 
       <NewAppointmentModal
         open={modalOpen}

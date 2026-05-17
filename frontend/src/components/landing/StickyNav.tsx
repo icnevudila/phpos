@@ -5,16 +5,7 @@ import { useTranslation } from "react-i18next";
 
 import { PORTAL_DEMO_SLUG } from "../../constants/portal";
 import { LanguageSwitcher } from "../LanguageSwitcher";
-
-function DentEaseLogo(): JSX.Element {
-  return (
-    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-sky-500 text-white shadow-md">
-      <svg viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5">
-        <path d="M12 2a5 5 0 0 0-5 5c0 2 1 3 1 5s-1 4-1 6a3 3 0 0 0 6 0c0-1 .5-1 1-1s1 0 1 1a3 3 0 0 0 6 0c0-2-1-4-1-6s1-3 1-5a5 5 0 0 0-5-5c-1 0-2 .5-2 1s-1 1-2 1-1-.5-2-1-1-1-2-1Z" />
-      </svg>
-    </div>
-  );
-}
+import { DentQLLogo } from "../ui/DentQLLogo";
 
 const SECTIONS = ["features", "day", "how", "pricing", "quote-band", "testimonials", "faq", "cta"] as const;
 
@@ -63,16 +54,8 @@ export function StickyNav(): JSX.Element {
       }`}
     >
       <nav className="mx-auto flex max-w-7xl items-center justify-between gap-2 px-2.5 py-2 sm:px-6 sm:py-4">
-        <Link to="/" className="flex items-center gap-2">
-          <DentEaseLogo />
-          <div className="flex flex-col">
-            <span className="text-lg font-extrabold leading-none tracking-tight text-slate-900 dark:text-white">
-              Dent<span className="bg-gradient-to-br from-emerald-500 to-sky-500 bg-clip-text text-transparent">Ease</span>
-            </span>
-            <span className="hidden text-[10px] font-medium uppercase tracking-wider text-emerald-600 dark:text-emerald-400 sm:inline">
-              {t("landing.brandSubLabel")}
-            </span>
-          </div>
+        <Link to="/" className="flex items-center">
+          <DentQLLogo size="sm" />
         </Link>
         <div className="hidden min-w-0 flex-1 items-center justify-end gap-0.5 md:flex">
           {links.map((l) => (

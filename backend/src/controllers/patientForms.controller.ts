@@ -1,53 +1,97 @@
-import type { Request, Response } from "express";
-import { z } from "zod";
-
+import { Request, Response } from "express";
+import { asyncHandler } from "../utils/asyncHandler.js";
 import {
   generateDentalRecordPdf,
-  generateInformedConsentPdf,
   generateMedicalHistoryPdf,
-  generateOrthodonticRecordPdf,
   generateTreatmentRecordPdf,
+  generateInformedConsentPdf,
+  generateOrthodonticRecordPdf,
+  generateMedicalCertificatePdf,
+  generateReferralLetterPdf,
+  generateLabOrderPdf,
+  generateSoaPdf,
+  generateTreatmentPlanPdf,
 } from "../services/patientFormsPdf.js";
-import { AppError } from "../utils/errors.js";
 
-function clinicId(req: Request): string {
-  const id = req.user?.clinicId;
-  if (!id) throw new AppError("Unauthorized", 401, "UNAUTHORIZED");
-  return id;
-}
-
-function patientIdParam(req: Request): string {
-  return z.string().min(1).parse(req.params.id);
-}
-
-function sendPdf(res: Response, buffer: Buffer, filename: string): void {
+export const dentalRecordPdfHandler = asyncHandler(async (req: Request, res: Response) => {
+  const { clinicId } = req.user!;
+  const { id } = req.params;
+  const buffer = await generateDentalRecordPdf(clinicId, id);
   res.setHeader("Content-Type", "application/pdf");
-  res.setHeader("Content-Disposition", `inline; filename="${filename}"`);
-  res.setHeader("Cache-Control", "private, no-store");
-  res.send(buffer);
-}
+  res.end(buffer);
+});
 
-export async function dentalRecordPdfHandler(req: Request, res: Response): Promise<void> {
-  const buf = await generateDentalRecordPdf(clinicId(req), patientIdParam(req));
-  sendPdf(res, buf, `dental-record-${patientIdParam(req)}.pdf`);
-}
+export const medicalHistoryPdfHandler = asyncHandler(async (req: Request, res: Response) => {
+  const { clinicId } = req.user!;
+  const { id } = req.params;
+  const buffer = await generateMedicalHistoryPdf(clinicId, id);
+  res.setHeader("Content-Type", "application/pdf");
+  res.end(buffer);
+});
 
-export async function medicalHistoryPdfHandler(req: Request, res: Response): Promise<void> {
-  const buf = await generateMedicalHistoryPdf(clinicId(req), patientIdParam(req));
-  sendPdf(res, buf, `medical-history-${patientIdParam(req)}.pdf`);
-}
+export const treatmentRecordPdfHandler = asyncHandler(async (req: Request, res: Response) => {
+  const { clinicId } = req.user!;
+  const { id } = req.params;
+  const buffer = await generateTreatmentRecordPdf(clinicId, id);
+  res.setHeader("Content-Type", "application/pdf");
+  res.end(buffer);
+});
 
-export async function treatmentRecordPdfHandler(req: Request, res: Response): Promise<void> {
-  const buf = await generateTreatmentRecordPdf(clinicId(req), patientIdParam(req));
-  sendPdf(res, buf, `treatment-record-${patientIdParam(req)}.pdf`);
-}
+export const informedConsentPdfHandler = asyncHandler(async (req: Request, res: Response) => {
+  const { clinicId } = req.user!;
+  const { id } = req.params;
+  const buffer = await generateInformedConsentPdf(clinicId, id);
+  res.setHeader("Content-Type", "application/pdf");
+  res.end(buffer);
+});
 
-export async function informedConsentPdfHandler(req: Request, res: Response): Promise<void> {
-  const buf = await generateInformedConsentPdf(clinicId(req), patientIdParam(req));
-  sendPdf(res, buf, `informed-consent-${patientIdParam(req)}.pdf`);
-}
+export const orthodonticRecordPdfHandler = asyncHandler(async (req: Request, res: Response) => {
+  const { clinicId } = req.user!;
+  const { id } = req.params;
+  const buffer = await generateOrthodonticRecordPdf(clinicId, id);
+  res.setHeader("Content-Type", "application/pdf");
+  res.end(buffer);
+});
 
-export async function orthodonticRecordPdfHandler(req: Request, res: Response): Promise<void> {
-  const buf = await generateOrthodonticRecordPdf(clinicId(req), patientIdParam(req));
-  sendPdf(res, buf, `orthodontic-record-${patientIdParam(req)}.pdf`);
-}
+export const medCertPdfHandler = asyncHandler(async (req: Request, res: Response) => {
+  const { clinicId, id: dentistId } = req.user!;
+  const { id } = req.params;
+  const { content } = req.query;
+  const buffer = await generateMedicalCertificatePdf(clinicId, id, content as string, dentistId);
+  res.setHeader("Content-Type", "application/pdf");
+  res.end(buffer);
+});
+
+export const referralPdfHandler = asyncHandler(async (req: Request, res: Response) => {
+  const { clinicId } = req.user!;
+  const { id } = req.params;
+  const { to, reason } = req.query;
+  const buffer = await generateReferralLetterPdf(clinicId, id, to as string, reason as string);
+  res.setHeader("Content-Type", "application/pdf");
+  res.end(buffer);
+});
+
+export const labOrderPdfHandler = asyncHandler(async (req: Request, res: Response) => {
+  const { clinicId } = req.user!;
+  const { labOrderId } = req.params;
+  const buffer = await generateLabOrderPdf(clinicId, labOrderId);
+  res.setHeader("Content-Type", "application/pdf");
+  res.end(buffer);
+});
+
+export const soaPdfHandler = asyncHandler(async (req: Request, res: Response) => {
+  const { clinicId } = req.user!;
+  const { id } = req.params;
+  const buffer = await generateSoaPdf(clinicId, id);
+  res.setHeader("Content-Type", "application/pdf");
+  res.end(buffer);
+});
+
+export const treatmentPlanPdfHandler = asyncHandler(async (req: Request, res: Response) => {
+  const { clinicId } = req.user!;
+  const { id } = req.params;
+  const { phases } = req.body; // Usually POST for complex plans
+  const buffer = await generateTreatmentPlanPdf(clinicId, id, phases);
+  res.setHeader("Content-Type", "application/pdf");
+  res.end(buffer);
+});

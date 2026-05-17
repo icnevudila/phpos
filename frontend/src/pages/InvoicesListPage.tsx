@@ -1,17 +1,30 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
+import { 
+  FileText, 
+  Search, 
+  Filter, 
+  Calendar, 
+  ChevronRight, 
+  CheckCircle2, 
+  Clock, 
+  AlertCircle, 
+  TrendingUp, 
+  RefreshCw,
+  Wallet,
+  Phone,
+  FileDown,
+} from "lucide-react";
 
 import { ListEmptyState } from "../components/ListEmptyState";
-import { InvoiceHmoClaimChips } from "../components/invoices/InvoiceHmoClaimChips";
-import { InvoiceStatusBadge } from "../components/invoices/InvoiceStatusBadge";
+import { downloadCsv, rowsToCsv } from "../utils/downloadCsv";
+// InvoiceHmoClaimChips removed
 import { useDebouncedValue } from "../hooks/useDebouncedValue";
 import { fetchInvoices } from "../services/invoices";
 import type { InvoiceDto, InvoiceStatus } from "../types/invoice";
 import { formatPHP } from "../types/invoice";
-
-const fieldFocus =
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:focus-visible:ring-offset-slate-950";
 
 function fmtDate(iso: string): string {
   return new Intl.DateTimeFormat("en-PH", {
@@ -20,10 +33,15 @@ function fmtDate(iso: string): string {
   }).format(new Date(iso));
 }
 
+const STATUS_CONFIG: Record<string, { color: string, bg: string, icon: any }> = {
+  UNPAID: { color: "text-rose-500", bg: "bg-rose-50 dark:bg-rose-950/20", icon: AlertCircle },
+  PARTIAL: { color: "text-amber-500", bg: "bg-amber-50 dark:bg-amber-950/20", icon: Clock },
+  PAID: { color: "text-emerald-500", bg: "bg-emerald-50 dark:bg-emerald-950/20", icon: CheckCircle2 },
+};
+
 export function InvoicesListPage(): JSX.Element {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const empty = t("pages.common.empty");
   const [rows, setRows] = useState<InvoiceDto[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -53,9 +71,7 @@ export function InvoicesListPage(): JSX.Element {
     }
   }, [q, status, from, to, openHmoOnly, t]);
 
-  useEffect(() => {
-    void load();
-  }, [load]);
+  useEffect(() => { void load(); }, [load]);
 
   const totals = useMemo(() => {
     const sum = (f: (i: InvoiceDto) => number) => rows.reduce((a, r) => a + f(r), 0);
@@ -67,234 +83,219 @@ export function InvoicesListPage(): JSX.Element {
     };
   }, [rows]);
 
-  const stats = useMemo(
-    () => [
-      { label: t("pages.invoicesList.statInvoices"), value: totals.count.toString(), color: "text-slate-900" },
-      { label: t("pages.invoicesList.statBilled"), value: formatPHP(totals.billed), color: "text-slate-900" },
-      { label: t("pages.invoicesList.statCollected"), value: formatPHP(totals.collected), color: "text-emerald-700" },
-      { label: t("pages.invoicesList.statOutstanding"), value: formatPHP(totals.outstanding), color: "text-amber-800" },
-    ],
-    [t, totals],
-  );
+  const stats = [
+    { label: t("pages.invoicesList.statInvoices"), value: totals.count.toString(), color: "text-slate-900", icon: FileText, tone: "sky" },
+    { label: t("pages.invoicesList.statBilled"), value: formatPHP(totals.billed), color: "text-slate-900", icon: TrendingUp, tone: "violet" },
+    { label: t("pages.invoicesList.statCollected"), value: formatPHP(totals.collected), color: "text-emerald-700", icon: CheckCircle2, tone: "emerald" },
+    { label: t("pages.invoicesList.statOutstanding"), value: formatPHP(totals.outstanding), color: "text-rose-700", icon: Wallet, tone: "rose" },
+  ];
 
   return (
-    <div className="min-w-0 space-y-5">
-      <div className="rounded-2xl border border-slate-200/80 bg-white/90 p-4 shadow-sm">
-        <div className="flex items-start gap-3">
-          <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="h-5 w-5" aria-hidden>
-              <path d="M7 4h7l5 5v11a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z" strokeLinecap="round" strokeLinejoin="round" />
-              <path d="M14 4v5h5M9 13h6M9 17h6" strokeLinecap="round" />
-            </svg>
-          </span>
-          <div>
-            <h1 className="text-xl font-semibold text-slate-900">{t("pages.invoicesList.title")}</h1>
-            <p className="text-xs text-slate-500">{t("pages.invoicesList.subtitle")}</p>
-          </div>
-        </div>
-      </div>
+    <div className="min-h-screen w-full pb-24 bg-[#fafbfc] dark:bg-slate-950">
+      <div className="mx-auto max-w-[1500px] px-6 lg:px-10 space-y-12 pt-10">
+        
+        {/* Header */}
+        <header className="flex flex-col lg:flex-row lg:items-center justify-between gap-10">
+           <div className="space-y-4">
+              <div className="flex items-center gap-3">
+                 <div className="h-2 w-2 rounded-full bg-emerald-500" />
+                 <span className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400">Financial Revenue Stream</span>
+              </div>
+              <h1 className="text-5xl lg:text-7xl font-black tracking-tighter text-slate-900 dark:text-white">
+                Invoices<span className="text-emerald-500">.</span>
+              </h1>
+              <p className="text-lg font-medium text-slate-400 max-w-xl">{t("pages.invoicesList.subtitle")}</p>
+           </div>
 
-      <div>
-        <div className="grid gap-3 sm:grid-cols-4">
-          {stats.map((s) => (
-            <div key={s.label} className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:shadow-md">
-              <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">{s.label}</p>
-              <p className={`mt-1 text-xl font-bold ${s.color}`}>{s.value}</p>
-            </div>
-          ))}
+           <div className="flex items-center gap-4">
+              <button 
+                onClick={() => void load()}
+                className="h-14 px-8 flex items-center gap-3 rounded-[1.5rem] bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-2xl transition-all hover:scale-105 active:scale-95"
+              >
+                 <RefreshCw size={18} className={loading ? "animate-spin" : ""} />
+                 <span className="text-[10px] font-black uppercase tracking-widest">Sync Ledger</span>
+              </button>
+           </div>
+        </header>
+
+        {/* Global Financial Stats */}
+        <div className="grid gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+           {stats.map((s, idx) => (
+             <motion.div 
+               key={s.label}
+               initial={{ opacity: 0, y: 20 }}
+               animate={{ opacity: 1, y: 0 }}
+               transition={{ delay: idx * 0.1 }}
+               className="rounded-[2.5rem] bg-white dark:bg-slate-900 p-8 shadow-xl ring-1 ring-slate-100 dark:ring-slate-800"
+             >
+                <div className="flex items-center justify-between mb-8">
+                   <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">{s.label}</p>
+                   <div className={`h-10 w-10 rounded-2xl flex items-center justify-center bg-${s.tone}-50 dark:bg-${s.tone}-950/20 text-${s.tone}-500`}>
+                      <s.icon size={20} />
+                   </div>
+                </div>
+                <p className={`text-3xl font-black tracking-tight ${s.color} dark:text-white`}>
+                   {s.value}
+                </p>
+             </motion.div>
+           ))}
         </div>
 
-        <div className="mt-4 flex flex-wrap items-end gap-3 rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
-          <div className="min-w-[200px] flex-1 basis-full lg:basis-auto">
-            <label className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-slate-500">
-              {t("pages.invoicesList.searchLabel")}
-            </label>
-            <input
-              type="text"
-              value={qInput}
-              onChange={(e) => setQInput(e.target.value)}
-              placeholder={t("pages.invoicesList.searchPlaceholder")}
-              className={`w-full rounded-lg border border-slate-300 px-3 py-2 text-sm ${fieldFocus}`}
-            />
-          </div>
-          <div className="w-full sm:w-auto">
-            <label className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-slate-500">
-              {t("pages.invoicesList.statusLabel")}
-            </label>
-            <select
-              value={status}
-              onChange={(e) => setStatus(e.target.value as InvoiceStatus | "")}
-              className={`w-full rounded-lg border border-slate-300 px-3 py-2 text-sm sm:w-auto ${fieldFocus}`}
+        {/* Workspace Toolbar */}
+        <div className="flex flex-wrap items-center gap-4 bg-white dark:bg-slate-900 p-4 rounded-[2.5rem] shadow-xl ring-1 ring-slate-100 dark:ring-slate-800">
+           <div className="flex-1 relative">
+              <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300" size={18} />
+              <input 
+                type="text"
+                value={qInput}
+                onChange={(e) => setQInput(e.target.value)}
+                placeholder={t("pages.invoicesList.searchPlaceholder")}
+                className="h-16 w-full pl-16 pr-8 rounded-2xl bg-slate-50 dark:bg-slate-800/50 text-sm font-bold outline-none ring-1 ring-slate-100 dark:ring-slate-800 focus:ring-2 focus:ring-emerald-500 transition-all"
+              />
+           </div>
+           
+           <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-800 rounded-2xl px-4 h-16 ring-1 ring-slate-100 dark:ring-slate-800">
+              <Filter size={16} className="text-slate-400 ml-2" />
+              <select
+                value={status}
+                onChange={(e) => setStatus(e.target.value as InvoiceStatus | "")}
+                className="bg-transparent text-[10px] font-black uppercase tracking-widest text-slate-600 dark:text-slate-300 px-4 outline-none"
+              >
+                <option value="">{t("pages.invoicesList.all")}</option>
+                <option value="UNPAID">{t("pages.invoicesList.statusUnpaid")}</option>
+                <option value="PARTIAL">{t("pages.invoicesList.statusPartial")}</option>
+                <option value="PAID">{t("pages.invoicesList.statusPaid")}</option>
+              </select>
+           </div>
+
+           <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-800 rounded-2xl px-6 h-16 ring-1 ring-slate-100 dark:ring-slate-800">
+              <Calendar size={16} className="text-slate-400" />
+              <div className="flex items-center gap-3">
+                 <input type="date" value={from} onChange={e => setFrom(e.target.value)} className="bg-transparent text-[10px] font-black uppercase text-slate-600 dark:text-slate-300 outline-none" />
+                 <span className="text-slate-200">—</span>
+                 <input type="date" value={to} onChange={e => setTo(e.target.value)} className="bg-transparent text-[10px] font-black uppercase text-slate-600 dark:text-slate-300 outline-none" />
+              </div>
+           </div>
+
+           <button
+              type="button"
+              disabled={rows.length === 0}
+              onClick={() => {
+                const headers = [
+                  t("pages.invoicesList.colOr"),
+                  t("pages.invoicesList.colPatient"),
+                  t("pages.invoicesList.colTotal"),
+                  t("pages.invoicesList.colPaid"),
+                  t("pages.invoicesList.colBalance"),
+                  t("pages.invoicesList.colStatus"),
+                ];
+                const body = rows.map((r) => [
+                  r.orNumber ?? "",
+                  r.patient.fullName,
+                  String(r.total),
+                  String(r.paid),
+                  String(r.balance),
+                  r.status,
+                ]);
+                downloadCsv(
+                  `invoices-${new Date().toISOString().slice(0, 10)}.csv`,
+                  rowsToCsv(headers, body),
+                );
+              }}
+              className="flex h-16 items-center gap-3 rounded-[1.5rem] bg-white dark:bg-slate-900 px-6 text-xs font-black uppercase tracking-widest text-slate-600 shadow-xl ring-1 ring-slate-100 disabled:opacity-40 dark:text-slate-300 dark:ring-slate-800"
             >
-              <option value="">{t("pages.invoicesList.all")}</option>
-              <option value="UNPAID">{t("pages.invoicesList.statusUnpaid")}</option>
-              <option value="PARTIAL">{t("pages.invoicesList.statusPartial")}</option>
-              <option value="PAID">{t("pages.invoicesList.statusPaid")}</option>
-            </select>
-          </div>
-          <div className="w-full sm:w-auto">
-            <label className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-slate-500">
-              {t("pages.invoicesList.from")}
-            </label>
-            <input
-              type="date"
-              value={from}
-              onChange={(e) => setFrom(e.target.value)}
-              className={`w-full rounded-lg border border-slate-300 px-2 py-2 text-sm sm:w-auto ${fieldFocus}`}
-            />
-          </div>
-          <div className="w-full sm:w-auto">
-            <label className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-slate-500">
-              {t("pages.invoicesList.to")}
-            </label>
-            <input
-              type="date"
-              value={to}
-              onChange={(e) => setTo(e.target.value)}
-              className={`w-full rounded-lg border border-slate-300 px-2 py-2 text-sm sm:w-auto ${fieldFocus}`}
-            />
-          </div>
-          <label className="flex min-h-11 w-full cursor-pointer items-start gap-2 rounded-lg border border-amber-200 bg-amber-50/80 px-3 py-2 text-xs text-amber-950 focus-within:ring-2 focus-within:ring-amber-400 focus-within:ring-offset-2 sm:max-w-[260px] dark:border-amber-900/60 dark:bg-amber-950/25 dark:text-amber-100 dark:focus-within:ring-offset-slate-950">
-            <input
-              type="checkbox"
-              checked={openHmoOnly}
-              onChange={(e) => setOpenHmoOnly(e.target.checked)}
-              className="mt-1 h-4 w-4 shrink-0 rounded border-amber-300 text-amber-700 focus:ring-amber-500"
-            />
-            <span>
-              <span className="font-bold">{t("pages.invoicesList.openHmoFilter")}</span>
-              <span className="mt-0.5 block text-[10px] font-normal text-amber-900/90">
-                {t("pages.invoicesList.openHmoHint")}
-              </span>
-            </span>
-          </label>
+              <FileDown size={18} />
+              CSV
+            </button>
+           <button 
+              onClick={() => setOpenHmoOnly(!openHmoOnly)}
+              className={`h-16 px-8 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${openHmoOnly ? 'bg-amber-500 text-white shadow-lg' : 'bg-slate-50 dark:bg-slate-800 text-slate-500'}`}
+           >
+              {t("pages.invoicesList.openHmoFilter")}
+           </button>
         </div>
 
-        {loading ? (
-          <div className="mt-4 rounded-xl border border-slate-200 bg-white px-4 py-10 text-center text-sm text-slate-500 shadow-sm">
-            {t("pages.invoicesList.loading")}
-          </div>
-        ) : error ? (
-          <div className="mt-4 rounded-xl border border-slate-200 bg-white px-4 py-10 text-center text-sm text-red-700 shadow-sm">
-            {error}
-          </div>
-        ) : rows.length === 0 ? (
-          <div className="mt-4 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-            <ListEmptyState
-              icon="receipt"
-              title={t("pages.invoicesList.emptyTitle")}
-              description={t("pages.invoicesList.emptyHint")}
-              primary={{
-                kind: "link",
-                to: "/patients",
-                label: t("pages.invoicesList.emptyCtaPatients"),
-              }}
-              secondary={{
-                kind: "link",
-                to: "/appointments",
-                label: t("pages.invoicesList.emptyCtaAppointments"),
-              }}
-            />
-          </div>
-        ) : (
-          <>
-            <p className="mt-3 text-[11px] text-slate-500 md:hidden">{t("pages.invoicesList.mobileCardHint")}</p>
-            <div className="mt-2 space-y-3 md:hidden">
-              {rows.map((r) => (
-                <button
-                  key={r.id}
-                  type="button"
-                  onClick={() => navigate(`/invoices/${r.id}`)}
-                  className="w-full min-h-[64px] rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-emerald-300 hover:bg-emerald-50/30 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 active:scale-[0.99] dark:border-slate-700 dark:bg-slate-900 dark:hover:border-emerald-700 dark:focus-visible:ring-offset-slate-950"
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="min-w-0">
-                      <p className="font-mono text-xs font-bold text-slate-900">{r.orNumber ?? empty}</p>
-                      <p className="mt-1 truncate text-sm font-semibold text-slate-900">{r.patient.fullName}</p>
-                      <p className="text-xs text-slate-500">{r.patient.phone}</p>
-                      <p className="mt-2 text-xs text-slate-600">{fmtDate(r.createdAt)}</p>
-                    </div>
-                    <InvoiceStatusBadge status={r.status} />
-                  </div>
-                  <div className="mt-3 grid grid-cols-3 gap-2 border-t border-slate-100 pt-3 text-xs">
-                    <div>
-                      <p className="font-semibold uppercase tracking-wider text-slate-400">{t("pages.invoicesList.colTotal")}</p>
-                      <p className="font-bold text-slate-800">{formatPHP(r.total)}</p>
-                    </div>
-                    <div>
-                      <p className="font-semibold uppercase tracking-wider text-slate-400">{t("pages.invoicesList.colPaid")}</p>
-                      <p className="font-bold text-emerald-700">{formatPHP(r.paid)}</p>
-                    </div>
-                    <div>
-                      <p className="font-semibold uppercase tracking-wider text-slate-400">{t("pages.invoicesList.colBalance")}</p>
-                      <p className="font-bold text-amber-800">{formatPHP(r.balance)}</p>
-                    </div>
-                  </div>
-                  <div className="mt-3 flex min-h-9 flex-wrap items-center justify-between gap-2">
-                    <InvoiceHmoClaimChips claims={r.hmoClaims ?? []} />
-                    <span className="text-xs font-bold text-emerald-700">{t("pages.invoicesList.open")}</span>
-                  </div>
-                </button>
-              ))}
-            </div>
-
-            <div className="mt-4 hidden overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm md:block">
-              <table className="min-w-[880px] w-full text-sm">
-                <thead>
-                  <tr className="border-b border-slate-200 bg-slate-50 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
-                    <th className="px-4 py-3">{t("pages.invoicesList.colOr")}</th>
-                    <th className="px-4 py-3">{t("pages.invoicesList.colPatient")}</th>
-                    <th className="px-4 py-3">{t("pages.invoicesList.colDate")}</th>
-                    <th className="px-4 py-3 text-right">{t("pages.invoicesList.colTotal")}</th>
-                    <th className="px-4 py-3 text-right">{t("pages.invoicesList.colPaid")}</th>
-                    <th className="px-4 py-3 text-right">{t("pages.invoicesList.colBalance")}</th>
-                    <th className="px-4 py-3">{t("pages.invoicesList.colStatus")}</th>
-                    <th className="px-4 py-3">{t("pages.invoicesList.colHmo")}</th>
-                    <th className="px-4 py-3"></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {rows.map((r) => (
-                    <tr
-                      key={r.id}
-                      className="cursor-pointer border-b border-slate-100 hover:bg-emerald-50/40"
-                      onClick={() => navigate(`/invoices/${r.id}`)}
-                    >
-                      <td className="px-4 py-3 font-mono text-xs font-semibold text-slate-900">
-                        {r.orNumber ?? empty}
-                      </td>
-                      <td className="px-4 py-3">
-                        <div className="font-semibold text-slate-900">{r.patient.fullName}</div>
-                        <div className="text-xs text-slate-500">{r.patient.phone}</div>
-                      </td>
-                      <td className="px-4 py-3 text-slate-700">{fmtDate(r.createdAt)}</td>
-                      <td className="px-4 py-3 text-right font-semibold">{formatPHP(r.total)}</td>
-                      <td className="px-4 py-3 text-right text-emerald-700">{formatPHP(r.paid)}</td>
-                      <td className="px-4 py-3 text-right font-bold text-amber-800">
-                        {formatPHP(r.balance)}
-                      </td>
-                      <td className="px-4 py-3">
-                        <InvoiceStatusBadge status={r.status} />
-                      </td>
-                      <td className="px-4 py-3 align-top">
-                        <InvoiceHmoClaimChips claims={r.hmoClaims ?? []} />
-                      </td>
-                      <td className="px-4 py-3">
-                        <Link
-                          to={`/invoices/${r.id}`}
-                          className="inline-flex min-h-9 items-center text-xs font-bold text-emerald-700 underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 dark:text-emerald-400 dark:focus-visible:ring-offset-slate-950"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          {t("pages.invoicesList.open")}
-                        </Link>
-                      </td>
+        {/* Main Stream Table */}
+        <div className="rounded-[3.5rem] bg-white dark:bg-slate-900 shadow-2xl overflow-hidden ring-1 ring-slate-100 dark:ring-slate-800">
+           <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse min-w-[1200px]">
+                 <thead>
+                    <tr className="bg-slate-50/50 dark:bg-slate-800/50">
+                       <th className="px-10 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">{t("pages.invoicesList.colOr")}</th>
+                       <th className="px-8 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">{t("pages.invoicesList.colPatient")}</th>
+                       <th className="px-8 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 text-right">{t("pages.invoicesList.colTotal")}</th>
+                       <th className="px-8 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 text-right">{t("pages.invoicesList.colPaid")}</th>
+                       <th className="px-8 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 text-right">{t("pages.invoicesList.colBalance")}</th>
+                       <th className="px-8 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">{t("pages.invoicesList.colStatus")}</th>
+                       <th className="px-10 py-8"></th>
                     </tr>
-                  ))}
-                </tbody>
+                 </thead>
+                 <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
+                    <AnimatePresence mode="popLayout">
+                       {loading ? (
+                          <tr><td colSpan={7} className="py-40 text-center"><RefreshCw className="animate-spin mx-auto text-slate-200" size={40} /></td></tr>
+                       ) : error ? (
+                          <tr><td colSpan={7} className="py-20 text-center text-rose-500 font-bold">{error}</td></tr>
+                       ) : rows.length === 0 ? (
+                          <tr><td colSpan={7} className="py-20"><ListEmptyState icon="receipt" title={t("pages.invoicesList.emptyTitle")} description={t("pages.invoicesList.emptyHint")} /></td></tr>
+                       ) : rows.map((r, idx) => (
+                          <motion.tr 
+                             key={r.id}
+                             initial={{ opacity: 0, y: 10 }}
+                             animate={{ opacity: 1, y: 0 }}
+                             transition={{ delay: idx * 0.02 }}
+                             onClick={() => navigate(`/invoices/${r.id}`)}
+                             className="group cursor-pointer hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-all"
+                          >
+                             <td className="px-10 py-8">
+                                <div className="h-10 w-24 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-[10px] font-black text-slate-500 uppercase tracking-tighter">
+                                   {r.orNumber || "PENDING"}
+                                </div>
+                             </td>
+                             <td className="px-8 py-8">
+                                <div className="space-y-1">
+                                   <p className="text-base font-black text-slate-900 dark:text-white uppercase leading-none">{r.patient.fullName}</p>
+                                   <div className="flex items-center gap-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                                      <Phone size={10} className="opacity-40" />
+                                      {r.patient.phone}
+                                      <span className="h-1 w-1 rounded-full bg-slate-200 mx-1" />
+                                      {fmtDate(r.createdAt)}
+                                   </div>
+                                </div>
+                             </td>
+                             <td className="px-8 py-8 text-right text-base font-black text-slate-900 dark:text-white tabular-nums">
+                                {formatPHP(r.total)}
+                             </td>
+                             <td className="px-8 py-8 text-right text-base font-black text-emerald-500 tabular-nums">
+                                {formatPHP(r.paid)}
+                             </td>
+                             <td className="px-8 py-8 text-right text-base font-black text-rose-500 tabular-nums">
+                                {formatPHP(r.balance)}
+                             </td>
+                             <td className="px-8 py-8">
+                                <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-2xl text-[10px] font-black uppercase tracking-widest ${STATUS_CONFIG[r.status].bg} ${STATUS_CONFIG[r.status].color}`}>
+                                   {r.status}
+                                </div>
+                                {r.hmoClaims && r.hmoClaims.length > 0 && (
+                                   <div className="mt-2 flex gap-1">
+                                      <div className="px-2 py-0.5 rounded-lg bg-violet-50 dark:bg-violet-900/30 text-[8px] font-black text-violet-500 uppercase tracking-tighter">HMO</div>
+                                   </div>
+                                )}
+                             </td>
+                             <td className="px-10 py-8">
+                                <div className="flex items-center justify-end">
+                                   <div className="h-12 w-12 flex items-center justify-center rounded-2xl bg-slate-50 dark:bg-slate-800 text-slate-400 group-hover:bg-slate-900 group-hover:text-white dark:group-hover:bg-white dark:group-hover:text-slate-900 transition-all">
+                                      <ChevronRight size={24} />
+                                   </div>
+                                </div>
+                             </td>
+                          </motion.tr>
+                       ))}
+                    </AnimatePresence>
+                 </tbody>
               </table>
-            </div>
-          </>
-        )}
+           </div>
+        </div>
       </div>
     </div>
   );

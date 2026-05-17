@@ -1,5 +1,7 @@
 import { useState, useMemo } from 'react';
-import { Zap, RotateCcw, Download } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Zap, RotateCcw, Activity, Shield, Info, ChevronRight } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export interface PainPoint {
   id: string;
@@ -22,145 +24,36 @@ export interface TMJFaceAnatomyProps {
   onPointClear?: (pointId: string) => void;
   notes?: ClinicNotePoint[];
   className?: string;
+  readOnly?: boolean;
 }
 
 const PAIN_POINTS: PainPoint[] = [
-  // TMJ points
-  { id: 'tmj-left', label: 'Left TMJ', type: 'tmj', x: 120, y: 140 },
-  { id: 'tmj-right', label: 'Right TMJ', type: 'tmj', x: 280, y: 140 },
-  
-  // Muscle points
-  { id: 'masseter-left', label: 'Left Masseter', type: 'muscle', x: 100, y: 160 },
-  { id: 'masseter-right', label: 'Right Masseter', type: 'muscle', x: 300, y: 160 },
-  { id: 'temporalis-left', label: 'Left Temporalis', type: 'muscle', x: 80, y: 100 },
-  { id: 'temporalis-right', label: 'Right Temporalis', type: 'muscle', x: 320, y: 100 },
-  
-  // Nerve points
-  { id: 'trigeminal-left', label: 'Left Trigeminal', type: 'nerve', x: 110, y: 180 },
-  { id: 'trigeminal-right', label: 'Right Trigeminal', type: 'nerve', x: 290, y: 180 },
-  
-  // Bone points
-  { id: 'mandible-left', label: 'Left Mandible', type: 'bone', x: 130, y: 200 },
-  { id: 'mandible-right', label: 'Right Mandible', type: 'bone', x: 270, y: 200 },
-  { id: 'maxilla', label: 'Maxilla', type: 'bone', x: 200, y: 80 },
+  { id: 'tmj-left', label: 'Left Temporomandibular Joint', type: 'tmj', x: 120, y: 155 },
+  { id: 'tmj-right', label: 'Right Temporomandibular Joint', type: 'tmj', x: 280, y: 155 },
+  { id: 'masseter-left', label: 'Left Masseter Muscle', type: 'muscle', x: 110, y: 190 },
+  { id: 'masseter-right', label: 'Right Masseter Muscle', type: 'muscle', x: 290, y: 190 },
+  { id: 'temporalis-left', label: 'Left Temporalis Muscle', type: 'muscle', x: 100, y: 100 },
+  { id: 'temporalis-right', label: 'Right Temporalis Muscle', type: 'muscle', x: 300, y: 100 },
+  { id: 'trigeminal-v2-left', label: 'Left Trigeminal (V2)', type: 'nerve', x: 140, y: 140 },
+  { id: 'trigeminal-v2-right', label: 'Right Trigeminal (V2)', type: 'nerve', x: 260, y: 140 },
+  { id: 'trigeminal-v3-left', label: 'Left Trigeminal (V3)', type: 'nerve', x: 130, y: 220 },
+  { id: 'trigeminal-v3-right', label: 'Right Trigeminal (V3)', type: 'nerve', x: 270, y: 220 },
+  { id: 'condyle-left', label: 'Left Mandibular Condyle', type: 'bone', x: 135, y: 165 },
+  { id: 'condyle-right', label: 'Right Mandibular Condyle', type: 'bone', x: 265, y: 165 },
 ];
 
-const POINT_COLORS = {
-  tmj: { default: '#0ea5e9', mild: '#fbbf24', moderate: '#f97316', severe: '#dc2626' },
-  muscle: { default: '#ec4899', mild: '#fbbf24', moderate: '#f97316', severe: '#dc2626' },
-  nerve: { default: '#a855f7', mild: '#fbbf24', moderate: '#f97316', severe: '#dc2626' },
-  bone: { default: '#f59e0b', mild: '#fbbf24', moderate: '#f97316', severe: '#dc2626' },
+const SEVERITY_COLORS = {
+  mild: { bg: 'bg-amber-400', text: 'text-amber-900', glow: 'shadow-amber-400/50', hex: '#fbbf24' },
+  moderate: { bg: 'bg-orange-500', text: 'text-white', glow: 'shadow-orange-500/50', hex: '#f97316' },
+  severe: { bg: 'bg-rose-600', text: 'text-white', glow: 'shadow-rose-600/50', hex: '#e11d48' },
 };
 
-function FaceOutline() {
-  return (
-    <g>
-      {/* Head oval */}
-      <ellipse cx="200" cy="120" rx="80" ry="100" fill="none" stroke="#cbd5e1" strokeWidth="2" />
-      
-      {/* Face midline */}
-      <line x1="200" y1="30" x2="200" y2="210" stroke="#e5e7eb" strokeWidth="1" strokeDasharray="3" />
-      
-      {/* Nose */}
-      <polygon points="200,80 190,120 210,120" fill="none" stroke="#cbd5e1" strokeWidth="1" />
-      
-      {/* Eyes */}
-      <circle cx="160" cy="90" r="5" fill="none" stroke="#cbd5e1" strokeWidth="1" />
-      <circle cx="240" cy="90" r="5" fill="none" stroke="#cbd5e1" strokeWidth="1" />
-      
-      {/* Mouth */}
-      <path d="M 170 140 Q 200 150 230 140" fill="none" stroke="#cbd5e1" strokeWidth="1.5" />
-      
-      {/* Mandible outline */}
-      <path
-        d="M 140 160 Q 200 220 260 160"
-        fill="none"
-        stroke="#cbd5e1"
-        strokeWidth="2"
-      />
-    </g>
-  );
-}
-
-function MuscleLayers() {
-  return (
-    <g opacity="0.3">
-      {/* Masseter muscle left */}
-      <ellipse cx="100" cy="160" rx="35" ry="25" fill="#ec4899" stroke="none" />
-      
-      {/* Masseter muscle right */}
-      <ellipse cx="300" cy="160" rx="35" ry="25" fill="#ec4899" stroke="none" />
-      
-      {/* Temporalis left */}
-      <path
-        d="M 80 80 Q 100 90 110 120 Q 100 110 85 100 Z"
-        fill="#ec4899"
-        stroke="none"
-      />
-      
-      {/* Temporalis right */}
-      <path
-        d="M 320 80 Q 300 90 290 120 Q 300 110 315 100 Z"
-        fill="#ec4899"
-        stroke="none"
-      />
-    </g>
-  );
-}
-
-function PainMarker({
-  point,
-  severity,
-  isSelected,
-  onSelect,
-}: {
-  point: PainPoint;
-  severity?: 'mild' | 'moderate' | 'severe';
-  isSelected: boolean;
-  onSelect: () => void;
-}) {
-  const colors = POINT_COLORS[point.type];
-  const fillColor = severity ? colors[severity] : colors.default;
-  
-  return (
-    <g key={point.id} onClick={onSelect} style={{ cursor: 'pointer' }}>
-      {/* Outer ring for selection */}
-      {isSelected && (
-        <circle
-          cx={point.x}
-          cy={point.y}
-          r="12"
-          fill="none"
-          stroke={fillColor}
-          strokeWidth="2"
-          opacity="0.5"
-        />
-      )}
-      
-      {/* Main point */}
-      <circle
-        cx={point.x}
-        cy={point.y}
-        r="7"
-        fill={fillColor}
-        stroke="white"
-        strokeWidth="2"
-        opacity={isSelected ? 1 : 0.8}
-      />
-      
-      {/* Inner dot */}
-      <circle
-        cx={point.x}
-        cy={point.y}
-        r="3"
-        fill="white"
-      />
-      
-      {/* Hover label */}
-      <title>{point.label}</title>
-    </g>
-  );
-}
+const TYPE_COLORS = {
+  tmj: '#0ea5e9',
+  muscle: '#ec4899',
+  nerve: '#a855f7',
+  bone: '#f59e0b',
+};
 
 export function TMJFaceAnatomy({
   selectedPoints = [],
@@ -168,219 +61,237 @@ export function TMJFaceAnatomy({
   onPointClear,
   notes = [],
   className = '',
+  readOnly = false
 }: TMJFaceAnatomyProps) {
-  const [hoveredPoint, setHoveredPoint] = useState<string | null>(null);
+  const { t } = useTranslation();
   const [selectedSeverity, setSelectedSeverity] = useState<'mild' | 'moderate' | 'severe'>('moderate');
-  const [showMuscles, setShowMuscles] = useState(false);
-
-  const pointsByType = useMemo(() => {
-    return PAIN_POINTS.reduce(
-      (acc, p) => {
-        if (!acc[p.type]) acc[p.type] = [];
-        acc[p.type].push(p);
-        return acc;
-      },
-      {} as Record<string, PainPoint[]>,
-    );
-  }, []);
+  const [activePoint, setActivePoint] = useState<string | null>(null);
 
   const notesByPoint = useMemo(() => {
-    return notes.reduce(
-      (acc, n) => {
-        acc[n.pointId] = n;
-        return acc;
-      },
-      {} as Record<string, ClinicNotePoint>,
-    );
+    const map: Record<string, ClinicNotePoint> = {};
+    notes.forEach(n => map[n.pointId] = n);
+    return map;
   }, [notes]);
 
   const handlePointClick = (pointId: string) => {
-    onPointSelect?.(pointId, selectedSeverity);
-  };
-
-  const handleClearAll = () => {
-    selectedPoints.forEach((pid) => onPointClear?.(pid));
+    if (readOnly) return;
+    if (selectedPoints.includes(pointId)) {
+      onPointClear?.(pointId);
+    } else {
+      onPointSelect?.(pointId, selectedSeverity);
+    }
   };
 
   return (
-    <div className={`space-y-3 rounded-lg bg-white p-4 shadow-sm ${className}`}>
-      <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-slate-900 flex items-center gap-2">
-          <Zap size={16} />
-          TMJ & Face Anatomy
-        </h3>
-        <button
-          onClick={handleClearAll}
-          disabled={selectedPoints.length === 0}
-          className="text-xs px-2 py-1 rounded bg-slate-100 hover:bg-slate-200 disabled:opacity-50 flex items-center gap-1"
-        >
-          <RotateCcw size={12} /> Clear
-        </button>
-      </div>
+    <div className={`grid grid-cols-1 lg:grid-cols-12 gap-6 min-h-[500px] ${className}`}>
+      {/* 3D-Like Anatomy Canvas */}
+      <div className="lg:col-span-7 relative flex items-center justify-center rounded-[2.5rem] bg-slate-50 dark:bg-slate-950/40 border border-slate-200 dark:border-slate-800 overflow-hidden shadow-inner p-6">
+        <svg viewBox="0 0 400 400" className="w-full h-full max-w-[400px] drop-shadow-2xl">
+          <defs>
+            <radialGradient id="headGrad" cx="50%" cy="40%" r="60%">
+              <stop offset="0%" stopColor="rgba(226, 232, 240, 0.4)" />
+              <stop offset="100%" stopColor="rgba(203, 213, 225, 0.1)" />
+            </radialGradient>
+            <filter id="glow">
+              <feGaussianBlur stdDeviation="2.5" result="coloredBlur"/>
+              <feMerge>
+                <feMergeNode in="coloredBlur"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+          </defs>
 
-      {/* Legend */}
-      <div className="grid grid-cols-2 gap-2 text-xs">
-        <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full bg-blue-500" />
-          <span>TMJ</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full bg-pink-500" />
-          <span>Muscle</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full bg-purple-500" />
-          <span>Nerve</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full bg-amber-500" />
-          <span>Bone</span>
-        </div>
-      </div>
-
-      {/* Severity selector */}
-      <div className="flex items-center gap-2 p-2 bg-slate-50 rounded">
-        <span className="text-xs font-medium text-slate-700">Severity:</span>
-        <button
-          onClick={() => setSelectedSeverity('mild')}
-          className={`px-2 py-1 rounded text-xs font-medium ${
-            selectedSeverity === 'mild'
-              ? 'bg-yellow-400 text-white'
-              : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
-          }`}
-        >
-          Mild
-        </button>
-        <button
-          onClick={() => setSelectedSeverity('moderate')}
-          className={`px-2 py-1 rounded text-xs font-medium ${
-            selectedSeverity === 'moderate'
-              ? 'bg-orange-500 text-white'
-              : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
-          }`}
-        >
-          Moderate
-        </button>
-        <button
-          onClick={() => setSelectedSeverity('severe')}
-          className={`px-2 py-1 rounded text-xs font-medium ${
-            selectedSeverity === 'severe'
-              ? 'bg-red-600 text-white'
-              : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
-          }`}
-        >
-          Severe
-        </button>
-        <label className="ml-auto flex items-center gap-2 text-xs">
-          <input
-            type="checkbox"
-            checked={showMuscles}
-            onChange={(e) => setShowMuscles(e.target.checked)}
-            className="rounded"
+          {/* Realistic Face Silhouette */}
+          <path 
+            d="M 200,40 C 140,40 100,80 100,160 C 100,240 140,340 200,340 C 260,340 300,240 300,160 C 300,80 260,40 200,40 Z" 
+            fill="url(#headGrad)" 
+            stroke="currentColor" 
+            className="text-slate-200 dark:text-slate-800" 
+            strokeWidth="1.5" 
           />
-          Show muscles
-        </label>
-      </div>
+          
+          {/* Internal Structures - Simplified Anatomical Landmarks */}
+          <g opacity="0.4" className="text-slate-300 dark:text-slate-700">
+            {/* Zygomatic Arches */}
+            <path d="M 120,150 Q 200,160 280,150" fill="none" stroke="currentColor" strokeWidth="1" />
+            {/* Mandible */}
+            <path d="M 130,160 Q 200,300 270,160" fill="none" stroke="currentColor" strokeWidth="2" />
+            {/* Midline */}
+            <line x1="200" y1="40" x2="200" y2="340" stroke="currentColor" strokeWidth="0.5" strokeDasharray="4 4" />
+          </g>
 
-      {/* SVG Canvas */}
-      <svg
-        width="400"
-        height="300"
-        viewBox="0 0 400 300"
-        className="w-full border border-slate-200 rounded-lg bg-gradient-to-b from-slate-50 to-white"
-      >
-        {/* Face outline */}
-        <FaceOutline />
-
-        {/* Muscle layers */}
-        {showMuscles && <MuscleLayers />}
-
-        {/* Pain points */}
-        {PAIN_POINTS.map((point) => (
-          <PainMarker
-            key={point.id}
-            point={point}
-            severity={notesByPoint[point.id]?.severity}
-            isSelected={selectedPoints.includes(point.id)}
-            onSelect={() => handlePointClick(point.id)}
-          />
-        ))}
-      </svg>
-
-      {/* Selected points summary */}
-      {selectedPoints.length > 0 && (
-        <div className="space-y-2 rounded-lg bg-slate-50 p-3">
-          <p className="text-xs font-semibold text-slate-900">
-            {selectedPoints.length} point{selectedPoints.length !== 1 ? 's' : ''} marked
-          </p>
-          <div className="flex flex-wrap gap-2">
-            {selectedPoints.map((pid) => {
-              const point = PAIN_POINTS.find((p) => p.id === pid);
-              const note = notesByPoint[pid];
-              if (!point) return null;
-
-              return (
-                <div
-                  key={pid}
-                  className="flex items-center gap-1 rounded-full bg-white px-2 py-1 text-xs border"
-                  style={{
-                    borderColor: POINT_COLORS[point.type][note?.severity || 'default'],
-                  }}
-                >
-                  <span className="font-medium">{point.label}</span>
-                  <span
-                    className="text-xs font-bold"
-                    style={{
-                      color: POINT_COLORS[point.type][note?.severity || 'default'],
-                    }}
-                  >
-                    {note?.severity || 'unmarked'}
-                  </span>
-                  <button
-                    onClick={() => onPointClear?.(pid)}
-                    className="text-slate-400 hover:text-slate-600"
-                  >
-                    ×
-                  </button>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
-
-      {/* Notes list */}
-      {notes.length > 0 && (
-        <div className="space-y-2 border-t pt-3">
-          <p className="text-xs font-semibold text-slate-900">Clinical Notes</p>
-          <div className="space-y-1 max-h-40 overflow-y-auto">
-            {notes.map((note) => {
-              const point = PAIN_POINTS.find((p) => p.id === note.pointId);
-              if (!point) return null;
-
-              return (
-                <div key={note.pointId} className="rounded bg-slate-50 p-2 text-xs">
-                  <div className="flex items-center justify-between">
-                    <span className="font-medium text-slate-900">{point.label}</span>
-                    <span
-                      className="px-2 py-0.5 rounded text-white font-bold text-[10px]"
-                      style={{
-                        backgroundColor: POINT_COLORS[point.type][note.severity],
-                      }}
-                    >
-                      {note.severity.toUpperCase()}
-                    </span>
-                  </div>
-                  {note.notes && (
-                    <p className="mt-1 text-slate-600">{note.notes}</p>
+          {/* Pain Markers */}
+          {PAIN_POINTS.map((point) => {
+            const note = notesByPoint[point.id];
+            const isSelected = selectedPoints.includes(point.id);
+            const severity = note?.severity;
+            const color = severity ? SEVERITY_COLORS[severity].hex : TYPE_COLORS[point.type];
+            
+            return (
+              <motion.g 
+                key={point.id} 
+                className="cursor-pointer"
+                onMouseEnter={() => setActivePoint(point.id)}
+                onMouseLeave={() => setActivePoint(null)}
+                onClick={() => handlePointClick(point.id)}
+                whileHover={{ scale: 1.1 }}
+              >
+                {/* Visual Feedback Circle */}
+                <AnimatePresence>
+                  {isSelected && (
+                    <motion.circle
+                      initial={{ scale: 0, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 0.2 }}
+                      exit={{ scale: 0, opacity: 0 }}
+                      cx={point.x} cy={point.y} r={isSelected && severity === 'severe' ? 24 : 18}
+                      fill={color}
+                    />
                   )}
-                  <p className="text-[10px] text-slate-500 mt-1">{note.date}</p>
-                </div>
-              );
-            })}
-          </div>
+                </AnimatePresence>
+
+                {/* Core Marker */}
+                <circle 
+                  cx={point.x} cy={point.y} r="8" 
+                  fill={color} 
+                  stroke="white" strokeWidth="2"
+                  className={isSelected ? "shadow-lg" : "opacity-60"}
+                />
+                
+                {/* Active Ripple Animation for High Severity */}
+                {isSelected && severity === 'severe' && (
+                  <motion.circle
+                    cx={point.x} cy={point.y} r="8"
+                    stroke={color}
+                    initial={{ scale: 1, opacity: 1 }}
+                    animate={{ scale: 3, opacity: 0 }}
+                    transition={{ repeat: Infinity, duration: 1.5 }}
+                  />
+                )}
+
+                {/* Label Tooltip - Subtle */}
+                {(activePoint === point.id || isSelected) && (
+                  <foreignObject x={point.x + 12} y={point.y - 12} width="150" height="40">
+                    <div className="flex items-center gap-1.5 rounded-full bg-white/90 dark:bg-slate-900/90 px-2 py-1 shadow-sm backdrop-blur-sm border border-slate-200 dark:border-slate-800">
+                       <div className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: color }} />
+                       <span className="text-[9px] font-black uppercase text-slate-700 dark:text-slate-300 whitespace-nowrap">
+                          {point.label.replace(' Temporomandibular Joint', ' TMJ')}
+                       </span>
+                    </div>
+                  </foreignObject>
+                )}
+              </motion.g>
+            );
+          })}
+        </svg>
+
+        {/* Floating Controls */}
+        <div className="absolute top-6 left-6 right-6 flex items-center justify-between pointer-events-none">
+           <div className="flex items-center gap-2 pointer-events-auto rounded-full bg-white/80 dark:bg-slate-900/80 p-1.5 shadow-lg backdrop-blur-md border border-white dark:border-slate-800">
+              <button 
+                onClick={() => setSelectedSeverity('mild')}
+                className={`px-3 py-1 rounded-full text-[10px] font-black uppercase transition-all ${selectedSeverity === 'mild' ? 'bg-amber-400 text-amber-950' : 'text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800'}`}
+              >
+                Mild
+              </button>
+              <button 
+                onClick={() => setSelectedSeverity('moderate')}
+                className={`px-3 py-1 rounded-full text-[10px] font-black uppercase transition-all ${selectedSeverity === 'moderate' ? 'bg-orange-500 text-white' : 'text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800'}`}
+              >
+                Moderate
+              </button>
+              <button 
+                onClick={() => setSelectedSeverity('severe')}
+                className={`px-3 py-1 rounded-full text-[10px] font-black uppercase transition-all ${selectedSeverity === 'severe' ? 'bg-rose-600 text-white' : 'text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800'}`}
+              >
+                Severe
+              </button>
+           </div>
+           
+           <button 
+             onClick={() => selectedPoints.forEach(p => onPointClear?.(p))}
+             className="pointer-events-auto flex items-center gap-2 rounded-full bg-slate-900 dark:bg-white px-4 py-2 text-[10px] font-black uppercase text-white dark:text-slate-900 shadow-xl"
+           >
+             <RotateCcw size={12} /> {t('common.clear')}
+           </button>
         </div>
-      )}
+      </div>
+
+      {/* Diagnostic Insight Panel */}
+      <div className="lg:col-span-5 flex flex-col gap-4">
+        <section className="flex-1 rounded-[2rem] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 shadow-xl shadow-slate-200/40 dark:shadow-none">
+           <div className="flex items-center gap-3 mb-6">
+              <div className="h-10 w-10 rounded-2xl bg-sky-500/10 flex items-center justify-center text-sky-600">
+                 <Activity size={20} />
+              </div>
+              <div>
+                 <h3 className="text-sm font-black uppercase tracking-widest text-slate-400">Diagnostic Hub</h3>
+                 <p className="text-xs font-bold text-slate-900 dark:text-white">Active Findings</p>
+              </div>
+           </div>
+
+           <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+              {selectedPoints.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-12 text-center">
+                   <div className="h-12 w-12 rounded-full border-2 border-dashed border-slate-200 dark:border-slate-800 flex items-center justify-center mb-4 text-slate-300">
+                      <Shield size={20} />
+                   </div>
+                   <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">No Points Marked</p>
+                   <p className="text-[10px] text-slate-400 mt-1">Tap anatomical markers to record pain areas.</p>
+                </div>
+              ) : (
+                selectedPoints.map(pid => {
+                  const point = PAIN_POINTS.find(p => p.id === pid);
+                  const note = notesByPoint[pid];
+                  const severity = note?.severity || selectedSeverity;
+                  const colors = SEVERITY_COLORS[severity];
+                  
+                  return (
+                    <motion.div 
+                      key={pid}
+                      initial={{ x: 20, opacity: 0 }}
+                      animate={{ x: 0, opacity: 1 }}
+                      className="group relative rounded-2xl bg-slate-50 dark:bg-slate-950/40 border border-slate-100 dark:border-slate-800 p-4 transition-all hover:shadow-lg"
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                         <div className="flex items-center gap-2">
+                            <div className="h-2 w-2 rounded-full" style={{ backgroundColor: TYPE_COLORS[point?.type || 'tmj'] }} />
+                            <span className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-tight">
+                               {point?.label}
+                            </span>
+                         </div>
+                         <div className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase ${colors.bg} ${colors.text} ${colors.glow} shadow-lg`}>
+                            {severity}
+                         </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                         <Info size={12} className="text-slate-400" />
+                         <span className="text-[10px] font-bold text-slate-500">
+                            {point?.type === 'tmj' ? 'Articular involvement detected' : 'Muscular tension identified'}
+                         </span>
+                      </div>
+                      <button 
+                        onClick={() => onPointClear?.(pid)}
+                        className="absolute -right-2 -top-2 h-6 w-6 rounded-full bg-rose-500 text-white flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                         <RotateCcw size={10} />
+                      </button>
+                    </motion.div>
+                  );
+                })
+              )}
+           </div>
+
+           {selectedPoints.length > 0 && (
+             <div className="mt-8 pt-6 border-t border-slate-100 dark:border-slate-800">
+                <button className="w-full flex items-center justify-between rounded-2xl bg-sky-500 p-4 text-white shadow-xl shadow-sky-500/20 group overflow-hidden relative">
+                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+                   <span className="text-xs font-black uppercase tracking-widest">Generate Analysis</span>
+                   <ChevronRight size={16} />
+                </button>
+             </div>
+           )}
+        </section>
+      </div>
     </div>
   );
 }

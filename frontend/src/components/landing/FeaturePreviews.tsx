@@ -421,3 +421,56 @@ export function InventoryPreview(): JSX.Element {
     </div>
   );
 }
+
+/* ---------------- Revenue & Reports ---------------- */
+
+export function RevenuePreview(): JSX.Element {
+  const { t } = useTranslation();
+  
+  return (
+    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div className="flex items-center justify-between border-b border-slate-100 px-5 py-3">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">{t("landingPreview.devices.deskRevenue")}</p>
+          <p className="text-sm font-bold text-slate-900">↑ ₱ 42,500 <span className="text-[10px] font-medium text-emerald-600 ml-1">avg +12%</span></p>
+        </div>
+        <div className="flex gap-1">
+          <div className="h-6 w-12 rounded bg-slate-100" />
+          <div className="h-6 w-12 rounded bg-slate-100" />
+        </div>
+      </div>
+
+      <div className="p-5">
+        <div className="flex items-end gap-1.5 h-32">
+          {[40, 65, 35, 85, 55, 95, 75].map((h, i) => (
+            <div key={i} className="flex-1 bg-sky-100 rounded-t-lg relative group">
+              <div className="absolute bottom-0 w-full bg-sky-500 rounded-t-lg transition-all" style={{ height: `${h}%` }} />
+            </div>
+          ))}
+        </div>
+        <div className="flex justify-between mt-3 px-1 text-[10px] font-bold text-slate-400">
+          <span>MON</span>
+          <span>TUE</span>
+          <span>WED</span>
+          <span>THU</span>
+          <span>FRI</span>
+          <span>SAT</span>
+          <span>SUN</span>
+        </div>
+
+        <div className="mt-6 grid grid-cols-2 gap-4">
+          <div className="rounded-xl border border-slate-100 bg-slate-50/50 p-3">
+             <p className="text-[10px] font-bold uppercase text-slate-500">Top Procedure</p>
+             <p className="mt-1 text-sm font-bold text-slate-900">Root Canal</p>
+             <p className="text-xs text-emerald-600 font-semibold">₱ 12.4k this week</p>
+          </div>
+          <div className="rounded-xl border border-slate-100 bg-slate-50/50 p-3">
+             <p className="text-[10px] font-bold uppercase text-slate-500">New Patients</p>
+             <p className="mt-1 text-sm font-bold text-slate-900">+14</p>
+             <p className="text-xs text-sky-600 font-semibold">↑ 30% from last</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

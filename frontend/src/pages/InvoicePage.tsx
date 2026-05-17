@@ -2,6 +2,24 @@ import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useParams } from "react-router-dom";
 import { toast } from "sonner";
+import { motion, AnimatePresence } from "framer-motion";
+import { 
+  ArrowLeft, 
+  Printer, 
+  Download, 
+  FileText, 
+  User, 
+  Calendar, 
+  CreditCard, 
+  Shield, 
+  Clock, 
+  Plus, 
+  CheckCircle2, 
+  RefreshCw, 
+  Phone,
+  MoreVertical,
+  Zap
+} from "lucide-react";
 
 import { InvoiceHmoClaimChips } from "../components/invoices/InvoiceHmoClaimChips";
 import { InvoiceStatusBadge } from "../components/invoices/InvoiceStatusBadge";
@@ -11,6 +29,7 @@ import {
   fetchInvoice,
   openInvoicePdf,
   openPhilhealthWorksheetPdf,
+  openBir2307Pdf,
   simulatePaymongoPaid,
   updateInvoice,
 } from "../services/invoices";
@@ -24,8 +43,7 @@ import {
 import type { InvoiceDto } from "../types/invoice";
 import { formatPHP } from "../types/invoice";
 
-const fieldFocus =
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:focus-visible:ring-offset-slate-950";
+// fieldFocus removed
 
 function fmtDateTime(iso: string): string {
   return new Intl.DateTimeFormat("en-PH", {
@@ -54,7 +72,7 @@ export function InvoicePage(): JSX.Element {
   const [claimProviderId, setClaimProviderId] = useState("");
   const [claimSelectedLineIds, setClaimSelectedLineIds] = useState<string[]>([]);
   const [claimCopay, setClaimCopay] = useState(0);
-  const [claimNotes, setClaimNotes] = useState("");
+  const [claimNotes] = useState("");
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -89,6 +107,7 @@ export function InvoicePage(): JSX.Element {
       const updated = await updateInvoice(invoice.id, { discount: value });
       setInvoice(updated);
       setEditingDiscount(false);
+      toast.success(t("pages.invoice.saved"));
     } catch (e) {
       toast.error(e instanceof Error ? e.message : t("pages.invoice.alertDiscountFailed"));
     }
@@ -116,19 +135,32 @@ export function InvoicePage(): JSX.Element {
       const updated = await simulatePaymongoPaid(invoice.id);
       setInvoice(updated);
       setPaymongoUrl(null);
+      toast.success(t("pages.invoice.paidFull", { date: t("pages.invoice.paidJustNow") }));
     } catch (e) {
       toast.error(e instanceof Error ? e.message : t("pages.invoice.alertSimulateFailed"));
     }
   }
 
   if (loading) {
-    return <div className="p-10 text-center text-slate-500">{t("pages.invoice.loading")}</div>;
+    return (
+      <div className="flex flex-col items-center justify-center py-40 gap-4">
+        <RefreshCw className="h-10 w-10 animate-spin text-emerald-500" />
+        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Syncing Ledger...</p>
+      </div>
+    );
   }
+
   if (error || !invoice) {
     return (
-      <div className="p-10 text-center">
-        <p className="text-red-700">{error ?? t("pages.invoice.notFound")}</p>
-        <Link to="/invoices" className="mt-3 inline-block text-sm font-semibold text-emerald-700">
+      <div className="flex flex-col items-center justify-center py-40 gap-6 text-center px-6">
+        <div className="h-20 w-20 rounded-[2.5rem] bg-rose-50 text-rose-500 flex items-center justify-center">
+           <FileText size={40} />
+        </div>
+        <div>
+          <p className="text-xl font-black text-slate-900 dark:text-white">{error ?? t("pages.invoice.notFound")}</p>
+          <p className="mt-2 text-sm font-medium text-slate-400">The requested financial record could not be retrieved.</p>
+        </div>
+        <Link to="/invoices" className="rounded-2xl bg-slate-900 px-8 py-4 text-xs font-black text-white uppercase tracking-widest shadow-xl transition-all hover:scale-105">
           {t("pages.invoice.backList")}
         </Link>
       </div>
@@ -137,17 +169,12 @@ export function InvoicePage(): JSX.Element {
 
   const balance = Number(invoice.balance);
   const isPaid = invoice.status === "PAID";
-  const currentInvoice = invoice;
   const claimRequested = invoice.treatments
     .filter((t) => claimSelectedLineIds.includes(t.id))
     .reduce((sum, t) => sum + Number(t.lineTotal), 0);
   const claimCoverage = Math.max(0, claimRequested - claimCopay);
   const selectedMembership = memberships.find((m) => m.providerId === claimProviderId);
-  const showNonPrimaryPlanHint = Boolean(
-    selectedMembership &&
-      !selectedMembership.isPrimary &&
-      memberships.some((m) => m.isPrimary),
-  );
+  // showNonPrimaryPlanHint removed
 
   async function submitClaim(): Promise<void> {
     if (!claimProviderId) {
@@ -160,7 +187,7 @@ export function InvoicePage(): JSX.Element {
     }
     setClaimBusy(true);
     try {
-      const lineDesc = currentInvoice.treatments
+      const lineDesc = invoice!.treatments
         .filter((t) => claimSelectedLineIds.includes(t.id))
         .map(
           (tr) =>
@@ -168,8 +195,8 @@ export function InvoicePage(): JSX.Element {
         )
         .join(" | ");
       await createHmoClaim({
-        patientId: currentInvoice.patient.id,
-        invoiceId: currentInvoice.id,
+        patientId: invoice!.patient.id,
+        invoiceId: invoice!.id,
         providerId: claimProviderId,
         patientHmoId: selectedMembership?.id,
         treatmentIds: claimSelectedLineIds,
@@ -189,525 +216,455 @@ export function InvoicePage(): JSX.Element {
   }
 
   return (
-    <div className={`space-y-5 print:bg-white ${!isPaid && balance > 0 ? "pb-28 md:pb-0" : ""}`}>
-      <div className="flex items-center justify-between print:hidden">
-        <Link
-          to="/invoices"
-          className="text-sm font-semibold text-slate-600 hover:text-slate-900"
-        >
-          {t("pages.invoice.backInvoices")}
-        </Link>
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={() => window.print()}
-            className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
-          >
-            {t("pages.invoice.print")}
-          </button>
-          <button
-            type="button"
-            onClick={() =>
-              openInvoicePdf(invoice.id).catch(() => toast.error(t("pages.invoice.pdfFailed")))
-            }
-            className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
-          >
-            {t("pages.invoice.downloadPdf")}
-          </button>
-          {invoice.patient.philhealthNo ? (
-            <button
-              type="button"
-              onClick={() =>
-                openPhilhealthWorksheetPdf(invoice.id).catch(() =>
-                  toast.error(t("pages.invoice.philhealthWorksheetPdfFailed")),
-                )
-              }
-              className="rounded-lg border border-amber-300 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950 hover:bg-amber-100"
-            >
-              {t("pages.invoice.philhealthWorksheet")}
-            </button>
-          ) : null}
-        </div>
-      </div>
+    <div className={`min-h-screen w-full pb-24 bg-[#fafbfc] dark:bg-slate-950 print:bg-white ${!isPaid && balance > 0 ? "pb-32 md:pb-24" : ""}`}>
+      <div className="mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-10 space-y-12 pt-10">
+        
+        {/* Navigation & Actions */}
+        <header className="flex flex-col gap-8 lg:flex-row lg:items-center justify-between print:hidden">
+           <Link 
+             to="/invoices" 
+             className="group flex items-center gap-4 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-emerald-500 transition-all"
+           >
+             <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white dark:bg-slate-900 shadow-xl ring-1 ring-slate-100 dark:ring-slate-800 group-hover:scale-110 transition-all">
+                <ArrowLeft size={20} />
+             </div>
+             {t("pages.invoice.backInvoices")}
+           </Link>
 
-      <div className="mx-auto w-full max-w-5xl">
-        {/* Header card */}
-        <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-          <div className="flex flex-wrap items-start justify-between gap-4">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-wider text-emerald-700">
-                {t("pages.invoice.officialReceipt")}
-              </p>
-              <h1 className="mt-1 font-mono text-2xl font-bold text-slate-900">
-                {invoice.orNumber ?? t("pages.invoice.orPending")}
-              </h1>
-              <p className="mt-1 text-sm text-slate-500">
-                {t("pages.invoice.issued", { date: fmtDateTime(invoice.createdAt) })}
-              </p>
-            </div>
-            <InvoiceStatusBadge status={invoice.status} />
-          </div>
-          <div className="mt-5 grid gap-6 sm:grid-cols-2">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-                {t("pages.invoice.billedTo")}
-              </p>
-              <p className="mt-1 text-base font-bold text-slate-900">
-                {invoice.patient.fullName}
-              </p>
-              <p className="text-sm text-slate-600">{invoice.patient.phone}</p>
-              {invoice.patient.email ? (
-                <p className="text-sm text-slate-600">{invoice.patient.email}</p>
-              ) : null}
-              {invoice.patient.philhealthNo ? (
-                <p className="mt-1 inline-block rounded bg-emerald-100 px-2 py-0.5 text-xs font-semibold text-emerald-900">
-                  PhilHealth · {invoice.patient.philhealthNo}
-                </p>
-              ) : null}
-              <div className="mt-2 flex flex-wrap gap-2">
-                {invoice.patient.isSeniorCitizen ? (
-                  <span className="inline-block rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-amber-900 ring-1 ring-amber-200">
-                    {t("pages.invoice.seniorCitizenBadge")}
-                  </span>
-                ) : null}
-                {invoice.patient.pwdIdNo?.trim() ? (
-                  <span className="inline-block rounded-full bg-sky-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-sky-900 ring-1 ring-sky-200">
-                    {t("pages.invoice.pwdBadge")}
-                  </span>
-                ) : null}
-              </div>
-              {invoice.patient.isSeniorCitizen || invoice.patient.pwdIdNo?.trim() ? (
-                <p className="mt-2 text-[11px] leading-snug text-slate-600 dark:text-slate-400">
-                  {t("pages.invoice.statutoryDiscountNote")}
-                </p>
-              ) : null}
-            </div>
-            {invoice.appointment ? (
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-                  {t("pages.invoice.appointment")}
-                </p>
-                <p className="mt-1 text-sm text-slate-800">
-                  {fmtDateTime(invoice.appointment.scheduledAt)}
-                </p>
-                <p className="text-sm text-slate-600">
-                  Dr. {invoice.appointment.dentist.fullName}
-                </p>
-                {invoice.appointment.type ? (
-                  <p className="text-sm text-slate-500">
-                    {invoice.appointment.type.replace(/_/g, " ")}
-                  </p>
-                ) : null}
-              </div>
-            ) : null}
-          </div>
-          {(invoice.hmoClaims?.length ?? 0) > 0 ? (
-            <div className="mt-5 border-t border-slate-100 pt-4">
-              <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-                {t("pages.invoice.hmoClaimsSection")}
-              </p>
-              <div className="mt-2">
-                <InvoiceHmoClaimChips claims={invoice.hmoClaims ?? []} />
-              </div>
-            </div>
-          ) : null}
-        </section>
-
-        {/* Line items */}
-        <section className="mt-6 overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
-          <table className="min-w-[520px] w-full text-sm">
-            <thead>
-              <tr className="border-b border-slate-200 bg-slate-50 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
-                <th className="px-4 py-3">{t("pages.invoice.colProcedure")}</th>
-                <th className="px-4 py-3">{t("pages.invoice.colTooth")}</th>
-                <th className="px-4 py-3 text-right">{t("pages.invoice.colQty")}</th>
-                <th className="px-4 py-3 text-right">{t("pages.invoice.colUnit")}</th>
-                <th className="px-4 py-3 text-right">{t("pages.invoice.colTotal")}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {invoice.treatments.length === 0 ? (
-                <tr>
-                  <td colSpan={5} className="px-4 py-6 text-center text-slate-500">
-                    {t("pages.invoice.noTreatments")}
-                  </td>
-                </tr>
-              ) : (
-                invoice.treatments.map((row) => (
-                  <tr key={row.id} className="border-b border-slate-100">
-                    <td className="px-4 py-3">
-                      <div className="font-semibold text-slate-900">
-                        {row.procedure.replace(/_/g, " ")}
-                      </div>
-                      {row.notes ? (
-                        <div className="text-xs text-slate-500">{row.notes}</div>
-                      ) : null}
-                    </td>
-                    <td className="px-4 py-3 text-slate-700">
-                      {row.toothIds.length ? row.toothIds.join(", ") : t("pages.common.empty")}
-                    </td>
-                    <td className="px-4 py-3 text-right text-slate-700">{row.quantity}</td>
-                    <td className="px-4 py-3 text-right text-slate-700">
-                      {formatPHP(row.unitPrice)}
-                    </td>
-                    <td className="px-4 py-3 text-right font-semibold text-slate-900">
-                      {formatPHP(row.lineTotal)}
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-
-          <div className="flex flex-col items-end gap-2 border-t border-slate-100 px-4 py-4">
-            <div className="flex w-full max-w-sm items-center justify-between text-sm text-slate-600">
-              <span>{t("pages.invoice.subtotal")}</span>
-              <span>{formatPHP(invoice.subtotal)}</span>
-            </div>
-            <div className="flex w-full max-w-sm items-center justify-between gap-3 text-sm text-slate-600">
-              <span>{t("pages.invoice.discount")}</span>
-              {editingDiscount && !isPaid ? (
-                <div className="flex items-center gap-1">
-                  <input
-                    type="number"
-                    step="0.01"
-                    value={discountDraft}
-                    onChange={(e) => setDiscountDraft(e.target.value)}
-                    className="w-24 rounded border border-slate-300 px-2 py-0.5 text-right text-sm"
-                  />
-                  <button
-                    type="button"
-                    onClick={saveDiscount}
-                    className="rounded bg-emerald-600 px-2 py-0.5 text-xs font-bold text-white"
-                  >
-                    {t("pages.invoice.save")}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setEditingDiscount(false);
-                      setDiscountDraft(invoice.discount);
-                    }}
-                    className="rounded border border-slate-300 px-2 py-0.5 text-xs font-semibold"
-                  >
-                    {t("pages.invoice.cancel")}
-                  </button>
-                </div>
-              ) : (
-                <div className="flex items-center gap-2">
-                  <span>{formatPHP(invoice.discount)}</span>
-                  {!isPaid ? (
-                    <button
-                      type="button"
-                      onClick={() => setEditingDiscount(true)}
-                      className="text-xs font-semibold text-emerald-700 hover:underline"
-                    >
-                      {t("pages.invoice.edit")}
-                    </button>
-                  ) : null}
-                </div>
-              )}
-            </div>
-            <div className="flex w-full max-w-sm items-center justify-between border-t border-slate-200 pt-2 text-base">
-              <span className="font-semibold text-slate-900">{t("pages.invoice.total")}</span>
-              <span className="text-xl font-extrabold text-slate-900">{formatPHP(invoice.total)}</span>
-            </div>
-          </div>
-        </section>
-
-        {/* Payments + actions */}
-        <section className="mt-6 grid gap-6 lg:grid-cols-[1.4fr_1fr]">
-          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-            <div className="mb-3 flex items-center justify-between">
-              <h2 className="text-sm font-bold uppercase tracking-wider text-slate-700">
-                {t("pages.invoice.paymentsTitle")}
-              </h2>
-              {!isPaid ? (
+           <div className="flex items-center gap-4">
+              <button
+                onClick={() => window.print()}
+                className="flex h-14 items-center gap-3 px-6 rounded-2xl bg-white dark:bg-slate-900 text-slate-400 shadow-xl ring-1 ring-slate-100 dark:ring-slate-800 transition-all hover:text-emerald-500"
+              >
+                <Printer size={18} />
+                <span className="text-[10px] font-black uppercase tracking-widest">{t("pages.invoice.print")}</span>
+              </button>
+              <button
+                onClick={() => openInvoicePdf(invoice.id).catch(() => toast.error(t("pages.invoice.pdfFailed")))}
+                className="flex h-14 items-center gap-3 px-6 rounded-2xl bg-white dark:bg-slate-900 text-slate-400 shadow-xl ring-1 ring-slate-100 dark:ring-slate-800 transition-all hover:text-emerald-500"
+              >
+                <Download size={18} />
+                <span className="text-[10px] font-black uppercase tracking-widest">PDF</span>
+              </button>
+              {invoice.patient.philhealthNo && (
                 <button
-                  type="button"
-                  onClick={() => setModalOpen(true)}
-                  className="rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 px-3 py-1.5 text-xs font-bold text-white shadow"
+                  onClick={() => openPhilhealthWorksheetPdf(invoice.id).catch(() => toast.error(t("pages.invoice.philhealthWorksheetPdfFailed")))}
+                  className="flex h-14 items-center gap-3 px-6 rounded-2xl bg-amber-50 text-amber-600 shadow-xl ring-1 ring-amber-100 transition-all hover:bg-amber-500 hover:text-white"
                 >
-                  {t("pages.invoice.addPayment")}
+                  <FileText size={18} />
+                  <span className="text-[10px] font-black uppercase tracking-widest">{t("pages.invoice.philhealthBtn")}</span>
                 </button>
-              ) : null}
-            </div>
-            {invoice.payments.length === 0 ? (
-              <p className="py-6 text-center text-sm text-slate-500">{t("pages.invoice.noPayments")}</p>
-            ) : (
-              <ul className="divide-y divide-slate-100">
-                {invoice.payments.map((p) => (
-                  <li key={p.id} className="flex items-center justify-between py-3 text-sm">
-                    <div>
-                      <div className="font-semibold text-slate-900">
-                        {formatPHP(p.amount)}
-                        <span className="ml-2 rounded bg-slate-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-slate-600">
-                          {p.method}
-                        </span>
-                      </div>
-                      <div className="text-xs text-slate-500">
-                        {fmtDateTime(p.paidAt)}
-                        {p.referenceNo ? t("pages.invoice.refLine", { ref: p.referenceNo }) : ""}
-                        {p.notes ? ` · ${p.notes}` : ""}
-                      </div>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
+              )}
+              <button
+                onClick={() => openBir2307Pdf(invoice.id).catch(() => toast.error(t("pages.invoice.bir2307Failed")))}
+                className="flex h-14 items-center gap-3 px-6 rounded-2xl bg-blue-50 text-blue-600 shadow-xl ring-1 ring-blue-100 transition-all hover:bg-blue-500 hover:text-white"
+              >
+                <Shield size={18} />
+                <span className="text-[10px] font-black uppercase tracking-widest">{t("pages.invoice.bir2307Label")}</span>
+              </button>
+           </div>
+        </header>
 
-          <div className="flex flex-col gap-4">
-            <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-              <div className="flex items-center justify-between">
-                <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-                  {t("pages.invoice.hmoClaim")}
-                </p>
-                <button
-                  type="button"
-                  onClick={() => setClaimOpen((v) => !v)}
-                  className="min-h-9 rounded border border-teal-300 px-3 py-1.5 text-xs font-semibold text-teal-800 hover:bg-teal-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2 dark:border-teal-700 dark:text-teal-200 dark:hover:bg-teal-950/40 dark:focus-visible:ring-offset-slate-950"
-                >
-                  {claimOpen ? t("pages.invoice.close") : t("pages.invoice.createHmoClaim")}
-                </button>
-              </div>
-              {claimOpen ? (
-                <div className="mt-3 space-y-3 text-sm">
-                  {memberships.length > 1 ? (
-                    <div className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-[11px] font-medium leading-snug text-amber-950 dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-100">
-                      {t("pages.invoice.multiMembershipHint", { count: memberships.length })}
+        {/* Hero Section */}
+        <section className="relative rounded-[3.5rem] bg-white dark:bg-slate-900 p-10 lg:p-16 shadow-2xl shadow-slate-200/40 dark:shadow-none ring-1 ring-slate-100 dark:ring-slate-800 overflow-hidden">
+           <div className="absolute top-0 right-0 h-96 w-96 bg-emerald-500/5 blur-[120px] pointer-events-none" />
+           <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+              <div className="space-y-8">
+                 <div className="space-y-4">
+                    <div className="flex items-center gap-4">
+                       <span className="text-[10px] font-black uppercase tracking-[0.4em] text-emerald-500">{t("pages.invoice.officialReceipt")}</span>
+                       <InvoiceStatusBadge status={invoice.status} />
                     </div>
-                  ) : null}
-                  {claimProviderId && showNonPrimaryPlanHint ? (
-                    <div className="rounded-lg border border-amber-200 bg-amber-50/90 px-3 py-2 text-[11px] font-medium leading-snug text-amber-950 dark:border-amber-800 dark:bg-amber-950/35 dark:text-amber-100">
-                      {t("pages.invoice.nonPrimaryMemberHint")}
-                    </div>
-                  ) : null}
-                  <div>
-                    <label className="mb-1 block text-xs font-semibold uppercase tracking-wider text-slate-500">
-                      {t("pages.invoice.provider")}
-                    </label>
-                    <select
-                      value={claimProviderId}
-                      onChange={(e) => setClaimProviderId(e.target.value)}
-                      className={`min-h-11 w-full rounded border border-slate-300 bg-white px-2 py-2 text-sm dark:border-slate-600 dark:bg-slate-900 ${fieldFocus}`}
-                    >
-                      <option value="">{t("pages.invoice.selectProvider")}</option>
-                      {providers.map((p) => {
-                        const mem = memberships.find((m) => m.providerId === p.id);
-                        const primarySuffix = mem?.isPrimary ? t("pages.invoice.providerOptionPrimary") : "";
-                        return (
-                          <option key={p.id} value={p.id}>
-                            {p.name}
-                            {primarySuffix}
-                          </option>
-                        );
-                      })}
-                    </select>
-                    {memberships.length > 0 ? (
-                      <p className="mt-1 flex flex-wrap items-center gap-1 text-xs text-slate-500">
-                        <span>
-                          {t("pages.invoice.membership")}{" "}
-                          {memberships.find((m) => m.providerId === claimProviderId)?.memberNumber ??
-                            memberships.find((m) => m.isPrimary)?.memberNumber ??
-                            t("pages.common.empty")}
-                        </span>
-                        {selectedMembership?.isPrimary ? (
-                          <span className="rounded bg-teal-100 px-1.5 py-0.5 text-[10px] font-bold uppercase text-teal-900">
-                            {t("pages.invoice.primaryPlanBadge")}
-                          </span>
-                        ) : null}
-                      </p>
-                    ) : null}
-                  </div>
-
-                  <div className="rounded-lg border border-slate-200 p-2">
-                    <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-500">
-                      {t("pages.invoice.lineMapping")}
+                    <h1 className="text-5xl lg:text-7xl font-black tracking-tighter text-slate-900 dark:text-white font-mono leading-none">
+                       {invoice.orNumber || t("pages.invoice.orNumberPending")}
+                    </h1>
+                    <p className="text-sm font-medium text-slate-400">
+                       {t("pages.invoice.issued", { date: fmtDateTime(invoice.createdAt) })}
                     </p>
-                    <div className="space-y-1">
-                      {invoice.treatments.map((row) => (
-                        <label key={row.id} className="flex items-center justify-between gap-2 text-xs">
-                          <span className="inline-flex items-center gap-2">
-                            <input
-                              type="checkbox"
-                              checked={claimSelectedLineIds.includes(row.id)}
-                              onChange={(e) => {
-                                setClaimSelectedLineIds((prev) =>
-                                  e.target.checked
-                                    ? [...prev, row.id]
-                                    : prev.filter((id) => id !== row.id),
-                                );
-                              }}
-                            />
-                            <span>
-                              {row.procedure} ·{" "}
-                              {row.toothIds.join(", ") || t("pages.common.general")}
-                            </span>
-                          </span>
-                          <span className="font-semibold text-slate-700">{formatPHP(row.lineTotal)}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
+                 </div>
 
-                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                 <div className="flex items-center gap-6">
+                    <div className="h-16 w-16 rounded-[2rem] bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400">
+                       <User size={32} />
+                    </div>
                     <div>
-                      <label className="mb-1 block text-xs font-semibold uppercase tracking-wider text-slate-500">
-                        {t("pages.invoice.patientCopay")}
-                      </label>
-                      <input
-                        type="number"
-                        min={0}
-                        step="0.01"
-                        value={claimCopay}
-                        onChange={(e) => setClaimCopay(Number(e.target.value) || 0)}
-                        className={`min-h-11 w-full rounded border border-slate-300 bg-white px-2 py-2 text-sm dark:border-slate-600 dark:bg-slate-900 ${fieldFocus}`}
-                      />
+                       <p className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight">{invoice.patient.fullName}</p>
+                       <div className="flex items-center gap-4 mt-1 text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                          <span className="flex items-center gap-1.5"><Phone size={12} className="opacity-40" /> {invoice.patient.phone}</span>
+                          {invoice.patient.philhealthNo && (
+                            <span className="flex items-center gap-1.5 text-emerald-500"><Shield size={12} className="opacity-40" /> PH: {invoice.patient.philhealthNo}</span>
+                          )}
+                       </div>
                     </div>
-                    <div className="rounded-lg border border-teal-200 bg-teal-50/80 px-3 py-2.5 text-xs leading-relaxed text-teal-950 dark:border-teal-800 dark:bg-teal-950/30 dark:text-teal-100">
-                      <p className="text-[10px] font-bold uppercase tracking-wider text-teal-800 dark:text-teal-300">
-                        {t("pages.invoice.claimEstimateTitle")}
-                      </p>
-                      <p className="mt-1.5">
-                        {t("pages.invoice.requested", { amount: formatPHP(claimRequested.toFixed(2)) })}
-                      </p>
-                      <p className="mt-0.5">
-                        {t("pages.invoice.copayAmount", { amount: formatPHP(claimCopay.toFixed(2)) })}
-                      </p>
-                      <p className="mt-1.5 border-t border-teal-200/80 pt-1.5 font-semibold text-teal-900 dark:border-teal-800 dark:text-teal-50">
-                        {t("pages.invoice.coverage", { amount: formatPHP(claimCoverage.toFixed(2)) })}
-                      </p>
+                 </div>
+
+                 <div className="flex flex-wrap gap-2">
+                    {invoice.patient.isSeniorCitizen && (
+                       <span className="px-4 py-1.5 rounded-xl bg-amber-50 text-amber-700 text-[9px] font-black uppercase tracking-widest border border-amber-100">SC Discount Active</span>
+                    )}
+                    {invoice.patient.pwdIdNo && (
+                       <span className="px-4 py-1.5 rounded-xl bg-sky-50 text-sky-700 text-[9px] font-black uppercase tracking-widest border border-sky-100">PWD Discount Active</span>
+                    )}
+                 </div>
+              </div>
+
+              <div className="space-y-8">
+                 {invoice.appointment && (
+                    <div className="p-8 rounded-[2.5rem] bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 space-y-4">
+                       <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Appointment Session</p>
+                       <div className="flex items-start gap-4">
+                          <Calendar className="text-emerald-500 mt-1" size={20} />
+                          <div>
+                             <p className="text-lg font-black text-slate-900 dark:text-white">{fmtDateTime(invoice.appointment.scheduledAt)}</p>
+                             <p className="text-sm font-bold text-slate-500 mt-1">Dr. {invoice.appointment.dentist.fullName}</p>
+                             <div className="mt-3 inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-emerald-500/10 text-emerald-600 text-[10px] font-black uppercase tracking-tighter">
+                                {invoice.appointment.type?.replace(/_/g, " ")}
+                             </div>
+                          </div>
+                       </div>
                     </div>
-                  </div>
+                 )}
 
-                  <textarea
-                    value={claimNotes}
-                    onChange={(e) => setClaimNotes(e.target.value)}
-                    rows={2}
-                    placeholder={t("pages.invoice.claimNotesPlaceholder")}
-                    className={`w-full rounded border border-slate-300 bg-white px-2 py-2 text-sm dark:border-slate-600 dark:bg-slate-900 ${fieldFocus}`}
-                  />
-                  <button
-                    type="button"
-                    disabled={claimBusy}
-                    onClick={() => void submitClaim()}
-                    className="flex min-h-11 w-full items-center justify-center rounded-lg bg-teal-600 px-3 py-2.5 text-sm font-semibold text-white hover:bg-teal-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 disabled:opacity-60 dark:focus-visible:ring-offset-slate-950"
-                  >
-                    {claimBusy ? t("pages.invoice.submitting") : t("pages.invoice.submitClaim")}
-                  </button>
-                </div>
-              ) : (
-                <p className="mt-2 text-xs text-slate-500">{t("pages.invoice.claimHintClosed")}</p>
-              )}
-            </div>
-
-            <div className="rounded-2xl bg-gradient-to-br from-emerald-950 to-teal-900 p-5 text-white shadow-lg">
-              <p className="text-xs font-semibold uppercase tracking-wider text-emerald-100/90">
-                {t("pages.invoice.remainingBalance")}
-              </p>
-              <p className="mt-1 text-3xl font-extrabold">{formatPHP(invoice.balance)}</p>
-              <p className="mt-1 text-xs text-emerald-100/80">
-                {t("pages.invoice.paidOf", {
-                  paid: formatPHP(invoice.paid),
-                  total: formatPHP(invoice.total),
-                })}
-              </p>
-            </div>
-
-            {!isPaid ? (
-              <div className="hidden md:block">
-                <p className="mb-2 text-[11px] leading-snug text-slate-500">{t("pages.invoice.payMongoHint")}</p>
-                <button
-                  type="button"
-                  disabled={busyGcash || balance <= 0}
-                  onClick={onGcashClick}
-                  className="flex min-h-[48px] w-full items-center justify-center gap-2 rounded-xl bg-teal-600 px-4 py-3 text-sm font-bold text-white shadow hover:bg-teal-700 disabled:cursor-not-allowed disabled:opacity-60"
-                >
-                  <svg viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5 shrink-0" aria-hidden>
-                    <path d="M4 6h16a2 2 0 0 1 2 2v1H2V8a2 2 0 0 1 2-2Zm-2 5h20v5a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-5Z" />
-                  </svg>
-                  {busyGcash ? t("pages.invoice.opening") : t("pages.invoice.payGcashMaya")}
-                </button>
+                 {(invoice.hmoClaims?.length ?? 0) > 0 && (
+                    <div className="p-8 rounded-[2.5rem] bg-indigo-50/30 dark:bg-indigo-950/20 border border-indigo-100 dark:border-indigo-900/30 space-y-4">
+                       <p className="text-[10px] font-black uppercase tracking-widest text-indigo-400">Integrated HMO Claims</p>
+                       <InvoiceHmoClaimChips claims={invoice.hmoClaims ?? []} />
+                    </div>
+                 )}
               </div>
-            ) : (
-              <div className="rounded-xl bg-emerald-50 p-4 text-center text-sm font-semibold text-emerald-800 ring-1 ring-emerald-200">
-                {t("pages.invoice.paidFull", {
-                  date: invoice.paidAt ? fmtDateTime(invoice.paidAt) : t("pages.common.empty"),
-                })}
-              </div>
-            )}
-
-            {paymongoUrl ? (
-              <div className="rounded-xl border border-teal-200 bg-teal-50 p-4 text-sm">
-                <p className="font-semibold text-teal-900">{t("pages.invoice.awaitingOnline")}</p>
-                <a
-                  href={paymongoUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="mt-1 block truncate text-xs text-teal-700 underline"
-                >
-                  {paymongoUrl}
-                </a>
-                {paymongoMock ? (
-                  <button
-                    type="button"
-                    onClick={onMockPaid}
-                    className="mt-3 w-full rounded-lg bg-teal-600 px-3 py-2 text-xs font-bold text-white hover:bg-teal-700"
-                  >
-                    {t("pages.invoice.devSimulatePaid")}
-                  </button>
-                ) : null}
-              </div>
-            ) : null}
-
-            {invoice.notes ? (
-              <div className="rounded-xl border border-slate-200 bg-white p-4">
-                <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-                  {t("pages.invoice.notes")}
-                </p>
-                <p className="mt-1 whitespace-pre-wrap text-sm text-slate-700">
-                  {invoice.notes}
-                </p>
-              </div>
-            ) : null}
-          </div>
+           </div>
         </section>
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+           {/* Ledger Table */}
+           <div className="lg:col-span-8 space-y-12">
+              <section className="rounded-[3.5rem] bg-white dark:bg-slate-900 shadow-2xl shadow-slate-200/40 dark:shadow-none ring-1 ring-slate-100 dark:ring-slate-800 overflow-hidden">
+                 <div className="px-10 py-8 border-b border-slate-50 dark:border-slate-800 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                       <FileText size={20} className="text-slate-400" />
+                       <h2 className="text-xl font-black tracking-tight text-slate-900 dark:text-white">Treatments & Procedures</h2>
+                    </div>
+                    <span className="px-3 py-1 rounded-lg bg-slate-50 dark:bg-slate-800 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                       {invoice.treatments.length} Items
+                    </span>
+                 </div>
+                 <div className="overflow-x-auto">
+                    <table className="w-full text-left border-collapse">
+                       <thead>
+                          <tr className="bg-slate-50/30 dark:bg-slate-800/30">
+                             <th className="px-10 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400">Procedure</th>
+                             <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400 text-right">Qty</th>
+                             <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400 text-right">Unit Price</th>
+                             <th className="px-10 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400 text-right">Total</th>
+                          </tr>
+                       </thead>
+                       <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
+                          {invoice.treatments.map((row) => (
+                             <tr key={row.id} className="group hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-all">
+                                <td className="px-10 py-8">
+                                   <div className="space-y-1">
+                                      <p className="text-base font-black text-slate-900 dark:text-white uppercase leading-none">{row.procedure.replace(/_/g, " ")}</p>
+                                      <div className="flex items-center gap-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                                         <span>
+                                           {row.toothIds.length
+                                             ? t("pages.invoice.toothLine", { teeth: row.toothIds.join(", ") })
+                                             : t("pages.common.general")}
+                                         </span>
+                                         {row.notes && (
+                                            <>
+                                               <span className="h-1 w-1 rounded-full bg-slate-200" />
+                                               <span className="italic">{row.notes}</span>
+                                            </>
+                                         )}
+                                      </div>
+                                   </div>
+                                </td>
+                                <td className="px-8 py-8 text-right font-black text-slate-500 tabular-nums">{row.quantity}</td>
+                                <td className="px-8 py-8 text-right font-black text-slate-500 tabular-nums">{formatPHP(row.unitPrice)}</td>
+                                <td className="px-10 py-8 text-right font-black text-slate-900 dark:text-white tabular-nums">{formatPHP(row.lineTotal)}</td>
+                             </tr>
+                          ))}
+                       </tbody>
+                    </table>
+                 </div>
+
+                 {/* Totals Summary */}
+                 <div className="p-10 bg-slate-50/50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-800 flex flex-col items-end gap-4">
+                    <div className="w-full max-w-xs space-y-3">
+                       <div className="flex justify-between text-xs font-black uppercase tracking-widest text-slate-400">
+                          <span>Subtotal</span>
+                          <span className="text-slate-900 dark:text-white">{formatPHP(invoice.subtotal)}</span>
+                       </div>
+                       <div className="flex justify-between items-center text-xs font-black uppercase tracking-widest text-slate-400">
+                          <span>Discount</span>
+                          <div className="flex items-center gap-3">
+                             {editingDiscount && !isPaid ? (
+                                <div className="flex items-center gap-2">
+                                   <input
+                                      type="number"
+                                      step="0.01"
+                                      value={discountDraft}
+                                      onChange={(e) => setDiscountDraft(e.target.value)}
+                                      className="w-24 h-10 rounded-xl bg-white dark:bg-slate-900 border-none ring-1 ring-slate-200 dark:ring-slate-700 px-3 text-right text-sm font-black focus:ring-2 focus:ring-emerald-500 outline-none"
+                                   />
+                                   <button onClick={saveDiscount} className="h-10 w-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center hover:bg-emerald-600 transition-all shadow-lg shadow-emerald-500/20"><CheckCircle2 size={18} /></button>
+                                   <button onClick={() => { setEditingDiscount(false); setDiscountDraft(invoice.discount); }} className="h-10 w-10 rounded-xl bg-slate-200 text-slate-600 flex items-center justify-center hover:bg-slate-300 transition-all"><MoreVertical size={18} /></button>
+                                </div>
+                             ) : (
+                                <div className="flex items-center gap-3">
+                                   <span className="text-rose-500">-{formatPHP(invoice.discount)}</span>
+                                   {!isPaid && <button onClick={() => setEditingDiscount(true)} className="h-8 w-8 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 hover:text-emerald-500 transition-all"><Plus size={14} /></button>}
+                                </div>
+                             )}
+                          </div>
+                       </div>
+                       <div className="pt-4 border-t border-slate-200 dark:border-slate-700 flex justify-between items-center">
+                          <span className="text-sm font-black uppercase tracking-[0.2em] text-slate-900 dark:text-white">Total Amount</span>
+                          <span className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter">{formatPHP(invoice.total)}</span>
+                       </div>
+                    </div>
+                 </div>
+              </section>
+
+              {/* Payments Ledger */}
+              <section className="rounded-[3.5rem] bg-white dark:bg-slate-900 shadow-2xl shadow-slate-200/40 dark:shadow-none ring-1 ring-slate-100 dark:ring-slate-800 overflow-hidden">
+                 <div className="px-10 py-8 border-b border-slate-50 dark:border-slate-800 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                       <CreditCard size={20} className="text-slate-400" />
+                       <h2 className="text-xl font-black tracking-tight text-slate-900 dark:text-white">Payment Ledger</h2>
+                    </div>
+                    {!isPaid && (
+                       <button
+                         onClick={() => setModalOpen(true)}
+                         className="flex h-12 items-center gap-3 px-6 rounded-2xl bg-emerald-500 text-white text-[10px] font-black uppercase tracking-widest shadow-xl shadow-emerald-500/20 hover:scale-105 active:scale-95 transition-all"
+                       >
+                         <Plus size={16} /> Record Payment
+                       </button>
+                    )}
+                 </div>
+                 <div className="p-10 space-y-6">
+                    {invoice.payments.length === 0 ? (
+                       <div className="py-12 text-center border-2 border-dashed border-slate-100 dark:border-slate-800 rounded-[2.5rem]">
+                          <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">No payments recorded yet</p>
+                       </div>
+                    ) : (
+                       invoice.payments.map((p) => (
+                          <div key={p.id} className="flex items-center justify-between p-6 rounded-[2rem] bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 group">
+                             <div className="flex items-center gap-6">
+                                <div className="h-14 w-14 rounded-2xl bg-white dark:bg-slate-900 flex items-center justify-center text-emerald-500 shadow-sm font-black text-xs uppercase">
+                                   {p.method.slice(0, 3)}
+                                </div>
+                                <div>
+                                   <p className="text-lg font-black text-slate-900 dark:text-white">{formatPHP(p.amount)}</p>
+                                   <div className="flex items-center gap-3 mt-1 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                                      <span>{fmtDateTime(p.paidAt)}</span>
+                                      {p.referenceNo && (
+                                         <>
+                                            <span className="h-1 w-1 rounded-full bg-slate-200" />
+                                            <span>Ref: {p.referenceNo}</span>
+                                         </>
+                                      )}
+                                   </div>
+                                </div>
+                             </div>
+                             {p.notes && <p className="text-xs font-medium text-slate-400 italic max-w-xs text-right truncate">"{p.notes}"</p>}
+                          </div>
+                       ))
+                    )}
+                 </div>
+              </section>
+           </div>
+
+           {/* Workspace Intelligence */}
+           <div className="lg:col-span-4 space-y-12">
+              <section className="rounded-[3rem] bg-slate-900 p-10 shadow-2xl relative overflow-hidden group">
+                 <div className="absolute top-0 right-0 h-40 w-40 bg-emerald-500/10 blur-[80px]" />
+                 <div className="relative z-10 space-y-8">
+                    <div>
+                       <p className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-400 mb-2">Remaining Ledger Balance</p>
+                       <p className="text-5xl font-black text-white tracking-tighter">{formatPHP(invoice.balance)}</p>
+                    </div>
+                    <div className="space-y-4 pt-8 border-t border-white/5">
+                       <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest text-slate-500">
+                          <span>Collection Progress</span>
+                          <span className="text-white">{Math.round((Number(invoice.paid) / Number(invoice.total)) * 100)}%</span>
+                       </div>
+                       <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
+                          <motion.div 
+                            initial={{ width: 0 }}
+                            animate={{ width: `${(Number(invoice.paid) / Number(invoice.total)) * 100}%` }}
+                            transition={{ duration: 1, ease: "easeOut" }}
+                            className="h-full bg-emerald-500" 
+                          />
+                       </div>
+                    </div>
+                    {isPaid ? (
+                       <div className="flex items-center gap-4 p-6 rounded-[2rem] bg-emerald-500 text-white shadow-xl shadow-emerald-500/20">
+                          <CheckCircle2 size={32} />
+                          <div>
+                             <p className="text-sm font-black uppercase tracking-widest">Settled in Full</p>
+                             <p className="text-[10px] font-bold opacity-80">{invoice.paidAt ? fmtDateTime(invoice.paidAt) : "Completed"}</p>
+                          </div>
+                       </div>
+                    ) : (
+                       <button
+                         disabled={busyGcash || balance <= 0}
+                         onClick={onGcashClick}
+                         className="w-full flex flex-col items-center justify-center gap-2 p-8 rounded-[2.5rem] bg-white text-slate-900 hover:scale-[1.02] active:scale-95 transition-all shadow-2xl"
+                       >
+                          <div className="flex items-center gap-3">
+                             <div className="h-10 w-20 bg-[#007DFE] flex items-center justify-center rounded-lg text-white font-black italic text-[10px]">GCash</div>
+                             <div className="h-10 w-20 bg-[#D9FD0D] flex items-center justify-center rounded-lg text-slate-900 font-black italic text-[10px]">Maya</div>
+                          </div>
+                          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mt-2">{t("pages.invoice.openPaymentGateway")}</p>
+                       </button>
+                    )}
+                 </div>
+              </section>
+
+              <section className="rounded-[3rem] bg-white dark:bg-slate-900 p-10 shadow-xl ring-1 ring-slate-100 dark:ring-slate-800 overflow-hidden relative">
+                 <div className="absolute top-0 right-0 h-32 w-32 bg-sky-500/5 blur-3xl pointer-events-none" />
+                 <div className="flex items-center justify-between mb-10">
+                    <div className="flex items-center gap-3">
+                       <Shield size={20} className="text-sky-500" />
+                       <h2 className="text-xl font-black tracking-tight text-slate-900 dark:text-white">HMO Integration</h2>
+                    </div>
+                    <button
+                      onClick={() => setClaimOpen(!claimOpen)}
+                      className={`h-10 w-10 flex items-center justify-center rounded-xl transition-all ${claimOpen ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900' : 'bg-slate-100 dark:bg-slate-800 text-slate-400 hover:bg-sky-500 hover:text-white'}`}
+                    >
+                      <Plus size={20} className={claimOpen ? "rotate-45" : ""} />
+                    </button>
+                 </div>
+
+                 <AnimatePresence>
+                    {claimOpen ? (
+                       <motion.div
+                         initial={{ height: 0, opacity: 0 }}
+                         animate={{ height: "auto", opacity: 1 }}
+                         exit={{ height: 0, opacity: 0 }}
+                         className="space-y-6 overflow-hidden"
+                       >
+                          <div className="space-y-2">
+                             <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-4 mb-2 block">Provider Authority</label>
+                             <select
+                               value={claimProviderId}
+                               onChange={(e) => setClaimProviderId(e.target.value)}
+                               className="h-16 w-full rounded-2xl bg-slate-50 dark:bg-slate-800/50 px-6 text-sm font-bold outline-none ring-1 ring-slate-100 dark:ring-slate-800 focus:ring-2 focus:ring-sky-500 transition-all"
+                             >
+                                <option value="">Select Provider...</option>
+                                {providers.map((p) => {
+                                  const mem = memberships.find((m) => m.providerId === p.id);
+                                  return (
+                                    <option key={p.id} value={p.id}>
+                                      {p.name} {mem?.isPrimary ? " (Primary)" : ""}
+                                    </option>
+                                  );
+                                })}
+                             </select>
+                          </div>
+
+                          <div className="p-6 rounded-[2rem] bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 space-y-4">
+                             <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Treatment Mapping</p>
+                             <div className="space-y-2">
+                                {invoice.treatments.map((row) => (
+                                   <label key={row.id} className="flex items-center justify-between group cursor-pointer">
+                                      <div className="flex items-center gap-3">
+                                         <div className={`h-5 w-5 rounded-md border-2 transition-all flex items-center justify-center ${claimSelectedLineIds.includes(row.id) ? 'bg-sky-500 border-sky-500' : 'border-slate-200 dark:border-slate-700'}`}>
+                                            {claimSelectedLineIds.includes(row.id) && <CheckCircle2 size={12} className="text-white" />}
+                                         </div>
+                                         <input
+                                            type="checkbox"
+                                            className="hidden"
+                                            checked={claimSelectedLineIds.includes(row.id)}
+                                            onChange={(e) => {
+                                               setClaimSelectedLineIds((prev) => e.target.checked ? [...prev, row.id] : prev.filter((id) => id !== row.id));
+                                            }}
+                                         />
+                                         <span className="text-[11px] font-black text-slate-600 dark:text-slate-300 uppercase truncate max-w-[120px]">{row.procedure}</span>
+                                      </div>
+                                      <span className="text-[11px] font-black text-slate-400">{formatPHP(row.lineTotal)}</span>
+                                   </label>
+                                ))}
+                             </div>
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-4">
+                             <div className="space-y-2">
+                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-4 mb-2 block">Patient Copay</label>
+                                <input
+                                  type="number"
+                                  value={claimCopay}
+                                  onChange={(e) => setClaimCopay(Number(e.target.value) || 0)}
+                                  className="h-16 w-full rounded-2xl bg-slate-50 dark:bg-slate-800/50 px-6 text-sm font-bold outline-none ring-1 ring-slate-100 dark:ring-slate-800 focus:ring-2 focus:ring-sky-500 transition-all"
+                                />
+                             </div>
+                             <div className="p-4 rounded-2xl bg-sky-50 dark:bg-sky-950/30 border border-sky-100 dark:border-sky-800/50 flex flex-col justify-center">
+                                <p className="text-[8px] font-black text-sky-600 uppercase tracking-widest">Coverage Estimate</p>
+                                <p className="text-xl font-black text-sky-700 dark:text-sky-400 tracking-tighter">{formatPHP(claimCoverage)}</p>
+                             </div>
+                          </div>
+
+                          <button
+                            disabled={claimBusy}
+                            onClick={() => void submitClaim()}
+                            className="w-full h-16 rounded-2xl bg-sky-500 text-white text-[10px] font-black uppercase tracking-widest shadow-xl shadow-sky-500/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3"
+                          >
+                             {claimBusy ? <RefreshCw className="animate-spin" size={18} /> : <Zap size={18} />}
+                             {t("pages.invoice.submitClinicalClaim")}
+                          </button>
+                       </motion.div>
+                    ) : (
+                       <p className="text-xs font-medium text-slate-400 italic">Initialize a new HMO claim sequence to route clinical charges to affiliated insurance providers.</p>
+                    )}
+                 </AnimatePresence>
+              </section>
+
+              {invoice.notes && (
+                 <section className="rounded-[3rem] bg-white dark:bg-slate-900 p-10 shadow-xl ring-1 ring-slate-100 dark:ring-slate-800">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-6">Internal Notes</p>
+                    <p className="text-sm font-medium text-slate-600 dark:text-slate-300 leading-relaxed italic">"{invoice.notes}"</p>
+                 </section>
+              )}
+           </div>
+        </div>
       </div>
 
-      {invoice ? (
-        <PaymentModal
-          open={modalOpen}
-          invoice={invoice}
-          onClose={() => setModalOpen(false)}
-          onSaved={(inv) => {
-            setInvoice(inv);
-            setModalOpen(false);
-          }}
-        />
-      ) : null}
+      {/* Online Payment Logic Banner */}
+      {paymongoUrl && (
+         <motion.div 
+           initial={{ y: 100 }}
+           animate={{ y: 0 }}
+           className="fixed inset-x-0 bottom-10 z-50 mx-auto max-w-xl px-6"
+         >
+            <div className="bg-slate-900 text-white p-6 rounded-[2.5rem] shadow-2xl flex items-center justify-between ring-1 ring-white/10 backdrop-blur-xl">
+               <div className="flex items-center gap-5">
+                  <div className="h-12 w-12 rounded-2xl bg-white/10 flex items-center justify-center text-emerald-400">
+                     <Clock size={24} className="animate-pulse" />
+                  </div>
+                  <div>
+                     <p className="text-sm font-black uppercase tracking-widest">Waiting for Gateway...</p>
+                     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter truncate max-w-[200px]">{paymongoUrl}</p>
+                  </div>
+               </div>
+               {paymongoMock && (
+                  <button onClick={onMockPaid} className="px-6 py-3 rounded-xl bg-emerald-500 text-white text-[10px] font-black uppercase tracking-widest shadow-lg shadow-emerald-500/20 hover:scale-105 transition-all">Simulate Success</button>
+               )}
+            </div>
+         </motion.div>
+      )}
 
-      {!isPaid && balance > 0 ? (
-        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-slate-200 bg-white/95 p-3 shadow-[0_-8px_24px_rgba(15,23,42,0.08)] backdrop-blur-md print:hidden md:hidden">
-          <p className="mb-2 text-center text-[10px] leading-snug text-slate-500">{t("pages.invoice.payMongoHint")}</p>
-          <button
-            type="button"
-            disabled={busyGcash || balance <= 0}
-            onClick={onGcashClick}
-            className="flex min-h-[52px] w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-teal-600 to-emerald-600 px-4 py-3 text-sm font-bold text-white shadow-lg shadow-teal-600/25 disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            <svg viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5 shrink-0" aria-hidden>
-              <path d="M4 6h16a2 2 0 0 1 2 2v1H2V8a2 2 0 0 1 2-2Zm-2 5h20v5a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-5Z" />
-            </svg>
-            <span className="text-left leading-tight">
-              <span className="block text-[10px] font-semibold uppercase tracking-wide text-white/90">
-                {t("pages.invoice.stickyPayLabel")}
-              </span>
-              <span className="text-base">{busyGcash ? t("pages.invoice.opening") : formatPHP(invoice.balance)}</span>
-            </span>
-          </button>
-        </div>
-      ) : null}
+      {/* Modals */}
+      <PaymentModal
+        open={modalOpen}
+        invoice={invoice}
+        onClose={() => setModalOpen(false)}
+        onSaved={(inv) => {
+          setInvoice(inv);
+          setModalOpen(false);
+          toast.success(t("pages.invoice.saved"));
+        }}
+      />
     </div>
   );
 }

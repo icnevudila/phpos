@@ -95,15 +95,28 @@ export async function login(input: { email: string; password: string }): Promise
   }
 
   // Kullanıcı bilgilerini al
-  const { data: userData, error: userError } = await supabase
+  console.log('[auth] Fetching user metadata for ID:', data.user.id);
+  const { data: users, error: userError } = await supabase
     .from('User')
     .select('*, Clinic(*)')
-    .eq('id', data.user.id)
-    .single()
+    .eq('id', data.user.id);
 
   if (userError) {
+    console.error('[auth] User fetch error:', userError);
     throw new AppError(userError.message, 500, 'USER_FETCH_FAILED')
   }
+
+  if (!users || users.length === 0) {
+    console.error('[auth] No user found in DB for auth ID:', data.user.id);
+    throw new AppError('User profile not found', 404, 'USER_PROFILE_MISSING')
+  }
+
+  if (users.length > 1) {
+    console.warn('[auth] Multiple user profiles found for ID:', data.user.id, '- using the first one');
+  }
+
+  const userData = users[0];
+
 
   return {
     accessToken: data.session.access_token,
@@ -160,6 +173,18 @@ function slugifyClinicName(name: string): string {
   return `${base}-${Math.random().toString(36).slice(2, 8)}`
 }
 
+/** Supabase şifre sıfırlama e-postası gönderir (kullanıcı yoksa da aynı yanıt). */
+export async function requestPasswordReset(email: string): Promise<void> {
+  const base = (process.env.APP_PUBLIC_URL ?? 'http://localhost:5173').replace(/\/$/, '')
+  const redirectTo = `${base}/reset-password`
+  const { error } = await supabase.auth.resetPasswordForEmail(email.trim().toLowerCase(), {
+    redirectTo,
+  })
+  if (error) {
+    console.warn('[auth] password reset email:', error.message)
+  }
+}
+
 export async function refreshSession(refreshToken: string): Promise<AuthTokensResponse> {
   const { data, error } = await supabase.auth.refreshSession({ refresh_token: refreshToken })
   if (error) {
@@ -168,17 +193,28 @@ export async function refreshSession(refreshToken: string): Promise<AuthTokensRe
   if (!data.user || !data.session) {
     throw new AppError('Session refresh failed', 401, 'SESSION_REFRESH_FAILED')
   }
+
+  const { data: users, error: userError } = await supabase
+    .from('User')
+    .select('id, clinicId, email, firstName, lastName, phone, role')
+    .eq('id', data.user.id)
+
+  if (userError || !users?.length) {
+    throw new AppError('User profile not found', 404, 'USER_PROFILE_MISSING')
+  }
+
+  const profile = users[0]
   return {
     accessToken: data.session.access_token,
     refreshToken: data.session.refresh_token,
     user: {
-      id: data.user.id,
-      clinicId: '',
-      email: data.user.email || '',
-      firstName: '',
-      lastName: '',
-      phone: '',
-      role: 'ADMIN' as const
-    }
+      id: profile.id,
+      clinicId: profile.clinicId,
+      email: profile.email,
+      firstName: profile.firstName,
+      lastName: profile.lastName,
+      phone: profile.phone ?? '',
+      role: profile.role,
+    },
   }
 }

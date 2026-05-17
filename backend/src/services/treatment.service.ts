@@ -16,6 +16,7 @@ const selectTreatment = {
   quantity: true,
   unitPrice: true,
   toothIds: true,
+  phase: true,
   notes: true,
   createdAt: true,
   dentist: { select: { firstName: true, lastName: true } },

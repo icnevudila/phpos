@@ -5,8 +5,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 // ─── Enums ───────────────────────────────────────────────────────────
@@ -56,6 +57,15 @@ enum LifestyleFrequency {
   FORMER
 }
 
+enum PhilHealthMembershipType {
+  FORMAL
+  INFORMAL
+  INDIGENT
+  SPONSORED
+  LIFETIME
+  SENIOR_CITIZEN
+}
+
 enum ToothCondition {
   HEALTHY
   DECAY
@@ -97,6 +107,7 @@ enum InvoiceStatus {
   UNPAID
   PARTIAL
   PAID
+  VOID
 }
 
 enum PaymentMethod {
@@ -145,29 +156,56 @@ enum PerioSiteCode {
   DL
 }
 
+enum LabOrderStatus {
+  ORDERED
+  SENT_TO_LAB
+  RECEIVED
+  COMPLETED
+  CANCELLED
+}
+
+enum SterilizationStatus {
+  SUCCESS
+  FAILED
+  ABORTED
+}
+
 // ─── Models ───────────────────────────────────────────────────────────
 
+model Organization {
+  id        String   @id @default(cuid())
+  name      String
+  ownerId   String?  @unique
+  createdAt DateTime @default(now())
+  clinics   Clinic[]
+}
+
 model Clinic {
-  id               String           @id @default(cuid())
+  id                        String           @id @default(cuid())
+  organizationId            String?
+  organization              Organization?    @relation(fields: [organizationId], references: [id])
   /// URL slug (portal & white-label). Örn: "pasig-smile"
-  slug             String           @unique
-  name             String
-  address          String?
-  city             String?
-  phone            String?
-  logoUrl          String?
+  slug                      String           @unique
+  name                      String
+  address                   String?
+  city                      String?
+  phone                     String?
+  logoUrl                   String?
   /// BIR TIN (Taxpayer Identification Number) — zorunlu resmi belge
-  tin              String?
+  tin                       String?
   /// BIR Permit to Use (PTU) no. — OR geçerliliği için
-  birPtuNo         String?
+  birPtuNo                  String?
   /// BIR Accreditation no.
-  birAccreditationNo String?
+  birAccreditationNo        String?
   /// PhilHealth Accreditation No. (HCI)
   philhealthAccreditationNo String?
   /// UI Theme color (Tailwind color name or hex)
-  themeColor       String?  @default("emerald")
-  subscriptionPlan SubscriptionPlan @default(STARTER)
-  createdAt        DateTime         @default(now())
+  themeColor                String?          @default("emerald")
+  currency                  String           @default("PHP")
+  googleReviewLink          String?
+  subscriptionPlan          SubscriptionPlan @default(STARTER)
+  families                  Family[]
+  createdAt                 DateTime         @default(now())
 
   users               User[]
   patients            Patient[]
@@ -186,6 +224,11 @@ model Clinic {
   phiAccessLogs       PhiAccessLog[]
   waitlistEntries     WaitlistEntry[]
   prescriptions       Prescription[]
+  labOrders           LabOrder[]
+  consentForms        ConsentForm[]
+  sterilizationLogs   SterilizationLog[]
+  soapNotes           SoapNote[]
+  patientReferrals    PatientReferral[]
 
   @@index([createdAt])
 }
@@ -234,39 +277,43 @@ model PhiAccessLog {
 }
 
 model User {
-  id               String   @id @default(cuid())
-  clinicId         String
+  id                        String   @id @default(cuid())
+  clinicId                  String
   /// Giriş e-postası (tenant genelinde tekil — /auth/login için)
-  email            String   @unique
+  email                     String   @unique
   /// Supabase Auth ID eşleşmesi için (UUID)
-  supabaseId       String?  @unique @map("supabase_id")
-  passwordHash     String
-  role             UserRole
-  firstName        String
-  lastName         String
-  phone            String?
-  isActive         Boolean  @default(true)
-  prcNumber        String?
-  ptrNumber        String?
-  s2License        String?
-  tinNumber        String?
+  supabaseId                String?  @unique @map("supabase_id")
+  passwordHash              String
+  role                      UserRole
+  firstName                 String
+  lastName                  String
+  phone                     String?
+  isActive                  Boolean  @default(true)
+  prcNumber                 String?
+  ptrNumber                 String?
+  s2License                 String?
+  tinNumber                 String?
   philhealthAccreditationNo String?
   /// Refresh JWT içindeki `sid` ile eşleşir; logout’ta temizlenir
-  refreshSessionId String?  @unique @map("refresh_session_id")
-  createdAt        DateTime @default(now())
+  refreshSessionId          String?  @unique @map("refresh_session_id")
+  createdAt                 DateTime @default(now())
 
   clinic Clinic @relation(fields: [clinicId], references: [id], onDelete: Cascade)
 
-  dentistAppointments      Appointment[]    @relation("AppointmentDentist")
-  treatments               Treatment[]      @relation("TreatmentDentist")
-  prescriptions            Prescription[]   @relation("PrescriptionDentist")
+  dentistAppointments      Appointment[]          @relation("AppointmentDentist")
+  treatments               Treatment[]            @relation("TreatmentDentist")
+  prescriptions            Prescription[]         @relation("PrescriptionDentist")
   notifications            Notification[]
   toothAuditLogs           ToothAuditLog[]
-  recordedMedicalHistories MedicalHistory[] @relation("MedicalHistoryRecorder")
-  perioExams               PerioExam[]      @relation("PerioExamExaminer")
+  recordedMedicalHistories MedicalHistory[]       @relation("MedicalHistoryRecorder")
+  perioExams               PerioExam[]            @relation("PerioExamExaminer")
   auditLogs                AuditLog[]
   phiAccessLogs            PhiAccessLog[]
   inventoryTransactions    InventoryTransaction[]
+  labOrders                LabOrder[]
+  sterilizationLogs        SterilizationLog[]     @relation("SterilizationOperator")
+  soapNotes                SoapNote[]             @relation("SoapNoteAuthor")
+  patientReferrals         PatientReferral[]      @relation("PatientReferralAuthor")
 
   @@index([clinicId])
   @@index([phone])
@@ -312,15 +359,19 @@ model Patient {
   /// DEPRECATED: yeni veri `medicalHistory` tablosuna yazılır. Geriye uyumluluk için saklı.
   medicalHistory         Json?
   philhealthNo           String?
+  philhealthType         PhilHealthMembershipType?
   /// RA 9994 — şube OSCA doğrulaması sonrası işaretlenir
   isSeniorCitizen        Boolean      @default(false)
   oscaIdNo               String?
   /// RA 10754 — PWD ID no. dolu ise indirim uygulanır
   pwdIdNo                String?
+  loyaltyPoints          Int          @default(0)
+  familyId               String?
   isActive               Boolean      @default(true)
   createdAt              DateTime     @default(now())
 
   clinic          Clinic          @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  family          Family?         @relation(fields: [familyId], references: [id], onDelete: SetNull)
   teeth           Tooth[]
   appointments    Appointment[]
   treatments      Treatment[]
@@ -335,12 +386,17 @@ model Patient {
   phiAccessLogs   PhiAccessLog[]
   waitlistEntries WaitlistEntry[]
   prescriptions   Prescription[]
+  labOrders       LabOrder[]
+  consentForms    ConsentForm[]
+  soapNotes       SoapNote[]
+  referrals       PatientReferral[]
 
   @@index([clinicId])
   @@index([phone])
   @@index([lastName, firstName])
   @@index([philhealthNo])
   @@index([isActive])
+  @@index([familyId])
 }
 
 /// PDA standart tıbbi geçmiş formu — her hasta için tek kayıt, versiyonlu.
@@ -523,6 +579,7 @@ model Treatment {
   unitPrice     Decimal  @db.Decimal(12, 2)
   icd10Code     String?  @db.VarChar(10)
   rvuCode       String?  @db.VarChar(10)
+  phase         String?  @db.VarChar(50)
   notes         String?
   createdAt     DateTime @default(now())
 
@@ -538,30 +595,30 @@ model Treatment {
 }
 
 model Invoice {
-  id            String        @id @default(cuid())
-  clinicId      String
-  patientId     String
-  appointmentId String?       @unique
-  orNumber      String?       @unique
-  subtotal      Decimal       @db.Decimal(12, 2)
-  discount      Decimal       @default(0) @db.Decimal(12, 2)
+  id             String        @id @default(cuid())
+  clinicId       String
+  patientId      String
+  appointmentId  String?       @unique
+  orNumber       String?       @unique
+  subtotal       Decimal       @db.Decimal(12, 2)
+  discount       Decimal       @default(0) @db.Decimal(12, 2)
   /// VAT rate (e.g. 0.12 for 12%). 0 for VAT-exempt (Senior/PWD).
-  vatRate       Decimal       @default(0.12) @db.Decimal(5, 4)
-  vatAmount     Decimal       @default(0) @db.Decimal(12, 2)
+  vatRate        Decimal       @default(0.12) @db.Decimal(5, 4)
+  vatAmount      Decimal       @default(0) @db.Decimal(12, 2)
   /// RA 9994 Senior Citizen 20% discount
-  seniorDiscount Decimal      @default(0) @db.Decimal(12, 2)
+  seniorDiscount Decimal       @default(0) @db.Decimal(12, 2)
   /// RA 10754 PWD 20% discount
-  pwdDiscount   Decimal       @default(0) @db.Decimal(12, 2)
+  pwdDiscount    Decimal       @default(0) @db.Decimal(12, 2)
   /// VAT exempt flag (Senior/PWD transactions)
-  vatExempt     Boolean       @default(false)
-  total         Decimal       @db.Decimal(12, 2)
-  status        InvoiceStatus @default(UNPAID)
-  notes         String?
-  dueDate       DateTime?
-  paidAt        DateTime?
+  vatExempt      Boolean       @default(false)
+  total          Decimal       @db.Decimal(12, 2)
+  status         InvoiceStatus @default(UNPAID)
+  notes          String?
+  dueDate        DateTime?
+  paidAt         DateTime?
   /// PayMongo checkout link id (provider-side reference)
-  externalRef   String?
-  createdAt     DateTime      @default(now())
+  externalRef    String?
+  createdAt      DateTime      @default(now())
 
   clinic      Clinic       @relation(fields: [clinicId], references: [id], onDelete: Cascade)
   patient     Patient      @relation(fields: [patientId], references: [id], onDelete: Cascade)
@@ -833,6 +890,8 @@ model HmoClaim {
   updatedAt       DateTime       @updatedAt
 
   clinic      Clinic               @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  familyId    String?
+  family      Family?              @relation(fields: [familyId], references: [id])
   patient     Patient              @relation(fields: [patientId], references: [id], onDelete: Cascade)
   invoice     Invoice              @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
   provider    HmoProvider          @relation(fields: [providerId], references: [id], onDelete: Restrict)
@@ -943,11 +1002,13 @@ model PrescriptionItem {
 }
 
 model WebhookEvent {
-  id              String   @id @default(cuid())
+  id              String    @id @default(cuid())
   provider        String // e.g., PAYMONGO
-  providerEventId String   @unique
-  status          String // PENDING, PROCESSED, FAILED
+  providerEventId String    @unique
+  eventType       String?
+  status          String // RECEIVED, PROCESSED, FAILED
   payload         Json
+  error           String?
   processedAt     DateTime?
   createdAt       DateTime  @default(now())
 }
@@ -973,4 +1034,132 @@ model InventoryTransaction {
 
   @@index([inventoryId])
   @@index([userId])
+}
+
+model LabOrder {
+  id              String         @id @default(cuid())
+  clinicId        String
+  patientId       String
+  dentistId       String
+  labName         String?
+  itemDescription String
+  shade           String?
+  mould           String?
+  orderDate       DateTime       @default(now())
+  dueDate         DateTime?
+  receivedDate    DateTime?
+  cost            Decimal?       @db.Decimal(12, 2)
+  status          LabOrderStatus @default(ORDERED)
+  notes           String?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  clinic  Clinic  @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  patient Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  dentist User    @relation(fields: [dentistId], references: [id], onDelete: Restrict)
+
+  @@index([clinicId])
+  @@index([patientId])
+  @@index([status])
+}
+
+model ConsentForm {
+  id           String    @id @default(cuid())
+  clinicId     String
+  patientId    String
+  title        String
+  content      String
+  signatureUrl String?
+  signedAt     DateTime?
+  ipAddress    String?
+  userAgent    String?
+  createdAt    DateTime  @default(now())
+
+  clinic  Clinic  @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  patient Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
+  @@index([clinicId])
+  @@index([patientId])
+}
+
+model SterilizationLog {
+  id              String              @id @default(cuid())
+  clinicId        String
+  operatorId      String
+  autoclaveName   String
+  cycleNumber     Int
+  temperature     Decimal             @db.Decimal(5, 1)
+  pressure        Decimal             @db.Decimal(5, 2)
+  durationMinutes Int
+  status          SterilizationStatus @default(SUCCESS)
+  biologicalIndicator Boolean @default(true)
+  notes           String?
+  startedAt       DateTime
+  completedAt     DateTime?
+  createdAt       DateTime            @default(now())
+
+  clinic   Clinic @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  operator User   @relation("SterilizationOperator", fields: [operatorId], references: [id], onDelete: Restrict)
+
+  @@index([operatorId])
+  @@index([createdAt])
+}
+
+/// SOAP / progress notes — klinik içi klinik kayıt notları
+model SoapNote {
+  id         String   @id @default(cuid())
+  clinicId   String
+  patientId  String
+  authorId   String
+  subjective String   @default("")
+  objective  String   @default("")
+  assessment String   @default("")
+  plan       String   @default("")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  clinic  Clinic  @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  patient Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  author  User    @relation("SoapNoteAuthor", fields: [authorId], references: [id], onDelete: Restrict)
+
+  @@index([clinicId])
+  @@index([patientId])
+  @@index([authorId])
+  @@index([createdAt])
+}
+
+/// Outbound specialist / clinic referrals
+model PatientReferral {
+  id          String   @id @default(cuid())
+  clinicId    String
+  patientId   String
+  authorId    String
+  referredTo  String   @default("")
+  specialty   String   @default("")
+  reason      String   @default("")
+  notes       String   @default("")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  clinic  Clinic  @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  patient Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  author  User    @relation("PatientReferralAuthor", fields: [authorId], references: [id], onDelete: Restrict)
+
+  @@index([clinicId])
+  @@index([patientId])
+  @@index([authorId])
+  @@index([createdAt])
+}
+
+model Family {
+  id        String    @id @default(cuid())
+  name      String
+  clinicId  String
+  clinic    Clinic     @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  patients  Patient[]
+  hmoClaims HmoClaim[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([clinicId])
 }

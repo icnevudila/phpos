@@ -1,7 +1,4 @@
-import { ACCESS_TOKEN_KEY } from "../constants/auth";
-
-import { apiFetch } from "./api";
-import { apiBaseUrl } from "./index";
+import api, { downloadAuthedFile, openAuthedPdf } from "./api";
 
 interface ApiEnvelope<T> {
   success: true;
@@ -74,6 +71,14 @@ export interface DashboardResponse {
   };
   topProcedures: Array<{ name: string; count: number; revenue: string }>;
   revenueByDay: Array<{ date: string; amount: string }>;
+  revenueByMonth: Array<{ month: string; amount: string }>;
+  recentTreatments: Array<{
+    id: string;
+    procedure: string;
+    patientName: string;
+    dentistName: string;
+    createdAt: string;
+  }>;
   appointmentsByStatus: {
     pending: number;
     confirmed: number;
@@ -147,30 +152,122 @@ export interface AgedReceivablesResponse {
 }
 
 export async function fetchAgedReceivables(): Promise<AgedReceivablesResponse> {
-  const res = await apiFetch<ApiEnvelope<AgedReceivablesResponse>>("/reports/aged-receivables");
+  const res = await api.get<ApiEnvelope<AgedReceivablesResponse>>("/reports/aged-receivables") as any;
   return res.data;
 }
 
+export interface DashboardSummary {
+  today: { appointments: number; completed: number; revenue: string };
+  thisMonth: { appointments: number; newPatients: number; revenue: string };
+  operational: { pendingHmoClaims: number; inventoryAlerts: number };
+}
+
+export async function fetchDashboardSummary(): Promise<DashboardSummary> {
+  const res = await api.get<ApiEnvelope<DashboardSummary>>("/reports/dashboard/summary") as any;
+  return res.data;
+}
+
+/** Hızlı KPI kartları — tam dashboard yüklenene kadar iskelet doldurur. */
+export function dashboardFromSummary(summary: DashboardSummary): DashboardResponse {
+  return {
+    today: {
+      appointments: summary.today.appointments,
+      completed: summary.today.completed,
+      revenue: summary.today.revenue,
+      upcoming: [],
+    },
+    queue: { total: 0, waiting: 0, checkedIn: 0, inProgress: 0, rows: [] },
+    waitlist: { total: 0, rows: [] },
+    operational: summary.operational,
+    activeTreatmentPlan: null,
+    thisMonth: summary.thisMonth,
+    topProcedures: [],
+    revenueByDay: [],
+    revenueByMonth: [],
+    recentTreatments: [],
+    appointmentsByStatus: {
+      pending: 0,
+      confirmed: 0,
+      checkedIn: 0,
+      inProgress: 0,
+      completed: 0,
+      cancelled: 0,
+      noShow: 0,
+    },
+  };
+}
+
+export type DashboardQueuePayload = Pick<
+  DashboardResponse,
+  "queue" | "waitlist" | "activeTreatmentPlan"
+> & { today: { upcoming: DashboardTodayAppointment[] } };
+
+export type DashboardChartsPayload = Pick<
+  DashboardResponse,
+  "topProcedures" | "revenueByDay" | "revenueByMonth" | "appointmentsByStatus" | "recentTreatments"
+>;
+
+export async function fetchDashboardQueue(): Promise<DashboardQueuePayload> {
+  const res = await api.get<ApiEnvelope<DashboardQueuePayload>>("/reports/dashboard/queue") as any;
+  return res.data;
+}
+
+export async function fetchDashboardCharts(): Promise<DashboardChartsPayload> {
+  const res = await api.get<ApiEnvelope<DashboardChartsPayload>>("/reports/dashboard/charts") as any;
+  return res.data;
+}
+
+export function mergeDashboardParts(
+  summary: DashboardSummary,
+  queue?: DashboardQueuePayload | null,
+  charts?: DashboardChartsPayload | null,
+): DashboardResponse {
+  const base = dashboardFromSummary(summary);
+  if (queue) {
+    base.today.upcoming = queue.today.upcoming;
+    base.queue = queue.queue;
+    base.waitlist = queue.waitlist;
+    base.activeTreatmentPlan = queue.activeTreatmentPlan;
+  }
+  if (charts) {
+    base.topProcedures = charts.topProcedures;
+    base.revenueByDay = charts.revenueByDay;
+    base.revenueByMonth = charts.revenueByMonth;
+    base.appointmentsByStatus = charts.appointmentsByStatus;
+    base.recentTreatments = charts.recentTreatments;
+  }
+  return base;
+}
+
 export async function fetchDashboard(): Promise<DashboardResponse> {
-  const res = await apiFetch<ApiEnvelope<DashboardResponse>>(`/reports/dashboard`);
+  const res = await api.get<ApiEnvelope<DashboardResponse>>(`/reports/dashboard`) as any;
   return res.data;
 }
 
 export async function fetchMonthlyReport(year: number, month: number): Promise<MonthlyReport> {
-  const res = await apiFetch<ApiEnvelope<MonthlyReport>>(
-    `/reports/monthly?year=${year}&month=${month}`,
-  );
+  const res = await api.get<ApiEnvelope<MonthlyReport>>(
+    `/reports/monthly`, { params: { year, month } }
+  ) as any;
   return res.data;
 }
 
 export async function openMonthlyReportPdf(year: number, month: number): Promise<void> {
-  const token = localStorage.getItem(ACCESS_TOKEN_KEY) ?? "";
-  const res = await fetch(`${apiBaseUrl}/reports/monthly/pdf?year=${year}&month=${month}`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  if (!res.ok) throw new Error("Failed to load PDF");
-  const blob = await res.blob();
-  const url = URL.createObjectURL(blob);
-  window.open(url, "_blank");
-  setTimeout(() => URL.revokeObjectURL(url), 60_000);
+  await openAuthedPdf(`/reports/monthly/pdf?year=${year}&month=${month}`);
+}
+
+export interface CustomReportResponse {
+  labels: string[];
+  values: number[];
+  dimension: string;
+  metric: string;
+}
+
+export async function fetchCustomReport(params: { dimension: string; metric: string }): Promise<CustomReportResponse> {
+  const res = await api.get<ApiEnvelope<CustomReportResponse>>("/reports/custom", { params }) as any;
+  return res.data;
+}
+
+export async function downloadBirJournalCsv(year: number, month: number): Promise<void> {
+  const mm = String(month).padStart(2, "0");
+  await downloadAuthedFile(`/reports/bir-journal.csv?year=${year}&month=${month}`, `bir-journal-${year}-${mm}.csv`);
 }

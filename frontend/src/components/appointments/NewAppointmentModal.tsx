@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import {
   createAppointment,
@@ -43,6 +44,7 @@ export function NewAppointmentModal({
   initial,
   editing,
 }: Props): JSX.Element | null {
+  const { t } = useTranslation();
   const [patient, setPatient] = useState<PatientSearchRow | null>(null);
   const [dentistId, setDentistId] = useState("");
   const [scheduledAt, setScheduledAt] = useState("");
@@ -87,15 +89,15 @@ export function NewAppointmentModal({
     setError(null);
 
     if (!patient) {
-      setError("Please select a patient");
+      setError(t("pages.appointments.modal.selectPatient"));
       return;
     }
     if (!dentistId) {
-      setError("Please select a dentist");
+      setError(t("pages.appointments.modal.selectDentist"));
       return;
     }
     if (!scheduledAt) {
-      setError("Please pick a date/time");
+      setError(t("pages.appointments.modal.selectDateTime"));
       return;
     }
 
@@ -123,7 +125,7 @@ export function NewAppointmentModal({
           });
       onSaved(saved);
     } catch (err) {
-      const msg = err instanceof Error ? err.message : "Failed to save appointment";
+      const msg = err instanceof Error ? err.message : t("pages.appointments.modal.saveFailed");
       setError(msg);
     } finally {
       setSubmitting(false);
@@ -136,9 +138,9 @@ export function NewAppointmentModal({
         <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
           <div>
             <h2 className="text-lg font-bold text-slate-900">
-              {editing ? "Edit appointment" : "New appointment"}
+              {editing ? t("pages.appointments.modal.editTitle") : t("pages.appointments.modal.newTitle")}
             </h2>
-            <p className="text-xs text-slate-500">Asia/Manila · 08:00–18:00 · closed Sundays</p>
+            <p className="text-xs text-slate-500">{t("pages.appointments.modal.hoursHint")}</p>
           </div>
           <button
             type="button"
@@ -230,7 +232,7 @@ export function NewAppointmentModal({
             <input
               value={chairNo}
               onChange={(e) => setChairNo(e.target.value)}
-              placeholder="Chair / station (optional)"
+              placeholder={t("pages.appointments.modal.chairPlaceholder")}
               className="mb-2 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-100"
             />
             <textarea
@@ -260,7 +262,11 @@ export function NewAppointmentModal({
               disabled={submitting}
               className="rounded-lg bg-gradient-to-br from-emerald-500 to-sky-500 px-5 py-2 text-sm font-semibold text-white shadow hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-70"
             >
-              {submitting ? "Saving…" : editing ? "Save changes" : "Create appointment"}
+              {submitting
+                ? t("pages.appointments.modal.saving")
+                : editing
+                  ? t("pages.appointments.modal.saveChanges")
+                  : t("pages.appointments.modal.create")}
             </button>
           </div>
         </form>

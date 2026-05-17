@@ -1,6 +1,6 @@
 import { motion, useReducedMotion } from "framer-motion";
 import type { TFunction } from "i18next";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { SectionEyebrow } from "./SectionEyebrow";

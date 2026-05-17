@@ -5,6 +5,7 @@ import {
   listNotificationsHandler,
   sendTestSmsHandler,
   triggerDailyReminderHandler,
+  triggerEodEmailHandler,
   triggerSoonReminderHandler,
   sendBulkSmsHandler,
 } from "../controllers/notification.controller.js";
@@ -33,6 +34,11 @@ notificationRouter.post(
   "/cron/soon",
   roleGuard([UserRole.ADMIN]),
   asyncHandler(triggerSoonReminderHandler),
+);
+notificationRouter.post(
+  "/cron/eod-email",
+  roleGuard([UserRole.ADMIN]),
+  asyncHandler(triggerEodEmailHandler),
 );
 
 notificationRouter.post(

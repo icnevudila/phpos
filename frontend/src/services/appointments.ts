@@ -1,3 +1,4 @@
+import api from "./api";
 import type {
   AppointmentDto,
   AppointmentStatus,
@@ -5,8 +6,6 @@ import type {
   DentistRow,
   PatientSearchRow,
 } from "../types/appointment";
-
-import { apiFetch } from "./api";
 
 interface ApiEnvelope<T> {
   success: true;
@@ -45,27 +44,19 @@ export interface UpdateAppointmentPayload {
 export async function fetchAppointments(
   params: ListAppointmentsParams = {},
 ): Promise<AppointmentDto[]> {
-  const search = new URLSearchParams();
-  for (const [k, v] of Object.entries(params)) {
-    if (v !== undefined && v !== "") search.set(k, v);
-  }
-  const suffix = search.toString() ? `?${search.toString()}` : "";
-  const res = await apiFetch<ApiEnvelope<AppointmentDto[]>>(`/appointments${suffix}`);
+  const res = await api.get<ApiEnvelope<AppointmentDto[]>>(`/appointments`, { params }) as any;
   return res.data;
 }
 
 export async function fetchAppointment(id: string): Promise<AppointmentDto> {
-  const res = await apiFetch<ApiEnvelope<AppointmentDto>>(`/appointments/${id}`);
+  const res = await api.get<ApiEnvelope<AppointmentDto>>(`/appointments/${id}`) as any;
   return res.data;
 }
 
 export async function createAppointment(
   payload: CreateAppointmentPayload,
 ): Promise<AppointmentDto> {
-  const res = await apiFetch<ApiEnvelope<AppointmentDto>>(`/appointments`, {
-    method: "POST",
-    body: JSON.stringify(payload),
-  });
+  const res = await api.post<ApiEnvelope<AppointmentDto>>(`/appointments`, payload) as any;
   return res.data;
 }
 
@@ -73,10 +64,7 @@ export async function updateAppointment(
   id: string,
   payload: UpdateAppointmentPayload,
 ): Promise<AppointmentDto> {
-  const res = await apiFetch<ApiEnvelope<AppointmentDto>>(`/appointments/${id}`, {
-    method: "PUT",
-    body: JSON.stringify(payload),
-  });
+  const res = await api.put<ApiEnvelope<AppointmentDto>>(`/appointments/${id}`, payload) as any;
   return res.data;
 }
 
@@ -85,15 +73,12 @@ export async function patchAppointmentStatus(
   status: AppointmentStatus,
   cancellationReason?: string,
 ): Promise<AppointmentDto> {
-  const res = await apiFetch<ApiEnvelope<AppointmentDto>>(`/appointments/${id}/status`, {
-    method: "PATCH",
-    body: JSON.stringify({ status, cancellationReason }),
-  });
+  const res = await api.patch<ApiEnvelope<AppointmentDto>>(`/appointments/${id}/status`, { status, cancellationReason }) as any;
   return res.data;
 }
 
 export async function deleteAppointment(id: string): Promise<void> {
-  await apiFetch<ApiEnvelope<{ id: string }>>(`/appointments/${id}`, { method: "DELETE" });
+  await api.delete(`/appointments/${id}`);
 }
 
 export async function sendAppointmentQueueAlert(
@@ -104,33 +89,29 @@ export async function sendAppointmentQueueAlert(
   recipient: string;
   notification: { id: string; status: "SENT" | "FAILED"; errorMessage?: string | null };
 }> {
-  const res = await apiFetch<
+  const res = await api.post<
     ApiEnvelope<{
       appointmentId: string;
       recipient: string;
       notification: { id: string; status: "SENT" | "FAILED"; errorMessage?: string | null };
     }>
-  >(`/appointments/${id}/send-alert`, {
-    method: "POST",
-    body: JSON.stringify({ message }),
-  });
+  >(`/appointments/${id}/send-alert`, { message }) as any;
   return res.data;
 }
 
 export async function fetchDentists(): Promise<DentistRow[]> {
-  const res = await apiFetch<ApiEnvelope<DentistRow[]>>(`/users/dentists`);
+  const res = await api.get<ApiEnvelope<DentistRow[]>>(`/users/dentists`) as any;
   return res.data;
 }
 
 export async function searchPatients(q: string): Promise<PatientSearchRow[]> {
-  const search = new URLSearchParams({ q, page: "1", limit: "10" });
-  const res = await apiFetch<
+  const res = await api.get<
     ApiEnvelope<{
       data: PatientSearchRow[];
       total: number;
       page: number;
       totalPages: number;
     }>
-  >(`/patients?${search.toString()}`);
+  >(`/patients`, { params: { q, page: 1, limit: 10 } }) as any;
   return res.data.data;
 }

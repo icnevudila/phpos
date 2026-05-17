@@ -112,7 +112,7 @@ export function PortalLayout(): JSX.Element {
     >
       <div
         className={`relative mx-auto flex w-full min-w-0 flex-1 flex-col bg-white shadow-xl dark:bg-slate-900 dark:shadow-black/40 ${
-          isKiosk ? "max-w-2xl" : "max-w-md"
+          isKiosk ? "max-w-2xl" : "max-w-md sm:max-w-lg"
         }`}
       >
         <header className="flex items-center justify-between gap-2 border-b border-slate-200 px-4 py-3 dark:border-slate-800 dark:bg-slate-900/90">
@@ -168,7 +168,7 @@ function BottomNav({ slug, kioskQuery }: { slug: string; kioskQuery: string }): 
   return (
     <nav
       className={`pointer-events-auto fixed bottom-0 left-1/2 z-30 w-full -translate-x-1/2 border-t border-slate-200 bg-white/95 backdrop-blur dark:border-slate-800 dark:bg-slate-900/95 ${
-        q ? "max-w-2xl" : "max-w-md"
+        q ? "max-w-2xl" : "max-w-md sm:max-w-lg"
       }`}
     >
       <ul className="grid grid-cols-4">

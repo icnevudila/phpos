@@ -9,3 +9,15 @@ export class AppError extends Error {
     this.code = code;
   }
 }
+
+export class NotFoundError extends AppError {
+  constructor(message = "Not found") {
+    super(message, 404, "NOT_FOUND");
+  }
+}
+
+export class ForbiddenError extends AppError {
+  constructor(message = "Forbidden") {
+    super(message, 403, "FORBIDDEN");
+  }
+}

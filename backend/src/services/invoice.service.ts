@@ -1,8 +1,10 @@
 import { HmoClaimStatus, InvoiceStatus, Prisma, type PaymentMethod } from "@prisma/client";
 
 import { emitInvoiceEvent } from "../events/invoiceEvents.js";
+import { isPgBouncerSingleConnection } from "../lib/dbTasks.js";
 import { prisma } from "../lib/prisma.js";
 import { AppError } from "../utils/errors.js";
+import { computePhStatutoryDiscounts } from "../utils/phStatutoryDiscount.js";
 import type {
   CreateInvoiceBody,
   CreatePaymentBody,
@@ -281,6 +283,14 @@ export async function listInvoices(
     select: publicSelect,
   });
 
+  if (isPgBouncerSingleConnection()) {
+    const dtos = [];
+    for (const r of rows) {
+      dtos.push(await toDto(r, await loadTreatments(r.id, r.appointmentId)));
+    }
+    return dtos;
+  }
+
   const dtos = await Promise.all(
     rows.map(async (r) => toDto(r, await loadTreatments(r.id, r.appointmentId))),
   );
@@ -323,12 +333,11 @@ export async function createInvoice(
     0,
   );
   const ph = await loadPatientDiscountFlags(clinicId, appointment.patientId);
-  const seniorDiscountCents = ph.isSeniorCitizen ? Math.floor(subtotalCents * 0.2) : 0;
-  const pwdDiscountCents = (ph.pwdIdNo?.trim().length ?? 0) > 0 ? Math.floor(subtotalCents * 0.2) : 0;
-  const statutoryCents = Math.max(seniorDiscountCents, pwdDiscountCents);
+  const statutory = computePhStatutoryDiscounts(subtotalCents, ph);
+  const { seniorDiscountCents, pwdDiscountCents, statutoryDiscountCents: statutoryCents, vatExempt } =
+    statutory;
   const manualCents = body.discount ? Math.round(body.discount * MONEY_SCALE) : 0;
   const discountCents = Math.min(subtotalCents, Math.max(manualCents, statutoryCents));
-  const vatExempt = ph.isSeniorCitizen || !!(ph.pwdIdNo?.trim().length);
   const vatRate = vatExempt ? 0 : 0.12;
   const vatAmountCents = vatExempt ? 0 : Math.round((subtotalCents - discountCents) * vatRate);
   const totalCents = Math.max(0, subtotalCents - discountCents + vatAmountCents);
@@ -399,12 +408,11 @@ export async function updateInvoice(
   if (body.discount !== undefined) {
     const subtotalCents = toCents(existing.subtotal);
     const ph = await loadPatientDiscountFlags(clinicId, existing.patientId);
-    const seniorDiscountCents = ph.isSeniorCitizen ? Math.floor(subtotalCents * 0.2) : 0;
-    const pwdDiscountCents = (ph.pwdIdNo?.trim().length ?? 0) > 0 ? Math.floor(subtotalCents * 0.2) : 0;
-    const statutoryCents = Math.max(seniorDiscountCents, pwdDiscountCents);
+    const statutory = computePhStatutoryDiscounts(subtotalCents, ph);
+    const { seniorDiscountCents, pwdDiscountCents, statutoryDiscountCents: statutoryCents, vatExempt } =
+      statutory;
     let discountCents = Math.round(body.discount * MONEY_SCALE);
     discountCents = Math.min(subtotalCents, Math.max(discountCents, statutoryCents));
-    const vatExempt = ph.isSeniorCitizen || !!(ph.pwdIdNo?.trim().length);
     const vatRate = vatExempt ? 0 : 0.12;
     const vatAmountCents = vatExempt ? 0 : Math.round((subtotalCents - discountCents) * vatRate);
     const totalCents = Math.max(0, subtotalCents - discountCents + vatAmountCents);
@@ -455,10 +463,9 @@ export async function finalizeTreatmentsToInvoice(
   );
 
   const ph = await loadPatientDiscountFlags(clinicId, appt.patientId);
-  const seniorDiscountCents = ph.isSeniorCitizen ? Math.floor(subtotalCents * 0.2) : 0;
-  const pwdDiscountCents = (ph.pwdIdNo?.trim().length ?? 0) > 0 ? Math.floor(subtotalCents * 0.2) : 0;
-  const statutoryCents = Math.max(seniorDiscountCents, pwdDiscountCents);
-  const vatExempt = ph.isSeniorCitizen || !!(ph.pwdIdNo?.trim().length);
+  const statutory = computePhStatutoryDiscounts(subtotalCents, ph);
+  const { seniorDiscountCents, pwdDiscountCents, statutoryDiscountCents: statutoryCents, vatExempt } =
+    statutory;
   const vatRate = vatExempt ? 0 : 0.12;
 
   const existing = await prisma.invoice.findFirst({
@@ -680,7 +687,7 @@ export async function createPaymongoCheckout(
   const description = body.description ?? `DentEase PH – ${invoice.orNumber ?? invoice.id}`;
 
   if (!key) {
-    const mockUrl = `${process.env.APP_PUBLIC_URL ?? "http://localhost:5174"}/invoices/${invoice.id}?paymongo_mock=1`;
+    const mockUrl = `${process.env.APP_PUBLIC_URL ?? "http://localhost:5173"}/invoices/${invoice.id}?paymongo_mock=1`;
     await prisma.invoice.update({
       where: { id: invoice.id },
       data: { externalRef: `mock-${Date.now()}` },
@@ -741,6 +748,7 @@ export async function handlePaymongoWebhook(payload: unknown): Promise<void> {
     // Event'i kaydet (status: RECEIVED)
     await prisma.webhookEvent.create({
       data: {
+        provider: "PAYMONGO",
         providerEventId: eventId,
         eventType: extractEventType(payload) || "unknown",
         payload: payload as any,

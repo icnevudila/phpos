@@ -9,8 +9,8 @@ export const prescriptionItemSchema = z.object({
 });
 
 export const createPrescriptionSchema = z.object({
-  patientId: z.string().cuid("Invalid patient ID"),
-  appointmentId: z.string().cuid("Invalid appointment ID").optional(),
+  patientId: z.string().min(1, "Patient ID is required"),
+  appointmentId: z.string().min(1).optional(),
   notes: z.string().optional(),
   items: z.array(prescriptionItemSchema).min(1, "At least one medicine is required"),
 });

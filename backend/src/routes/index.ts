@@ -26,12 +26,21 @@ import { waitlistRouter } from "./waitlist.routes.js";
 import { prescriptionRouter } from "./prescription.routes.js";
 import { analyticsRouter } from "./analytics.routes.js";
 import { eodRouter } from "./eod.routes.js";
+import { aiRouter } from "./ai.routes.js";
+import { labOrderRouter } from "./labOrder.routes.js";
+import { consentRouter } from "./consent.routes.js";
+import { sterilizationRouter } from "./sterilization.routes.js";
+import { soapNoteRouter } from "./soapNote.routes.js";
+import { referralRouter } from "./referral.routes.js";
+import { hqRouter } from "./hq.routes.js";
+import { publicRouter } from "./public.routes.js";
 
 export const apiRouter = Router();
 
 apiRouter.use(auditTrailMiddleware);
 
 apiRouter.get("/health", healthController);
+apiRouter.use("/public", publicRouter);
 apiRouter.use("/auth", authRouter);
 apiRouter.use("/clinic", clinicRouter);
 apiRouter.use("/staff/users", staffUserRouter);
@@ -52,4 +61,11 @@ apiRouter.use("/prescriptions", prescriptionRouter);
 apiRouter.use("/analytics", analyticsRouter);
 apiRouter.use("/reports/eod", eodRouter);
 apiRouter.use("/portal", portalRouter);
+apiRouter.use("/ai", aiRouter);
+apiRouter.use("/lab-orders", labOrderRouter);
+apiRouter.use("/consent-forms", consentRouter);
+apiRouter.use("/sterilization", sterilizationRouter);
+apiRouter.use("/soap-notes", soapNoteRouter);
+apiRouter.use("/referrals", referralRouter);
+apiRouter.use("/hq", hqRouter);
 apiRouter.use("/webhooks", webhookRouter);

@@ -1,4 +1,4 @@
-import { apiFetch, apiPostFormData, downloadAuthedFile } from "./api";
+import api, { downloadAuthedFile } from "./api";
 
 interface ApiEnvelope<T> {
   success: true;
@@ -99,7 +99,7 @@ export interface PatientHmoMembership {
 }
 
 export async function fetchHmoProviders(): Promise<HmoProvider[]> {
-  const res = await apiFetch<ApiEnvelope<HmoProvider[]>>("/hmo/providers");
+  const res = await api.get<ApiEnvelope<HmoProvider[]>>("/hmo/providers") as any;
   return res.data;
 }
 
@@ -111,10 +111,7 @@ export async function createHmoProvider(payload: {
   notes?: string;
   isActive?: boolean;
 }): Promise<HmoProvider> {
-  const res = await apiFetch<ApiEnvelope<HmoProvider>>("/hmo/providers", {
-    method: "POST",
-    body: JSON.stringify(payload),
-  });
+  const res = await api.post<ApiEnvelope<HmoProvider>>("/hmo/providers", payload) as any;
   return res.data;
 }
 
@@ -129,10 +126,7 @@ export async function updateHmoProvider(
     isActive: boolean;
   }>,
 ): Promise<HmoProvider> {
-  const res = await apiFetch<ApiEnvelope<HmoProvider>>(`/hmo/providers/${id}`, {
-    method: "PUT",
-    body: JSON.stringify(payload),
-  });
+  const res = await api.put<ApiEnvelope<HmoProvider>>(`/hmo/providers/${id}`, payload) as any;
   return res.data;
 }
 
@@ -142,13 +136,7 @@ export async function fetchHmoClaims(params?: {
   patientId?: string;
   limit?: number;
 }): Promise<HmoClaim[]> {
-  const q = new URLSearchParams();
-  if (params?.status) q.set("status", params.status);
-  if (params?.providerId) q.set("providerId", params.providerId);
-  if (params?.patientId) q.set("patientId", params.patientId);
-  if (params?.limit) q.set("limit", String(params.limit));
-  const suffix = q.toString() ? `?${q.toString()}` : "";
-  const res = await apiFetch<ApiEnvelope<HmoClaim[]>>(`/hmo/claims${suffix}`);
+  const res = await api.get<ApiEnvelope<HmoClaim[]>>(`/hmo/claims`, { params }) as any;
   return res.data;
 }
 
@@ -170,7 +158,7 @@ export async function downloadHmoClaimsReconciliationCsv(params: {
 }
 
 export async function fetchHmoClaim(id: string): Promise<HmoClaimDetail> {
-  const res = await apiFetch<ApiEnvelope<HmoClaimDetail>>(`/hmo/claims/${id}`);
+  const res = await api.get<ApiEnvelope<HmoClaimDetail>>(`/hmo/claims/${id}`) as any;
   return res.data;
 }
 
@@ -185,10 +173,7 @@ export async function updateHmoClaim(
     notes: string | null;
   }>,
 ): Promise<HmoClaimDetail> {
-  const res = await apiFetch<ApiEnvelope<HmoClaimDetail>>(`/hmo/claims/${id}`, {
-    method: "PUT",
-    body: JSON.stringify(payload),
-  });
+  const res = await api.put<ApiEnvelope<HmoClaimDetail>>(`/hmo/claims/${id}`, payload) as any;
   return res.data;
 }
 
@@ -205,17 +190,16 @@ export async function uploadHmoClaimAttachment(
   const fd = new FormData();
   fd.append("file", file);
   fd.append("kind", kind);
-  const res = await apiPostFormData<ApiEnvelope<HmoClaimAttachment>>(
+  const res = await api.post<ApiEnvelope<HmoClaimAttachment>>(
     `/hmo/claims/${claimId}/attachments`,
     fd,
-  );
+    { headers: { "Content-Type": "multipart/form-data" } }
+  ) as any;
   return res.data;
 }
 
 export async function deleteHmoClaimAttachment(claimId: string, attachmentId: string): Promise<void> {
-  await apiFetch<ApiEnvelope<{ id: string }>>(`/hmo/claims/${claimId}/attachments/${attachmentId}`, {
-    method: "DELETE",
-  });
+  await api.delete(`/hmo/claims/${claimId}/attachments/${attachmentId}`);
 }
 
 export async function createHmoClaim(payload: {
@@ -231,15 +215,12 @@ export async function createHmoClaim(payload: {
   externalRef?: string;
   notes?: string;
 }): Promise<HmoClaimDetail> {
-  const res = await apiFetch<ApiEnvelope<HmoClaimDetail>>("/hmo/claims", {
-    method: "POST",
-    body: JSON.stringify(payload),
-  });
+  const res = await api.post<ApiEnvelope<HmoClaimDetail>>("/hmo/claims", payload) as any;
   return res.data;
 }
 
 export async function fetchPatientHmoMemberships(patientId: string): Promise<PatientHmoMembership[]> {
-  const res = await apiFetch<ApiEnvelope<PatientHmoMembership[]>>(`/hmo/patients/${patientId}/memberships`);
+  const res = await api.get<ApiEnvelope<PatientHmoMembership[]>>(`/hmo/patients/${patientId}/memberships`) as any;
   return res.data;
 }
 
@@ -255,9 +236,6 @@ export async function createPatientHmoMembership(
     isPrimary?: boolean;
   },
 ): Promise<PatientHmoMembership> {
-  const res = await apiFetch<ApiEnvelope<PatientHmoMembership>>(`/hmo/patients/${patientId}/memberships`, {
-    method: "POST",
-    body: JSON.stringify(payload),
-  });
+  const res = await api.post<ApiEnvelope<PatientHmoMembership>>(`/hmo/patients/${patientId}/memberships`, payload) as any;
   return res.data;
 }

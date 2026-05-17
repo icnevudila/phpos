@@ -13,6 +13,7 @@ import {
   ReceiptIcon,
   ReportBarsIcon,
   SettingsIcon,
+  ShieldCheckIcon,
   UsersIcon,
 } from "./icons";
 
@@ -82,6 +83,13 @@ const CORE_NAV: NavItem[] = [
     icon: UsersIcon,
   },
   {
+    key: "compliance",
+    to: "/compliance",
+    section: "clinical",
+    icon: ShieldCheckIcon,
+    roles: ["ADMIN", "DENTIST"],
+  },
+  {
     key: "invoices",
     to: "/invoices",
     matchPrefix: "/invoices",
@@ -101,6 +109,20 @@ const CORE_NAV: NavItem[] = [
     matchPrefix: "/reports/aged-receivables",
     section: "billing",
     icon: AgingReceivablesIcon,
+  },
+  {
+    key: "hmoProviders",
+    to: "/hmo-providers",
+    section: "billing",
+    icon: HmoShieldIcon,
+    roles: ["ADMIN"],
+  },
+  {
+    key: "philhealth",
+    to: "/philhealth",
+    section: "billing",
+    icon: ShieldCheckIcon,
+    roles: ["ADMIN"],
   },
   {
     key: "inventory",

@@ -92,16 +92,18 @@ export function PricingTeaser({ ctaHref: ctaHrefOverride }: { ctaHref?: string }
         <p className="mt-4 text-slate-600 dark:text-slate-400">{t("landing.pricingSubtitle")}</p>
       </div>
 
-      <div className="mt-12 grid gap-6 md:grid-cols-3">
+      <div className="mt-12 grid gap-8 md:grid-cols-3">
         {plans.map((p, i) => (
           <motion.div
             key={p.key}
-            initial={{ opacity: 0, y: 14 }}
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ delay: i * 0.08, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-            className={`relative flex flex-col rounded-3xl border bg-white p-7 shadow-sm transition hover:shadow-lg dark:bg-slate-900 ${
-              p.popular ? `border-transparent ring-2 ${p.ring} lg:-mt-4 lg:scale-105` : "border-slate-200 dark:border-slate-800"
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ delay: i * 0.1, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            className={`relative flex flex-col rounded-[2.5rem] p-8 transition-all duration-500 hover:-translate-y-2 ${
+              p.popular 
+                ? "bg-white shadow-[0_30px_60px_-12px_rgba(16,185,129,0.15)] ring-2 ring-emerald-500 dark:bg-slate-900 dark:shadow-none" 
+                : "border border-slate-200 bg-white/50 shadow-sm backdrop-blur-sm hover:shadow-xl dark:border-slate-800 dark:bg-slate-900/50"
             }`}
           >
             {p.popular && (

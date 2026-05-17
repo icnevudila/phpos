@@ -66,6 +66,7 @@ const basePatientFields = {
   allergies: z.array(z.string().trim().min(1)).default([]),
   medicalHistory: optionalString,
   philhealthNo: optionalString,
+  philhealthType: z.enum(["FORMAL", "INFORMAL", "INDIGENT", "SPONSORED", "LIFETIME", "SENIOR_CITIZEN"]).optional(),
   isSeniorCitizen: z.boolean().optional(),
   oscaIdNo: optionalString,
   pwdIdNo: optionalString,

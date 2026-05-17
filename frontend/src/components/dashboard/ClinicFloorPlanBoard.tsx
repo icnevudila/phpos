@@ -1,4 +1,5 @@
 import { useMemo, useState, type DragEvent } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export type ClinicFloorPlanZoneId = 'waiting-room' | 'unit-1' | 'unit-2' | 'xray-room';
 
@@ -41,6 +42,8 @@ export const CLINIC_FLOOR_PLAN_ZONE_ACTIONS: Record<ClinicFloorPlanZoneId, Clini
   },
 };
 
+const FP_NS = 'pages.dashboard.floorPlan';
+
 interface FloorPlanZoneViewModel {
   id: ClinicFloorPlanZoneId;
   label: string;
@@ -48,32 +51,14 @@ interface FloorPlanZoneViewModel {
   accentClassName: string;
 }
 
-const FLOOR_PLAN_ZONES: FloorPlanZoneViewModel[] = [
-  {
-    id: 'waiting-room',
-    label: 'Waiting room',
-    description: 'Queued patients waiting for an available chair.',
-    accentClassName: 'from-amber-400/20 to-amber-100/20 border-amber-200/70 text-amber-900',
-  },
-  {
-    id: 'unit-1',
-    label: 'Unit 1',
-    description: 'Primary operatory chair for active treatment.',
-    accentClassName: 'from-sky-400/20 to-sky-100/20 border-sky-200/70 text-sky-900',
-  },
-  {
-    id: 'unit-2',
-    label: 'Unit 2',
-    description: 'Secondary operatory chair for active treatment.',
-    accentClassName: 'from-emerald-400/20 to-emerald-100/20 border-emerald-200/70 text-emerald-900',
-  },
-  {
-    id: 'xray-room',
-    label: 'X-ray room',
-    description: 'Imaging room for scans and diagnostics.',
-    accentClassName: 'from-violet-400/20 to-violet-100/20 border-violet-200/70 text-violet-900',
-  },
-];
+const ZONE_IDS: ClinicFloorPlanZoneId[] = ['waiting-room', 'unit-1', 'unit-2', 'xray-room'];
+
+const ZONE_ACCENT: Record<ClinicFloorPlanZoneId, string> = {
+  'waiting-room': 'from-amber-400/20 to-amber-100/20 border-amber-200/70 text-amber-900',
+  'unit-1': 'from-sky-400/20 to-sky-100/20 border-sky-200/70 text-sky-900',
+  'unit-2': 'from-emerald-400/20 to-emerald-100/20 border-emerald-200/70 text-emerald-900',
+  'xray-room': 'from-violet-400/20 to-violet-100/20 border-violet-200/70 text-violet-900',
+};
 
 const STATUS_TO_ZONE: Array<[RegExp, ClinicFloorPlanZoneId]> = [
   [/x[\s-]?ray/i, 'xray-room'],
@@ -140,7 +125,10 @@ const getDashboardArrayCandidate = (dashboard: unknown): Record<string, unknown>
   return [];
 };
 
-const normalizeDashboardPatients = (dashboard: unknown): ClinicFloorPlanBoardPatient[] => {
+const normalizeDashboardPatients = (
+  dashboard: unknown,
+  unknownPatientLabel: (index: number) => string,
+): ClinicFloorPlanBoardPatient[] => {
   return getDashboardArrayCandidate(dashboard).map((row, index) => {
     const patientRecord = readNestedRecord(row.patient) ?? readNestedRecord(row.patientInfo) ?? readNestedRecord(row.patientDetails);
     const sourceRecord = patientRecord ?? row;
@@ -178,7 +166,8 @@ const normalizeDashboardPatients = (dashboard: unknown): ClinicFloorPlanBoardPat
       row.name,
     );
 
-      const name = (fullName ?? [firstName, lastName].filter(Boolean).join(' ').trim()) || `Patient ${index + 1}`;
+    const name =
+      (fullName ?? [firstName, lastName].filter(Boolean).join(' ').trim()) || unknownPatientLabel(index + 1);
 
     const status = pickString(
       row.status,
@@ -227,18 +216,34 @@ const normalizeDashboardPatients = (dashboard: unknown): ClinicFloorPlanBoardPat
   });
 };
 
-const getZoneMeta = (zoneId: ClinicFloorPlanZoneId): FloorPlanZoneViewModel =>
-  FLOOR_PLAN_ZONES.find((zone) => zone.id === zoneId) ?? FLOOR_PLAN_ZONES[0];
-
 export default function ClinicFloorPlanBoard({
   dashboard,
   onPatientDrop,
   className,
 }: ClinicFloorPlanBoardProps) {
+  const { t } = useTranslation();
   const [draggedPatientId, setDraggedPatientId] = useState<string | null>(null);
   const [activeZoneId, setActiveZoneId] = useState<ClinicFloorPlanZoneId | null>(null);
 
-  const patients = useMemo(() => normalizeDashboardPatients(dashboard), [dashboard]);
+  const zones = useMemo<FloorPlanZoneViewModel[]>(
+    () =>
+      ZONE_IDS.map((id) => ({
+        id,
+        label: t(`${FP_NS}.zones.${id}.label`),
+        description: t(`${FP_NS}.zones.${id}.description`),
+        accentClassName: ZONE_ACCENT[id],
+      })),
+    [t],
+  );
+
+  const getZoneMeta = (zoneId: ClinicFloorPlanZoneId): FloorPlanZoneViewModel =>
+    zones.find((zone) => zone.id === zoneId) ?? zones[0];
+
+  const patients = useMemo(
+    () =>
+      normalizeDashboardPatients(dashboard, (n) => t(`${FP_NS}.unknownPatient`, { n })),
+    [dashboard, t],
+  );
 
   const onDragStart = (patientId: string) => {
     return (event: DragEvent<HTMLButtonElement>) => {
@@ -292,17 +297,15 @@ export default function ClinicFloorPlanBoard({
     >
       <div className="mb-4 flex flex-col gap-2 lg:flex-row lg:items-end lg:justify-between">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">Clinic floor plan</p>
-          <h3 className="text-lg font-semibold text-slate-900">Drag patients into a room or chair</h3>
-          <p className="mt-1 text-sm text-slate-500">
-            Drop a chip onto a zone to update the patient's appointment status and chair assignment.
-          </p>
+          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">{t(`${FP_NS}.eyebrow`)}</p>
+          <h3 className="text-lg font-semibold text-slate-900">{t(`${FP_NS}.title`)}</h3>
+          <p className="mt-1 text-sm text-slate-500">{t(`${FP_NS}.subtitle`)}</p>
         </div>
 
         <div className="flex flex-wrap gap-2 text-xs text-slate-500">
-          <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1">Queued</span>
-          <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1">In clinic</span>
-          <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1">X-ray</span>
+          <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1">{t(`${FP_NS}.legendQueued`)}</span>
+          <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1">{t(`${FP_NS}.legendInClinic`)}</span>
+          <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1">{t(`${FP_NS}.legendXray`)}</span>
         </div>
       </div>
 
@@ -310,7 +313,7 @@ export default function ClinicFloorPlanBoard({
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 bg-gradient-to-br from-slate-50 to-white p-3">
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(148,163,184,0.15),transparent_28%),radial-gradient(circle_at_80%_0%,rgba(56,189,248,0.08),transparent_24%),linear-gradient(to_right,rgba(148,163,184,0.08)_1px,transparent_1px),linear-gradient(to_bottom,rgba(148,163,184,0.08)_1px,transparent_1px)] bg-[length:100%_100%,100%_100%,48px_48px,48px_48px]" />
           <div className="relative grid min-h-[28rem] gap-3 sm:grid-cols-2 sm:grid-rows-2">
-            {FLOOR_PLAN_ZONES.map((zone) => {
+            {zones.map((zone) => {
               const zonePatients = patients.filter((patient) => (patient.currentZoneId ?? 'waiting-room') === zone.id);
               const isActive = activeZoneId === zone.id;
               const zoneMeta = getZoneMeta(zone.id);
@@ -341,7 +344,7 @@ export default function ClinicFloorPlanBoard({
                     </div>
 
                     <div className="rounded-full bg-white/80 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500 shadow-sm ring-1 ring-slate-200">
-                      {patientCountByZone[zone.id]} {patientCountByZone[zone.id] === 1 ? 'patient' : 'patients'}
+                      {t(`${FP_NS}.patientCount`, { count: patientCountByZone[zone.id] })}
                     </div>
                   </div>
 
@@ -358,7 +361,7 @@ export default function ClinicFloorPlanBoard({
                       ))
                     ) : (
                       <div className="max-w-[16rem] rounded-2xl border border-dashed border-slate-200 bg-white/70 px-3 py-2 text-xs leading-5 text-slate-400">
-                        Drop a chip here to move the patient into this zone.
+                        {t(`${FP_NS}.dropHint`)}
                       </div>
                     )}
                   </div>
@@ -371,10 +374,8 @@ export default function ClinicFloorPlanBoard({
         <aside className="rounded-3xl border border-slate-200 bg-slate-50/80 p-3">
           <div className="flex items-center justify-between gap-3">
             <div>
-              <h4 className="text-sm font-semibold text-slate-900">Active chips</h4>
-              <p className="mt-1 text-xs leading-5 text-slate-500">
-                Drag any queued or in-clinic patient chip into a floor-plan zone.
-              </p>
+              <h4 className="text-sm font-semibold text-slate-900">{t(`${FP_NS}.chipsTitle`)}</h4>
+              <p className="mt-1 text-xs leading-5 text-slate-500">{t(`${FP_NS}.chipsSubtitle`)}</p>
             </div>
             <div className="rounded-full bg-white px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500 ring-1 ring-slate-200">
               {patients.length}
@@ -416,7 +417,7 @@ export default function ClinicFloorPlanBoard({
               })
             ) : (
               <div className="rounded-2xl border border-dashed border-slate-200 bg-white px-3 py-8 text-center text-sm text-slate-500">
-                No active patients are available for the floor plan.
+                {t(`${FP_NS}.noChips`)}
               </div>
             )}
           </div>

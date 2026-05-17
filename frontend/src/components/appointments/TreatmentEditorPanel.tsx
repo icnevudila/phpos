@@ -11,17 +11,26 @@ import {
   updateTreatment,
 } from "../../services/treatments";
 
-const PROCEDURES = [
-  "Extraction",
-  "Filling",
-  "Cleaning",
-  "Root Canal",
-  "Crown",
-  "Whitening",
-  "Consultation",
-  "X-Ray",
-  "Other",
-];
+const TE = "pages.appointments.treatmentEditor";
+
+const PROCEDURE_OPTIONS = [
+  { value: "Extraction", key: `${TE}.procedures.extraction` },
+  { value: "Filling", key: `${TE}.procedures.filling` },
+  { value: "Cleaning", key: `${TE}.procedures.cleaning` },
+  { value: "Root Canal", key: `${TE}.procedures.rootCanal` },
+  { value: "Crown", key: `${TE}.procedures.crown` },
+  { value: "Whitening", key: `${TE}.procedures.whitening` },
+  { value: "Consultation", key: `${TE}.procedures.consultation` },
+  { value: "X-Ray", key: `${TE}.procedures.xray` },
+  { value: "Other", key: `${TE}.procedures.other` },
+] as const;
+
+const PROCEDURE_I18N = Object.fromEntries(PROCEDURE_OPTIONS.map((p) => [p.value, p.key]));
+
+function procedureLabel(value: string, t: (k: string) => string): string {
+  const key = PROCEDURE_I18N[value];
+  return key ? t(key) : value;
+}
 
 const PHP = new Intl.NumberFormat("en-PH", {
   style: "currency",
@@ -262,9 +271,9 @@ export function TreatmentEditorPanel({ appointmentId, disabled = false }: Props)
               onChange={(e) => setForm((s) => ({ ...s, procedure: e.target.value }))}
               className="rounded border border-slate-300 px-2 py-1 text-xs"
             >
-              {PROCEDURES.map((p) => (
-                <option key={p} value={p}>
-                  {p}
+              {PROCEDURE_OPTIONS.map((p) => (
+                <option key={p.value} value={p.value}>
+                  {t(p.key)}
                 </option>
               ))}
             </select>

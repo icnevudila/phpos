@@ -1,12 +1,13 @@
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { Suspense, lazy, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
 import { PORTAL_DEMO_SLUG } from "../constants/portal";
+import { CookieConsent } from "../components/landing/CookieConsent";
 import { AnnouncementBar } from "../components/landing/AnnouncementBar";
 import { CapabilitiesList } from "../components/landing/CapabilitiesList";
-import { Confetti } from "../components/landing/Confetti";
+// Confetti removed
 import { DeviceShowcase } from "../components/landing/DeviceShowcase";
 import { EverythingInside } from "../components/landing/EverythingInside";
 import { FAQ } from "../components/landing/FAQ";
@@ -26,6 +27,7 @@ import { SideTOC } from "../components/landing/SideTOC";
 import { SecurityBlock } from "../components/landing/SecurityBlock";
 import { StickyNav } from "../components/landing/StickyNav";
 import { TestimonialMarquee } from "../components/landing/TestimonialMarquee";
+import { DentQLLogo } from "../components/ui/DentQLLogo";
 import {
   IconFlow,
   IconGrid,
@@ -38,6 +40,7 @@ import {
   InventoryPreview,
   OdontogramPreview,
   PatientRecordPreview,
+  RevenuePreview,
 } from "../components/landing/FeaturePreviews";
 
 const DayInClinic = lazy(async () =>
@@ -75,14 +78,9 @@ function Check(): JSX.Element {
   );
 }
 
-function DentEaseLogo({ size = "md" }: { size?: "sm" | "md" }): JSX.Element {
-  const dims = size === "sm" ? "h-7 w-7" : "h-9 w-9";
+function FireflyLogo({ size = "md" }: { size?: "sm" | "md" }): JSX.Element {
   return (
-    <div className={`flex ${dims} items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-sky-500 text-white shadow-md`}>
-      <svg viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5">
-        <path d="M12 2a5 5 0 0 0-5 5c0 2 1 3 1 5s-1 4-1 6a3 3 0 0 0 6 0c0-1 .5-1 1-1s1 0 1 1a3 3 0 0 0 6 0c0-2-1-4-1-6s1-3 1-5a5 5 0 0 0-5-5c-1 0-2 .5-2 1s-1 1-2 1-1-.5-2-1-1-1-2-1Z" />
-      </svg>
-    </div>
+    <DentQLLogo size={size === "sm" ? "sm" : "md"} className={size === "sm" ? "scale-50" : "scale-75"} />
   );
 }
 
@@ -105,10 +103,154 @@ function differentiatorIcon(key: string): JSX.Element {
   );
 }
 
+function DifferentiatorMiniMock({ type }: { type: string }) {
+  const glassCls = "bg-white/95 backdrop-blur-md ring-1 ring-white shadow-xl dark:bg-slate-900/90 dark:ring-slate-800/50";
+  
+  switch (type) {
+    case "chairflow":
+      return (
+        <div className={`w-full max-w-[210px] rounded-t-2xl p-4 ${glassCls}`}>
+           <div className="mb-3 flex items-center justify-between border-b border-slate-100 pb-2 dark:border-slate-800">
+              <span className="text-[9px] font-black uppercase tracking-wider text-slate-400">Chair 1 Queue</span>
+              <span className="text-[9px] font-bold text-emerald-600">3 Pending</span>
+           </div>
+           <div className="space-y-2">
+              <div className="flex items-center gap-3 rounded-xl bg-emerald-50 p-2 dark:bg-emerald-950/40">
+                 <div className="flex flex-col items-center">
+                    <span className="text-[7px] font-black text-emerald-600">08:30</span>
+                    <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                 </div>
+                 <div className="flex-1">
+                    <p className="text-[9px] font-bold text-slate-900 dark:text-white leading-tight">Maria Santos</p>
+                    <p className="text-[7px] text-slate-500 font-medium">Routine Cleaning</p>
+                 </div>
+              </div>
+              <div className="flex items-center gap-3 rounded-xl bg-slate-50 p-2 dark:bg-slate-800/40 opacity-70">
+                 <span className="text-[7px] font-black text-slate-400">09:15</span>
+                 <div className="flex-1">
+                    <p className="text-[9px] font-bold text-slate-700 dark:text-slate-300">Juan Dela Cruz</p>
+                    <p className="text-[7px] text-slate-400 font-medium">Dental X-Ray</p>
+                 </div>
+              </div>
+           </div>
+        </div>
+      );
+    case "phpay":
+      return (
+        <div className="flex items-end gap-3 px-4">
+           <div className={`w-28 rounded-t-2xl p-3 pb-6 transition-all duration-500 group-hover:-translate-y-2 ${glassCls}`}>
+              <div className="flex justify-between items-center mb-2">
+                 <div className="h-6 w-12 rounded bg-[#007DFE] flex items-center justify-center text-[7px] font-black text-white italic">GCash</div>
+                 <span className="text-[7px] font-black text-emerald-600">LIVE</span>
+              </div>
+              <div className="space-y-1.5 border-t border-slate-50 pt-2 dark:border-slate-800">
+                 <p className="text-[6px] font-bold text-slate-400 uppercase tracking-tighter">Amount to Collect</p>
+                 <p className="text-[11px] font-black text-slate-900 dark:text-white tracking-tighter">₱2,450.00</p>
+              </div>
+              <button className="mt-3 w-full h-5 rounded-md bg-emerald-600 text-[7px] font-black text-white shadow-sm">PAY NOW</button>
+           </div>
+           <div className={`w-24 rounded-t-2xl p-3 pb-4 opacity-40 ${glassCls}`}>
+              <div className="h-5 w-10 rounded bg-[#D9FD0D] flex items-center justify-center text-[6px] font-black text-slate-900 italic">Maya</div>
+              <div className="mt-2 h-1 w-full rounded-full bg-slate-100 dark:bg-slate-800" />
+           </div>
+        </div>
+      );
+    case "hmocc":
+      return (
+        <div className={`w-full max-w-[220px] rounded-t-2xl p-4 ${glassCls}`}>
+           <div className="flex items-center justify-between border-b border-slate-100 pb-2 mb-3 dark:border-slate-800">
+              <span className="text-[9px] font-black uppercase tracking-wider text-sky-600">HMO Command Center</span>
+              <div className="flex gap-1">
+                 <div className="h-1 w-1 rounded-full bg-sky-500" />
+                 <div className="h-1 w-1 rounded-full bg-sky-300" />
+              </div>
+           </div>
+           <div className="space-y-2">
+              <div className="flex justify-between items-center bg-sky-50/50 p-2 rounded-xl dark:bg-sky-950/20">
+                 <div className="flex items-center gap-2">
+                    <div className="h-4 w-4 rounded bg-white shadow-sm dark:bg-slate-800 flex items-center justify-center text-[6px] font-black text-sky-700 leading-none">M</div>
+                    <span className="text-[8px] font-bold text-slate-800 dark:text-slate-200">Maxicare Claim</span>
+                 </div>
+                 <span className="text-[7px] font-black bg-sky-500/10 text-sky-600 px-1.5 py-0.5 rounded-full uppercase">Approved</span>
+              </div>
+              <div className="flex justify-between items-center bg-indigo-50/50 p-2 rounded-xl dark:bg-indigo-950/20">
+                 <div className="flex items-center gap-2">
+                    <div className="h-4 w-4 rounded bg-white shadow-sm dark:bg-slate-800 flex items-center justify-center text-[6px] font-black text-indigo-700 leading-none">I</div>
+                    <span className="text-[8px] font-bold text-slate-800 dark:text-slate-200">Intellicare</span>
+                 </div>
+                 <span className="text-[7px] font-black bg-amber-500/10 text-amber-600 px-1.5 py-0.5 rounded-full uppercase">Pending</span>
+              </div>
+           </div>
+        </div>
+      );
+    case "xrayflow":
+      return (
+        <div className="flex items-end gap-3">
+           <div className="h-28 w-24 rounded-2xl bg-slate-900 p-2 shadow-2xl ring-4 ring-white/10 overflow-hidden relative transition-transform duration-500 group-hover:scale-110">
+              <div className="absolute inset-x-0 top-0 h-4 flex items-center justify-center gap-1 bg-white/10 text-[6px] font-bold text-white uppercase tracking-widest">Digital X-Ray</div>
+              <div className="mt-4 h-full w-full rounded-xl bg-gradient-to-br from-slate-800 to-slate-950 flex flex-col items-center justify-center">
+                 <div className="h-12 w-12 rounded-full border-2 border-emerald-500/30 bg-emerald-500/10 flex items-center justify-center relative">
+                    <div className="absolute inset-0 rounded-full border border-emerald-500/40 animate-ping" />
+                    <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6 text-emerald-500 opacity-60">
+                       <path d="M12 2a5 5 0 0 0-5 5c0 2 1 3 1 5s-1 4-1 6a3 3 0 0 0 6 0c0-1 .5-1 1-1s1 0 1 1a3 3 0 0 0 6 0c0-2-1-4-1-6s1-3 1-5a5 5 0 0 0-5-5Z" fill="currentColor" />
+                    </svg>
+                 </div>
+              </div>
+           </div>
+           <div className={`h-24 w-32 rounded-t-2xl p-3 ${glassCls}`}>
+              <div className="flex items-center gap-1.5 mb-2">
+                 <div className="h-3 w-3 rounded-full bg-emerald-500/20" />
+                 <span className="text-[8px] font-black text-slate-800 dark:text-white uppercase tracking-tighter">Tooth 24 Analysis</span>
+              </div>
+              <div className="space-y-1.5">
+                 <div className="h-1 w-full rounded-full bg-slate-100 dark:bg-slate-800" />
+                 <div className="h-1 w-3/4 rounded-full bg-slate-100 dark:bg-slate-800" />
+                 <div className="mt-2 flex gap-2">
+                    <div className="h-3 flex-1 rounded bg-rose-500/10 border border-rose-500/20 text-[6px] font-black text-rose-600 flex items-center justify-center">CAVITY</div>
+                    <div className="h-3 flex-1 rounded bg-sky-500/10 border border-sky-500/20 text-[6px] font-black text-sky-600 flex items-center justify-center">RCT</div>
+                 </div>
+              </div>
+           </div>
+        </div>
+      );
+    case "livechair":
+      return (
+        <div className={`w-full max-w-[230px] rounded-t-2xl p-4 ${glassCls}`}>
+           <div className="mb-3 text-[9px] font-black uppercase tracking-wider text-slate-400">Live Operations</div>
+           <div className="grid grid-cols-2 gap-3">
+              <div className="rounded-2xl border-2 border-emerald-500/30 bg-emerald-50/20 p-2.5 dark:bg-emerald-950/30 relative overflow-hidden group-hover:border-emerald-500 transition-colors">
+                 <div className="flex justify-between items-start">
+                    <span className="text-[7px] font-black text-emerald-600 uppercase">Chair 01</span>
+                    <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                 </div>
+                 <p className="mt-1 text-[10px] font-black text-slate-900 dark:text-white">In Surgery</p>
+                 <p className="text-[7px] text-emerald-700/80 font-bold mt-0.5">14m elapsed</p>
+              </div>
+              <div className="rounded-2xl border-2 border-slate-100 bg-slate-50/50 p-2.5 dark:border-slate-800 dark:bg-slate-900/50">
+                 <span className="text-[7px] font-black text-slate-400 uppercase">Chair 02</span>
+                 <p className="mt-1 text-[10px] font-black text-slate-400">Cleaning</p>
+                 <p className="text-[7px] text-slate-300 font-bold mt-0.5">Ready soon</p>
+              </div>
+           </div>
+        </div>
+      );
+    default:
+      return (
+        <div className={`w-full max-w-[200px] rounded-t-2xl p-5 ${glassCls}`}>
+           <div className="space-y-3">
+              <div className="h-2.5 w-full rounded-full bg-slate-100 dark:bg-slate-800" />
+              <div className="h-2.5 w-3/4 rounded-full bg-slate-100 dark:bg-slate-800" />
+              <div className="h-2.5 w-1/2 rounded-full bg-slate-100 dark:bg-slate-800" />
+           </div>
+        </div>
+      );
+  }
+}
+
 export function HomePage(): JSX.Element {
   const { t } = useTranslation();
   const [email, setEmail] = useState("");
-  const [sent, setSent] = useState(false);
+  // sent removed
   const [activeFeature, setActiveFeature] = useState<string | null>(null);
 
   const features: FeatureDef[] = [
@@ -167,6 +309,17 @@ export function HomePage(): JSX.Element {
       preview: <InventoryPreview />,
       tryInAppPath: "/inventory",
     },
+    {
+      id: "reports",
+      title: t("landing.f6Title"),
+      desc: t("landing.f6Desc"),
+      longDesc: t("landing.f6Long"),
+      d: "M3 3v18h18M7 16l4-4 4 4 6-6",
+      color: "text-sky-600 bg-sky-100",
+      accent: "bg-sky-400",
+      preview: <RevenuePreview />,
+      tryInAppPath: "/dashboard",
+    },
   ];
 
   const localFeatures = [t("landing.local1"), t("landing.local2"), t("landing.local3"), t("landing.local4")];
@@ -187,13 +340,12 @@ export function HomePage(): JSX.Element {
 
   function submitEmail(e: React.FormEvent): void {
     e.preventDefault();
-    if (email.trim()) setSent(true);
   }
 
   const activeFeatureDef = features.find((f) => f.id === activeFeature) ?? null;
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-gradient-to-b from-emerald-50 via-white to-emerald-50 text-slate-800 dark:from-slate-950 dark:via-slate-950 dark:to-slate-950 dark:text-slate-300">
+    <div className="relative min-h-screen overflow-x-hidden bg-white text-slate-800 dark:bg-slate-950 dark:text-slate-300">
       <ScrollProgressBar />
       <NoiseOverlay />
       <AnnouncementBar />
@@ -213,7 +365,7 @@ export function HomePage(): JSX.Element {
       {/* LOCAL FEATURES STRIP */}
       <section className="relative z-10 mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
         <ScrollReveal>
-          <div className="rounded-3xl border border-emerald-200/70 bg-gradient-to-br from-white to-emerald-50/60 p-5 shadow-sm backdrop-blur sm:p-8 dark:border-emerald-900/50 dark:from-slate-900 dark:to-slate-900">
+          <div className="rounded-3xl border border-slate-100 bg-white p-5 shadow-sm sm:p-8 dark:border-slate-800 dark:bg-slate-900">
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div>
                 <SectionEyebrow label={t("landing.localEyebrow")} icon={IconSparkle} accent="emerald" />
@@ -245,7 +397,7 @@ export function HomePage(): JSX.Element {
       {/* DIFFERENTIATORS */}
       <section className="relative z-10 mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10">
         <ScrollReveal>
-          <div className="rounded-3xl border border-sky-200/70 bg-gradient-to-br from-white to-sky-50/70 p-5 shadow-sm sm:p-8 dark:border-sky-900/50 dark:from-slate-900 dark:to-slate-900">
+          <div className="rounded-3xl border border-slate-100 bg-white p-5 shadow-sm sm:p-8 dark:border-slate-800 dark:bg-slate-900">
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div>
                 <SectionEyebrow label={t("landing.diffEyebrow")} icon={IconSparkle} accent="sky" />
@@ -277,18 +429,24 @@ export function HomePage(): JSX.Element {
                 </span>
               ))}
             </div>
-            <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {differentiators.map((item) => (
-                <article key={item.title} className="rounded-xl border border-slate-200/80 bg-white/90 p-4 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:shadow-md dark:border-slate-700 dark:bg-slate-900/70">
-                  <div className="mb-1">{differentiatorIcon(item.key)}</div>
-                  <p className="text-sm font-semibold text-slate-900 dark:text-white">{item.title}</p>
-                  <p className="mt-1 text-xs leading-relaxed text-slate-600 dark:text-slate-400">{item.desc}</p>
-                  <Link
-                    to={item.path}
-                    className="mt-3 inline-flex min-h-10 items-center rounded-lg border border-sky-200 bg-sky-50 px-3 py-1.5 text-xs font-semibold text-sky-800 transition hover:bg-sky-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-2 dark:border-sky-900 dark:bg-sky-950/40 dark:text-sky-300 dark:hover:bg-sky-950/60 dark:focus-visible:ring-offset-slate-950"
-                  >
-                    {t("landing.diffCta")}
-                  </Link>
+                <article key={item.title} className="group relative flex flex-col overflow-hidden rounded-[2.5rem] border border-slate-200/80 bg-white/90 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-emerald-200 hover:shadow-xl dark:border-slate-800 dark:bg-slate-900/70">
+                  <div className="p-8">
+                    <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600 ring-1 ring-emerald-100 dark:bg-emerald-950/30 dark:ring-emerald-900/50">
+                      {differentiatorIcon(item.key)}
+                    </div>
+                    <p className="text-xl font-black text-slate-900 dark:text-white">{item.title}</p>
+                    <p className="mt-2 text-sm leading-relaxed text-slate-600 dark:text-slate-400">{item.desc}</p>
+                  </div>
+                  
+                  {/* Mini Mockup Area */}
+                  <div className="relative mt-auto h-32 overflow-hidden bg-slate-50/50 px-6 dark:bg-slate-950/20">
+                     <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent dark:via-slate-800" />
+                     <div className="flex h-full items-end justify-center pt-4 transition-transform duration-500 group-hover:translate-y-[-4px]">
+                        <DifferentiatorMiniMock type={item.key} />
+                     </div>
+                  </div>
                 </article>
               ))}
             </div>
@@ -424,7 +582,7 @@ export function HomePage(): JSX.Element {
         </div>
       </section>
 
-      <SectionDivider variant="curve" fromColor="rgba(16,185,129,0.06)" toColor="rgba(56,189,248,0.08)" />
+      <div className="h-px w-full bg-slate-100 dark:bg-slate-800" />
 
       {/* PRICING TEASER */}
       <section id="pricing" className="scroll-mt-24 relative z-10 py-12 sm:py-16 md:py-20">
@@ -439,10 +597,7 @@ export function HomePage(): JSX.Element {
 
       {/* TESTIMONIALS — horizontal marquee */}
       <section id="testimonials" className="relative z-10 overflow-hidden py-12 sm:py-16 md:py-20">
-        <div className="pointer-events-none absolute inset-0 -z-10">
-          <div className="absolute left-1/4 top-10 h-72 w-72 rounded-full bg-rose-200/30 blur-3xl" />
-          <div className="absolute right-1/4 bottom-10 h-72 w-72 rounded-full bg-sky-200/30 blur-3xl" />
-        </div>
+
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <ScrollReveal>
             <div className="mx-auto max-w-2xl text-center">
@@ -472,84 +627,45 @@ export function HomePage(): JSX.Element {
         <ScrollReveal>
           <div className="mx-auto max-w-5xl px-4 sm:px-6">
             <motion.div
-              className="relative overflow-hidden rounded-3xl p-6 text-white shadow-2xl sm:p-10 lg:p-12"
-              style={{
-                backgroundImage:
-                  "linear-gradient(135deg, #10b981 0%, #0ea5e9 45%, #6366f1 100%)",
-                backgroundSize: "200% 200%",
-              }}
-              animate={{ backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] }}
-              transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+              className="relative overflow-hidden rounded-3xl p-6 text-white shadow-2xl sm:p-10 lg:p-12 bg-slate-900 dark:bg-emerald-950"
             >
-              <div className="absolute inset-0 bg-gradient-to-br from-white/0 via-white/10 to-white/0" />
-              <div className="relative grid items-center gap-8 md:grid-cols-[1.2fr_1fr]">
-                <div>
-                  <h2 className="text-3xl font-bold sm:text-4xl">{t("landing.newsletterTitle")}</h2>
-                  <p className="mt-3 text-emerald-50">{t("landing.newsletterSubtitle")}</p>
+
+              <div className="relative flex flex-col items-center text-center">
+                <div className="inline-flex items-center gap-2 rounded-full bg-white/20 px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] backdrop-blur-md ring-1 ring-white/30">
+                  <span className="h-2 w-2 rounded-full bg-white animate-pulse" />
+                  Limited Beta slots
                 </div>
-                <form onSubmit={submitEmail} className="space-y-3">
-                  <AnimatePresence mode="wait">
-                    {sent ? (
-                      <motion.div
-                        key="sent"
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="relative rounded-xl bg-white/15 p-4 text-center text-sm font-semibold ring-1 ring-white/30"
-                      >
-                        <Confetti />
-                        <p className="font-semibold">✓ {t("landing.newsletterSuccess")}</p>
-                        <p className="mt-1 text-xs font-normal opacity-80">
-                          {t("landing.newsletterStep2")}
-                        </p>
-                      </motion.div>
-                    ) : (
-                      <motion.div
-                        key="form"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="flex flex-col gap-2 sm:flex-row"
-                      >
-                        <div className="relative flex-1">
-                          <input
-                            type="email"
-                            required
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            placeholder={t("landing.newsletterPlaceholder")}
-                            className="w-full rounded-xl bg-white px-4 py-3 pr-10 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-4 focus:ring-white/40"
-                          />
-                          <AnimatePresence>
-                            {/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && (
-                              <motion.span
-                                key="ok"
-                                initial={{ opacity: 0, scale: 0.5 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                exit={{ opacity: 0, scale: 0.5 }}
-                                transition={{ type: "spring", stiffness: 420, damping: 22 }}
-                                aria-label={t("landing.newsletterInlineOk")}
-                                className="absolute right-3 top-1/2 inline-flex h-5 w-5 -translate-y-1/2 items-center justify-center rounded-full bg-emerald-500 text-white shadow-md"
-                              >
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3} className="h-3 w-3">
-                                  <path d="M20 6 9 17l-5-5" strokeLinecap="round" strokeLinejoin="round" />
-                                </svg>
-                              </motion.span>
-                            )}
-                          </AnimatePresence>
-                        </div>
-                        <motion.button
-                          type="submit"
-                          whileTap={{ scale: 0.97 }}
-                          whileHover={{ y: -2 }}
-                          className="rounded-xl bg-slate-900 px-6 py-3 text-sm font-bold text-white shadow-lg transition hover:bg-slate-800"
-                        >
-                          {t("landing.newsletterButton")}
-                        </motion.button>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+                <h2 className="mt-6 text-4xl font-black tracking-tight sm:text-5xl lg:text-6xl">
+                  Ready to modernize your clinic?
+                </h2>
+                <p className="mt-6 max-w-2xl text-lg font-medium text-white/80">
+                  Join the free demo list. We'll help you set up your clinic, import your patients, and train your staff in a single afternoon.
+                </p>
+
+                <form onSubmit={submitEmail} className="mt-10 flex w-full max-w-xl flex-col gap-3 sm:flex-row">
+                  <input
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Your work email..."
+                    className="h-14 flex-1 rounded-2xl border-none bg-white/10 px-6 text-white placeholder:text-white/40 focus:ring-2 focus:ring-white/40 backdrop-blur-md"
+                  />
+                  <button
+                    type="submit"
+                    className="h-14 rounded-2xl bg-white px-8 text-sm font-black uppercase tracking-widest text-emerald-600 transition hover:bg-emerald-50 hover:shadow-xl active:scale-95"
+                  >
+                    Firefly Professional OS v4.2                </button>
                 </form>
+
+                <div className="mt-10 flex flex-wrap justify-center gap-x-8 gap-y-4 opacity-80">
+                  {["Free setup", "No card required", "24/7 Support"].map((point) => (
+                    <div key={point} className="flex items-center gap-2 text-xs font-bold">
+                      <span className="flex h-4 w-4 items-center justify-center rounded-full bg-white/20 text-[8px]">✓</span>
+                      {point}
+                    </div>
+                  ))}
+                </div>
               </div>
             </motion.div>
           </div>
@@ -564,8 +680,7 @@ export function HomePage(): JSX.Element {
             <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
               <div className="col-span-2 lg:col-span-1">
                 <div className="flex items-center gap-2">
-                  <DentEaseLogo size="sm" />
-                  <span className="font-bold text-slate-900 dark:text-white">{t("common.appName")}</span>
+                  <FireflyLogo size="sm" />
                 </div>
                 <p className="mt-3 max-w-sm text-sm leading-relaxed text-slate-600 dark:text-slate-400">{t("landing.footerTagline")}</p>
               </div>
@@ -580,6 +695,7 @@ export function HomePage(): JSX.Element {
                     { label: t("landing.footerFaq"), to: "/faq" },
                     { label: t("landing.footerStaffSignIn"), to: "/login" },
                     { label: t("landing.navPatientPortal"), to: `/${PORTAL_DEMO_SLUG}/portal/login` },
+                    { label: t("landing.navKioskMode"), to: `/${PORTAL_DEMO_SLUG}/kiosk` },
                   ],
                 },
                 {
@@ -643,6 +759,7 @@ export function HomePage(): JSX.Element {
           </div>
         </ScrollReveal>
       </footer>
+      <CookieConsent />
     </div>
   );
 }

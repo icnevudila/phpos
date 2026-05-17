@@ -1,4 +1,5 @@
 import type { ToothCondition } from "@prisma/client";
+import type { ToothSurfaceValue } from "../validation/teeth.schemas.js";
 
 import { prisma } from "../lib/prisma.js";
 import { AppError } from "../utils/errors.js";
@@ -98,6 +99,24 @@ export async function upsertTooth(
   });
 
   return tooth;
+}
+
+export async function batchUpsertTeeth(
+  clinicId: string,
+  patientId: string,
+  updates: Array<{
+    toothNumber: number;
+    condition: ToothCondition;
+    surfaces: ToothSurfaceValue[];
+    notes?: string;
+  }>,
+  userId: string,
+) {
+  const results = [];
+  for (const u of updates) {
+    results.push(await upsertTooth(clinicId, patientId, u.toothNumber, u, userId));
+  }
+  return results;
 }
 
 export async function listToothHistory(clinicId: string, patientId: string) {

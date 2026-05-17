@@ -73,3 +73,17 @@ export function balanceDue(args: {
   const or = args.orNumber ? ` ${args.orNumber}` : "";
   return `Hi ${name}, friendly reminder: balance of PHP ${args.amount} on invoice${or}. Thanks! -DentEase`;
 }
+
+export function birthdayGreeting(args: { patientName: string }): string {
+  const name = firstName(args.patientName);
+  return `Happy Birthday, ${name}! Wishing you a wonderful day filled with smiles. From your friends at the dental clinic! -DentEase`;
+}
+
+export function postOpCheckIn(args: { patientName: string, procedure: string }): string {
+  const name = firstName(args.patientName);
+  return `Hi ${name}! Just checking in on you after your ${args.procedure} today. Hope you're feeling okay. Call us if you need anything! -DentEase`;
+}
+
+export function sterilizationFailure(args: { autoclaveName: string, cycleNumber: string }): string {
+  return `ALERT: Sterilization failure detected in ${args.autoclaveName} (Cycle #${args.cycleNumber}). Immediate action required. BI results: POSITIVE. -DentEase Compliance`;
+}

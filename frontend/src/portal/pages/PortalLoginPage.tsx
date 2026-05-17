@@ -232,7 +232,13 @@ export function PortalLoginPage(): JSX.Element {
                     )}
                   </button>
                   <p className="text-center text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">
-                    {t("pages.portal.login.notPatient")}
+                    {t("pages.portal.login.notPatient")}{" "}
+                    <Link
+                      to={`/${slug}/portal/register${kioskSuffix}`}
+                      className="font-bold text-emerald-600 hover:underline"
+                    >
+                      {t("pages.portal.login.registerLink")}
+                    </Link>
                   </p>
                 </form>
               ) : (

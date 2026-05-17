@@ -203,7 +203,7 @@
     "faq2Q": "Pwede bang i-import ang Excel / Sheets na pasyente ko?",
     "faq2A": "Oo. Supported ang bulk import mula CSV, may mapping screen para sa patient, dentist at procedure fields.",
     "faq3Q": "Gumagana ba offline?",
-    "faq3A": "Gumagana offline ang core tasks (appointment viewing, odontogram notes), nag-sync pag may internet na.",
+    "faq3A": "Cloud-based ang DentQL at kailangan ng internet para sa live data. Sinusuri namin ang offline-friendly workflows sa susunod na release.",
     "faq4Q": "Anong payment methods ang supported?",
     "faq4A": "GCash, Maya, PayMongo (card) at cash. Invoices pinapadala via email o SMS.",
     "faq5Q": "May multiple branches kami — kasya ba?",
@@ -313,7 +313,7 @@
     "deviceTabletDesc": "Odontogram, treatment plan at X-rays — nasa kamay habang nasa silya.",
     "deviceDesktop": "Desktop · Admin",
     "deviceDesktopDesc": "Revenue, staff performance, multi-branch reports — detalyadong panel.",
-    "deviceSync": "Real-time sync · Gumagana offline",
+    "deviceSync": "Real-time sync · Secure cloud",
 
     "secEyebrow": "Seguridad at Pagsunod",
     "secTitle": "Disenyo na may pag-iingat sa health data.",

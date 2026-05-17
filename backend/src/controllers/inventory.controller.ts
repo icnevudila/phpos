@@ -2,15 +2,14 @@ import type { Request, Response } from "express";
 import { z } from "zod";
 
 import {
-  adjustInventory,
   createInventoryItem,
   deleteInventoryItem,
   getInventoryAlerts,
   getInventoryItem,
   listInventory,
-  listInventory,
   updateInventoryItem,
 } from "../services/inventory.service.js";
+import { importInventoryFromCsv } from "../services/inventoryImport.service.js";
 import { listInventoryHistory, logInventoryTransaction } from "../services/inventoryAudit.service.js";
 import { AppError } from "../utils/errors.js";
 import {
@@ -49,6 +48,17 @@ export async function createInventoryHandler(req: Request, res: Response): Promi
   res.status(201).json({ success: true, data: item });
 }
 
+export async function importInventoryCsvHandler(req: Request, res: Response): Promise<void> {
+  if (!req.file?.buffer?.length) {
+    throw new AppError("CSV file required", 400, "FILE_REQUIRED");
+  }
+  const result = await importInventoryFromCsv(
+    clinicId(req),
+    req.file.buffer.toString("utf-8"),
+  );
+  res.json({ success: true, data: result });
+}
+
 export async function updateInventoryHandler(req: Request, res: Response): Promise<void> {
   const id = z.string().min(1).parse(req.params.id);
   const body = updateInventoryBodySchema.parse(req.body);
@@ -70,8 +80,8 @@ export async function adjustInventoryHandler(req: Request, res: Response): Promi
   const { inventory } = await logInventoryTransaction({
     inventoryId: id,
     userId: req.user?.id,
-    type: body.quantity >= 0 ? "IN" : "OUT",
-    quantity: body.quantity,
+    type: body.change >= 0 ? "IN" : "OUT",
+    quantity: body.change,
     reason: body.reason || "Manual Adjustment",
   });
 

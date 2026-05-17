@@ -1,4 +1,4 @@
-import { apiFetch } from "./api";
+import api from "./api";
 
 interface ApiEnvelope<T> {
   success: true;
@@ -14,6 +14,6 @@ export interface AnalyticsOverview {
 }
 
 export async function fetchAnalyticsOverview(): Promise<AnalyticsOverview> {
-  const res = await apiFetch<ApiEnvelope<AnalyticsOverview>>("/analytics/overview");
+  const res = await api.get<ApiEnvelope<AnalyticsOverview>>("/analytics/overview") as any;
   return res.data;
 }

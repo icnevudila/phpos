@@ -1,5 +1,6 @@
 import { AppointmentStatus, HmoClaimStatus, InvoiceStatus, Prisma } from "@prisma/client";
 
+import { dbTasks } from "../lib/dbTasks.js";
 import { prisma } from "../lib/prisma.js";
 
 const MANILA_OFFSET_MS = 8 * 60 * 60 * 1000;
@@ -98,6 +99,126 @@ export interface DashboardActiveTreatmentPlan {
   operations: Array<{ procedure: string; fee: string; toothIds: string[] }>;
 }
 
+const TODAY_APPOINTMENT_LIST_SELECT = {
+  id: true,
+  scheduledAt: true,
+  arrivedAt: true,
+  status: true,
+  chairNo: true,
+  type: true,
+  patient: { select: { id: true, firstName: true, lastName: true, phone: true } },
+  dentist: { select: { firstName: true, lastName: true } },
+} as const;
+
+const ACTIVE_TREATMENT_SELECT = {
+  id: true,
+  scheduledAt: true,
+  patient: { select: { id: true, firstName: true, lastName: true } },
+  dentist: { select: { firstName: true, lastName: true } },
+  treatments: {
+    orderBy: { createdAt: "asc" as const },
+    select: { procedure: true, unitPrice: true, quantity: true, toothIds: true },
+  },
+} as const;
+
+type TodayAppointmentRow = Prisma.AppointmentGetPayload<{
+  select: typeof TODAY_APPOINTMENT_LIST_SELECT;
+}>;
+
+type ActiveTreatmentRow = Prisma.AppointmentGetPayload<{
+  select: typeof ACTIVE_TREATMENT_SELECT;
+}>;
+
+type WaitlistRowRaw = Prisma.WaitlistEntryGetPayload<{
+  select: {
+    id: true;
+    patientId: true;
+    notes: true;
+    createdAt: true;
+    patient: { select: { firstName: true; lastName: true } };
+  };
+}>;
+
+function mapTodayAppointments(todayList: TodayAppointmentRow[]): DashboardTodayAppointment[] {
+  const formatTime = new Intl.DateTimeFormat("en-PH", {
+    timeZone: "Asia/Manila",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
+  return todayList.map((a) => {
+    const waitFrom = a.arrivedAt ?? a.scheduledAt;
+    const waitingMinutes = Math.max(0, Math.floor((Date.now() - waitFrom.getTime()) / 60_000));
+    return {
+      id: a.id,
+      time: formatTime.format(a.scheduledAt),
+      patientName: `${a.patient.firstName} ${a.patient.lastName}`.trim(),
+      patientPhone: a.patient.phone,
+      dentistName: `${a.dentist.firstName} ${a.dentist.lastName}`.trim(),
+      status: a.status,
+      chairNo: a.chairNo,
+      type: a.type,
+      arrivedAt: a.arrivedAt?.toISOString() ?? null,
+      waitingMinutes,
+    };
+  });
+}
+
+function mapActiveTreatmentPlan(activePlan: ActiveTreatmentRow | null): DashboardActiveTreatmentPlan | null {
+  if (!activePlan) return null;
+  return {
+    appointmentId: activePlan.id,
+    patientId: activePlan.patient.id,
+    patientName: `${activePlan.patient.firstName} ${activePlan.patient.lastName}`.trim(),
+    dentistName: `${activePlan.dentist.firstName} ${activePlan.dentist.lastName}`.trim(),
+    scheduledAt: activePlan.scheduledAt.toISOString(),
+    operations: activePlan.treatments.map((t) => ({
+      procedure: t.procedure,
+      fee: (Number(t.unitPrice) * t.quantity).toFixed(2),
+      toothIds: t.toothIds,
+    })),
+  };
+}
+
+function assembleDashboardQueuePayload(
+  todayList: TodayAppointmentRow[],
+  activePlan: ActiveTreatmentRow | null,
+  waitlistRowsRaw: WaitlistRowRaw[],
+): DashboardQueuePayload {
+  const upcoming = mapTodayAppointments(todayList);
+  const queueRows = upcoming.filter((a) =>
+    ["PENDING", "CONFIRMED", "CHECKED_IN", "IN_PROGRESS"].includes(a.status),
+  );
+  const queuedPatientIds = new Set(
+    todayList
+      .filter((a) => ["PENDING", "CONFIRMED", "CHECKED_IN", "IN_PROGRESS"].includes(a.status))
+      .map((a) => a.patient.id),
+  );
+  const waitlistRows: DashboardWaitlistRow[] = waitlistRowsRaw
+    .filter((w) => !queuedPatientIds.has(w.patientId))
+    .map((w) => ({
+      id: w.id,
+      patientId: w.patientId,
+      patientName: `${w.patient.firstName} ${w.patient.lastName}`.trim(),
+      note: w.notes,
+      createdAt: w.createdAt.toISOString(),
+      waitingMinutes: Math.max(0, Math.floor((Date.now() - w.createdAt.getTime()) / 60_000)),
+    }));
+
+  return {
+    today: { upcoming },
+    queue: {
+      total: queueRows.length,
+      waiting: queueRows.filter((r) => r.status === "PENDING" || r.status === "CONFIRMED").length,
+      checkedIn: queueRows.filter((r) => r.status === "CHECKED_IN").length,
+      inProgress: queueRows.filter((r) => r.status === "IN_PROGRESS").length,
+      rows: queueRows,
+    },
+    waitlist: { total: waitlistRows.length, rows: waitlistRows },
+    activeTreatmentPlan: mapActiveTreatmentPlan(activePlan),
+  };
+}
+
 export interface DashboardResponse {
   today: {
     appointments: number;
@@ -153,139 +274,134 @@ export async function buildDashboard(clinicId: string): Promise<DashboardRespons
     monthNewPatients,
     monthPayments,
     last30Payments,
+    last12MonthsPayments,
     topProcedures,
     statusGroups,
     todayList,
     pendingHmoClaims,
-    inventoryRows,
+    inventoryAlertCount,
     activePlan,
     waitlistRowsRaw,
-    last12MonthsPayments,
-  ] = await Promise.all([
-    prisma.appointment.count({
-      where: { clinicId, scheduledAt: { gte: today.gte, lt: today.lt } },
-    }),
-    prisma.appointment.count({
-      where: {
-        clinicId,
-        scheduledAt: { gte: today.gte, lt: today.lt },
-        status: AppointmentStatus.COMPLETED,
-      },
-    }),
-    prisma.payment.findMany({
-      where: {
-        invoice: { clinicId },
-        paidAt: { gte: today.gte, lt: today.lt },
-      },
-      select: { amount: true, method: true, paidAt: true },
-    }),
-    prisma.appointment.count({
-      where: { clinicId, scheduledAt: { gte: month.gte, lt: month.lt } },
-    }),
-    prisma.patient.count({
-      where: { clinicId, createdAt: { gte: month.gte, lt: month.lt } },
-    }),
-    prisma.payment.findMany({
-      where: {
-        invoice: { clinicId },
-        paidAt: { gte: month.gte, lt: month.lt },
-      },
-      select: { amount: true, method: true, paidAt: true },
-    }),
-    prisma.payment.findMany({
-      where: {
-        invoice: { clinicId },
-        paidAt: { gte: last30.gte, lt: last30.lt },
-      },
-      select: { amount: true, paidAt: true },
-    }),
-    prisma.payment.findMany({
-      where: {
-        invoice: { clinicId },
-        paidAt: { gte: new Date(new Date().getUTCFullYear(), 0, 1) }, // Year to date
-      },
-      select: { amount: true, paidAt: true },
-    }),
-    prisma.treatment.groupBy({
-      by: ["procedure"],
-      where: { patient: { clinicId } },
-      _count: { _all: true },
-      _sum: { unitPrice: true },
-      orderBy: { _count: { procedure: "desc" } },
-      take: 5,
-    }),
-    prisma.appointment.groupBy({
-      by: ["status"],
-      where: { clinicId },
-      _count: { _all: true },
-    }),
-    prisma.appointment.findMany({
-      where: { clinicId, scheduledAt: { gte: today.gte, lt: today.lt } },
-      orderBy: { scheduledAt: "asc" },
-      select: {
-        id: true,
-        scheduledAt: true,
-        arrivedAt: true,
-        status: true,
-        chairNo: true,
-        type: true,
-        patient: { select: { id: true, firstName: true, lastName: true, phone: true } },
-        dentist: { select: { firstName: true, lastName: true } },
-      },
-    }),
-    prisma.hmoClaim.count({
-      where: {
-        clinicId,
-        status: { in: [HmoClaimStatus.DRAFT, HmoClaimStatus.SUBMITTED] },
-      },
-    }),
-    prisma.inventory.findMany({
-      where: { clinicId },
-      select: { quantity: true, minimumStock: true, expiryDate: true },
-    }),
-    prisma.appointment.findFirst({
-      where: {
-        clinicId,
-        scheduledAt: { gte: today.gte, lt: today.lt },
-        status: { in: [AppointmentStatus.IN_PROGRESS, AppointmentStatus.CHECKED_IN, AppointmentStatus.CONFIRMED] },
-      },
-      orderBy: [{ status: "desc" }, { scheduledAt: "asc" }],
-      select: {
-        id: true,
-        scheduledAt: true,
-        patient: { select: { id: true, firstName: true, lastName: true } },
-        dentist: { select: { firstName: true, lastName: true } },
-        treatments: {
-          orderBy: { createdAt: "asc" },
-          select: { procedure: true, unitPrice: true, quantity: true, toothIds: true },
+    last10Treatments,
+  ] = await dbTasks([
+    () =>
+      prisma.appointment.count({
+        where: { clinicId, scheduledAt: { gte: today.gte, lt: today.lt } },
+      }),
+    () =>
+      prisma.appointment.count({
+        where: {
+          clinicId,
+          scheduledAt: { gte: today.gte, lt: today.lt },
+          status: AppointmentStatus.COMPLETED,
         },
-      },
-    }),
-    prisma.waitlistEntry.findMany({
-      where: { clinicId, status: "WAITING" },
-      orderBy: { createdAt: "asc" },
-      take: 20,
-      select: {
-        id: true,
-        patientId: true,
-        notes: true,
-        createdAt: true,
-        patient: { select: { firstName: true, lastName: true } },
-      },
-    }),
-    prisma.treatment.findMany({
-      where: { patient: { clinicId } },
-      orderBy: { createdAt: "desc" },
-      take: 10,
-      select: {
-        id: true,
-        procedure: true,
-        createdAt: true,
-        patient: { select: { firstName: true, lastName: true } },
-        dentist: { select: { firstName: true, lastName: true } },
-      },
-    }),
-  ]);
+      }),
+    () =>
+      prisma.payment.findMany({
+        where: {
+          invoice: { clinicId },
+          paidAt: { gte: today.gte, lt: today.lt },
+        },
+        select: { amount: true, method: true, paidAt: true },
+      }),
+    () =>
+      prisma.appointment.count({
+        where: { clinicId, scheduledAt: { gte: month.gte, lt: month.lt } },
+      }),
+    () =>
+      prisma.patient.count({
+        where: { clinicId, createdAt: { gte: month.gte, lt: month.lt } },
+      }),
+    () =>
+      prisma.payment.findMany({
+        where: {
+          invoice: { clinicId },
+          paidAt: { gte: month.gte, lt: month.lt },
+        },
+        select: { amount: true, method: true, paidAt: true },
+      }),
+    () =>
+      prisma.payment.findMany({
+        where: {
+          invoice: { clinicId },
+          paidAt: { gte: last30.gte, lt: last30.lt },
+        },
+        select: { amount: true, paidAt: true },
+      }),
+    () =>
+      prisma.payment.findMany({
+        where: {
+          invoice: { clinicId },
+          paidAt: { gte: new Date(new Date().getUTCFullYear(), 0, 1) },
+        },
+        select: { amount: true, paidAt: true },
+      }),
+    () =>
+      prisma.treatment.groupBy({
+        by: ["procedure"],
+        where: { patient: { clinicId } },
+        _count: { _all: true },
+        _sum: { unitPrice: true },
+        orderBy: { _count: { procedure: "desc" } },
+        take: 5,
+      }),
+    () =>
+      prisma.appointment.groupBy({
+        by: ["status"],
+        where: { clinicId },
+        _count: { _all: true },
+      }),
+    () =>
+      prisma.appointment.findMany({
+        where: { clinicId, scheduledAt: { gte: today.gte, lt: today.lt } },
+        orderBy: { scheduledAt: "asc" },
+        select: TODAY_APPOINTMENT_LIST_SELECT,
+      }),
+    () =>
+      prisma.hmoClaim.count({
+        where: {
+          clinicId,
+          status: { in: [HmoClaimStatus.DRAFT, HmoClaimStatus.SUBMITTED] },
+        },
+      }),
+    () => countInventoryAlerts(clinicId, now),
+    () =>
+      prisma.appointment.findFirst({
+        where: {
+          clinicId,
+          scheduledAt: { gte: today.gte, lt: today.lt },
+          status: { in: [AppointmentStatus.IN_PROGRESS, AppointmentStatus.CHECKED_IN, AppointmentStatus.CONFIRMED] },
+        },
+        orderBy: [{ status: "desc" }, { scheduledAt: "asc" }],
+        select: ACTIVE_TREATMENT_SELECT,
+      }),
+    () =>
+      prisma.waitlistEntry.findMany({
+        where: { clinicId, status: "WAITING" },
+        orderBy: { createdAt: "asc" },
+        take: 20,
+        select: {
+          id: true,
+          patientId: true,
+          notes: true,
+          createdAt: true,
+          patient: { select: { firstName: true, lastName: true } },
+        },
+      }),
+    () =>
+      prisma.treatment.findMany({
+        where: { patient: { clinicId } },
+        orderBy: { createdAt: "desc" },
+        take: 10,
+        select: {
+          id: true,
+          procedure: true,
+          createdAt: true,
+          patient: { select: { firstName: true, lastName: true } },
+          dentist: { select: { firstName: true, lastName: true } },
+        },
+      }),
+  ] as const);
 
   const statusCounts: DashboardStatusCounts = {
     pending: 0,
@@ -369,92 +485,21 @@ export async function buildDashboard(clinicId: string): Promise<DashboardRespons
     revenue: (revenueByProc.get(p.procedure) ?? 0).toFixed(2),
   }));
 
-  const formatTime = new Intl.DateTimeFormat("en-PH", {
-    timeZone: "Asia/Manila",
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-  });
-  const upcoming: DashboardTodayAppointment[] = todayList.map((a) => {
-    const waitFrom = a.arrivedAt ?? a.scheduledAt;
-    const waitingMinutes = Math.max(0, Math.floor((Date.now() - waitFrom.getTime()) / 60_000));
-    return {
-      id: a.id,
-      time: formatTime.format(a.scheduledAt),
-      patientName: `${a.patient.firstName} ${a.patient.lastName}`.trim(),
-      patientPhone: a.patient.phone,
-      dentistName: `${a.dentist.firstName} ${a.dentist.lastName}`.trim(),
-      status: a.status,
-      chairNo: a.chairNo,
-      type: a.type,
-      arrivedAt: a.arrivedAt?.toISOString() ?? null,
-      waitingMinutes,
-    };
-  });
-  const queueRows = upcoming.filter((a) =>
-    ["PENDING", "CONFIRMED", "CHECKED_IN", "IN_PROGRESS"].includes(a.status),
-  );
-  const queuedPatientIds = new Set(
-    todayList
-      .filter((a) => ["PENDING", "CONFIRMED", "CHECKED_IN", "IN_PROGRESS"].includes(a.status))
-      .map((a) => a.patient.id),
-  );
-  const waitlistRows: DashboardWaitlistRow[] = waitlistRowsRaw
-    .filter((w) => !queuedPatientIds.has(w.patientId))
-    .map((w) => ({
-    id: w.id,
-    patientId: w.patientId,
-    patientName: `${w.patient.firstName} ${w.patient.lastName}`.trim(),
-    note: w.notes,
-    createdAt: w.createdAt.toISOString(),
-    waitingMinutes: Math.max(0, Math.floor((Date.now() - w.createdAt.getTime()) / 60_000)),
-  }));
-  const inventoryAlerts = inventoryRows.filter((i) => {
-    const low = i.quantity <= i.minimumStock;
-    const expiring =
-      i.expiryDate !== null &&
-      i.expiryDate.getTime() >= Date.now() &&
-      i.expiryDate.getTime() <= Date.now() + 30 * 86_400_000;
-    return low || expiring;
-  }).length;
-  const activeTreatmentPlan: DashboardActiveTreatmentPlan | null = activePlan
-    ? {
-        appointmentId: activePlan.id,
-        patientId: activePlan.patient.id,
-        patientName: `${activePlan.patient.firstName} ${activePlan.patient.lastName}`.trim(),
-        dentistName: `${activePlan.dentist.firstName} ${activePlan.dentist.lastName}`.trim(),
-        scheduledAt: activePlan.scheduledAt.toISOString(),
-        operations: activePlan.treatments.map((t) => ({
-          procedure: t.procedure,
-          fee: (Number(t.unitPrice) * t.quantity).toFixed(2),
-          toothIds: t.toothIds,
-        })),
-      }
-    : null;
-
+  const queuePayload = assembleDashboardQueuePayload(todayList, activePlan, waitlistRowsRaw);
   return {
     today: {
       appointments: todayAppointments,
       completed: todayCompleted,
       revenue: todayRevenue.toFixed(2),
-      upcoming,
+      upcoming: queuePayload.today.upcoming,
     },
-    queue: {
-      total: queueRows.length,
-      waiting: queueRows.filter((r) => r.status === "PENDING" || r.status === "CONFIRMED").length,
-      checkedIn: queueRows.filter((r) => r.status === "CHECKED_IN").length,
-      inProgress: queueRows.filter((r) => r.status === "IN_PROGRESS").length,
-      rows: queueRows,
-    },
-    waitlist: {
-      total: waitlistRows.length,
-      rows: waitlistRows,
-    },
+    queue: queuePayload.queue,
+    waitlist: queuePayload.waitlist,
     operational: {
       pendingHmoClaims,
-      inventoryAlerts,
+      inventoryAlerts: inventoryAlertCount,
     },
-    activeTreatmentPlan,
+    activeTreatmentPlan: queuePayload.activeTreatmentPlan,
     thisMonth: {
       appointments: monthAppointments,
       newPatients: monthNewPatients,
@@ -464,6 +509,197 @@ export async function buildDashboard(clinicId: string): Promise<DashboardRespons
     revenueByDay,
     revenueByMonth,
     appointmentsByStatus: statusCounts,
+    recentTreatments: last10Treatments.map((t) => ({
+      id: t.id,
+      procedure: t.procedure,
+      patientName: `${t.patient.firstName} ${t.patient.lastName}`.trim(),
+      dentistName: `${t.dentist.firstName} ${t.dentist.lastName}`.trim(),
+      createdAt: t.createdAt.toISOString(),
+    })),
+  };
+}
+
+export type DashboardQueuePayload = Pick<
+  DashboardResponse,
+  "queue" | "waitlist" | "activeTreatmentPlan"
+> & {
+  today: { upcoming: DashboardTodayAppointment[] };
+};
+
+export type DashboardChartsPayload = Pick<
+  DashboardResponse,
+  "topProcedures" | "revenueByDay" | "revenueByMonth" | "appointmentsByStatus" | "recentTreatments"
+>;
+
+/** Kuyruk + bekleme listesi — grafik/ödeme sorguları olmadan. */
+export async function buildDashboardQueue(clinicId: string): Promise<DashboardQueuePayload> {
+  const today = manilaTodayRange();
+  const [todayList, activePlan, waitlistRowsRaw] = await dbTasks([
+    () =>
+      prisma.appointment.findMany({
+        where: { clinicId, scheduledAt: { gte: today.gte, lt: today.lt } },
+        orderBy: { scheduledAt: "asc" },
+        select: TODAY_APPOINTMENT_LIST_SELECT,
+      }),
+    () =>
+      prisma.appointment.findFirst({
+        where: {
+          clinicId,
+          scheduledAt: { gte: today.gte, lt: today.lt },
+          status: { in: [AppointmentStatus.IN_PROGRESS, AppointmentStatus.CHECKED_IN, AppointmentStatus.CONFIRMED] },
+        },
+        orderBy: [{ status: "desc" }, { scheduledAt: "asc" }],
+        select: ACTIVE_TREATMENT_SELECT,
+      }),
+    () =>
+      prisma.waitlistEntry.findMany({
+        where: { clinicId, status: "WAITING" },
+        orderBy: { createdAt: "asc" },
+        take: 20,
+        select: {
+          id: true,
+          patientId: true,
+          notes: true,
+          createdAt: true,
+          patient: { select: { firstName: true, lastName: true } },
+        },
+      }),
+  ] as const);
+  return assembleDashboardQueuePayload(todayList, activePlan, waitlistRowsRaw);
+}
+
+/** Grafikler ve prosedür dağılımı — kuyruk sorguları olmadan. */
+export async function buildDashboardCharts(clinicId: string): Promise<DashboardChartsPayload> {
+  const now = new Date();
+  const last30 = manilaLast30Range(now);
+
+  const yearStart = new Date(new Date().getUTCFullYear(), 0, 1);
+
+  const [
+    revenueByDayRows,
+    revenueByMonthRows,
+    topProcedures,
+    statusGroups,
+    last10Treatments,
+  ] = await dbTasks([
+    () =>
+      prisma.$queryRaw<Array<{ day: string; total: Prisma.Decimal | number }>>`
+        SELECT to_char((p."paidAt" AT TIME ZONE 'Asia/Manila')::date, 'YYYY-MM-DD') AS day,
+               COALESCE(SUM(p.amount), 0) AS total
+        FROM "Payment" p
+        INNER JOIN "Invoice" i ON i.id = p."invoiceId"
+        WHERE i."clinicId" = ${clinicId}
+          AND p."paidAt" >= ${last30.gte}
+          AND p."paidAt" < ${last30.lt}
+        GROUP BY 1
+      `,
+    () =>
+      prisma.$queryRaw<Array<{ month: string; total: Prisma.Decimal | number }>>`
+        SELECT to_char((p."paidAt" AT TIME ZONE 'Asia/Manila')::date, 'YYYY-MM') AS month,
+               COALESCE(SUM(p.amount), 0) AS total
+        FROM "Payment" p
+        INNER JOIN "Invoice" i ON i.id = p."invoiceId"
+        WHERE i."clinicId" = ${clinicId}
+          AND p."paidAt" >= ${yearStart}
+        GROUP BY 1
+      `,
+    () =>
+      prisma.treatment.groupBy({
+        by: ["procedure"],
+        where: { patient: { clinicId } },
+        _count: { _all: true },
+        _sum: { unitPrice: true },
+        orderBy: { _count: { procedure: "desc" } },
+        take: 5,
+      }),
+    () =>
+      prisma.appointment.groupBy({
+        by: ["status"],
+        where: { clinicId },
+        _count: { _all: true },
+      }),
+    () =>
+      prisma.treatment.findMany({
+        where: { patient: { clinicId } },
+        orderBy: { createdAt: "desc" },
+        take: 10,
+        select: {
+          id: true,
+          procedure: true,
+          createdAt: true,
+          patient: { select: { firstName: true, lastName: true } },
+          dentist: { select: { firstName: true, lastName: true } },
+        },
+      }),
+  ] as const);
+
+  const appointmentsByStatus: DashboardStatusCounts = {
+    pending: 0,
+    confirmed: 0,
+    checkedIn: 0,
+    inProgress: 0,
+    completed: 0,
+    cancelled: 0,
+    noShow: 0,
+  };
+  for (const g of statusGroups) {
+    appointmentsByStatus[STATUS_KEY[g.status]] = g._count._all;
+  }
+
+  const byDayMap = new Map(revenueByDayRows.map((r) => [r.day, Number(r.total)] as const));
+  const revenueByDay = last30.days.map((date) => ({
+    date,
+    amount: (byDayMap.get(date) ?? 0).toFixed(2),
+  }));
+
+  const byMonthMap = new Map(revenueByMonthRows.map((r) => [r.month, Number(r.total)] as const));
+  const revenueByMonth: Array<{ month: string; amount: string }> = [];
+  for (let i = 0; i < 12; i += 1) {
+    const d = new Date();
+    d.setUTCMonth(d.getUTCMonth() - i);
+    const key = `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}`;
+    revenueByMonth.push({ month: key, amount: (byMonthMap.get(key) ?? 0).toFixed(2) });
+  }
+  revenueByMonth.reverse();
+
+  const [procedureDetails, procedureRevenueRows] = await dbTasks([
+    () =>
+      prisma.treatment.groupBy({
+        by: ["procedure"],
+        where: {
+          patient: { clinicId },
+          procedure: { in: topProcedures.map((p) => p.procedure) },
+        },
+        _sum: { quantity: true },
+      }),
+    () =>
+      prisma.$queryRaw<Array<{ procedure: string; revenue: string | number }>>`
+        SELECT t."procedure", COALESCE(SUM(t."quantity" * t."unitPrice"), 0) AS revenue
+        FROM "Treatment" t
+        JOIN "Patient" p ON p.id = t."patientId"
+        WHERE p."clinicId" = ${clinicId}
+          AND t."procedure" = ANY(${topProcedures.map((x) => x.procedure)}::text[])
+        GROUP BY t."procedure"
+      `,
+  ] as const);
+  const quantityByProc = new Map(
+    procedureDetails.map((r) => [r.procedure, r._sum.quantity ?? 0] as const),
+  );
+  const revenueByProc = new Map<string, number>(
+    procedureRevenueRows.map((r) => [r.procedure, Number(r.revenue)] as const),
+  );
+
+  const topProceduresDto = topProcedures.map((p) => ({
+    name: p.procedure,
+    count: quantityByProc.get(p.procedure) ?? p._count._all,
+    revenue: (revenueByProc.get(p.procedure) ?? 0).toFixed(2),
+  }));
+
+  return {
+    topProcedures: topProceduresDto,
+    revenueByDay,
+    revenueByMonth,
+    appointmentsByStatus,
     recentTreatments: last10Treatments.map((t) => ({
       id: t.id,
       procedure: t.procedure,
@@ -524,53 +760,60 @@ export async function buildMonthlyReport(
   const range = manilaMonthRange(year, month);
 
   const [appointments, completed, cancelled, newPatients, payments, topProc, patientsInMonth] =
-    await Promise.all([
-      prisma.appointment.count({
-        where: { clinicId, scheduledAt: { gte: range.gte, lt: range.lt } },
-      }),
-      prisma.appointment.count({
-        where: {
-          clinicId,
-          scheduledAt: { gte: range.gte, lt: range.lt },
-          status: AppointmentStatus.COMPLETED,
-        },
-      }),
-      prisma.appointment.count({
-        where: {
-          clinicId,
-          scheduledAt: { gte: range.gte, lt: range.lt },
-          status: AppointmentStatus.CANCELLED,
-        },
-      }),
-      prisma.patient.count({
-        where: { clinicId, createdAt: { gte: range.gte, lt: range.lt } },
-      }),
-      prisma.payment.findMany({
-        where: {
-          invoice: { clinicId },
-          paidAt: { gte: range.gte, lt: range.lt },
-        },
-        select: { amount: true, method: true, paidAt: true },
-      }),
-      prisma.treatment.groupBy({
-        by: ["procedure"],
-        where: {
-          patient: { clinicId },
-          createdAt: { gte: range.gte, lt: range.lt },
-        },
-        _count: { _all: true },
-        _sum: { quantity: true },
-        orderBy: { _count: { procedure: "desc" } },
-        take: 5,
-      }),
-      prisma.appointment.findMany({
-        where: {
-          clinicId,
-          scheduledAt: { gte: range.gte, lt: range.lt },
-        },
-        select: { patientId: true, patient: { select: { createdAt: true } } },
-      }),
-    ]);
+    await dbTasks([
+      () =>
+        prisma.appointment.count({
+          where: { clinicId, scheduledAt: { gte: range.gte, lt: range.lt } },
+        }),
+      () =>
+        prisma.appointment.count({
+          where: {
+            clinicId,
+            scheduledAt: { gte: range.gte, lt: range.lt },
+            status: AppointmentStatus.COMPLETED,
+          },
+        }),
+      () =>
+        prisma.appointment.count({
+          where: {
+            clinicId,
+            scheduledAt: { gte: range.gte, lt: range.lt },
+            status: AppointmentStatus.CANCELLED,
+          },
+        }),
+      () =>
+        prisma.patient.count({
+          where: { clinicId, createdAt: { gte: range.gte, lt: range.lt } },
+        }),
+      () =>
+        prisma.payment.findMany({
+          where: {
+            invoice: { clinicId },
+            paidAt: { gte: range.gte, lt: range.lt },
+          },
+          select: { amount: true, method: true, paidAt: true },
+        }),
+      () =>
+        prisma.treatment.groupBy({
+          by: ["procedure"],
+          where: {
+            patient: { clinicId },
+            createdAt: { gte: range.gte, lt: range.lt },
+          },
+          _count: { _all: true },
+          _sum: { quantity: true },
+          orderBy: { _count: { procedure: "desc" } },
+          take: 5,
+        }),
+      () =>
+        prisma.appointment.findMany({
+          where: {
+            clinicId,
+            scheduledAt: { gte: range.gte, lt: range.lt },
+          },
+          select: { patientId: true, patient: { select: { createdAt: true } } },
+        }),
+    ] as const);
 
   // returning = distinct patients whose account was created before the month
   const returningSet = new Set<string>();
@@ -613,22 +856,24 @@ export async function buildMonthlyReport(
   }
 
   // Hekim bazlı kırılım — randevu sayıları + treatment geliri
-  const [dentistApptAgg, dentistRevRows] = await Promise.all([
-    prisma.appointment.groupBy({
-      by: ["dentistId", "status"],
-      where: { clinicId, scheduledAt: { gte: range.gte, lt: range.lt } },
-      _count: { _all: true },
-    }),
-    prisma.$queryRaw<Array<{ dentistId: string; revenue: string | number }>>`
-      SELECT t."dentistId" as "dentistId",
-             COALESCE(SUM(t."quantity" * t."unitPrice"), 0) AS revenue
-      FROM "Treatment" t
-      JOIN "Patient" p ON p.id = t."patientId"
-      WHERE p."clinicId" = ${clinicId}
-        AND t."createdAt" >= ${range.gte}
-        AND t."createdAt" < ${range.lt}
-      GROUP BY t."dentistId"
-    `,
+  const [dentistApptAgg, dentistRevRows] = await dbTasks([
+    () =>
+      prisma.appointment.groupBy({
+        by: ["dentistId", "status"],
+        where: { clinicId, scheduledAt: { gte: range.gte, lt: range.lt } },
+        _count: { _all: true },
+      }),
+    () =>
+      prisma.$queryRaw<Array<{ dentistId: string; revenue: string | number }>>`
+        SELECT t."dentistId" as "dentistId",
+               COALESCE(SUM(t."quantity" * t."unitPrice"), 0) AS revenue
+        FROM "Treatment" t
+        JOIN "Patient" p ON p.id = t."patientId"
+        WHERE p."clinicId" = ${clinicId}
+          AND t."createdAt" >= ${range.gte}
+          AND t."createdAt" < ${range.lt}
+        GROUP BY t."dentistId"
+      `,
   ]);
 
   const dentistIds = new Set<string>();
@@ -854,8 +1099,9 @@ export async function getLiveQueue(clinicId: string): Promise<QueueItem[]> {
   const now = new Date();
 
   // Fetch appointments that are CHECKED_IN or IN_PROGRESS
-  const [appointments, waitlist] = await Promise.all([
-    prisma.appointment.findMany({
+  const [appointments, waitlist] = await dbTasks([
+    () =>
+      prisma.appointment.findMany({
       where: { 
         clinicId, 
         status: { in: ["CHECKED_IN", "IN_PROGRESS"] } 
@@ -866,15 +1112,16 @@ export async function getLiveQueue(clinicId: string): Promise<QueueItem[]> {
         treatments: { select: { procedure: true }, take: 1 }, // Take the primary procedure
       },
       orderBy: { arrivedAt: "asc" },
-    }),
-    prisma.waitlistEntry.findMany({
-      where: { clinicId, status: "WAITING" },
-      include: { 
-        patient: { select: { firstName: true, lastName: true } } 
-      },
-      orderBy: { createdAt: "asc" },
-    }),
-  ]);
+      }),
+    () =>
+      prisma.waitlistEntry.findMany({
+        where: { clinicId, status: "WAITING" },
+        include: {
+          patient: { select: { firstName: true, lastName: true } },
+        },
+        orderBy: { createdAt: "asc" },
+      }),
+  ] as const);
 
   const queue: QueueItem[] = [];
 
@@ -927,4 +1174,135 @@ export async function getLiveQueue(clinicId: string): Promise<QueueItem[]> {
 
   // Sort by wait time (longest first)
   return queue.sort((a, b) => b.waitTime - a.waitTime);
+}
+
+export interface DashboardSummary {
+  today: { appointments: number; completed: number; revenue: string };
+  thisMonth: { appointments: number; newPatients: number; revenue: string };
+  operational: { pendingHmoClaims: number; inventoryAlerts: number };
+}
+
+export type DashboardAlertsPayload = DashboardSummary["operational"];
+
+/** Stok uyarısı — düşük stok veya 30 gün içinde son kullanma (DB seviyesi). */
+export async function countInventoryAlerts(clinicId: string, now: Date = new Date()): Promise<number> {
+  const thirtyDays = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+  const rows = await prisma.$queryRaw<Array<{ count: number }>>`
+    SELECT COUNT(*)::int AS count
+    FROM "Inventory"
+    WHERE "clinicId" = ${clinicId}
+      AND (
+        "quantity" <= "minimumStock"
+        OR (
+          "expiryDate" IS NOT NULL
+          AND "expiryDate" >= ${now}
+          AND "expiryDate" <= ${thirtyDays}
+        )
+      )
+  `;
+  return rows[0]?.count ?? 0;
+}
+
+/** HMO + stok uyarıları — summary'den bağımsız hafif endpoint. */
+export async function buildDashboardAlerts(clinicId: string): Promise<DashboardAlertsPayload> {
+  const pendingHmoClaims = await prisma.hmoClaim.count({
+    where: {
+      clinicId,
+      status: { in: [HmoClaimStatus.DRAFT, HmoClaimStatus.SUBMITTED, HmoClaimStatus.PARTIAL_APPROVED] },
+    },
+  });
+  const inventoryAlerts = await countInventoryAlerts(clinicId);
+  return { pendingHmoClaims, inventoryAlerts };
+}
+
+/** Hafif KPI kartları — tam dashboard yerine hızlı özet. */
+export async function buildDashboardSummary(clinicId: string): Promise<DashboardSummary> {
+  const now = new Date();
+  const today = manilaTodayRange(now);
+  const month = manilaMonthRange(now.getUTCFullYear(), now.getUTCMonth() + 1);
+
+  // Supabase PgBouncer (connection_limit=1) ile Promise.all pool timeout verir — sıralı çalıştır.
+  const todayAppointments = await prisma.appointment.count({
+    where: { clinicId, scheduledAt: { gte: today.gte, lt: today.lt } },
+  });
+  const todayCompleted = await prisma.appointment.count({
+    where: {
+      clinicId,
+      scheduledAt: { gte: today.gte, lt: today.lt },
+      status: AppointmentStatus.COMPLETED,
+    },
+  });
+  const todayPayments = await prisma.payment.findMany({
+    where: { invoice: { clinicId }, paidAt: { gte: today.gte, lt: today.lt } },
+    select: { amount: true },
+  });
+  const monthAppointments = await prisma.appointment.count({
+    where: { clinicId, scheduledAt: { gte: month.gte, lt: month.lt } },
+  });
+  const monthNewPatients = await prisma.patient.count({
+    where: { clinicId, createdAt: { gte: month.gte, lt: month.lt } },
+  });
+  const monthPayments = await prisma.payment.findMany({
+    where: { invoice: { clinicId }, paidAt: { gte: month.gte, lt: month.lt } },
+    select: { amount: true },
+  });
+  const pendingHmoClaims = await prisma.hmoClaim.count({
+    where: {
+      clinicId,
+      status: { in: [HmoClaimStatus.DRAFT, HmoClaimStatus.SUBMITTED, HmoClaimStatus.PARTIAL_APPROVED] },
+    },
+  });
+  const inventoryAlertCount = await countInventoryAlerts(clinicId, now);
+
+  const sumPayments = (rows: { amount: Prisma.Decimal }[]) =>
+    rows.reduce((a, p) => a + Number(p.amount), 0).toFixed(2);
+
+  return {
+    today: {
+      appointments: todayAppointments,
+      completed: todayCompleted,
+      revenue: sumPayments(todayPayments),
+    },
+    thisMonth: {
+      appointments: monthAppointments,
+      newPatients: monthNewPatients,
+      revenue: sumPayments(monthPayments),
+    },
+    operational: {
+      pendingHmoClaims,
+      inventoryAlerts: inventoryAlertCount,
+    },
+  };
+}
+
+/** BIR-style sales journal CSV (ödemeler + OR numarası) — aylık. */
+export async function buildBirJournalCsv(clinicId: string, year: number, month: number): Promise<string> {
+  const range = manilaMonthRange(year, month);
+  const payments = await prisma.payment.findMany({
+    where: {
+      invoice: { clinicId },
+      paidAt: { gte: range.gte, lt: range.lt },
+    },
+    orderBy: { paidAt: "asc" },
+    include: {
+      invoice: {
+        select: {
+          orNumber: true,
+          patient: { select: { firstName: true, lastName: true } },
+        },
+      },
+    },
+  });
+
+  const header = "Date,OR Number,Patient,Amount PHP,Method";
+  const lines = payments.map((p) => {
+    const date = manilaDayKey(p.paidAt);
+    const orN = p.invoice.orNumber ?? "";
+    const patient = `${p.invoice.patient.firstName} ${p.invoice.patient.lastName}`.trim();
+    const amt = Number(p.amount).toFixed(2);
+    const method = p.method;
+    const esc = (v: string) => (v.includes(",") ? `"${v.replace(/"/g, '""')}"` : v);
+    return [date, orN, patient, amt, method].map(esc).join(",");
+  });
+  return [header, ...lines].join("\n");
 }

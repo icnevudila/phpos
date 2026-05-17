@@ -1,3 +1,4 @@
+import axios, { type InternalAxiosRequestConfig, AxiosError } from "axios";
 import { ACCESS_TOKEN_KEY } from "../constants/auth";
 import {
   clearTokens,
@@ -6,247 +7,134 @@ import {
   type AuthProfile,
 } from "../hooks/authTokens";
 import i18n from "../i18n";
-
+import { messageFromApiError } from "../utils/apiErrorMessage";
 import { apiBaseUrl } from "./index";
 
-export function getAuthHeaders(): Record<string, string> {
+const api = axios.create({
+  baseURL: apiBaseUrl,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
+api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   const token = localStorage.getItem(ACCESS_TOKEN_KEY);
-  if (!token) return {};
-  return { Authorization: `Bearer ${token}` };
-}
-
-/** Paralel 401 durumunda tek yenileme */
-let refreshPromise: Promise<boolean> | null = null;
-
-function isLikelyNetworkFailure(e: unknown): boolean {
-  if (typeof navigator !== "undefined" && !navigator.onLine) return true;
-  if (e instanceof TypeError) return true;
-  if (e instanceof Error) {
-    const m = e.message.toLowerCase();
-    return m.includes("failed to fetch") || m.includes("networkerror") || m.includes("load failed");
+  if (token && config.headers) {
+    config.headers.Authorization = `Bearer ${token}`;
   }
-  return false;
-}
+  return config;
+});
 
-async function readJsonBody<T>(res: Response): Promise<T & { success?: boolean; error?: string }> {
-  const text = await res.text();
-  if (!text.trim()) {
-    return {} as T & { success?: boolean; error?: string };
-  }
-  try {
-    return JSON.parse(text) as T & { success?: boolean; error?: string };
-  } catch {
-    if (res.status >= 500) {
-      throw new Error(i18n.t("errors.serverError"));
+let isRefreshing = false;
+let failedQueue: any[] = [];
+
+const processQueue = (error: any, token: string | null = null) => {
+  failedQueue.forEach((prom) => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token);
     }
-    throw new Error(res.statusText || `HTTP ${res.status}`);
-  }
-}
+  });
+  failedQueue = [];
+};
 
-async function tryRefreshTokens(): Promise<boolean> {
-  const rt = getRefreshToken();
-  if (!rt) return false;
-  if (!refreshPromise) {
-    refreshPromise = (async () => {
-      try {
-        const res = await fetch(`${apiBaseUrl}/auth/refresh`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ refreshToken: rt }),
-        });
-        const json = (await res.json()) as {
-          success?: boolean;
-          data?: { accessToken?: string; refreshToken?: string };
-        };
-        if (
-          !res.ok ||
-          json.success === false ||
-          !json.data?.accessToken ||
-          !json.data?.refreshToken
-        ) {
-          clearTokens();
-          return false;
-        }
-        setTokens(json.data.accessToken, json.data.refreshToken);
-        return true;
-      } catch {
-        clearTokens();
-        return false;
-      } finally {
-        refreshPromise = null;
+api.interceptors.response.use(
+  (response) => response.data,
+  async (error: AxiosError) => {
+    const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
+
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        })
+          .then((token) => {
+            if (originalRequest.headers) {
+              originalRequest.headers.Authorization = `Bearer ${token}`;
+            }
+            return api(originalRequest);
+          })
+          .catch((err) => Promise.reject(err));
       }
-    })();
-  }
-  return refreshPromise;
-}
 
-/**
- * Korumalı PDF endpoint'ini indirir ve yeni bir sekmede açar.
- * `<a href>` doğrudan Authorization header taşıyamadığı için blob + object URL kullanılır.
- */
-export async function openAuthedPdf(path: string): Promise<void> {
-  const fetchPdf = async (): Promise<Response> =>
-    fetch(`${apiBaseUrl}${path}`, {
-      headers: { ...getAuthHeaders() },
-    });
+      originalRequest._retry = true;
+      isRefreshing = true;
 
-  let res = await fetchPdf();
-  if (res.status === 401) {
-    const ok = await tryRefreshTokens();
-    if (ok) res = await fetchPdf();
-  }
-  if (!res.ok) {
-    throw new Error(`Download failed (${res.status})`);
-  }
-  const blob = await res.blob();
-  const url = URL.createObjectURL(blob);
-  window.open(url, "_blank", "noopener,noreferrer");
-  setTimeout(() => URL.revokeObjectURL(url), 60_000);
-}
+      const refreshToken = getRefreshToken();
+      if (!refreshToken) {
+        clearTokens();
+        return Promise.reject(error);
+      }
 
-/** Blob indirme (Authorization header; `Content-Disposition` tarayıcıda güvenilir değil). */
-export async function downloadAuthedFile(path: string, suggestedName: string): Promise<void> {
-  const fetchBlob = async (): Promise<Response> =>
-    fetch(`${apiBaseUrl}${path}`, {
-      headers: { ...getAuthHeaders() },
-    });
+      try {
+        const { data } = await axios.post(`${apiBaseUrl}/auth/refresh`, {
+          refreshToken,
+        });
 
-  let res = await fetchBlob();
-  if (res.status === 401) {
-    const ok = await tryRefreshTokens();
-    if (ok) res = await fetchBlob();
-  }
-  if (!res.ok) {
-    throw new Error(`Download failed (${res.status})`);
-  }
-  const blob = await res.blob();
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = suggestedName || "download";
-  a.rel = "noopener";
-  a.click();
-  setTimeout(() => URL.revokeObjectURL(url), 60_000);
-}
+        if (data.success && data.data) {
+          const { accessToken, refreshToken: newRefreshToken } = data.data;
+          setTokens(accessToken, newRefreshToken);
+          processQueue(null, accessToken);
+          if (originalRequest.headers) {
+            originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+          }
+          return api(originalRequest);
+        } else {
+          clearTokens();
+          processQueue(error, null);
+          return Promise.reject(error);
+        }
+      } catch (refreshError) {
+        clearTokens();
+        processQueue(refreshError, null);
+        return Promise.reject(refreshError);
+      } finally {
+        isRefreshing = false;
+      }
+    }
 
-/** `multipart/form-data` (Authorization; Content-Type set etme). */
-export async function apiPostFormData<T>(
-  path: string,
-  formData: FormData,
-  _alreadyRetried = false,
-): Promise<T> {
-  if (typeof navigator !== "undefined" && !navigator.onLine) {
-    throw new Error(i18n.t("errors.networkOffline"));
-  }
-  let res: Response;
-  try {
-    res = await fetch(`${apiBaseUrl}${path}`, {
-      method: "POST",
-      headers: { ...getAuthHeaders() },
-      body: formData,
-    });
-  } catch (e) {
-    if (isLikelyNetworkFailure(e)) {
+    // Network errors or offline
+    if (!error.response) {
       throw new Error(i18n.t("errors.networkOffline"));
     }
-    throw e;
+
+    const data = error.response.data as {
+      code?: string;
+      error?: string;
+      message?: string;
+      requestId?: string;
+    };
+    throw new Error(messageFromApiError(data));
   }
-  const json = await readJsonBody<T>(res);
-  if (res.status === 401 && path !== "/auth/refresh" && !_alreadyRetried) {
-    const refreshed = await tryRefreshTokens();
-    if (refreshed) {
-      return apiPostFormData<T>(path, formData, true);
-    }
-  }
-  if (!res.ok || ("success" in json && json.success === false)) {
-    const raw = "error" in json && typeof json.error === "string" ? json.error : res.statusText;
-    if (res.status >= 500) {
-      throw new Error(raw?.trim() ? raw : i18n.t("errors.serverError"));
-    }
-    throw new Error(raw || res.statusText || String(res.status));
-  }
-  return json as T;
-}
+);
+
+export default api;
 
 export async function apiFetch<T>(
   path: string,
-  init?: RequestInit,
-  _alreadyRetried = false,
+  init?: any
 ): Promise<T> {
-  const run = async (): Promise<T> => {
-    if (typeof navigator !== "undefined" && !navigator.onLine) {
-      throw new Error(i18n.t("errors.networkOffline"));
-    }
-    const headers: Record<string, string> = {
-      ...getAuthHeaders(),
-      ...((init?.headers as Record<string, string>) ?? {}),
-    };
-    if (init?.body !== undefined && typeof init.body === "string" && !headers["Content-Type"]) {
-      headers["Content-Type"] = "application/json";
-    }
-    let res: Response;
-    try {
-      res = await fetch(`${apiBaseUrl}${path}`, {
-        ...init,
-        headers,
-      });
-    } catch (e) {
-      if (isLikelyNetworkFailure(e)) {
-        throw new Error(i18n.t("errors.networkOffline"));
-      }
-      throw e;
-    }
-    const json = await readJsonBody<T>(res);
-
-    if (res.status === 401 && path !== "/auth/refresh" && !_alreadyRetried) {
-      const refreshed = await tryRefreshTokens();
-      if (refreshed) {
-        return apiFetch<T>(path, init, true);
-      }
-    }
-
-    if (!res.ok || ("success" in json && json.success === false)) {
-      const raw = "error" in json && typeof json.error === "string" ? json.error : res.statusText;
-      if (res.status >= 500) {
-        throw new Error(raw?.trim() ? raw : i18n.t("errors.serverError"));
-      }
-      throw new Error(raw || res.statusText || String(res.status));
-    }
-    return json as T;
-  };
-
-  try {
-    return await run();
-  } catch (e) {
-    if (isLikelyNetworkFailure(e)) {
-      throw new Error(i18n.t("errors.networkOffline"));
-    }
-    throw e;
-  }
+  const method = init?.method?.toLowerCase() || "get";
+  const response = await (api as any)[method](path, init?.body ? JSON.parse(init.body) : undefined, {
+    headers: init?.headers,
+  });
+  return response;
 }
 
-/** Aynı anda tek istek (React StrictMode çift effect / hızlı yeniden mount için). */
-let authMeInflight: Promise<AuthProfile | null> | null = null;
+export async function apiPostFormData<T>(path: string, formData: FormData): Promise<T> {
+  return api.post(path, formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+}
 
-/** Oturum açıkken backend profil ile `localStorage` profilini eşitler */
 export async function fetchAuthMeProfile(): Promise<AuthProfile | null> {
-  const token = localStorage.getItem(ACCESS_TOKEN_KEY);
-  if (!token) {
-    authMeInflight = null;
+  try {
+    const res = await api.get<{ success: true; data: AuthProfile }>("/auth/me") as any;
+    return res.data;
+  } catch {
     return null;
   }
-  if (authMeInflight) return authMeInflight;
-  authMeInflight = (async () => {
-    try {
-      const json = await apiFetch<{ success: true; data: AuthProfile }>("/auth/me");
-      return json.data;
-    } catch {
-      return null;
-    } finally {
-      authMeInflight = null;
-    }
-  })();
-  return authMeInflight;
 }
 
 export interface PatientFileDto {
@@ -260,29 +148,17 @@ export interface PatientFileDto {
 }
 
 export async function listPatientXrayFiles(patientId: string): Promise<PatientFileDto[]> {
-  const res = await apiFetch<{ success: true; data: PatientFileDto[] }>(`/patients/${patientId}/files`);
+  const res = await api.get<{ success: true; data: PatientFileDto[] }>(`/patients/${patientId}/files`) as any;
   return res.data;
 }
 
 export async function uploadPatientXrayFile(patientId: string, file: File): Promise<PatientFileDto[]> {
   const formData = new FormData();
   formData.append("file", file);
-  
-  const token = localStorage.getItem(ACCESS_TOKEN_KEY);
-  const res = await fetch(`${apiBaseUrl}/patients/${patientId}/files`, {
-    method: "POST",
-    headers: token ? { Authorization: `Bearer ${token}` } : {},
-    body: formData,
-  });
-
-  if (!res.ok) {
-    const errorText = await res.text();
-    throw new Error(errorText || "Failed to upload file");
-  }
-  
-  const json = await res.json();
-  if (!json.success) throw new Error(json.error || "Upload failed");
-  return [json.data];
+  const res = await api.post(`/patients/${patientId}/files`, formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  }) as any;
+  return [res.data];
 }
 
 export async function downloadPatientXrayFile(patientId: string, fileId: string): Promise<string> {
@@ -290,10 +166,24 @@ export async function downloadPatientXrayFile(patientId: string, fileId: string)
 }
 
 export async function updatePatientXrayAnnotations(patientId: string, fileId: string, annotations: any): Promise<void> {
-  await apiFetch(`/patients/${patientId}/files/${fileId}/annotations`, {
-    method: "PATCH",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ annotations }),
-  });
+  await api.patch(`/patients/${patientId}/files/${fileId}/annotations`, { annotations });
 }
 
+export async function openAuthedPdf(path: string): Promise<void> {
+  const res = await api.get(path, { responseType: "blob" }) as any;
+  const url = URL.createObjectURL(res);
+  window.open(url, "_blank", "noopener,noreferrer");
+  setTimeout(() => URL.revokeObjectURL(url), 60_000);
+}
+
+export async function downloadAuthedFile(path: string, fileName: string): Promise<void> {
+  const res = await api.get(path, { responseType: "blob" }) as any;
+  const url = URL.createObjectURL(res);
+  const link = document.createElement("a");
+  link.href = url;
+  link.setAttribute("download", fileName);
+  document.body.appendChild(link);
+  link.click();
+  link.parentNode?.removeChild(link);
+  setTimeout(() => URL.revokeObjectURL(url), 60_000);
+}

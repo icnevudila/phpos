@@ -2,8 +2,17 @@ import type { Request, Response } from "express";
 import { z } from "zod";
 
 import {
+  dashboardCacheKey,
+  withDashboardCache,
+} from "../lib/dashboardCache.js";
+import {
   buildAgedReceivables,
+  buildBirJournalCsv,
   buildDashboard,
+  buildDashboardAlerts,
+  buildDashboardCharts,
+  buildDashboardQueue,
+  buildDashboardSummary,
   buildMonthlyReport,
 } from "../services/reports.service.js";
 import { generateMonthlyReportPdf } from "../services/reportsPdf.js";
@@ -23,6 +32,94 @@ const monthlyQuerySchema = z.object({
 export async function dashboardHandler(req: Request, res: Response): Promise<void> {
   const data = await buildDashboard(clinicId(req));
   res.json({ success: true, data });
+}
+
+export async function dashboardSummaryHandler(req: Request, res: Response): Promise<void> {
+  const cid = clinicId(req);
+  const data = await withDashboardCache(dashboardCacheKey(cid, "summary"), () =>
+    buildDashboardSummary(cid),
+  );
+  res.setHeader("Cache-Control", "private, max-age=30");
+  res.json({ success: true, data });
+}
+
+export async function dashboardQueueHandler(req: Request, res: Response): Promise<void> {
+  const data = await buildDashboardQueue(clinicId(req));
+  res.json({ success: true, data });
+}
+
+/** SSE — dashboard queue snapshot every ~12s (EventSource + `?access_token=`). */
+export async function dashboardQueueStreamHandler(req: Request, res: Response): Promise<void> {
+  const cid = clinicId(req);
+  res.setHeader("Content-Type", "text/event-stream; charset=utf-8");
+  res.setHeader("Cache-Control", "no-cache, no-transform");
+  res.setHeader("Connection", "keep-alive");
+  res.flushHeaders();
+
+  let closed = false;
+  const onClose = (): void => {
+    closed = true;
+  };
+  req.on("close", onClose);
+
+  const push = async (): Promise<void> => {
+    if (closed) return;
+    const data = await buildDashboardQueue(cid);
+    res.write(`event: queue\ndata: ${JSON.stringify(data)}\n\n`);
+  };
+
+  try {
+    await push();
+  } catch {
+    res.write(`event: error\ndata: ${JSON.stringify({ message: "queue_failed" })}\n\n`);
+    res.end();
+    return;
+  }
+
+  const intervalMs = Number(process.env.DASHBOARD_QUEUE_SSE_MS) || 12_000;
+  const timer = setInterval(() => {
+    void push().catch(() => {
+      if (!closed) {
+        res.write(`event: error\ndata: ${JSON.stringify({ message: "queue_failed" })}\n\n`);
+      }
+    });
+  }, intervalMs);
+
+  const heartbeat = setInterval(() => {
+    if (!closed) res.write(": ping\n\n");
+  }, 25_000);
+
+  req.on("close", () => {
+    clearInterval(timer);
+    clearInterval(heartbeat);
+  });
+}
+
+export async function dashboardChartsHandler(req: Request, res: Response): Promise<void> {
+  const cid = clinicId(req);
+  const data = await withDashboardCache(dashboardCacheKey(cid, "charts"), () =>
+    buildDashboardCharts(cid),
+  );
+  res.setHeader("Cache-Control", "private, max-age=30");
+  res.json({ success: true, data });
+}
+
+export async function dashboardAlertsHandler(req: Request, res: Response): Promise<void> {
+  const cid = clinicId(req);
+  const data = await withDashboardCache(dashboardCacheKey(cid, "alerts"), () =>
+    buildDashboardAlerts(cid),
+  );
+  res.setHeader("Cache-Control", "private, max-age=30");
+  res.json({ success: true, data });
+}
+
+export async function birJournalCsvHandler(req: Request, res: Response): Promise<void> {
+  const q = monthlyQuerySchema.parse(req.query);
+  const csv = await buildBirJournalCsv(clinicId(req), q.year, q.month);
+  const mm = String(q.month).padStart(2, "0");
+  res.setHeader("Content-Type", "text/csv; charset=utf-8");
+  res.setHeader("Content-Disposition", `attachment; filename="bir-journal-${q.year}-${mm}.csv"`);
+  res.send("\uFEFF" + csv);
 }
 
 export async function monthlyReportHandler(req: Request, res: Response): Promise<void> {

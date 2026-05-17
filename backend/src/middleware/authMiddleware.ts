@@ -1,5 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
-import { supabase } from "../lib/supabase.js";
+
+import { prisma } from "../lib/prisma.js";
+import { verifyAccessToken } from "../utils/jwt.js";
 
 export async function authenticate(req: Request, res: Response, next: NextFunction): Promise<void> {
   const header = req.headers.authorization;
@@ -11,6 +13,7 @@ export async function authenticate(req: Request, res: Response, next: NextFuncti
     });
     return;
   }
+
   const token = header.slice("Bearer ".length).trim();
   if (!token) {
     res.status(401).json({
@@ -22,10 +25,13 @@ export async function authenticate(req: Request, res: Response, next: NextFuncti
   }
 
   try {
-    // Supabase JWT'ini doğrula
-    const { data: { user }, error } = await supabase.auth.getUser(token);
+    const payload = verifyAccessToken(token);
+    const user = await prisma.user.findUnique({
+      where: { id: payload.sub },
+      select: { id: true, clinicId: true, role: true, isActive: true },
+    });
 
-    if (error || !user) {
+    if (!user?.isActive || user.clinicId !== payload.clinicId || user.role !== payload.role) {
       res.status(401).json({
         success: false,
         error: "Invalid or expired token",
@@ -34,30 +40,13 @@ export async function authenticate(req: Request, res: Response, next: NextFuncti
       return;
     }
 
-    // Kullanıcı bilgilerini al
-    const { data: userData, error: userError } = await supabase
-      .from('User')
-      .select('*')
-      .eq('id', user.id)
-      .single();
-
-    if (userError || !userData) {
-      res.status(401).json({
-        success: false,
-        error: "User not found in public database",
-        code: "USER_NOT_FOUND",
-      });
-      return;
-    }
-
     req.user = {
-      id: userData.id,
-      clinicId: userData.clinicId,
-      role: userData.role,
+      id: user.id,
+      clinicId: user.clinicId,
+      role: user.role,
     };
     next();
-  } catch (err) {
-    console.error("Auth Middleware Error:", err);
+  } catch {
     res.status(401).json({
       success: false,
       error: "Invalid or expired token",

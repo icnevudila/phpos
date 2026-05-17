@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ReactCompareSlider, ReactCompareSliderImage } from 'react-compare-slider';
 
 export type ComparisonType = 'orthodontic' | 'whitening' | 'implant' | 'filling' | 'veneer' | 'other';
@@ -20,15 +21,6 @@ export interface BeforeAfterSliderProps {
   className?: string;
 }
 
-const TYPE_LABELS: Record<ComparisonType, string> = {
-  orthodontic: 'Orthodontic',
-  whitening: 'Whitening',
-  implant: 'Implant',
-  filling: 'Filling',
-  veneer: 'Veneer',
-  other: 'Other',
-};
-
 const TYPE_COLORS: Record<ComparisonType, string> = {
   orthodontic: 'bg-sky-100 text-sky-700 border-sky-200',
   whitening: 'bg-amber-100 text-amber-700 border-amber-200',
@@ -38,7 +30,20 @@ const TYPE_COLORS: Record<ComparisonType, string> = {
   other: 'bg-slate-100 text-slate-700 border-slate-200',
 };
 
+const TYPE_I18N_KEYS: Record<ComparisonType, string> = {
+  orthodontic: 'typeOrthodontic',
+  whitening: 'typeWhitening',
+  implant: 'typeImplant',
+  filling: 'typeFilling',
+  veneer: 'typeVeneer',
+  other: 'typeOther',
+};
+
 export default function BeforeAfterSlider({ pairs, className = '' }: BeforeAfterSliderProps): JSX.Element {
+  const { t } = useTranslation();
+  const BA = 'pages.patientDetail.beforeAfter';
+  const typeLabel = (type: ComparisonType) => t(`${BA}.${TYPE_I18N_KEYS[type]}`);
+
   const [selected, setSelected] = useState<string>(pairs[0]?.id || '');
   const [vertical, setVertical] = useState(false);
 
@@ -47,10 +52,22 @@ export default function BeforeAfterSlider({ pairs, className = '' }: BeforeAfter
   return (
     <div className={`space-y-3 ${className}`.trim()}>
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <h3 className="text-sm font-semibold text-slate-900">Before & After Gallery</h3>
+        <h3 className="text-sm font-semibold text-slate-900">{t(`${BA}.galleryTitle`)}</h3>
         <div className="flex items-center gap-2">
-          <button onClick={() => setVertical(false)} className={`px-2.5 py-1 rounded-lg text-[10px] font-medium border ${!vertical ? 'bg-slate-900 text-white border-slate-900' : 'bg-white text-slate-600 border-slate-200'}`}>Horizontal</button>
-          <button onClick={() => setVertical(true)} className={`px-2.5 py-1 rounded-lg text-[10px] font-medium border ${vertical ? 'bg-slate-900 text-white border-slate-900' : 'bg-white text-slate-600 border-slate-200'}`}>Vertical</button>
+          <button
+            type="button"
+            onClick={() => setVertical(false)}
+            className={`px-2.5 py-1 rounded-lg text-[10px] font-medium border ${!vertical ? 'bg-slate-900 text-white border-slate-900' : 'bg-white text-slate-600 border-slate-200'}`}
+          >
+            {t(`${BA}.horizontal`)}
+          </button>
+          <button
+            type="button"
+            onClick={() => setVertical(true)}
+            className={`px-2.5 py-1 rounded-lg text-[10px] font-medium border ${vertical ? 'bg-slate-900 text-white border-slate-900' : 'bg-white text-slate-600 border-slate-200'}`}
+          >
+            {t(`${BA}.vertical`)}
+          </button>
         </div>
       </div>
 
@@ -58,44 +75,70 @@ export default function BeforeAfterSlider({ pairs, className = '' }: BeforeAfter
         <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
           <div className="relative" style={{ height: 400 }}>
             <ReactCompareSlider
-              itemOne={<ReactCompareSliderImage src={active.beforeUrl} alt="Before" style={{ objectFit: 'cover', width: '100%', height: '100%' }} />}
-              itemTwo={<ReactCompareSliderImage src={active.afterUrl} alt="After" style={{ objectFit: 'cover', width: '100%', height: '100%' }} />}
+              itemOne={
+                <ReactCompareSliderImage
+                  src={active.beforeUrl}
+                  alt={t(`${BA}.before`)}
+                  style={{ objectFit: 'cover', width: '100%', height: '100%' }}
+                />
+              }
+              itemTwo={
+                <ReactCompareSliderImage
+                  src={active.afterUrl}
+                  alt={t(`${BA}.after`)}
+                  style={{ objectFit: 'cover', width: '100%', height: '100%' }}
+                />
+              }
               portrait={vertical}
               style={{ height: '100%' }}
             />
-            <div className="absolute top-3 left-3 px-2 py-1 rounded-md bg-black/60 text-white text-[10px] font-bold">BEFORE</div>
-            <div className="absolute top-3 right-3 px-2 py-1 rounded-md bg-emerald-600/90 text-white text-[10px] font-bold">AFTER</div>
+            <div className="absolute top-3 left-3 px-2 py-1 rounded-md bg-black/60 text-white text-[10px] font-bold">
+              {t(`${BA}.before`)}
+            </div>
+            <div className="absolute top-3 right-3 px-2 py-1 rounded-md bg-emerald-600/90 text-white text-[10px] font-bold">
+              {t(`${BA}.after`)}
+            </div>
           </div>
 
           <div className="p-4 border-t border-slate-100">
             <div className="flex items-center justify-between mb-1">
               <h4 className="text-sm font-semibold text-slate-900">{active.title}</h4>
-              <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium border ${TYPE_COLORS[active.type]}`}>{TYPE_LABELS[active.type]}</span>
+              <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium border ${TYPE_COLORS[active.type]}`}>
+                {typeLabel(active.type)}
+              </span>
             </div>
             <div className="flex items-center gap-4 text-[11px] text-slate-500">
-              <span>Before: {active.beforeDate}</span>
-              <span>After: {active.afterDate}</span>
-              {active.dentist && <span>Dr. {active.dentist}</span>}
+              <span>{t(`${BA}.beforeDate`, { date: active.beforeDate })}</span>
+              <span>{t(`${BA}.afterDate`, { date: active.afterDate })}</span>
+              {active.dentist ? <span>{t(`${BA}.drPrefix`, { name: active.dentist })}</span> : null}
             </div>
-            {active.notes && <p className="text-[11px] text-slate-500 mt-1">{active.notes}</p>}
+            {active.notes ? <p className="text-[11px] text-slate-500 mt-1">{active.notes}</p> : null}
           </div>
         </div>
       )}
 
-      {pairs.length > 1 && (
+      {pairs.length > 1 ? (
         <div className="flex gap-2 overflow-x-auto pb-1">
           {pairs.map((p) => (
-            <button key={p.id} onClick={() => setSelected(p.id)} className={`flex-shrink-0 w-24 rounded-xl border overflow-hidden transition ${selected === p.id ? 'border-emerald-500 ring-2 ring-emerald-500/20' : 'border-slate-200 hover:border-slate-300'}`}>
+            <button
+              key={p.id}
+              type="button"
+              onClick={() => setSelected(p.id)}
+              className={`flex-shrink-0 w-24 rounded-xl border overflow-hidden transition ${selected === p.id ? 'border-emerald-500 ring-2 ring-emerald-500/20' : 'border-slate-200 hover:border-slate-300'}`}
+            >
               <div className="h-16 bg-slate-100 relative">
                 <img src={p.afterUrl} alt={p.title} className="w-full h-full object-cover" />
-                <span className={`absolute bottom-1 left-1 px-1 py-0.5 rounded text-[8px] font-medium border ${TYPE_COLORS[p.type]}`}>{TYPE_LABELS[p.type]}</span>
+                <span
+                  className={`absolute bottom-1 left-1 px-1 py-0.5 rounded text-[8px] font-medium border ${TYPE_COLORS[p.type]}`}
+                >
+                  {typeLabel(p.type)}
+                </span>
               </div>
               <p className="text-[9px] text-slate-600 p-1.5 truncate">{p.title}</p>
             </button>
           ))}
         </div>
-      )}
+      ) : null}
     </div>
   );
 }
-

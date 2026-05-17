@@ -7,7 +7,9 @@ import {
   logout,
   refreshSession,
   registerClinicAdmin,
-} from "../services/supabaseAuth.service.js";
+  requestPasswordReset,
+  resetPasswordWithToken,
+} from "../services/auth.service.js";
 import type { ApiSuccess } from "../types/auth.js";
 import { AppError } from "../utils/errors.js";
 
@@ -29,8 +31,16 @@ const refreshSchema = z.object({
   refreshToken: z.string().min(1),
 });
 
+const forgotPasswordSchema = z.object({
+  email: z.string().email(),
+});
+
+const resetPasswordSchema = z.object({
+  token: z.string().min(1),
+  password: z.string().min(8).max(128),
+});
+
 export async function registerHandler(req: Request, res: Response): Promise<void> {
-  /** GAP-003: Açık kayıt yalnızca ALLOW_PUBLIC_REGISTER=true ile (tüm ortamlar; varsayılan kapalı). */
   if (process.env.ALLOW_PUBLIC_REGISTER !== "true") {
     throw new AppError("Public registration is disabled", 403, "REGISTER_DISABLED");
   }
@@ -38,6 +48,29 @@ export async function registerHandler(req: Request, res: Response): Promise<void
   const data = await registerClinicAdmin(body);
   const payload: ApiSuccess<typeof data> = { success: true, data };
   res.status(201).json(payload);
+}
+
+export async function forgotPasswordHandler(req: Request, res: Response): Promise<void> {
+  const { email } = forgotPasswordSchema.parse(req.body);
+  await requestPasswordReset(email);
+  const payload: ApiSuccess<{ message: string }> = {
+    success: true,
+    data: {
+      message:
+        "If an account exists for this email, you will receive password reset instructions shortly.",
+    },
+  };
+  res.json(payload);
+}
+
+export async function resetPasswordHandler(req: Request, res: Response): Promise<void> {
+  const { token, password } = resetPasswordSchema.parse(req.body);
+  await resetPasswordWithToken(token, password);
+  const payload: ApiSuccess<{ message: string }> = {
+    success: true,
+    data: { message: "Password updated. You can sign in with your new password." },
+  };
+  res.json(payload);
 }
 
 export async function loginHandler(req: Request, res: Response): Promise<void> {
@@ -72,7 +105,7 @@ export async function logoutHandler(req: Request, res: Response): Promise<void> 
     });
     return;
   }
-await logout();
+  await logout(req.user.id);
   const payload: ApiSuccess<{ ok: true }> = { success: true, data: { ok: true } };
   res.json(payload);
 }

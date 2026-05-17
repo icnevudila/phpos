@@ -11,6 +11,11 @@ export function phiAccessLogMiddleware(req: Request, res: Response, next: NextFu
 
   const pathOnly = req.originalUrl?.split("?")[0] ?? req.path;
   const paramId = typeof req.params?.id === "string" ? req.params.id : undefined;
+  const fileDownload = pathOnly.match(/\/patients\/([^/]+)\/files\/([^/]+)\/download$/);
+  const patientIdForLog = fileDownload?.[1] ?? paramId ?? null;
+  const pathForLog = fileDownload
+    ? `/patients/${patientIdForLog}/files/${fileDownload[2]}/download`
+    : pathOnly;
 
   res.on("finish", () => {
     void (async () => {
@@ -22,9 +27,9 @@ export function phiAccessLogMiddleware(req: Request, res: Response, next: NextFu
           data: {
             clinicId: user.clinicId,
             userId: user.id,
-            patientId: paramId ?? null,
+            patientId: patientIdForLog,
             method: "GET",
-            path: pathOnly.slice(0, 512),
+            path: pathForLog.slice(0, 512),
             statusCode: res.statusCode,
             ip: typeof req.ip === "string" ? req.ip.slice(0, 64) : undefined,
             userAgent: req.get("user-agent")?.slice(0, 512) ?? undefined,

@@ -29,6 +29,11 @@ export interface RefreshTokenPayload {
   typ: "refresh";
 }
 
+export interface PasswordResetTokenPayload {
+  sub: string;
+  typ: "password_reset";
+}
+
 export interface ApiSuccess<T> {
   success: true;
   data: T;

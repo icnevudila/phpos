@@ -1,4 +1,4 @@
-import { apiFetch } from "./api";
+import api from "./api";
 
 interface ApiEnvelope<T> {
   success: true;
@@ -25,8 +25,7 @@ export interface WaitlistEntryDto {
 }
 
 export async function fetchWaitlist(scope: "active" | "all"): Promise<WaitlistEntryDto[]> {
-  const search = new URLSearchParams({ scope });
-  const res = await apiFetch<ApiEnvelope<WaitlistEntryDto[]>>(`/waitlist?${search.toString()}`);
+  const res = await api.get<ApiEnvelope<WaitlistEntryDto[]>>(`/waitlist`, { params: { scope } }) as any;
   return res.data;
 }
 
@@ -34,10 +33,7 @@ export async function createWaitlistEntry(payload: {
   patientId: string;
   notes?: string | null;
 }): Promise<WaitlistEntryDto> {
-  const res = await apiFetch<ApiEnvelope<WaitlistEntryDto>>(`/waitlist`, {
-    method: "POST",
-    body: JSON.stringify(payload),
-  });
+  const res = await api.post<ApiEnvelope<WaitlistEntryDto>>(`/waitlist`, payload) as any;
   return res.data;
 }
 
@@ -45,9 +41,6 @@ export async function patchWaitlistEntry(
   id: string,
   status: "FULFILLED" | "CANCELLED",
 ): Promise<WaitlistEntryDto> {
-  const res = await apiFetch<ApiEnvelope<WaitlistEntryDto>>(`/waitlist/${id}`, {
-    method: "PATCH",
-    body: JSON.stringify({ status }),
-  });
+  const res = await api.patch<ApiEnvelope<WaitlistEntryDto>>(`/waitlist/${id}`, { status }) as any;
   return res.data;
 }

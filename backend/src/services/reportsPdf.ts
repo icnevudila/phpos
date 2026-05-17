@@ -1,5 +1,6 @@
 import type { Content, TDocumentDefinitions } from "../pdfmakeTypes.js";
 
+import { dbTasks } from "../lib/dbTasks.js";
 import { prisma } from "../lib/prisma.js";
 
 import { buildMonthlyReport } from "./reports.service.js";
@@ -10,13 +11,14 @@ export async function generateMonthlyReportPdf(
   year: number,
   month: number,
 ): Promise<Buffer> {
-  const [report, clinic] = await Promise.all([
-    buildMonthlyReport(clinicId, year, month),
-    prisma.clinic.findUnique({
-      where: { id: clinicId },
-      select: { name: true, address: true, city: true, phone: true },
-    }),
-  ]);
+  const [report, clinic] = await dbTasks([
+    () => buildMonthlyReport(clinicId, year, month),
+    () =>
+      prisma.clinic.findUnique({
+        where: { id: clinicId },
+        select: { name: true, address: true, city: true, phone: true },
+      }),
+  ] as const);
 
   const money = (v: string | number): string =>
     `₱ ${Number(v).toLocaleString("en-PH", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;

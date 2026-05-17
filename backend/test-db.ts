@@ -1,15 +1,14 @@
-import { PrismaClient } from '@prisma/client'
-const prisma = new PrismaClient()
+import { PrismaClient } from '@prisma/client';
+
 async function main() {
+  const prisma = new PrismaClient();
   try {
-    await prisma.$connect()
-    console.log('SUCCESS: Connected to Supabase')
-    const count = await prisma.clinic.count()
-    console.log('Clinic count:', count)
+    const res = await prisma.$queryRaw`SELECT 1`;
+    console.log("Success:", res);
   } catch (e) {
-    console.error('FAILURE:', e)
+    console.error("Failed:", e);
   } finally {
-    await prisma.$disconnect()
+    await prisma.$disconnect();
   }
 }
-main()
+main();

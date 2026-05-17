@@ -1,4 +1,5 @@
 /* eslint-disable react/no-unescaped-entities */
+import React from "react";
 
 function LaptopFrame({ children }: { children: React.ReactNode }): JSX.Element {
   return (
@@ -35,7 +36,11 @@ function PhoneFrame({
 
 export function LaptopDashboardMock(): JSX.Element {
   return (
-    <LaptopFrame>
+    <div>
+      <p className="mb-2 text-center text-[9px] font-bold uppercase tracking-widest text-slate-400">
+        Illustrative UI — not live patient data
+      </p>
+      <LaptopFrame>
       <div className="flex h-full text-[7px]">
         {/* Sidebar */}
         <aside className="flex w-[18%] flex-col gap-1 bg-gradient-to-b from-emerald-50 to-sky-50 p-2">
@@ -53,7 +58,7 @@ export function LaptopDashboardMock(): JSX.Element {
           ))}
         </aside>
         {/* Main */}
-        <div className="flex-1 p-2">
+        <div className="flex-1 p-2 overflow-hidden">
           <div className="flex items-center justify-between">
             <span className="text-[8px] font-bold text-slate-900">Staff Dashboard</span>
             <div className="flex -space-x-1">
@@ -136,6 +141,62 @@ export function LaptopDashboardMock(): JSX.Element {
                 <span className="text-slate-600">RCT</span>
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+    </LaptopFrame>
+    </div>
+  );
+}
+
+export function LaptopInventoryMock(): JSX.Element {
+  return (
+    <LaptopFrame>
+      <div className="flex h-full bg-slate-50 text-[7px]">
+        <aside className="w-[18%] bg-white border-r border-slate-200 p-2">
+          <div className="h-3 w-8 rounded bg-slate-200 mb-2" />
+          <div className="space-y-1">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div key={i} className={`h-2 rounded ${i === 2 ? 'bg-emerald-100' : 'bg-slate-100'}`} />
+            ))}
+          </div>
+        </aside>
+        <div className="flex-1 p-3">
+          <div className="flex justify-between items-center mb-3">
+            <span className="text-[8px] font-bold">Inventory Management</span>
+            <span className="rounded-full bg-rose-100 px-2 py-0.5 text-rose-700 text-[6px] font-bold">2 Alerts</span>
+          </div>
+          <div className="grid grid-cols-3 gap-2 mb-3">
+             {["Anesthetics", "Restorative", "PPE"].map(c => (
+               <div key={c} className="bg-white rounded p-1.5 shadow-sm border border-slate-100">
+                 <p className="text-slate-400 text-[5px] uppercase font-bold">{c}</p>
+                 <p className="text-[7px] font-bold mt-1">12 items</p>
+               </div>
+             ))}
+          </div>
+          <div className="bg-white rounded shadow-sm overflow-hidden">
+            <table className="w-full">
+              <thead className="bg-slate-100 text-slate-500">
+                <tr>
+                  <th className="p-1 text-left">Item Name</th>
+                  <th className="p-1">Stock</th>
+                  <th className="p-1">Status</th>
+                </tr>
+              </thead>
+              <tbody className="text-slate-700">
+                {[
+                  { n: "Lidocaine 2%", s: "4", st: "Critical", cls: "text-rose-600" },
+                  { n: "Composite A2", s: "18", st: "OK", cls: "text-emerald-600" },
+                  { n: "Sterile Gloves", s: "2", st: "Low", cls: "text-amber-600" },
+                ].map(r => (
+                  <tr key={r.n} className="border-t border-slate-50">
+                    <td className="p-1">{r.n}</td>
+                    <td className="p-1 text-center">{r.s}</td>
+                    <td className={`p-1 text-center font-bold ${r.cls}`}>{r.st}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
@@ -303,17 +364,75 @@ function PhoneBilling(): JSX.Element {
   );
 }
 
-export function PhonesStack(): JSX.Element {
+export function PhoneReports(): JSX.Element {
   return (
-    <div className="flex items-end gap-3">
-      <div className="-mr-6 -mb-4 scale-90 opacity-90">
-        <PhoneBooking />
+    <PhoneFrame>
+      <div className="flex h-full flex-col bg-white p-3 text-[7px]">
+        <p className="text-[8px] font-black uppercase text-slate-400">Weekly Reports</p>
+        <div className="mt-4 flex-1">
+          <div className="flex items-end gap-1.5 h-20">
+            {[30, 45, 25, 60, 80, 55, 40].map((h, i) => (
+              <div key={i} className="flex-1 bg-emerald-500/20 rounded-t-sm relative group">
+                <div className="absolute bottom-0 w-full bg-emerald-500 rounded-t-sm" style={{ height: `${h}%` }} />
+              </div>
+            ))}
+          </div>
+          <div className="flex justify-between mt-2 text-[5px] text-slate-400 font-bold">
+            <span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span>
+          </div>
+        </div>
+        <div className="mt-4 space-y-2">
+          <div className="rounded-xl bg-slate-50 p-2 flex justify-between items-center">
+            <span className="font-bold">Total Revenue</span>
+            <span className="text-emerald-600 font-black">₱42.5k</span>
+          </div>
+          <div className="rounded-xl bg-slate-50 p-2 flex justify-between items-center">
+            <span className="font-bold">New Patients</span>
+            <span className="text-sky-600 font-black">+18</span>
+          </div>
+        </div>
       </div>
-      <div className="relative z-10">
-        <PhoneChart />
+    </PhoneFrame>
+  );
+}
+
+export function PhonesStack({ variant = 0 }: { variant?: number }): JSX.Element {
+  const label = (
+    <p className="mb-3 text-center text-[9px] font-bold uppercase tracking-widest text-slate-400">
+      Illustrative UI � not live patient data
+    </p>
+  );
+  if (variant === 1) {
+    return (
+      <div>
+        {label}
+        <div className="flex items-end gap-3">
+          <div className="-mr-6 -mb-4 scale-90 opacity-90">
+            <PhoneBilling />
+          </div>
+          <div className="relative z-10">
+            <PhoneReports />
+          </div>
+          <div className="-ml-6 -mb-4 scale-90 opacity-90">
+            <PhoneChart />
+          </div>
+        </div>
       </div>
-      <div className="-ml-6 -mb-4 scale-90 opacity-90">
-        <PhoneBilling />
+    );
+  }
+  return (
+    <div>
+      {label}
+      <div className="flex items-end gap-3">
+        <div className="-mr-6 -mb-4 scale-90 opacity-90">
+          <PhoneBooking />
+        </div>
+        <div className="relative z-10">
+          <PhoneChart />
+        </div>
+        <div className="-ml-6 -mb-4 scale-90 opacity-90">
+          <PhoneBilling />
+        </div>
       </div>
     </div>
   );

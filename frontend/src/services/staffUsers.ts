@@ -1,6 +1,5 @@
+import api from "./api";
 import type { UserRole } from "../types/user";
-
-import { apiFetch } from "./api";
 
 export interface StaffUserDto {
   id: string;
@@ -19,7 +18,7 @@ interface ApiOk<T> {
 }
 
 export async function fetchStaffUsers(): Promise<StaffUserDto[]> {
-  const res = await apiFetch<ApiOk<StaffUserDto[]>>("/staff/users");
+  const res = await api.get<ApiOk<StaffUserDto[]>>("/staff/users") as any;
   return res.data;
 }
 
@@ -31,10 +30,7 @@ export async function createStaffUser(input: {
   phone?: string | null;
   role: UserRole;
 }): Promise<StaffUserDto> {
-  const res = await apiFetch<ApiOk<StaffUserDto>>("/staff/users", {
-    method: "POST",
-    body: JSON.stringify(input),
-  });
+  const res = await api.post<ApiOk<StaffUserDto>>("/staff/users", input) as any;
   return res.data;
 }
 
@@ -42,9 +38,6 @@ export async function patchStaffUser(
   id: string,
   input: { role?: UserRole; isActive?: boolean },
 ): Promise<StaffUserDto> {
-  const res = await apiFetch<ApiOk<StaffUserDto>>(`/staff/users/${id}`, {
-    method: "PATCH",
-    body: JSON.stringify(input),
-  });
+  const res = await api.patch<ApiOk<StaffUserDto>>(`/staff/users/${id}`, input) as any;
   return res.data;
 }

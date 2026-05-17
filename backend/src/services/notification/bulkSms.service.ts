@@ -20,7 +20,7 @@ export async function sendBulkSms(options: BulkSmsOptions): Promise<{ total: num
     where.id = { in: patientIds };
   } else {
     // Default to active patients with phone numbers
-    where.phone = { not: null, not: "" };
+    where.phone = { not: "" };
   }
 
   const patients = await prisma.patient.findMany({

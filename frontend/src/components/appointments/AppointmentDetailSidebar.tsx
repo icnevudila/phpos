@@ -28,35 +28,22 @@ function formatManila(iso: string): string {
   }).format(d);
 }
 
-const STATUS_ACTIONS: { from: AppointmentStatus[]; to: AppointmentStatus; label: string; cls: string }[] = [
-  {
-    from: ["PENDING"],
-    to: "CONFIRMED",
-    label: "Confirm",
-    cls: "bg-sky-600 hover:bg-sky-700 text-white",
-  },
-  {
-    from: ["CONFIRMED", "PENDING"],
-    to: "CHECKED_IN",
-    label: "Check-in",
-    cls: "bg-indigo-600 hover:bg-indigo-700 text-white",
-  },
-  {
-    from: ["CHECKED_IN"],
-    to: "IN_PROGRESS",
-    label: "Start treatment",
-    cls: "bg-fuchsia-600 hover:bg-fuchsia-700 text-white",
-  },
+const SB = "pages.appointments.sidebar";
+
+const STATUS_ACTIONS: { from: AppointmentStatus[]; to: AppointmentStatus; labelKey: string; cls: string }[] = [
+  { from: ["PENDING"], to: "CONFIRMED", labelKey: `${SB}.actionConfirm`, cls: "bg-sky-600 hover:bg-sky-700 text-white" },
+  { from: ["CONFIRMED", "PENDING"], to: "CHECKED_IN", labelKey: `${SB}.actionCheckIn`, cls: "bg-indigo-600 hover:bg-indigo-700 text-white" },
+  { from: ["CHECKED_IN"], to: "IN_PROGRESS", labelKey: `${SB}.actionStartTreatment`, cls: "bg-fuchsia-600 hover:bg-fuchsia-700 text-white" },
   {
     from: ["CONFIRMED", "PENDING", "CHECKED_IN", "IN_PROGRESS"],
     to: "COMPLETED",
-    label: "Mark completed",
+    labelKey: `${SB}.actionMarkCompleted`,
     cls: "bg-emerald-600 hover:bg-emerald-700 text-white",
   },
   {
     from: ["PENDING", "CONFIRMED"],
     to: "NO_SHOW",
-    label: "Mark no-show",
+    labelKey: `${SB}.actionMarkNoShow`,
     cls: "bg-rose-600 hover:bg-rose-700 text-white",
   },
 ];
@@ -91,7 +78,7 @@ export function AppointmentDetailSidebar({
       onChanged(updated);
       setTreatRefreshKey((v) => v + 1);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to update status");
+      setError(err instanceof Error ? err.message : t(`${SB}.statusFailed`));
     } finally {
       setBusy(null);
     }
@@ -105,7 +92,7 @@ export function AppointmentDetailSidebar({
       await deleteAppointmentApi(appointment.id);
       onDeleted(appointment.id);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to delete");
+      setError(err instanceof Error ? err.message : t(`${SB}.deleteFailed`));
     } finally {
       setBusy(null);
     }
@@ -129,7 +116,7 @@ export function AppointmentDetailSidebar({
   return (
     <aside className="flex h-full w-[360px] flex-col border-l border-slate-200 bg-white">
       <div className="flex items-center justify-between border-b border-slate-200 px-5 py-4">
-        <h3 className="text-sm font-bold text-slate-900">Appointment</h3>
+        <h3 className="text-sm font-bold text-slate-900">{t(`${SB}.title`)}</h3>
         <button
           onClick={onClose}
           className="rounded-full p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-700"
@@ -151,27 +138,30 @@ export function AppointmentDetailSidebar({
         </div>
 
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Patient</p>
+          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">{t(`${SB}.patient`)}</p>
           <p className="mt-1 text-base font-bold text-slate-900">{appointment.patient.fullName}</p>
           <p className="text-xs text-slate-500">{appointment.patient.phone}</p>
         </div>
 
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Dentist</p>
+          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">{t(`${SB}.dentist`)}</p>
           <p className="mt-1 text-sm font-semibold text-slate-800">Dr. {appointment.dentist.fullName}</p>
         </div>
 
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">When</p>
+          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">{t(`${SB}.when`)}</p>
           <p className="mt-1 text-sm text-slate-800">{formatManila(appointment.scheduledAt)}</p>
           <p className="text-xs text-slate-500">
-            {appointment.duration} min · ends {formatManila(appointment.endsAt)}
+            {t(`${SB}.durationLine`, {
+              duration: appointment.duration,
+              ends: formatManila(appointment.endsAt),
+            })}
           </p>
         </div>
 
         {appointment.type ? (
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Type</p>
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">{t(`${SB}.type`)}</p>
             <p className="mt-1 text-sm text-slate-800">
               {appointment.type.replace(/_/g, " ")}
             </p>
@@ -187,7 +177,7 @@ export function AppointmentDetailSidebar({
 
         {appointment.notes ? (
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Notes</p>
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">{t(`${SB}.notes`)}</p>
             <p className="mt-1 whitespace-pre-wrap text-sm text-slate-700">{appointment.notes}</p>
           </div>
         ) : null}
@@ -200,7 +190,7 @@ export function AppointmentDetailSidebar({
 
         {!isLocked ? (
           <div className="space-y-2 border-t border-slate-100 pt-4">
-            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Change status</p>
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">{t(`${SB}.changeStatus`)}</p>
             <div className="flex flex-wrap gap-2">
               {STATUS_ACTIONS.filter((a) => a.from.includes(appointment.status)).map((a) => (
                 <button
@@ -210,20 +200,20 @@ export function AppointmentDetailSidebar({
                   onClick={() => changeStatus(a.to)}
                   className={`rounded-lg px-3 py-1.5 text-xs font-semibold shadow-sm ${a.cls} disabled:opacity-60`}
                 >
-                  {a.label}
+                  {t(a.labelKey)}
                 </button>
               ))}
             </div>
 
             <div className="pt-2">
               <label className="mb-1 block text-xs font-semibold uppercase tracking-wider text-slate-500">
-                Cancellation reason
+                {t(`${SB}.cancellationReason`)}
               </label>
               <input
                 type="text"
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
-                placeholder="Optional"
+                placeholder={t(`${SB}.optional`)}
                 className="w-full rounded-lg border border-slate-300 px-2 py-1.5 text-sm focus:border-rose-400 focus:outline-none focus:ring-2 focus:ring-rose-100"
               />
               <button
@@ -245,7 +235,7 @@ export function AppointmentDetailSidebar({
               checked={autoFinalize}
               onChange={(e) => toggleAutoFinalize(e.target.checked)}
             />
-            Auto-finalize when marked completed
+            {t(`${SB}.autoFinalize`)}
           </label>
         </div>
 
@@ -264,7 +254,7 @@ export function AppointmentDetailSidebar({
             onClick={() => onEdit(appointment)}
             className="flex-1 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50"
           >
-            Edit
+            {t(`${SB}.edit`)}
           </button>
           <button
             type="button"
@@ -279,7 +269,7 @@ export function AppointmentDetailSidebar({
             onClick={removeAppointment}
             className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-500 hover:border-rose-300 hover:bg-rose-50 hover:text-rose-700 disabled:opacity-50"
           >
-            Delete
+            {t(`${SB}.delete`)}
           </button>
         </div>
       </div>

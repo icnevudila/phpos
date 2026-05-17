@@ -1,10 +1,15 @@
 import jwt, { type SignOptions } from "jsonwebtoken";
 
-import type { AccessTokenPayload, RefreshTokenPayload } from "../types/auth.js";
+import type {
+  AccessTokenPayload,
+  PasswordResetTokenPayload,
+  RefreshTokenPayload,
+} from "../types/auth.js";
 import { assertEnv } from "./env.js";
 
 const ACCESS_EXPIRES = process.env.JWT_ACCESS_EXPIRES ?? "15m";
 const REFRESH_EXPIRES = process.env.JWT_REFRESH_EXPIRES ?? "7d";
+const PASSWORD_RESET_EXPIRES = process.env.JWT_PASSWORD_RESET_EXPIRES ?? "1h";
 
 function signOptions(expiresIn: string): SignOptions {
   return { expiresIn: expiresIn as SignOptions["expiresIn"] };
@@ -46,4 +51,25 @@ export function verifyRefreshToken(token: string): RefreshTokenPayload {
     throw new Error("Invalid refresh token");
   }
   return p as RefreshTokenPayload;
+}
+
+function passwordResetSecret(): string {
+  return process.env.JWT_PASSWORD_RESET_SECRET ?? assertEnv("JWT_ACCESS_SECRET");
+}
+
+export function signPasswordResetToken(userId: string): string {
+  const full: PasswordResetTokenPayload = { sub: userId, typ: "password_reset" };
+  return jwt.sign(full, passwordResetSecret(), signOptions(PASSWORD_RESET_EXPIRES));
+}
+
+export function verifyPasswordResetToken(token: string): PasswordResetTokenPayload {
+  const decoded = jwt.verify(token, passwordResetSecret());
+  if (typeof decoded !== "object" || decoded === null) {
+    throw new Error("Invalid token payload");
+  }
+  const p = decoded as Partial<PasswordResetTokenPayload>;
+  if (p.typ !== "password_reset" || !p.sub) {
+    throw new Error("Invalid password reset token");
+  }
+  return p as PasswordResetTokenPayload;
 }

@@ -1,9 +1,19 @@
-import { useState, useRef, useCallback } from 'react';
-import { Eraser, Pencil, Ruler, Zap, RotateCcw } from 'lucide-react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
+import { Pencil, Ruler, Zap, RotateCcw, Save } from 'lucide-react';
+
+export interface ImageAdjustments {
+  brightness: number;
+  contrast: number;
+  invert: number;
+}
 
 export interface XrayAnnotationToolsProps {
   imageElement: HTMLImageElement | null;
   onAnnotationsChange?: (annotations: Annotation[]) => void;
+  initialAnnotations?: Annotation[];
+  initialAdjustments?: ImageAdjustments;
+  onSave?: (payload: { annotations: Annotation[]; adjustments: ImageAdjustments }) => void;
+  saving?: boolean;
   className?: string;
 }
 
@@ -36,31 +46,27 @@ export type AngleAnnotation = {
 
 export type Annotation = BrushAnnotation | RulerAnnotation | AngleAnnotation;
 
-interface ImageAdjustments {
-  brightness: number;
-  contrast: number;
-  invert: number;
-}
-
 export default function XrayAnnotationTools({
   imageElement,
   onAnnotationsChange,
+  initialAnnotations = [],
+  initialAdjustments,
+  onSave,
+  saving = false,
   className = '',
 }: XrayAnnotationToolsProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [mode, setMode] = useState<'brush' | 'ruler' | 'angle' | 'view'>('view');
   const [brushColor, setBrushColor] = useState('#ff0000');
   const [brushWidth, setBrushWidth] = useState(2);
-  const [annotations, setAnnotations] = useState<Annotation[]>([]);
+  const [annotations, setAnnotations] = useState<Annotation[]>(initialAnnotations);
   const [isDrawing, setIsDrawing] = useState(false);
   const [currentPoints, setCurrentPoints] = useState<Point[]>([]);
   const [rulerStart, setRulerStart] = useState<Point | null>(null);
   const [anglePoints, setAnglePoints] = useState<Point[]>([]);
-  const [adjustments, setAdjustments] = useState<ImageAdjustments>({
-    brightness: 100,
-    contrast: 100,
-    invert: 0,
-  });
+  const [adjustments, setAdjustments] = useState<ImageAdjustments>(
+    initialAdjustments ?? { brightness: 100, contrast: 100, invert: 0 },
+  );
 
   const redrawCanvas = useCallback(() => {
     if (!canvasRef.current || !imageElement) return;
@@ -256,13 +262,27 @@ export default function XrayAnnotationTools({
     <div className={`space-y-3 rounded-lg bg-white p-4 shadow-sm ${className}`}>
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-semibold text-slate-900">X-Ray Annotation & Analysis</h3>
-        <button
-          onClick={handleUndo}
-          disabled={annotations.length === 0}
-          className="text-xs px-2 py-1 rounded bg-slate-100 hover:bg-slate-200 disabled:opacity-50"
-        >
-          Undo
-        </button>
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={handleUndo}
+            disabled={annotations.length === 0}
+            className="text-xs px-2 py-1 rounded bg-slate-100 hover:bg-slate-200 disabled:opacity-50"
+          >
+            Undo
+          </button>
+          {onSave ? (
+            <button
+              type="button"
+              disabled={saving || !imageElement}
+              onClick={() => onSave({ annotations, adjustments })}
+              className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded bg-sky-600 text-white hover:bg-sky-700 disabled:opacity-50"
+            >
+              <Save size={12} />
+              {saving ? 'Saving…' : 'Save'}
+            </button>
+          ) : null}
+        </div>
       </div>
 
       {/* Tool buttons */}

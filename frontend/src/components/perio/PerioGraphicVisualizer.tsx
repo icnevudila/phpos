@@ -1,5 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { PerioSiteDto, PerioToothDto } from '../../services/perio';
+
+const CH = 'pages.patientDetail.perio.chart';
 
 export type PerioPainPointId =
   | 'left-temple'
@@ -51,23 +54,13 @@ type PerioToothVisual = PerioToothDto & {
 
 type ArchName = 'upper' | 'lower';
 
-const ARCH_LABELS: Record<ArchName, string> = {
-  upper: 'Upper arch',
-  lower: 'Lower arch',
-};
-
-const PAIN_POINTS: Array<{
-  id: PerioPainPointId;
-  label: string;
-  x: number;
-  y: number;
-}> = [
-  { id: 'left-temple', label: 'Left temple', x: 66, y: 68 },
-  { id: 'right-temple', label: 'Right temple', x: 174, y: 68 },
-  { id: 'left-tmj', label: 'Left TMJ', x: 62, y: 144 },
-  { id: 'right-tmj', label: 'Right TMJ', x: 178, y: 144 },
-  { id: 'left-masseter', label: 'Left masseter', x: 78, y: 160 },
-  { id: 'right-masseter', label: 'Right masseter', x: 162, y: 160 },
+const PAIN_POINT_COORDS: Array<{ id: PerioPainPointId; x: number; y: number }> = [
+  { id: 'left-temple', x: 66, y: 68 },
+  { id: 'right-temple', x: 174, y: 68 },
+  { id: 'left-tmj', x: 62, y: 144 },
+  { id: 'right-tmj', x: 178, y: 144 },
+  { id: 'left-masseter', x: 78, y: 160 },
+  { id: 'right-masseter', x: 162, y: 160 },
 ];
 
 function clamp(value: number, min: number, max: number): number {
@@ -167,8 +160,7 @@ function getArchName(tooth: PerioToothVisual, index: number, total: number): Arc
     tooth.arch ??
       tooth.jaw ??
       tooth.quadrant ??
-      (tooth.maxillary === true ? 'upper' : tooth.mandibular === true ? 'lower' : '') ??
-      '',
+      (tooth.maxillary === true ? 'upper' : tooth.mandibular === true ? 'lower' : ''),
   )
     .trim()
     .toLowerCase();
@@ -269,7 +261,7 @@ function ToothGlyph({
   selected: boolean;
   onClick?: () => void;
 }): JSX.Element {
-
+  const { t } = useTranslation();
   const sites = getSiteList(tooth);
   const totalScore = sites.length
     ? sites.reduce((sum, site) => sum + getSiteSeverity(site), 0) / sites.length
@@ -277,7 +269,7 @@ function ToothGlyph({
   const pocketDepth = sites.length ? Math.max(...sites.map(getSitePocketDepth)) : 0;
   const recession = sites.length ? Math.max(...sites.map(getSiteRecession)) : 0;
   const fillHeight = 16 + clamp((pocketDepth + recession) * 2.1, 0, 26);
-  const apicalDirection = arch === 'upper' ? 1 : -1;
+  // apicalDirection removed
   const gumOffset = 4;
   const clipId = `tooth-clip-${toothKey}`;
   const toothId = toothKey;
@@ -295,7 +287,12 @@ function ToothGlyph({
   });
 
   return (
-    <g transform={`translate(${x}, ${y})`} onClick={onClick} className={onClick ? 'cursor-pointer' : undefined}>
+    <g
+      data-testid={`perio-glyph-${toothKey}`}
+      transform={`translate(${x}, ${y})`}
+      onClick={onClick}
+      className={onClick ? 'cursor-pointer' : undefined}
+    >
       <defs>
         <clipPath id={clipId}>
           <path d="M -16 8 C -17 -3 -12 -28 0 -32 C 12 -28 17 -3 16 8 L 12 30 C 11 39 -11 39 -12 30 Z" />
@@ -360,10 +357,10 @@ function ToothGlyph({
 
           <title>
             {label}
-            {hasBleeding(site) ? ' · bleeding' : ''}
-            {hasPlaque(site) ? ' · plaque' : ''}
-            {getSitePocketDepth(site) > 0 ? ` · PD ${getSitePocketDepth(site)}` : ''}
-            {getSiteRecession(site) > 0 ? ` · REC ${getSiteRecession(site)}` : ''}
+            {hasBleeding(site) ? ` · ${t(`${CH}.hintBleeding`)}` : ''}
+            {hasPlaque(site) ? ` · ${t(`${CH}.hintPlaque`)}` : ''}
+            {getSitePocketDepth(site) > 0 ? ` · ${t(`${CH}.hintPd`, { n: getSitePocketDepth(site) })}` : ''}
+            {getSiteRecession(site) > 0 ? ` · ${t(`${CH}.hintRec`, { n: getSiteRecession(site) })}` : ''}
           </title>
         </g>
       ))}
@@ -430,7 +427,17 @@ export function PerioGraphicVisualizer({
   onToothClick,
   onPainPointClick,
 }: PerioGraphicVisualizerProps): JSX.Element {
+  const { t } = useTranslation();
   const [internalPainPointId, setInternalPainPointId] = useState<PerioPainPointId | null>(selectedPainPointId ?? null);
+
+  const painPoints = useMemo(
+    () =>
+      PAIN_POINT_COORDS.map((point) => ({
+        ...point,
+        label: t(`${CH}.pain.${point.id}`),
+      })),
+    [t],
+  );
 
   useEffect(() => {
     if (selectedPainPointId !== undefined) {
@@ -468,29 +475,54 @@ export function PerioGraphicVisualizer({
   const usableWidth = width - leftPadding - rightPadding;
   const spacing = totalColumns > 1 ? usableWidth / (totalColumns - 1) : usableWidth / 2;
 
-  const selectedPainPoint = internalPainPointId ? PAIN_POINTS.find((point) => point.id === internalPainPointId) ?? null : null;
+  const selectedPainPoint = internalPainPointId ? painPoints.find((point) => point.id === internalPainPointId) ?? null : null;
 
   return (
     <div className={`grid gap-4 xl:grid-cols-[minmax(0,1fr)_280px] ${className}`.trim()}>
       <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
         <div className="mb-3 flex items-start justify-between gap-4">
           <div>
-            <h3 className="text-sm font-semibold text-slate-900">Periodontal overview</h3>
-            <p className="mt-1 text-xs text-slate-500">
-              Red fill = recession / pocket burden, red dots = bleeding on probing, amber markers = plaque.
-            </p>
+            <h3 className="text-sm font-semibold text-slate-900">{t(`${CH}.overviewTitle`)}</h3>
+            <p className="mt-1 text-xs text-slate-500">{t(`${CH}.overviewSubtitle`)}</p>
           </div>
 
           <div className="flex flex-wrap items-center gap-2 text-[11px] text-slate-500">
             <span className="inline-flex items-center gap-1 rounded-full bg-slate-50 px-2 py-1">
               <span className="h-2 w-2 rounded-full bg-red-500" />
-              BOP
+              {t(`${CH}.legendBop`)}
             </span>
             <span className="inline-flex items-center gap-1 rounded-full bg-slate-50 px-2 py-1">
               <span className="h-2 w-2 rounded-sm bg-amber-500" />
-              Plaque
+              {t(`${CH}.legendPlaque`)}
             </span>
           </div>
+        </div>
+
+        <div className="mb-6 grid grid-cols-2 md:grid-cols-4 gap-4">
+           <div className="p-4 rounded-2xl bg-rose-50 border border-rose-100">
+              <p className="text-[10px] font-black uppercase tracking-widest text-rose-500 mb-1">{t(`${CH}.statBleedingSites`)}</p>
+              <p className="text-2xl font-black text-rose-700 tracking-tighter">
+                 {normalizedTeeth.reduce((acc, t) => acc + getSiteList(t).filter(hasBleeding).length, 0)}
+              </p>
+           </div>
+           <div className="p-4 rounded-2xl bg-amber-50 border border-amber-100">
+              <p className="text-[10px] font-black uppercase tracking-widest text-amber-500 mb-1">{t(`${CH}.statPlaqueCount`)}</p>
+              <p className="text-2xl font-black text-amber-700 tracking-tighter">
+                 {normalizedTeeth.reduce((acc, t) => acc + getSiteList(t).filter(hasPlaque).length, 0)}
+              </p>
+           </div>
+           <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-100">
+              <p className="text-[10px] font-black uppercase tracking-widest text-emerald-500 mb-1">Deep Pockets ({">"}4mm)</p>
+              <p className="text-2xl font-black text-emerald-700 tracking-tighter">
+                 {normalizedTeeth.reduce((acc, t) => acc + getSiteList(t).filter(s => getSitePocketDepth(s) > 4).length, 0)}
+              </p>
+           </div>
+           <div className="p-4 rounded-2xl bg-sky-50 border border-sky-100">
+              <p className="text-[10px] font-black uppercase tracking-widest text-sky-500 mb-1">{t(`${CH}.statRecessionAreas`)}</p>
+              <p className="text-2xl font-black text-sky-700 tracking-tighter">
+                 {normalizedTeeth.reduce((acc, t) => acc + getSiteList(t).filter(s => getSiteRecession(s) > 0).length, 0)}
+              </p>
+           </div>
         </div>
 
         <svg viewBox={`0 0 ${width} ${height}`} className="h-auto w-full">
@@ -517,10 +549,10 @@ export function PerioGraphicVisualizer({
           />
 
           <text x="24" y="112" className="fill-slate-500" style={{ fontSize: '11px', fontWeight: 600 }}>
-            {ARCH_LABELS.upper}
+            {t(`${CH}.archUpper`)}
           </text>
           <text x="24" y="316" className="fill-slate-500" style={{ fontSize: '11px', fontWeight: 600 }}>
-            {ARCH_LABELS.lower}
+            {t(`${CH}.archLower`)}
           </text>
 
           {grouped.upper.map(({ tooth }, displayIndex) => {
@@ -575,15 +607,15 @@ export function PerioGraphicVisualizer({
 
         {normalizedTeeth.length === 0 ? (
           <div className="mt-3 rounded-xl border border-dashed border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-500">
-            No periodontal measurements available yet.
+            {t(`${CH}.noMeasurements`)}
           </div>
         ) : null}
       </section>
 
       <aside className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
         <div className="mb-3">
-          <h3 className="text-sm font-semibold text-slate-900">TMJ / face anatomy</h3>
-          <p className="mt-1 text-xs text-slate-500">Click a pain point to mark tenderness or pain during the exam.</p>
+          <h3 className="text-sm font-semibold text-slate-900">{t(`${CH}.tmjTitle`)}</h3>
+          <p className="mt-1 text-xs text-slate-500">{t(`${CH}.tmjHint`)}</p>
         </div>
 
         <svg viewBox="0 0 240 220" className="h-60 w-full">
@@ -637,7 +669,7 @@ export function PerioGraphicVisualizer({
             strokeLinecap="round"
           />
 
-          {PAIN_POINTS.map((point) => (
+          {painPoints.map((point) => (
             <PainPointButton
               key={point.id}
               id={point.id}
@@ -658,11 +690,11 @@ export function PerioGraphicVisualizer({
 
         <div className="mt-2 rounded-xl bg-slate-50 px-3 py-2 text-xs text-slate-600">
           {selectedPainPoint ? (
-            <>
-              Selected point: <span className="font-medium text-slate-900">{selectedPainPoint.label}</span>
-            </>
+            <span>
+              {t(`${CH}.selectedPainPoint`, { label: selectedPainPoint.label })}
+            </span>
           ) : (
-            'No pain point selected.'
+            t(`${CH}.noPainPoint`)
           )}
         </div>
       </aside>

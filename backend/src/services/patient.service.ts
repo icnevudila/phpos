@@ -3,7 +3,7 @@ import { Prisma } from "@prisma/client";
 import { prisma } from "../lib/prisma.js";
 import { AppError } from "../utils/errors.js";
 import type { CreatePatientInput, ListPatientsQuery, UpdatePatientInput } from "../validation/patient.schemas.js";
-import { readLocalPatientFileBuffer, uploadPatientFile } from "./patientFileStorage.js";
+import { readStoredFileBuffer, uploadPatientFile } from "./patientFileStorage.js";
 
 function medicalJson(text: string | undefined): Prisma.InputJsonValue | undefined {
   if (text === undefined) return undefined;
@@ -68,6 +68,7 @@ export async function listPatients(clinicId: string, query: ListPatientsQuery) {
       phone: p.phone,
       birthDate: p.birthDate,
       philhealthNo: p.philhealthNo,
+      philhealthType: p.philhealthType,
       lastVisitAt: lastVisit,
       createdAt: p.createdAt,
       hmoMemberships: p.hmoMemberships.map((m) => ({
@@ -190,6 +191,7 @@ function buildPatientData(input: Partial<CreatePatientInput>): Prisma.PatientUnc
   assign("pulseRate", input.pulseRate);
   assign("bloodType", input.bloodType);
   assign("philhealthNo", input.philhealthNo);
+  assign("philhealthType", input.philhealthType as any);
   assign("isSeniorCitizen", input.isSeniorCitizen);
   assign("oscaIdNo", input.oscaIdNo);
   assign("pwdIdNo", input.pwdIdNo);
@@ -286,15 +288,7 @@ export async function getPatientFileDownload(
   if (!row) {
     throw new AppError("File not found", 404, "FILE_NOT_FOUND");
   }
-  const driver = (process.env.STORAGE_DRIVER ?? "local") as string;
-  if (driver !== "local") {
-    throw new AppError(
-      "Download for this storage driver is not implemented yet; use cloud console or add GetObject",
-      501,
-      "STORAGE_DOWNLOAD_NOT_IMPLEMENTED",
-    );
-  }
-  const buffer = await readLocalPatientFileBuffer(row.storageKey);
+  const buffer = await readStoredFileBuffer(row.storageKey);
   return { buffer, fileName: row.fileName, mimeType: row.mimeType };
 }
 
@@ -310,6 +304,7 @@ export async function listPatientFiles(clinicId: string, patientId: string) {
       sizeBytes: true,
       publicUrl: true,
       createdAt: true,
+      annotations: true,
     },
   });
 }

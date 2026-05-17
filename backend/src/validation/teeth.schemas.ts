@@ -13,3 +13,19 @@ export const upsertToothBodySchema = z.object({
 export type UpsertToothBody = z.infer<typeof upsertToothBodySchema>;
 
 export const toothNumberParamSchema = z.coerce.number().int().min(1).max(32);
+
+export const batchUpsertTeethBodySchema = z.object({
+  updates: z
+    .array(
+      z.object({
+        toothNumber: toothNumberParamSchema,
+        condition: z.nativeEnum(ToothCondition),
+        surfaces: z.array(toothSurfaceEnum).default([]),
+        notes: z.string().max(2000).optional(),
+      }),
+    )
+    .min(1)
+    .max(32),
+});
+
+export type BatchUpsertTeethBody = z.infer<typeof batchUpsertTeethBodySchema>;

@@ -1,7 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { HMO_CLAIM_STATUS_I18N_KEY } from "../../constants/hmoClaimStatusLabels";
 import {
@@ -23,36 +24,32 @@ const PHP = new Intl.NumberFormat("en-PH", {
 
 export function PatientHmoPanel({ patientId }: { patientId: string }): JSX.Element {
   const { t } = useTranslation();
-  const [providers, setProviders] = useState<HmoProvider[]>([]);
-  const [memberships, setMemberships] = useState<PatientHmoMembership[]>([]);
-  const [claims, setClaims] = useState<HmoClaim[]>([]);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
   const [providerId, setProviderId] = useState("");
   const [memberNumber, setMemberNumber] = useState("");
   const [isPrimary, setIsPrimary] = useState(true);
 
-  async function loadAll(): Promise<void> {
-    setLoading(true);
-    try {
-      const [p, m, c] = await Promise.all([
-        fetchHmoProviders(),
-        fetchPatientHmoMemberships(patientId),
-        fetchHmoClaims({ patientId, limit: 50 }),
-      ]);
-      setProviders(p.filter((x) => x.isActive));
-      setMemberships(m);
-      setClaims(c);
-    } catch (e) {
-      toast.error((e as Error).message);
-    } finally {
-      setLoading(false);
-    }
-  }
+  const { data: providers = [] } = useQuery({
+    queryKey: ["hmoProviders"],
+    queryFn: async () => {
+      const all = await fetchHmoProviders();
+      return all.filter((x) => x.isActive);
+    },
+  });
 
-  useEffect(() => {
-    void loadAll();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [patientId]);
+  const { data: memberships = [], isLoading: membershipsLoading } = useQuery({
+    queryKey: ["patientHmoMemberships", patientId],
+    queryFn: () => fetchPatientHmoMemberships(patientId),
+    enabled: !!patientId,
+  });
+
+  const { data: claims = [], isLoading: claimsLoading } = useQuery({
+    queryKey: ["patientHmoClaims", patientId],
+    queryFn: () => fetchHmoClaims({ patientId, limit: 50 }),
+    enabled: !!patientId,
+  });
+
+  const loading = membershipsLoading || claimsLoading;
 
   const pendingClaims = useMemo(
     () => claims.filter((c) => c.status === "DRAFT" || c.status === "SUBMITTED"),
@@ -71,7 +68,7 @@ export function PatientHmoPanel({ patientId }: { patientId: string }): JSX.Eleme
         isPrimary,
       });
       setMemberNumber("");
-      await loadAll();
+      await queryClient.invalidateQueries({ queryKey: ["patientHmoMemberships", patientId] });
       toast.success(t("pages.patientDetail.hmo.toastMembershipAdded"));
     } catch (e) {
       toast.error((e as Error).message);

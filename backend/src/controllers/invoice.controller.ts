@@ -13,6 +13,7 @@ import {
 } from "../services/invoice.service.js";
 import { generateInvoicePdf } from "../services/invoicePdf.js";
 import { generatePhilhealthWorksheetPdf } from "../services/philhealthWorksheetPdf.js";
+import { generateBir2307Pdf } from "../services/bir2307Pdf.js";
 import type { ApiSuccess } from "../types/auth.js";
 import { AppError } from "../utils/errors.js";
 import { assertPaymongoWebhookRequest } from "../utils/paymongoWebhook.js";
@@ -117,4 +118,12 @@ export async function simulatePaymongoPaidHandler(req: Request, res: Response): 
   await handlePaymongoWebhook({ simulate: true, invoiceId: id });
   const item = await getInvoice(clinicId(req), id);
   res.json({ success: true, data: item });
+}
+
+export async function bir2307PdfHandler(req: Request, res: Response): Promise<void> {
+  const id = z.string().min(1).parse(req.params.id);
+  const buffer = await generateBir2307Pdf(clinicId(req), id);
+  res.setHeader("Content-Type", "application/pdf");
+  res.setHeader("Content-Disposition", `inline; filename="bir-2307-${id}.pdf"`);
+  res.end(buffer);
 }

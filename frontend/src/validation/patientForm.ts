@@ -57,6 +57,7 @@ export const patientFormSchema = z
     allergies: z.array(z.string().min(1)).default([]),
     medicalHistory: z.string().optional(),
     philhealthNo: z.string().optional(),
+    philhealthType: z.enum(["FORMAL", "INFORMAL", "INDIGENT", "SPONSORED", "LIFETIME", "SENIOR_CITIZEN"]).optional().or(z.literal("")),
     isSeniorCitizen: z.boolean(),
     oscaIdNo: z.string().optional(),
     pwdIdNo: z.string().optional(),

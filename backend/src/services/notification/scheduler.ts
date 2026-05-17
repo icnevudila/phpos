@@ -4,6 +4,7 @@ import cron, { type ScheduledTask } from "node-cron";
 import { prisma } from "../../lib/prisma.js";
 
 import * as T from "./smsTemplates.js";
+import { runDailyEodEmailNow } from "./eodEmailJob.js";
 import { sendSMS } from "./smsService.js";
 
 const tz = "Asia/Manila";
@@ -126,35 +127,57 @@ export async function runSoonReminderNow(now: Date = new Date()): Promise<{
 const tasks: ScheduledTask[] = [];
 
 export function startNotificationScheduler(): void {
-  if (process.env.DISABLE_SMS_CRON === "1") {
+  const smsDisabled = process.env.DISABLE_SMS_CRON === "1";
+  const eodDisabled = process.env.DISABLE_EOD_EMAIL_CRON === "1";
+
+  if (smsDisabled) {
     console.info("[cron] SMS scheduler disabled via DISABLE_SMS_CRON");
+  }
+  if (eodDisabled) {
+    console.info("[cron] EOD email scheduler disabled via DISABLE_EOD_EMAIL_CRON");
+  }
+  if (smsDisabled && eodDisabled) {
     return;
   }
 
-  // 09:00 Asia/Manila — yarınki tüm randevulara hatırlatma
-  const daily = cron.schedule(
-    "0 9 * * *",
-    () => {
-      void runDailyReminderNow()
-        .then((r) => console.info("[cron] daily reminder", r))
-        .catch((e: unknown) => console.error("[cron] daily reminder error", e));
-    },
-    { timezone: tz },
-  );
+  if (!smsDisabled) {
+    const daily = cron.schedule(
+      "0 9 * * *",
+      () => {
+        void runDailyReminderNow()
+          .then((r) => console.info("[cron] daily reminder", r))
+          .catch((e: unknown) => console.error("[cron] daily reminder error", e));
+      },
+      { timezone: tz },
+    );
 
-  // 14:00 Asia/Manila — yaklaşık 2 saat sonrası için hatırlatma
-  const soon = cron.schedule(
-    "0 14 * * *",
-    () => {
-      void runSoonReminderNow()
-        .then((r) => console.info("[cron] soon reminder", r))
-        .catch((e: unknown) => console.error("[cron] soon reminder error", e));
-    },
-    { timezone: tz },
-  );
+    const soon = cron.schedule(
+      "0 14 * * *",
+      () => {
+        void runSoonReminderNow()
+          .then((r) => console.info("[cron] soon reminder", r))
+          .catch((e: unknown) => console.error("[cron] soon reminder error", e));
+      },
+      { timezone: tz },
+    );
 
-  tasks.push(daily, soon);
-  console.info("[cron] SMS scheduler started (09:00 + 14:00 Asia/Manila)");
+    tasks.push(daily, soon);
+    console.info("[cron] SMS scheduler started (09:00 + 14:00 Asia/Manila)");
+  }
+
+  if (!eodDisabled) {
+    const eod = cron.schedule(
+      "0 20 * * *",
+      () => {
+        void runDailyEodEmailNow()
+          .then((r) => console.info("[cron] EOD Z-report email", r))
+          .catch((e: unknown) => console.error("[cron] EOD email error", e));
+      },
+      { timezone: tz },
+    );
+    tasks.push(eod);
+    console.info("[cron] EOD email scheduler started (20:00 Asia/Manila)");
+  }
 }
 
 export function stopNotificationScheduler(): void {

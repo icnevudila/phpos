@@ -14,6 +14,7 @@ export { NotificationsPage } from "./NotificationsPage";
 export { PatientDetailPage } from "./PatientDetailPage";
 export { PatientList } from "./PatientList";
 export { PrivacyPage } from "./PrivacyPage";
+export { RegisterPage } from "./RegisterPage";
 export { ReportsPage } from "./ReportsPage";
 export { SettingsPage } from "./SettingsPage";
 export { TermsPage } from "./TermsPage";

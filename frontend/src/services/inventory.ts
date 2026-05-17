@@ -1,5 +1,4 @@
-import { apiFetch } from "./api";
-
+import api from "./api";
 import type { InventoryAlerts, InventoryCategory, InventoryDto } from "../types/inventory";
 
 interface ApiEnvelope<T> {
@@ -14,17 +13,12 @@ export interface ListInventoryParams {
 }
 
 export async function fetchInventory(params: ListInventoryParams = {}): Promise<InventoryDto[]> {
-  const qs = new URLSearchParams();
-  if (params.category) qs.set("category", params.category);
-  if (params.lowStock) qs.set("lowStock", "true");
-  if (params.q) qs.set("q", params.q);
-  const suffix = qs.toString() ? `?${qs.toString()}` : "";
-  const res = await apiFetch<ApiEnvelope<InventoryDto[]>>(`/inventory${suffix}`);
+  const res = await api.get<ApiEnvelope<InventoryDto[]>>("/inventory", { params }) as any;
   return res.data;
 }
 
 export async function fetchInventoryAlerts(): Promise<InventoryAlerts> {
-  const res = await apiFetch<ApiEnvelope<InventoryAlerts>>(`/inventory/alerts`);
+  const res = await api.get<ApiEnvelope<InventoryAlerts>>(`/inventory/alerts`) as any;
   return res.data;
 }
 
@@ -40,10 +34,7 @@ export interface InventoryUpsertBody {
 }
 
 export async function createInventoryItem(body: InventoryUpsertBody): Promise<InventoryDto> {
-  const res = await apiFetch<ApiEnvelope<InventoryDto>>(`/inventory`, {
-    method: "POST",
-    body: JSON.stringify(body),
-  });
+  const res = await api.post<ApiEnvelope<InventoryDto>>(`/inventory`, body) as any;
   return res.data;
 }
 
@@ -51,15 +42,12 @@ export async function updateInventoryItem(
   id: string,
   body: Partial<InventoryUpsertBody>,
 ): Promise<InventoryDto> {
-  const res = await apiFetch<ApiEnvelope<InventoryDto>>(`/inventory/${id}`, {
-    method: "PUT",
-    body: JSON.stringify(body),
-  });
+  const res = await api.put<ApiEnvelope<InventoryDto>>(`/inventory/${id}`, body) as any;
   return res.data;
 }
 
 export async function deleteInventoryItem(id: string): Promise<void> {
-  await apiFetch<ApiEnvelope<{ id: string }>>(`/inventory/${id}`, { method: "DELETE" });
+  await api.delete(`/inventory/${id}`);
 }
 
 export async function adjustInventoryItem(
@@ -67,9 +55,6 @@ export async function adjustInventoryItem(
   change: number,
   reason: string,
 ): Promise<InventoryDto> {
-  const res = await apiFetch<ApiEnvelope<InventoryDto>>(`/inventory/${id}/adjust`, {
-    method: "POST",
-    body: JSON.stringify({ change, reason }),
-  });
+  const res = await api.post<ApiEnvelope<InventoryDto>>(`/inventory/${id}/adjust`, { change, reason }) as any;
   return res.data;
 }

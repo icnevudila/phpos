@@ -1,5 +1,8 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { PerioGraphicVisualizer, type PerioPainPointId } from './PerioGraphicVisualizer';
+
+const CH = 'pages.patientDetail.perio.chart';
 import type { PerioSiteDto, PerioToothDto } from '../../services/perio';
 
 export interface PeriodontalChartProps {
@@ -143,8 +146,7 @@ function getArchName(tooth: PerioToothVisual, index: number, total: number): 'up
     tooth.arch ??
       tooth.jaw ??
       tooth.quadrant ??
-      (tooth.maxillary === true ? 'upper' : tooth.mandibular === true ? 'lower' : '') ??
-      '',
+      (tooth.maxillary === true ? 'upper' : tooth.mandibular === true ? 'lower' : ''),
   )
     .trim()
     .toLowerCase();
@@ -224,12 +226,19 @@ function toothMatchesSelection(
 }
 
 export function PeriodontalChart(props: PeriodontalChartProps): JSX.Element {
+  const { t } = useTranslation();
   const teeth = resolveTeeth(props);
   const className = typeof props.className === 'string' ? props.className : '';
   const selectedToothId = props.selectedToothId as string | number | null | undefined;
   const selectedPainPointId = props.selectedPainPointId as PerioPainPointId | null | undefined;
   const onToothClick = props.onToothClick as ((tooth: PerioToothDto) => void) | undefined;
   const onPainPointClick = props.onPainPointClick as ((painPointId: PerioPainPointId) => void) | undefined;
+  const rowRefs = useRef<Map<string, HTMLTableRowElement>>(new Map());
+
+  useEffect(() => {
+    if (selectedToothId === undefined || selectedToothId === null) return;
+    rowRefs.current.get(String(selectedToothId))?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }, [selectedToothId]);
 
   const sortedTeeth = useMemo(() => {
     const visualTeeth = teeth.filter(Boolean) as PerioToothVisual[];
@@ -278,20 +287,18 @@ export function PeriodontalChart(props: PeriodontalChartProps): JSX.Element {
         <div className="border-b border-slate-200 px-4 py-3 sm:px-5">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div>
-              <h3 className="text-sm font-semibold text-slate-900">Periodontal grid</h3>
-              <p className="mt-1 text-xs text-slate-500">
-                Site-level measurements, bleeding, and plaque markers for each tooth.
-              </p>
+              <h3 className="text-sm font-semibold text-slate-900">{t(`${CH}.gridTitle`)}</h3>
+              <p className="mt-1 text-xs text-slate-500">{t(`${CH}.gridSubtitle`)}</p>
             </div>
 
             <div className="flex flex-wrap items-center gap-2 text-[11px] text-slate-500">
               <span className="inline-flex items-center gap-1 rounded-full bg-slate-50 px-2 py-1">
                 <span className="h-2 w-2 rounded-full bg-red-500" />
-                Bleeding
+                {t(`${CH}.legendBleeding`)}
               </span>
               <span className="inline-flex items-center gap-1 rounded-full bg-slate-50 px-2 py-1">
                 <span className="h-2 w-2 rounded-sm bg-amber-500" />
-                Plaque
+                {t(`${CH}.legendPlaque`)}
               </span>
             </div>
           </div>
@@ -303,7 +310,7 @@ export function PeriodontalChart(props: PeriodontalChartProps): JSX.Element {
               <thead className="bg-slate-50">
                 <tr>
                   <th className="sticky left-0 z-10 border-b border-r border-slate-200 bg-slate-50 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-                    Tooth
+                    {t(`${CH}.colTooth`)}
                   </th>
                   {SITE_ORDER.map((siteLabel) => (
                     <th
@@ -314,7 +321,7 @@ export function PeriodontalChart(props: PeriodontalChartProps): JSX.Element {
                     </th>
                   ))}
                   <th className="border-b border-l border-slate-200 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-                    Summary
+                    {t(`${CH}.colSummary`)}
                   </th>
                 </tr>
               </thead>
@@ -334,7 +341,13 @@ export function PeriodontalChart(props: PeriodontalChartProps): JSX.Element {
                   return (
                     <tr
                       key={toothKey}
-                      className={selected ? 'bg-sky-50/60' : 'odd:bg-white even:bg-slate-50/60'}
+                      ref={(el) => {
+                        const rowKey = String(toothNumber);
+                        if (el) rowRefs.current.set(rowKey, el);
+                        else rowRefs.current.delete(rowKey);
+                      }}
+                      data-testid={`perio-chart-row-${toothNumber}`}
+                      className={`cursor-pointer ${selected ? 'bg-sky-50/60 ring-1 ring-inset ring-sky-300' : 'odd:bg-white even:bg-slate-50/60'}`}
                       onClick={(): void => onToothClick?.(tooth)}
                     >
                       <td className="sticky left-0 z-10 border-b border-r border-slate-200 bg-inherit px-4 py-3 align-top">
@@ -349,11 +362,11 @@ export function PeriodontalChart(props: PeriodontalChartProps): JSX.Element {
 
                           <div className="min-w-0">
                             <div className="text-sm font-medium text-slate-900">
-                              Tooth {toothNumber}
+                              {t(`${CH}.toothLabel`, { n: toothNumber })}
                             </div>
                             <div className="mt-1 flex items-center gap-2 text-[11px] text-slate-500">
                               <span className="rounded-full bg-slate-100 px-2 py-0.5 uppercase tracking-wide">{arch}</span>
-                              {selected ? <span className="text-sky-600">selected</span> : null}
+                              {selected ? <span className="text-sky-600">{t(`${CH}.selectedBadge`)}</span> : null}
                             </div>
                           </div>
                         </div>
@@ -367,7 +380,7 @@ export function PeriodontalChart(props: PeriodontalChartProps): JSX.Element {
                                 {label}
                               </div>
                               <div className="text-sm font-semibold text-slate-900">{getSitePocketDepth(site)}</div>
-                              <div className="text-[10px] text-slate-500">REC {getSiteRecession(site)}</div>
+                              <div className="text-[10px] text-slate-500">{t(`${CH}.recValue`, { n: getSiteRecession(site) })}</div>
                               <div className="flex items-center gap-1 text-[10px]">
                                 {hasBleeding(site) ? (
                                   <span className="inline-flex items-center gap-1 rounded-full bg-red-50 px-1.5 py-0.5 text-red-600">
@@ -395,16 +408,16 @@ export function PeriodontalChart(props: PeriodontalChartProps): JSX.Element {
                       <td className="border-b border-l border-slate-200 px-4 py-3 align-top text-sm text-slate-600">
                         <div className="flex flex-wrap gap-2">
                           <span className="rounded-full bg-slate-100 px-2 py-1 text-[11px] font-medium text-slate-600">
-                            PD {maxPocket}
+                            {t(`${CH}.pdValue`, { n: maxPocket })}
                           </span>
                           <span className="rounded-full bg-slate-100 px-2 py-1 text-[11px] font-medium text-slate-600">
-                            REC {maxRecession}
+                            {t(`${CH}.recSummary`, { n: maxRecession })}
                           </span>
                           <span className="rounded-full bg-red-50 px-2 py-1 text-[11px] font-medium text-red-600">
-                            BOP {bleedingCount}
+                            {t(`${CH}.bopSummary`, { n: bleedingCount })}
                           </span>
                           <span className="rounded-full bg-amber-50 px-2 py-1 text-[11px] font-medium text-amber-700">
-                            PLAQUE {plaqueCount}
+                            {t(`${CH}.plaqueSummary`, { n: plaqueCount })}
                           </span>
                         </div>
                       </td>
@@ -416,7 +429,7 @@ export function PeriodontalChart(props: PeriodontalChartProps): JSX.Element {
           </div>
         ) : (
           <div className="px-4 py-8 text-sm text-slate-500 sm:px-5">
-            No teeth found for this periodontal chart.
+            {t(`${CH}.emptyChart`)}
           </div>
         )}
       </section>

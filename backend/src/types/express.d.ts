@@ -12,6 +12,7 @@ declare global {
       user?: AuthUserPayload;
       /** express.json verify ile doldurulur (PayMongo webhook imzası vb.) */
       rawBody?: Buffer;
+      requestId?: string;
     }
   }
 }

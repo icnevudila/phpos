@@ -3,6 +3,7 @@ import { z } from "zod";
 
 import { prisma } from "../lib/prisma.js";
 import { sendSMS } from "../services/notification/smsService.js";
+import { runDailyEodEmailNow } from "../services/notification/eodEmailJob.js";
 import {
   runDailyReminderNow,
   runSoonReminderNow,
@@ -94,6 +95,12 @@ export async function triggerDailyReminderHandler(req: Request, res: Response): 
 export async function triggerSoonReminderHandler(req: Request, res: Response): Promise<void> {
   void clinicId(req);
   const summary = await runSoonReminderNow();
+  res.json({ success: true, data: summary });
+}
+
+export async function triggerEodEmailHandler(req: Request, res: Response): Promise<void> {
+  void clinicId(req);
+  const summary = await runDailyEodEmailNow();
   res.json({ success: true, data: summary });
 }
 

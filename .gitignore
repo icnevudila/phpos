@@ -18,6 +18,10 @@ build/
 .env.test.local
 .env.production.local
 
+# Playwright
+frontend/test-results/
+frontend/playwright-report/
+
 # Logs
 npm-debug.log*
 yarn-debug.log*

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type DragEvent } from "react";
+import { useTranslation } from "react-i18next";
 
 type Primitive = string | number | boolean | null | undefined;
 type DateLike = Date | Primitive;
@@ -177,7 +178,7 @@ function createLocalNoonDate(year: number, month: number, day: number): Date {
 }
 
 function coerceDate(value: DateLike): Date | null {
-  if (value === null || value === undefined || value === "") {
+  if (value === null || value === undefined || value === "" || typeof value === "boolean") {
     return null;
   }
 
@@ -257,10 +258,6 @@ function formatDateRange(formatter: Intl.DateTimeFormat, start: Date, end: Date)
   const startLabel = formatter.format(start);
   const endLabel = formatter.format(end);
   return diffDays(end, start) === 0 ? startLabel : `${startLabel} – ${endLabel}`;
-}
-
-function formatDuration(days: number): string {
-  return days === 1 ? "1 day" : `${days} days`;
 }
 
 function buildRoadmapSeed(
@@ -492,6 +489,17 @@ export default function TreatmentRoadmapTimeline({
   dateFormatter,
   className,
 }: TreatmentRoadmapTimelineProps) {
+  const { t } = useTranslation();
+  const TRM = "pages.patientDetail.treatmentRoadmap";
+  const formatDuration = (days: number) => t(`${TRM}.days`, { count: days });
+  const formatStatusLabel = (status: string) => {
+    const normalized = normalizeStatus(status).replace(/-/g, "_");
+    const camel = normalized
+      .split("_")
+      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+      .join("");
+    return t(`${TRM}.status${camel}`, { defaultValue: status });
+  };
   const seed = useMemo(() => buildRoadmapSeed(appointments, treatments), [appointments, treatments]);
   const [phases, setPhases] = useState<TimelinePhase[]>(seed);
   const [dragState, setDragState] = useState<DragSelection | null>(null);
@@ -622,13 +630,13 @@ export default function TreatmentRoadmapTimeline({
     return (
       <section className={`rounded-2xl border border-slate-200 bg-white shadow-sm ${className ?? ""}`}>
         <div className="border-b border-slate-100 px-4 py-4">
-          <p className="text-sm font-semibold text-slate-900">Treatment roadmap</p>
+          <p className="text-sm font-semibold text-slate-900">{t(`${TRM}.title`)}</p>
           <p className="mt-1 text-xs text-slate-500">
-            No appointments or treatments are available to visualize yet.
+            {t(`${TRM}.emptySubtitle`)}
           </p>
         </div>
         <div className="px-4 py-8 text-sm text-slate-500">
-          Add dates to treatments or appointments to see the roadmap.
+          {t(`${TRM}.emptyBody`)}
         </div>
       </section>
     );
@@ -638,24 +646,24 @@ export default function TreatmentRoadmapTimeline({
     <section className={`rounded-2xl border border-slate-200 bg-white shadow-sm ${className ?? ""}`}>
       <div className="flex flex-wrap items-start justify-between gap-3 border-b border-slate-100 px-4 py-4">
         <div>
-          <p className="text-sm font-semibold text-slate-900">Treatment roadmap</p>
+          <p className="text-sm font-semibold text-slate-900">{t(`${TRM}.title`)}</p>
           <p className="mt-1 text-xs leading-5 text-slate-500">
-            Drag a phase or visit card to locally shift it in time. Idle and healing gaps appear between phases.
+            {t(`${TRM}.subtitle`)}
           </p>
         </div>
 
         <div className="flex flex-wrap gap-2 text-[11px] text-slate-600">
           <span className="rounded-full bg-slate-100 px-2.5 py-1 font-medium">
-            {displayPhases.length} phase{displayPhases.length === 1 ? "" : "s"}
+            {t(`${TRM}.phaseCount`, { count: displayPhases.length })}
           </span>
           <span className="rounded-full bg-slate-100 px-2.5 py-1 font-medium">
-            {metrics.visitCount} visit{metrics.visitCount === 1 ? "" : "s"}
+            {t(`${TRM}.visitCount`, { count: metrics.visitCount })}
           </span>
           <span className="rounded-full bg-slate-100 px-2.5 py-1 font-medium">
             {formatDuration(metrics.totalSpanDays)}
           </span>
           <span className="rounded-full bg-slate-100 px-2.5 py-1 font-medium">
-            {metrics.totalGapDays} healing day{metrics.totalGapDays === 1 ? "" : "s"}
+            {t(`${TRM}.healingDays`, { count: metrics.totalGapDays })}
           </span>
         </div>
       </div>
@@ -671,13 +679,13 @@ export default function TreatmentRoadmapTimeline({
         <div className="min-w-max px-4 py-4">
           <div className="mb-3 flex min-w-max items-center gap-2 text-[11px] text-slate-400">
             <span className="rounded-full border border-slate-200 bg-slate-50 px-2 py-1 font-medium text-slate-500">
-              Starts {formatter.format(metrics.start)}
+              {t(`${TRM}.starts`, { date: formatter.format(metrics.start) })}
             </span>
             <span className="rounded-full border border-slate-200 bg-slate-50 px-2 py-1 font-medium text-slate-500">
-              Ends {formatter.format(metrics.end)}
+              {t(`${TRM}.ends`, { date: formatter.format(metrics.end) })}
             </span>
             <span className="rounded-full border border-sky-200 bg-sky-50 px-2 py-1 font-medium text-sky-700">
-              Drag and drop to test local sequencing
+              {t(`${TRM}.dragTestHint`)}
             </span>
           </div>
 
@@ -700,9 +708,9 @@ export default function TreatmentRoadmapTimeline({
                         style={{ width: Math.max(gapDays * DAY_WIDTH_PX, 72) }}
                       >
                         <div>
-                          <div className="uppercase tracking-[0.16em] text-emerald-600">Idle / healing</div>
+                          <div className="uppercase tracking-[0.16em] text-emerald-600">{t(`${TRM}.idleHealing`)}</div>
                           <div className="mt-1 text-sm font-semibold">
-                            +{gapDays} day{gapDays === 1 ? "" : "s"}
+                            +{t(`${TRM}.days`, { count: gapDays })}
                           </div>
                         </div>
                       </div>
@@ -717,7 +725,9 @@ export default function TreatmentRoadmapTimeline({
                   >
                     <div className="mb-3 flex items-start justify-between gap-3">
                       <div className="min-w-0">
-                        <p className="truncate text-sm font-semibold">{phase.title}</p>
+                        <p className="truncate text-sm font-semibold">
+                          {phase.id === "unassigned-visits" ? t(`${TRM}.unassignedVisits`) : phase.title}
+                        </p>
                         <p className="mt-1 text-[11px] uppercase tracking-[0.16em] opacity-75">
                           {formatDateRange(formatter, phase.displayStart, phase.displayEnd)}
                         </p>
@@ -729,10 +739,10 @@ export default function TreatmentRoadmapTimeline({
                         onDragStart={handleDragStart({ kind: "phase", phaseId: phase.id })}
                         onDragEnd={handleDragEnd}
                         className="flex flex-shrink-0 cursor-grab select-none items-center gap-2 rounded-full border border-current/15 px-2.5 py-1 text-[11px] font-medium active:cursor-grabbing"
-                        title="Drag to shift this phase in time"
+                        title={t(`${TRM}.dragPhaseTitle`)}
                       >
                         <span aria-hidden="true">↔</span>
-                        <span>Drag phase</span>
+                        <span>{t(`${TRM}.dragPhase`)}</span>
                       </button>
                     </div>
 
@@ -744,7 +754,7 @@ export default function TreatmentRoadmapTimeline({
                             : "border-white/60 bg-white/90 text-slate-700"
                         }`}
                       >
-                        {phase.visits.length} visit{phase.visits.length === 1 ? "" : "s"}
+                        {t(`${TRM}.phaseVisits`, { count: phase.visits.length })}
                       </span>
                       <span
                         className={`rounded-full border px-2.5 py-1 font-medium ${
@@ -797,7 +807,7 @@ export default function TreatmentRoadmapTimeline({
                                   ? "border-slate-200 bg-white text-slate-700"
                                   : "border-white/60 bg-white/90 text-slate-700"
                               } active:cursor-grabbing`}
-                              title="Drag to locally shift this visit"
+                              title={t(`${TRM}.dragVisitTitle`)}
                             >
                               <span className="inline-flex h-2 w-2 flex-shrink-0 rounded-full bg-current/70" />
                               <span className="truncate font-medium">{visit.title}</span>
@@ -807,7 +817,7 @@ export default function TreatmentRoadmapTimeline({
                         })
                       ) : (
                         <div className="rounded-xl border border-dashed border-current/15 bg-white/50 px-3 py-4 text-sm text-slate-600">
-                          No linked visits yet.
+                          {t(`${TRM}.noLinkedVisits`)}
                         </div>
                       )}
                     </div>
@@ -829,14 +839,14 @@ export default function TreatmentRoadmapTimeline({
                         className="rounded-full border border-current/15 px-2.5 py-1 text-[11px] font-medium text-current/80 transition hover:bg-white/70"
                         onClick={() => shiftPhase(phase.id, -1)}
                       >
-                        ← 1 day
+                        {t(`${TRM}.shiftBackDay`)}
                       </button>
                       <button
                         type="button"
                         className="rounded-full border border-current/15 px-2.5 py-1 text-[11px] font-medium text-current/80 transition hover:bg-white/70"
                         onClick={() => shiftPhase(phase.id, 1)}
                       >
-                        1 day →
+                        {t(`${TRM}.shiftForwardDay`)}
                       </button>
                     </div>
                   </div>

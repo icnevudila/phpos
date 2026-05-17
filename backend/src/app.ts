@@ -5,9 +5,12 @@ import helmet from "helmet";
 import morgan from "morgan";
 import { ZodError } from "zod";
 
+import { pruneDashboardCache } from "./lib/dashboardCache.js";
+import { requestIdMiddleware } from "./middleware/requestId.js";
 import { apiRouter } from "./routes/index.js";
 import { registerNotificationListeners } from "./services/notification/listeners.js";
 import { startNotificationScheduler } from "./services/notification/scheduler.js";
+import { setupSwagger } from "./utils/swagger.js";
 import { AppError } from "./utils/errors.js";
 
 let listenersRegistered = false;
@@ -23,16 +26,26 @@ export function createApp(): Express {
   if (!schedulerStarted && process.env.NODE_ENV !== "test") {
     startNotificationScheduler();
     schedulerStarted = true;
+    setInterval(pruneDashboardCache, 5 * 60 * 1000).unref?.();
   }
 
+  if (process.env.NODE_ENV === "production" && !process.env.PAYMONGO_WEBHOOK_SECRET?.trim()) {
+    console.error(
+      "[boot] PAYMONGO_WEBHOOK_SECRET is missing — PayMongo webhooks will return 503 in production",
+    );
+  }
+
+  setupSwagger(app);
+
+  app.use(requestIdMiddleware);
   app.use(helmet());
   const corsOrigins = (process.env.CORS_ORIGIN ?? "")
     .split(",")
     .map((s) => s.trim())
     .filter(Boolean);
   if (process.env.NODE_ENV === "production" && corsOrigins.length === 0) {
-    console.warn(
-      "[cors] CORS_ORIGIN is empty in production — browsers will not receive Access-Control-Allow-Origin for staff/portal SPA. Set comma-separated origins (e.g. https://app.example.com).",
+    throw new Error(
+      "CORS_ORIGIN must be set in production (comma-separated staff/portal SPA origins).",
     );
   }
   const allowAllDev =
@@ -80,20 +93,23 @@ export function createApp(): Express {
     res.json({ success: true, data: { status: "ok", service: "dentease-api" } });
   });
 
-  app.use((_req, res) => {
+  app.use((req, res) => {
     res.status(404).json({
       success: false,
       error: "Not Found",
       code: "NOT_FOUND",
+      requestId: req.requestId,
     });
   });
 
-  app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
+  app.use((err: unknown, req: Request, res: Response, _next: NextFunction) => {
+    const requestId = req.requestId;
     if (err instanceof AppError) {
       res.status(err.statusCode).json({
         success: false,
         error: err.message,
         code: err.code,
+        requestId,
       });
       return;
     }
@@ -102,14 +118,16 @@ export function createApp(): Express {
         success: false,
         error: "Validation failed",
         code: "VALIDATION_ERROR",
+        requestId,
       });
       return;
     }
-    console.error(err);
+    console.error(requestId ? `[${requestId}]` : "", err);
     res.status(500).json({
       success: false,
       error: "Internal Server Error",
       code: "INTERNAL_ERROR",
+      requestId,
     });
   });
 

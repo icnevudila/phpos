@@ -1,4 +1,4 @@
-import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { GetObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { randomUUID } from "node:crypto";
 import { mkdir, readFile, unlink, writeFile } from "node:fs/promises";
@@ -146,8 +146,51 @@ export async function uploadHmoClaimAttachment(params: {
   };
 }
 
+function getStorageDriver(): StorageDriver {
+  return (process.env.STORAGE_DRIVER ?? "local") as StorageDriver;
+}
+
+function getSupabaseClient(): { supabase: SupabaseClient; bucket: string } {
+  const url = process.env.SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const bucket = process.env.SUPABASE_STORAGE_BUCKET;
+  if (!url || !key || !bucket) {
+    throw new Error("SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, SUPABASE_STORAGE_BUCKET required");
+  }
+  return { supabase: createClient(url, key), bucket };
+}
+
+/** JWT ile indirme — local, S3 veya Supabase. */
+export async function readStoredFileBuffer(storageKey: string): Promise<Buffer> {
+  const driver = getStorageDriver();
+
+  if (driver === "s3") {
+    const bucket = process.env.S3_BUCKET;
+    const region = process.env.AWS_REGION;
+    if (!bucket || !region) {
+      throw new Error("S3_BUCKET and AWS_REGION are required for STORAGE_DRIVER=s3");
+    }
+    const client = new S3Client({ region });
+    const out = await client.send(new GetObjectCommand({ Bucket: bucket, Key: storageKey }));
+    const body = out.Body;
+    if (!body) throw new Error("Empty S3 object body");
+    return Buffer.from(await body.transformToByteArray());
+  }
+
+  if (driver === "supabase") {
+    const { supabase, bucket } = getSupabaseClient();
+    const { data, error } = await supabase.storage.from(bucket).download(storageKey);
+    if (error || !data) {
+      throw new Error(`Supabase download failed: ${error?.message ?? "no data"}`);
+    }
+    return Buffer.from(await data.arrayBuffer());
+  }
+
+  return readLocalPatientFileBuffer(storageKey);
+}
+
 /**
- * Yerel depolanan hasta dosyasını okur. S3/Supabase için ayrı implementasyon gerekir.
+ * Yerel depolanan hasta dosyasını okur.
  */
 export async function readLocalPatientFileBuffer(storageKey: string): Promise<Buffer> {
   const root = process.env.LOCAL_UPLOAD_DIR ?? path.join(process.cwd(), "uploads", "patient-files");

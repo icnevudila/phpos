@@ -4,7 +4,14 @@ import { randomUUID } from "node:crypto";
 import { prisma } from "../lib/prisma.js";
 import type { AuthTokensResponse, PublicUser } from "../types/auth.js";
 import { AppError } from "../utils/errors.js";
-import { signAccessToken, signRefreshToken, verifyRefreshToken } from "../utils/jwt.js";
+import {
+  signAccessToken,
+  signPasswordResetToken,
+  signRefreshToken,
+  verifyPasswordResetToken,
+  verifyRefreshToken,
+} from "../utils/jwt.js";
+import { sendEmail } from "./notification/emailService.js";
 import { hashPassword, verifyPassword } from "../utils/password.js";
 import { isLoginLocked, recordLoginFailure, resetLoginFailures } from "./loginLockout.js";
 
@@ -198,5 +205,58 @@ export async function logout(userId: string): Promise<void> {
   await prisma.user.update({
     where: { id: userId },
     data: { refreshSessionId: null },
+  });
+}
+
+/** E-posta yoksa veya kullanıcı pasifse sessizce döner (enumeration önleme). */
+export async function requestPasswordReset(email: string): Promise<void> {
+  const normalized = email.trim().toLowerCase();
+  const user = await prisma.user.findUnique({
+    where: { email: normalized },
+    select: { id: true, email: true, firstName: true, clinicId: true, isActive: true },
+  });
+  if (!user?.isActive) {
+    return;
+  }
+
+  const token = signPasswordResetToken(user.id);
+  const base = (process.env.APP_PUBLIC_URL ?? "http://localhost:5173").replace(/\/$/, "");
+  const resetUrl = `${base}/reset-password?token=${encodeURIComponent(token)}`;
+  const subject = "Reset your DentEase password";
+  const html = `
+    <p>Hi ${user.firstName},</p>
+    <p>We received a request to reset your staff account password.</p>
+    <p><a href="${resetUrl}">Reset password</a> (link expires in 1 hour)</p>
+    <p>If you did not request this, you can ignore this email.</p>
+  `;
+
+  await sendEmail({
+    clinicId: user.clinicId,
+    userId: user.id,
+    kind: "GENERIC",
+    to: user.email,
+    subject,
+    html,
+    messageDedupeKey: `password_reset:${user.id}:${new Date().toISOString().slice(0, 13)}`,
+  });
+}
+
+export async function resetPasswordWithToken(token: string, password: string): Promise<void> {
+  let userId: string;
+  try {
+    userId = verifyPasswordResetToken(token).sub;
+  } catch {
+    throw new AppError("Invalid or expired reset link", 400, "RESET_TOKEN_INVALID");
+  }
+
+  const user = await prisma.user.findUnique({ where: { id: userId }, select: { id: true, isActive: true } });
+  if (!user?.isActive) {
+    throw new AppError("Invalid or expired reset link", 400, "RESET_TOKEN_INVALID");
+  }
+
+  const passwordHash = await hashPassword(password);
+  await prisma.user.update({
+    where: { id: userId },
+    data: { passwordHash, refreshSessionId: null },
   });
 }

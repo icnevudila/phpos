@@ -1,4 +1,4 @@
-import { apiFetch } from "./api";
+import api from "./api";
 
 export interface ClinicDto {
   id: string;
@@ -18,7 +18,7 @@ interface ApiOk<T> {
 }
 
 export async function fetchClinic(): Promise<ClinicDto> {
-  const res = await apiFetch<ApiOk<ClinicDto>>("/clinic");
+  const res = await api.get<ApiOk<ClinicDto>>("/clinic") as any;
   return res.data;
 }
 
@@ -29,9 +29,6 @@ export async function patchClinic(input: {
   phone?: string | null;
   logoUrl?: string | null;
 }): Promise<ClinicDto> {
-  const res = await apiFetch<ApiOk<ClinicDto>>("/clinic", {
-    method: "PATCH",
-    body: JSON.stringify(input),
-  });
+  const res = await api.patch<ApiOk<ClinicDto>>("/clinic", input) as any;
   return res.data;
 }

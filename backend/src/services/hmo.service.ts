@@ -3,7 +3,7 @@ import { HmoClaimStatus, Prisma } from "@prisma/client";
 import { prisma } from "../lib/prisma.js";
 import {
   deleteLocalStorageFile,
-  readLocalPatientFileBuffer,
+  readStoredFileBuffer,
   uploadHmoClaimAttachment,
 } from "./patientFileStorage.js";
 import { AppError } from "../utils/errors.js";
@@ -775,14 +775,6 @@ export async function getHmoClaimAttachmentDownload(
     select: { storageKey: true, fileName: true, mimeType: true },
   });
   if (!att) throw new AppError("Attachment not found", 404, "ATTACHMENT_NOT_FOUND");
-  const driver = (process.env.STORAGE_DRIVER ?? "local") as string;
-  if (driver !== "local") {
-    throw new AppError(
-      "Download for this storage driver is not implemented yet; use cloud console or add GetObject",
-      501,
-      "STORAGE_DOWNLOAD_NOT_IMPLEMENTED",
-    );
-  }
-  const buffer = await readLocalPatientFileBuffer(att.storageKey);
+  const buffer = await readStoredFileBuffer(att.storageKey);
   return { buffer, fileName: att.fileName, mimeType: att.mimeType };
 }

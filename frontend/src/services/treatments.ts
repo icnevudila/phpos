@@ -1,6 +1,5 @@
+import api from "./api";
 import type { InvoiceDto } from "../types/invoice";
-
-import { apiFetch } from "./api";
 
 interface ApiEnvelope<T> {
   success: true;
@@ -26,6 +25,7 @@ export interface CreateTreatmentPayload {
   quantity: number;
   unitPrice: number;
   toothIds: string[];
+  phase?: string | null;
   notes?: string;
 }
 
@@ -38,9 +38,9 @@ export interface UpdateTreatmentPayload {
 }
 
 export async function fetchAppointmentTreatments(appointmentId: string): Promise<TreatmentRow[]> {
-  const res = await apiFetch<ApiEnvelope<TreatmentRow[]>>(
+  const res = await api.get<ApiEnvelope<TreatmentRow[]>>(
     `/appointments/${appointmentId}/treatments`,
-  );
+  ) as any;
   return res.data;
 }
 
@@ -48,13 +48,10 @@ export async function createAppointmentTreatment(
   appointmentId: string,
   body: CreateTreatmentPayload,
 ): Promise<TreatmentRow> {
-  const res = await apiFetch<ApiEnvelope<TreatmentRow>>(
+  const res = await api.post<ApiEnvelope<TreatmentRow>>(
     `/appointments/${appointmentId}/treatments`,
-    {
-      method: "POST",
-      body: JSON.stringify(body),
-    },
-  );
+    body
+  ) as any;
   return res.data;
 }
 
@@ -62,37 +59,29 @@ export async function updateTreatment(
   treatmentId: string,
   body: UpdateTreatmentPayload,
 ): Promise<TreatmentRow> {
-  const res = await apiFetch<ApiEnvelope<TreatmentRow>>(`/treatments/${treatmentId}`, {
-    method: "PUT",
-    body: JSON.stringify(body),
-  });
+  const res = await api.put<ApiEnvelope<TreatmentRow>>(`/treatments/${treatmentId}`, body) as any;
   return res.data;
 }
 
 export async function deleteTreatment(treatmentId: string): Promise<void> {
-  await apiFetch<ApiEnvelope<{ ok: true }>>(`/treatments/${treatmentId}`, {
-    method: "DELETE",
-  });
+  await api.delete(`/treatments/${treatmentId}`);
 }
 
 export async function finalizeAppointmentTreatments(
   appointmentId: string,
 ): Promise<InvoiceDto> {
-  const res = await apiFetch<ApiEnvelope<InvoiceDto>>(
+  const res = await api.post<ApiEnvelope<InvoiceDto>>(
     `/appointments/${appointmentId}/treatments/finalize`,
-    {
-      method: "POST",
-      body: "{}",
-    },
-  );
+    {}
+  ) as any;
   return res.data;
 }
 
 export async function fetchAppointmentInvoiceMeta(
   appointmentId: string,
 ): Promise<{ id: string; status: string; orNumber: string | null } | null> {
-  const res = await apiFetch<
+  const res = await api.get<
     ApiEnvelope<{ id: string; status: string; orNumber: string | null } | null>
-  >(`/appointments/${appointmentId}/invoice`);
+  >(`/appointments/${appointmentId}/invoice`) as any;
   return res.data;
 }

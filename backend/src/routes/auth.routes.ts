@@ -2,13 +2,15 @@ import { Router } from "express";
 import rateLimit from "express-rate-limit";
 
 import {
+  forgotPasswordHandler,
+  resetPasswordHandler,
   loginHandler,
   logoutHandler,
   meHandler,
   refreshHandler,
   registerHandler,
 } from "../controllers/auth.controller.js";
-import { authenticate } from "../middleware/supabaseAuthMiddleware.js";
+import { authenticate } from "../middleware/authMiddleware.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 
 export const authRouter = Router();
@@ -25,7 +27,18 @@ const authStrictLimiter = rateLimit({
   message: { success: false, error: "Too many attempts", code: "RATE_LIMIT" },
 });
 
+const forgotPasswordLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: Number(process.env.AUTH_FORGOT_RATE_LIMIT_MAX ?? 5),
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, error: "Too many reset requests", code: "RATE_LIMIT" },
+});
+
 authRouter.post("/register", authStrictLimiter, asyncHandler(registerHandler));
+authRouter.post("/forgot-password", forgotPasswordLimiter, asyncHandler(forgotPasswordHandler));
+authRouter.post("/reset-password", authStrictLimiter, asyncHandler(resetPasswordHandler));
+authRouter.post("/register-clinic", authStrictLimiter, asyncHandler(registerHandler));
 authRouter.post("/login", authStrictLimiter, asyncHandler(loginHandler));
 authRouter.post("/refresh", asyncHandler(refreshHandler));
 authRouter.get("/me", authenticate, asyncHandler(meHandler));

@@ -13,6 +13,9 @@ import {
   updatePatient,
   updatePatientFileAnnotations,
 } from "../services/patient.service.js";
+import { importPatientsFromCsv } from "../services/patientImport.service.js";
+import { buildPatientDpaExport } from "../services/patientDpaExport.service.js";
+import { executePatientDpaErasure } from "../services/patientDpaErasure.service.js";
 import type { ApiSuccess } from "../types/auth.js";
 import {
   createPatientBodySchema,
@@ -26,6 +29,12 @@ function clinicId(req: Request): string {
   if (!id) {
     throw new AppError("Unauthorized", 401, "UNAUTHORIZED");
   }
+  return id;
+}
+
+function actorUserId(req: Request): string {
+  const id = req.user?.id;
+  if (!id) throw new AppError("Unauthorized", 401, "UNAUTHORIZED");
   return id;
 }
 
@@ -50,12 +59,58 @@ export async function createPatientHandler(req: Request, res: Response): Promise
   res.status(201).json(payload);
 }
 
+export async function importPatientsCsvHandler(req: Request, res: Response): Promise<void> {
+  if (!req.file?.buffer?.length) {
+    throw new AppError("CSV file required", 400, "FILE_REQUIRED");
+  }
+  const text = req.file.buffer.toString("utf-8");
+  const result = await importPatientsFromCsv(clinicId(req), text);
+  res.json({ success: true, data: result });
+}
+
 export async function updatePatientHandler(req: Request, res: Response): Promise<void> {
   const id = z.string().min(1).parse(req.params.id);
   const body = updatePatientBodySchema.parse(req.body);
   const updated = await updatePatient(clinicId(req), id, body);
   const payload: ApiSuccess<typeof updated> = { success: true, data: updated };
   res.json(payload);
+}
+
+/** DPA veri taşınabilirliği — yalnızca ADMIN (route roleGuard). */
+export async function exportPatientDpaHandler(req: Request, res: Response): Promise<void> {
+  const id = z.string().min(1).parse(req.params.id);
+  const payload = await buildPatientDpaExport(clinicId(req), id);
+  const stamp = new Date().toISOString().slice(0, 10);
+  const safeName = `${payload.demographics.lastName}-${payload.demographics.firstName}`
+    .replace(/[^\w.-]+/g, "_")
+    .slice(0, 48);
+  res.setHeader("Content-Type", "application/json; charset=utf-8");
+  res.setHeader(
+    "Content-Disposition",
+    `attachment; filename="patient-dpa-export-${safeName}-${stamp}.json"`,
+  );
+  res.json(payload);
+}
+
+const dpaErasureBodySchema = z.object({
+  confirmPatientId: z.string().min(1),
+  reason: z.string().max(500).optional(),
+});
+
+/** DPA — hasta kaydını pasifleştirir (soft delete); açık fatura varsa reddeder. */
+export async function patientDpaErasureHandler(req: Request, res: Response): Promise<void> {
+  const id = z.string().min(1).parse(req.params.id);
+  const body = dpaErasureBodySchema.parse(req.body);
+  if (body.confirmPatientId !== id) {
+    throw new AppError("Confirmation does not match patient id", 400, "DPA_CONFIRM_MISMATCH");
+  }
+  const result = await executePatientDpaErasure(
+    clinicId(req),
+    id,
+    actorUserId(req),
+    body.reason,
+  );
+  res.json({ success: true, data: result });
 }
 
 export async function deletePatientHandler(req: Request, res: Response): Promise<void> {

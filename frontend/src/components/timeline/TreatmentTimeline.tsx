@@ -1,5 +1,7 @@
 import { useMemo, useState } from 'react';
-import { Calendar, ChevronRight, AlertCircle } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { CheckCircle2, Circle, Clock, Activity, ArrowRight, ChevronRight, Zap, Trophy } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export interface TreatmentPhase {
   id: string;
@@ -16,383 +18,185 @@ export interface TreatmentPhase {
 export interface TreatmentTimelineProps {
   phases: TreatmentPhase[];
   onPhaseUpdate?: (phase: TreatmentPhase) => void;
-  onPhaseReorder?: (phases: TreatmentPhase[]) => void;
   className?: string;
 }
 
-function parseDate(d: Date | string): Date {
-  return typeof d === 'string' ? new Date(d) : d;
-}
-
-function formatDate(d: Date | string): string {
-  const date = parseDate(d);
-  return new Intl.DateTimeFormat('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  }).format(date);
-}
-
-function getDaysBetween(start: Date | string, end: Date | string): number {
-  const s = parseDate(start);
-  const e = parseDate(end);
-  return Math.ceil((e.getTime() - s.getTime()) / (1000 * 60 * 60 * 24));
-}
-
-function getStatusColor(status: TreatmentPhase['status']): {
-  bg: string;
-  border: string;
-  text: string;
-  bar: string;
-} {
-  switch (status) {
-    case 'completed':
-      return {
-        bg: 'bg-green-50',
-        border: 'border-green-300',
-        text: 'text-green-700',
-        bar: 'bg-green-500',
-      };
-    case 'in-progress':
-      return {
-        bg: 'bg-blue-50',
-        border: 'border-blue-300',
-        text: 'text-blue-700',
-        bar: 'bg-blue-500',
-      };
-    case 'paused':
-      return {
-        bg: 'bg-amber-50',
-        border: 'border-amber-300',
-        text: 'text-amber-700',
-        bar: 'bg-amber-500',
-      };
-    default:
-      return {
-        bg: 'bg-slate-50',
-        border: 'border-slate-300',
-        text: 'text-slate-700',
-        bar: 'bg-slate-400',
-      };
-  }
-}
-
-function PhaseBar({
-  phase,
-  minDate,
-  maxDate,
-  totalDays,
-}: {
-  phase: TreatmentPhase;
-  minDate: Date;
-  maxDate: Date;
-  totalDays: number;
-}) {
-  const phaseStart = parseDate(phase.startDate);
-  const phaseEnd = parseDate(phase.endDate);
-
-  const startOffset = (phaseStart.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24);
-  const phaseDuration = getDaysBetween(phaseStart, phaseEnd);
-
-  const leftPercent = (startOffset / totalDays) * 100;
-  const widthPercent = (phaseDuration / totalDays) * 100;
-
-  const colors = getStatusColor(phase.status);
-
-  return (
-    <div
-      key={`bar-${phase.id}`}
-      className="relative h-10 rounded-lg border-2 transition-all hover:shadow-md"
-      style={{
-        marginLeft: `${Math.max(0, leftPercent)}%`,
-        width: `${Math.max(5, widthPercent)}%`,
-        backgroundColor: colors.bg,
-        borderColor: colors.border,
-      }}
-    >
-      {/* Status indicator dot */}
-      <div
-        className={`absolute -top-1.5 left-1 h-3 w-3 rounded-full ${colors.bar}`}
-      />
-
-      {/* Phase title */}
-      <div className="flex h-full items-center justify-center px-2">
-        <span className={`truncate text-xs font-semibold ${colors.text}`}>
-          {phase.title}
-        </span>
-      </div>
-
-      {/* Duration label on hover */}
-      <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-slate-900 px-2 py-1 text-xs text-white opacity-0 transition-opacity hover:opacity-100">
-        {phaseDuration} days
-      </div>
-    </div>
-  );
-}
-
-function PhaseCard({
-  phase,
-  index,
-  onUpdate,
-}: {
-  phase: TreatmentPhase;
-  index: number;
-  onUpdate?: (phase: TreatmentPhase) => void;
-}) {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const daysDuration = getDaysBetween(phase.startDate, phase.endDate);
-  const colors = getStatusColor(phase.status);
-
-  return (
-    <div
-      className={`rounded-lg border-l-4 p-4 shadow-sm transition-all ${colors.bg} ${colors.border}`}
-    >
-      <div className="flex items-start justify-between">
-        <div className="flex-1">
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-bold text-slate-900">
-              Phase {index + 1}:
-            </span>
-            <h4 className="text-sm font-semibold text-slate-900">
-              {phase.title}
-            </h4>
-            <span
-              className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${colors.text}`}
-              style={{
-                backgroundColor: `${colors.bar}20`,
-                color: colors.text,
-              }}
-            >
-              {phase.status}
-            </span>
-          </div>
-
-          {phase.description && (
-            <p className="mt-1 text-xs text-slate-600">{phase.description}</p>
-          )}
-
-          <div className="mt-2 flex flex-wrap gap-3 text-xs text-slate-600">
-            <div className="flex items-center gap-1">
-              <Calendar size={14} />
-              <span>{formatDate(phase.startDate)}</span>
-            </div>
-            <ChevronRight size={14} className="text-slate-400" />
-            <div className="flex items-center gap-1">
-              <Calendar size={14} />
-              <span>{formatDate(phase.endDate)}</span>
-            </div>
-            <span className="font-medium text-slate-700">
-              ({daysDuration} days)
-            </span>
-          </div>
-
-          {phase.treatments && phase.treatments.length > 0 && (
-            <div className="mt-2 flex flex-wrap gap-1">
-              {phase.treatments.slice(0, 3).map((treatment, i) => (
-                <span
-                  key={i}
-                  className="inline-block rounded-full bg-white px-2 py-0.5 text-xs text-slate-700"
-                >
-                  {treatment}
-                </span>
-              ))}
-              {phase.treatments.length > 3 && (
-                <span className="inline-block rounded-full bg-white px-2 py-0.5 text-xs text-slate-500">
-                  +{phase.treatments.length - 3} more
-                </span>
-              )}
-            </div>
-          )}
-        </div>
-
-        <button
-          onClick={() => setIsExpanded(!isExpanded)}
-          className={`ml-2 text-slate-500 transition-transform ${
-            isExpanded ? 'rotate-90' : ''
-          }`}
-        >
-          <ChevronRight size={18} />
-        </button>
-      </div>
-
-      {isExpanded && (
-        <div className="mt-4 space-y-3 border-t pt-3">
-          {phase.notes && (
-            <div>
-              <p className="text-xs font-medium text-slate-700">Notes:</p>
-              <p className="mt-1 text-xs text-slate-600">{phase.notes}</p>
-            </div>
-          )}
-
-          {phase.treatments && phase.treatments.length > 0 && (
-            <div>
-              <p className="text-xs font-medium text-slate-700">Treatments:</p>
-              <ul className="mt-1 space-y-1">
-                {phase.treatments.map((treatment, i) => (
-                  <li key={i} className="text-xs text-slate-600">
-                    • {treatment}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {phase.status === 'pending' && (
-            <button
-              onClick={() =>
-                onUpdate?.({ ...phase, status: 'in-progress' })
-              }
-              className="mt-3 w-full rounded bg-blue-500 px-3 py-1.5 text-xs font-medium text-white hover:bg-blue-600"
-            >
-              Start Phase
-            </button>
-          )}
-
-          {phase.status === 'in-progress' && (
-            <button
-              onClick={() =>
-                onUpdate?.({ ...phase, status: 'completed' })
-              }
-              className="mt-3 w-full rounded bg-green-500 px-3 py-1.5 text-xs font-medium text-white hover:bg-green-600"
-            >
-              Complete Phase
-            </button>
-          )}
-        </div>
-      )}
-    </div>
-  );
-}
+const STATUS_CONFIG = {
+  completed: { color: 'text-emerald-500', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20', icon: <CheckCircle2 size={16} /> },
+  'in-progress': { color: 'text-sky-500', bg: 'bg-sky-500/10', border: 'border-sky-500/20', icon: <Activity size={16} /> },
+  pending: { color: 'text-slate-400', bg: 'bg-slate-500/5', border: 'border-slate-500/10', icon: <Circle size={16} /> },
+  paused: { color: 'text-amber-500', bg: 'bg-amber-500/10', border: 'border-amber-500/20', icon: <Clock size={16} /> },
+};
 
 export function TreatmentTimeline({
   phases = [],
   onPhaseUpdate,
-  onPhaseReorder,
   className = '',
 }: TreatmentTimelineProps) {
-  const sortedPhases = useMemo(
-    () => [...phases].sort((a, b) => a.order - b.order),
-    [phases],
-  );
-
-  const dateRange = useMemo(() => {
-    if (sortedPhases.length === 0) {
-      return { min: new Date(), max: new Date() };
-    }
-
-    const dates = sortedPhases.flatMap((p) => [
-      parseDate(p.startDate),
-      parseDate(p.endDate),
-    ]);
-    return {
-      min: new Date(Math.min(...dates.map((d) => d.getTime()))),
-      max: new Date(Math.max(...dates.map((d) => d.getTime()))),
-    };
-  }, [sortedPhases]);
-
-  const totalDays = getDaysBetween(dateRange.min, dateRange.max) || 1;
-
+  const { t } = useTranslation();
+  const sortedPhases = useMemo(() => [...phases].sort((a, b) => a.order - b.order), [phases]);
+  
   const stats = useMemo(() => {
+    const total = sortedPhases.length;
+    const completed = sortedPhases.filter(p => p.status === 'completed').length;
     return {
-      total: sortedPhases.length,
-      completed: sortedPhases.filter((p) => p.status === 'completed').length,
-      inProgress: sortedPhases.filter((p) => p.status === 'in-progress').length,
-      pending: sortedPhases.filter((p) => p.status === 'pending').length,
+      total,
+      completed,
+      percent: Math.round((completed / (total || 1)) * 100)
     };
   }, [sortedPhases]);
-
-  const progressPercent = (stats.completed / Math.max(1, stats.total)) * 100;
 
   return (
-    <div className={`space-y-4 rounded-lg bg-white p-4 shadow-sm ${className}`}>
-      <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-slate-900">
-          Treatment Roadmap
-        </h3>
-        <div className="text-xs text-slate-500">
-          {stats.completed}/{stats.total} phases completed
-        </div>
-      </div>
-
-      {/* Progress bar */}
-      <div className="h-2 rounded-full bg-slate-200 overflow-hidden">
-        <div
-          className="h-full bg-gradient-to-r from-blue-500 to-green-500 transition-all"
-          style={{ width: `${progressPercent}%` }}
-        />
-      </div>
-
-      {/* Stats */}
-      <div className="grid grid-cols-4 gap-2">
-        <div className="rounded bg-slate-50 p-2 text-center">
-          <div className="text-xs font-semibold text-slate-900">
-            {stats.total}
-          </div>
-          <div className="text-xs text-slate-500">Total</div>
-        </div>
-        <div className="rounded bg-green-50 p-2 text-center">
-          <div className="text-xs font-semibold text-green-700">
-            {stats.completed}
-          </div>
-          <div className="text-xs text-green-600">Completed</div>
-        </div>
-        <div className="rounded bg-blue-50 p-2 text-center">
-          <div className="text-xs font-semibold text-blue-700">
-            {stats.inProgress}
-          </div>
-          <div className="text-xs text-blue-600">In Progress</div>
-        </div>
-        <div className="rounded bg-slate-100 p-2 text-center">
-          <div className="text-xs font-semibold text-slate-700">
-            {stats.pending}
-          </div>
-          <div className="text-xs text-slate-600">Pending</div>
-        </div>
-      </div>
-
-      {/* Gantt chart */}
-      {sortedPhases.length > 0 && (
-        <div className="space-y-1 rounded-lg bg-slate-50 p-3">
-          <div className="mb-4">
-            <div className="flex justify-between text-xs text-slate-600 mb-2">
-              <span>{formatDate(dateRange.min)}</span>
-              <span>{formatDate(dateRange.max)}</span>
+    <div className={`flex flex-col gap-8 ${className}`}>
+      {/* Header with Progress Orbit */}
+      <header className="flex items-center justify-between rounded-[2.5rem] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-8 shadow-xl shadow-slate-200/40 dark:shadow-none">
+         <div className="flex items-center gap-4">
+            <div className="relative h-20 w-20 flex items-center justify-center">
+               <svg className="absolute inset-0 h-full w-full -rotate-90">
+                  <circle cx="40" cy="40" r="36" fill="none" stroke="currentColor" strokeWidth="6" className="text-slate-100 dark:text-slate-800" />
+                  <motion.circle 
+                    cx="40" cy="40" r="36" fill="none" stroke="currentColor" strokeWidth="6" 
+                    strokeDasharray="226" 
+                    initial={{ strokeDashoffset: 226 }}
+                    animate={{ strokeDashoffset: 226 - (226 * stats.percent) / 100 }}
+                    transition={{ duration: 1.5, ease: "easeOut" }}
+                    className="text-sky-500" 
+                  />
+               </svg>
+               <div className="flex flex-col items-center">
+                  <span className="text-xl font-black text-slate-900 dark:text-white">{stats.percent}%</span>
+                  <span className="text-[8px] font-black uppercase text-slate-400">{t("pages.patientDetail.timeline.successLabel")}</span>
+               </div>
             </div>
-            <div className="space-y-2">
-              {sortedPhases.map((phase) => (
-                <PhaseBar
-                  key={`gantt-${phase.id}`}
-                  phase={phase}
-                  minDate={dateRange.min}
-                  maxDate={dateRange.max}
-                  totalDays={totalDays}
-                />
-              ))}
+            <div>
+               <h3 className="text-sm font-black uppercase tracking-widest text-slate-400">{t("pages.patientDetail.timeline.headerKicker")}</h3>
+               <p className="text-lg font-black text-slate-900 dark:text-white">{t("pages.patientDetail.timeline.headerTitle")}</p>
+               <div className="mt-1 flex items-center gap-2 text-[10px] font-bold text-slate-500 uppercase">
+                  <span>{t("pages.patientDetail.timeline.stats.complete", { count: stats.completed })}</span>
+                  <span className="h-1 w-1 rounded-full bg-slate-300" />
+                  <span>{t("pages.patientDetail.timeline.stats.remaining", { count: stats.total - stats.completed })}</span>
+               </div>
             </div>
-          </div>
-        </div>
-      )}
+         </div>
 
-      {/* Phase cards */}
-      <div className="space-y-3">
-        {sortedPhases.map((phase, index) => (
-          <PhaseCard
-            key={`card-${phase.id}`}
-            phase={phase}
-            index={index}
-            onUpdate={onPhaseUpdate}
-          />
-        ))}
+         <div className="hidden md:flex items-center gap-2 bg-slate-50 dark:bg-slate-950 p-3 rounded-2xl border border-slate-100 dark:border-slate-800">
+            <Trophy className="text-amber-500" size={20} />
+            <div className="pr-2">
+               <p className="text-[10px] font-black uppercase text-slate-400">{t("pages.patientDetail.timeline.nextMilestone")}</p>
+               <p className="text-xs font-black text-slate-900 dark:text-white">
+                  {sortedPhases.find(p => p.status !== 'completed')?.title || t("pages.patientDetail.timeline.finalized")}
+               </p>
+            </div>
+         </div>
+      </header>
+
+      {/* The Journey Path */}
+      <div className="relative pl-8 md:pl-24 space-y-12">
+         {/* Vertical Path Line */}
+         <div className="absolute left-10 md:left-28 top-0 bottom-0 w-px bg-gradient-to-b from-sky-500 via-slate-200 dark:via-slate-800 to-transparent" />
+
+         {sortedPhases.map((phase, idx) => (
+           <JourneyPhaseNode 
+             key={phase.id} 
+             phase={phase} 
+             index={idx} 
+             isLast={idx === sortedPhases.length - 1}
+             onUpdate={onPhaseUpdate} 
+             t={t}
+           />
+         ))}
       </div>
-
-      {sortedPhases.length === 0 && (
-        <div className="flex items-center justify-center rounded-lg border-2 border-dashed border-slate-200 py-8">
-          <div className="text-center">
-            <AlertCircle className="mx-auto mb-2 text-slate-400" size={24} />
-            <p className="text-sm text-slate-500">No treatment phases yet</p>
-          </div>
-        </div>
-      )}
     </div>
+  );
+}
+
+function JourneyPhaseNode({ phase, index, t }: any) {
+  const config = STATUS_CONFIG[phase.status as keyof typeof STATUS_CONFIG];
+  const [isExpanded, setIsExpanded] = useState(phase.status === 'in-progress');
+
+  return (
+    <motion.div 
+      initial={{ opacity: 0, x: -20 }}
+      whileInView={{ opacity: 1, x: 0 }}
+      viewport={{ once: true }}
+      className="relative group"
+    >
+      {/* Date Pillar (Desktop) */}
+      <div className="hidden md:block absolute -left-24 top-2 text-right">
+         <p className="text-[10px] font-black uppercase text-slate-400">{t("pages.patientDetail.timeline.phaseLabel", { count: index + 1 })}</p>
+         <p className="text-xs font-black text-slate-900 dark:text-white">
+            {new Date(phase.startDate).toLocaleDateString([], { month: 'short', day: 'numeric' })}
+         </p>
+      </div>
+
+      {/* Status Orb */}
+      <div className={`absolute -left-10 md:left-[-1.125rem] top-2 z-10 h-5 w-5 rounded-full border-4 border-slate-50 dark:border-slate-950 flex items-center justify-center ${config.bg} ${config.color} shadow-lg`}>
+         {config.icon}
+      </div>
+
+      {/* Content Card */}
+      <div className={`ml-4 md:ml-12 rounded-[2rem] border transition-all duration-300 ${
+        isExpanded ? 'bg-white dark:bg-slate-900 shadow-2xl border-slate-200 dark:border-slate-800 p-8' : 'bg-slate-50 dark:bg-slate-950/40 border-transparent hover:border-slate-200 p-6'
+      }`}>
+         <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+               <div className={`h-10 w-10 rounded-2xl flex items-center justify-center ${config.bg} ${config.color}`}>
+                  <Zap size={18} />
+               </div>
+               <div>
+                  <div className="flex items-center gap-2">
+                     <h4 className="text-lg font-black text-slate-900 dark:text-white">{phase.title}</h4>
+                     <span className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase ${config.bg} ${config.color}`}>
+                        {t(`pages.patientDetail.timeline.status.${phase.status}`)}
+                     </span>
+                  </div>
+                  {!isExpanded && <p className="text-xs font-bold text-slate-400 mt-0.5 line-clamp-1">{phase.description}</p>}
+               </div>
+            </div>
+
+            <button 
+              onClick={() => setIsExpanded(!isExpanded)}
+              className="h-10 w-10 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center transition-colors"
+            >
+               <ChevronRight size={20} className={`transition-transform duration-300 ${isExpanded ? 'rotate-90' : ''}`} />
+            </button>
+         </div>
+
+         <AnimatePresence>
+            {isExpanded && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                className="overflow-hidden"
+              >
+                <div className="mt-6 pt-6 border-t border-slate-100 dark:border-slate-800 space-y-6">
+                   <p className="text-sm font-bold text-slate-600 dark:text-slate-400 leading-relaxed">
+                      {phase.description}
+                   </p>
+
+                   {phase.treatments && (
+                     <div className="flex flex-wrap gap-2">
+                        {phase.treatments.map((t_item: string, i: number) => (
+                          <div key={i} className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 text-[11px] font-black uppercase text-slate-500">
+                             <ArrowRight size={12} className="text-sky-500" />
+                             {t_item}
+                          </div>
+                        ))}
+                     </div>
+                   )}
+
+                   {phase.notes && (
+                     <div className="bg-sky-50/50 dark:bg-sky-500/5 p-4 rounded-2xl border border-sky-100 dark:border-sky-500/10">
+                        <p className="text-[10px] font-black uppercase text-sky-600 mb-1">{t("pages.patientDetail.timeline.notesTitle")}</p>
+                        <p className="text-xs font-bold text-sky-900 dark:text-sky-200">{phase.notes}</p>
+                     </div>
+                   )}
+                </div>
+              </motion.div>
+            )}
+         </AnimatePresence>
+      </div>
+    </motion.div>
   );
 }

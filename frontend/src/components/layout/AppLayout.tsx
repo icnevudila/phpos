@@ -68,7 +68,13 @@ export function AppLayout(): JSX.Element {
   }, []);
 
   return (
-    <div className="flex h-[100dvh] min-h-0 w-full bg-gradient-to-b from-slate-100 via-slate-50 to-slate-50 text-slate-900">
+    <div className="flex h-[100dvh] min-h-0 w-full bg-slate-50 text-slate-900 transition-colors duration-300 dark:bg-slate-950 dark:text-slate-100">
+      <a
+        href="#main"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-xl focus:bg-emerald-600 focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white focus:shadow-lg"
+      >
+        {t("nav.skipToContent")}
+      </a>
       {/* Desktop sidebar */}
       <div className="hidden min-h-0 lg:block">
         <AppSidebar

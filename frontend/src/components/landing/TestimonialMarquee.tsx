@@ -6,38 +6,27 @@ interface Quote {
   n: string;
   r: string;
   gradient: string;
+  image: string;
 }
 
-function initialsOf(name: string): string {
-  return name
-    .split(" ")
-    .slice(0, 2)
-    .map((s) => s[0])
-    .join("")
-    .toUpperCase();
-}
-
-function QuoteCard({ q, n, r, gradient }: Quote): JSX.Element {
+function QuoteCard({ q, n, r, image }: Quote): JSX.Element {
   return (
     <figure className="group relative flex w-[300px] shrink-0 flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg sm:w-[360px] dark:border-slate-800 dark:bg-slate-900">
-      <svg
-        aria-hidden
-        viewBox="0 0 32 32"
-        className="h-6 w-6 text-emerald-200"
-        fill="currentColor"
-      >
-        <path d="M10 8c-3 0-5 2-5 5v11h10V13h-5c0-2 2-3 4-3V8h-4Zm14 0c-3 0-5 2-5 5v11h10V13h-5c0-2 2-3 4-3V8h-4Z" />
-      </svg>
-      <blockquote className="text-sm leading-relaxed text-slate-700 dark:text-slate-300">{q}</blockquote>
+      <div className="absolute -right-2 top-2 opacity-10 transition group-hover:opacity-20">
+        <svg viewBox="0 0 32 32" className="h-12 w-12 text-emerald-500" fill="currentColor">
+          <path d="M10 8c-3 0-5 2-5 5v11h10V13h-5c0-2 2-3 4-3V8h-4Zm14 0c-3 0-5 2-5 5v11h10V13h-5c0-2 2-3 4-3V8h-4Z" />
+        </svg>
+      </div>
+      <blockquote className="relative z-10 text-sm leading-relaxed text-slate-700 dark:text-slate-300">{q}</blockquote>
       <figcaption className="mt-auto flex items-center gap-3 border-t border-slate-100 pt-3 dark:border-slate-800">
-        <div
-          className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br ${gradient} text-xs font-bold text-white shadow-sm`}
-        >
-          {initialsOf(n)}
-        </div>
+        <img
+          src={image}
+          alt={n}
+          className="h-10 w-10 shrink-0 rounded-full object-cover ring-2 ring-emerald-50 dark:ring-emerald-950"
+        />
         <div className="min-w-0">
           <p className="truncate text-sm font-bold text-slate-900 dark:text-white">{n}</p>
-          <p className="truncate text-xs text-slate-500 dark:text-slate-400">{r}</p>
+          <p className="truncate text-[10px] font-medium uppercase tracking-wider text-emerald-600 dark:text-emerald-400">{r}</p>
         </div>
       </figcaption>
     </figure>
@@ -85,22 +74,25 @@ function Row({
 export function TestimonialMarquee(): JSX.Element {
   const { t } = useTranslation();
 
+  const avatars = [
+    "https://images.unsplash.com/photo-1559839734-2b71f1536783?auto=format&fit=crop&q=80&w=150&h=150",
+    "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&q=80&w=150&h=150",
+    "https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&q=80&w=150&h=150",
+    "https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&q=80&w=150&h=150",
+    "https://images.unsplash.com/photo-1537368910025-700350fe46c7?auto=format&fit=crop&q=80&w=150&h=150",
+    "https://images.unsplash.com/photo-1527613426441-4da17471b66d?auto=format&fit=crop&q=80&w=150&h=150",
+    "https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&q=80&w=150&h=150",
+    "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=150&h=150",
+    "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=150&h=150",
+    "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&q=80&w=150&h=150",
+  ];
+
   const quotes: Quote[] = Array.from({ length: 10 }).map((_, i) => ({
     q: t(`landing.testi${i + 1}Quote`),
     n: t(`landing.testi${i + 1}Name`),
     r: t(`landing.testi${i + 1}Role`),
-    gradient: [
-      "from-emerald-400 to-sky-500",
-      "from-amber-400 to-rose-500",
-      "from-sky-400 to-violet-500",
-      "from-violet-500 to-fuchsia-500",
-      "from-emerald-400 to-teal-500",
-      "from-rose-400 to-orange-500",
-      "from-sky-400 to-indigo-500",
-      "from-amber-300 to-rose-400",
-      "from-fuchsia-400 to-pink-500",
-      "from-teal-400 to-emerald-600",
-    ][i],
+    image: avatars[i],
+    gradient: "",
   }));
 
   const rowA = quotes.slice(0, 5);
@@ -108,6 +100,9 @@ export function TestimonialMarquee(): JSX.Element {
 
   return (
     <div className="space-y-4">
+      <p className="text-center text-[10px] font-bold uppercase tracking-widest text-slate-400">
+        {t("landing.testimonialsSample")}
+      </p>
       <Row items={rowA} direction="left" duration={45} />
       <Row items={rowB} direction="right" duration={55} />
     </div>

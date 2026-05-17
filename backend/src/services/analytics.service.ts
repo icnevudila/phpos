@@ -1,12 +1,5 @@
-import { AppointmentStatus, Prisma } from "@prisma/client";
+import { AppointmentStatus } from "@prisma/client";
 import { prisma } from "../lib/prisma.js";
-
-const MANILA_OFFSET_MS = 8 * 60 * 60 * 1000;
-
-function manilaDayKey(d: Date): string {
-  const shifted = new Date(d.getTime() + MANILA_OFFSET_MS);
-  return shifted.toISOString().slice(0, 10);
-}
 
 /**
  * Prosedür isimlerini kategorilere ayırır.
@@ -33,9 +26,6 @@ export interface AnalyticsOverview {
 }
 
 export async function getAnalyticsOverview(clinicId: string): Promise<AnalyticsOverview> {
-  const now = new Date();
-  const year = now.getUTCFullYear();
-  
   // 1. Treatment Breakdown (Pie Chart data)
   const treatments = await prisma.treatment.groupBy({
     by: ["procedure"],
@@ -78,13 +68,13 @@ export async function getAnalyticsOverview(clinicId: string): Promise<AnalyticsO
       },
       dentistAppointments: {
         where: { status: AppointmentStatus.COMPLETED },
-        _count: true
+        select: { id: true }
       }
     }
   });
 
   const dentistProductivity = dentistStats.map(d => {
-    const revenue = d.treatments.reduce((sum, t) => sum + (Number(t.unitPrice) * t.quantity), 0);
+    const revenue = d.treatments.reduce((sum: number, t) => sum + (Number(t.unitPrice) * t.quantity), 0);
     return {
       name: `${d.firstName} ${d.lastName}`,
       revenue: Number(revenue.toFixed(2)),
@@ -92,49 +82,61 @@ export async function getAnalyticsOverview(clinicId: string): Promise<AnalyticsO
     };
   }).sort((a, b) => b.revenue - a.revenue);
 
-  // 4. Patient Growth (Line Chart data - Last 12 months)
+  // 4. Patient Growth — tek sorgu (12 ay × 2 count yerine)
+  const twelveMonthsAgo = new Date();
+  twelveMonthsAgo.setUTCMonth(twelveMonthsAgo.getUTCMonth() - 11);
+  twelveMonthsAgo.setUTCDate(1);
+  twelveMonthsAgo.setUTCHours(0, 0, 0, 0);
+
+  const newByMonth = await prisma.$queryRaw<Array<{ month: Date; cnt: bigint }>>`
+    SELECT DATE_TRUNC('month', "createdAt") AS month, COUNT(*)::bigint AS cnt
+    FROM "Patient"
+    WHERE "clinicId" = ${clinicId}
+      AND "createdAt" >= ${twelveMonthsAgo}
+    GROUP BY DATE_TRUNC('month', "createdAt")
+    ORDER BY month
+  `;
+
+  const returningByMonth = await prisma.$queryRaw<Array<{ month: Date; cnt: bigint }>>`
+    SELECT DATE_TRUNC('month', a."scheduledAt") AS month,
+           COUNT(DISTINCT a."patientId")::bigint AS cnt
+    FROM "Appointment" a
+    INNER JOIN "Patient" p ON p.id = a."patientId"
+    WHERE a."clinicId" = ${clinicId}
+      AND a."status" = ${AppointmentStatus.COMPLETED}::"AppointmentStatus"
+      AND a."scheduledAt" >= ${twelveMonthsAgo}
+      AND p."createdAt" < DATE_TRUNC('month', a."scheduledAt")
+    GROUP BY DATE_TRUNC('month', a."scheduledAt")
+    ORDER BY month
+  `;
+
+  const newMap = new Map(
+    newByMonth.map((r) => [r.month.toISOString().slice(0, 7), Number(r.cnt)]),
+  );
+  const retMap = new Map(
+    returningByMonth.map((r) => [r.month.toISOString().slice(0, 7), Number(r.cnt)]),
+  );
+
   const patientGrowth: Array<{ month: string; newPatients: number; returningPatients: number }> = [];
   for (let i = 11; i >= 0; i--) {
     const d = new Date();
     d.setUTCMonth(d.getUTCMonth() - i);
-    const start = new Date(d.getUTCFullYear(), d.getUTCMonth(), 1);
-    const end = new Date(d.getUTCFullYear(), d.getUTCMonth() + 1, 1);
-    const monthLabel = d.toLocaleString('en-PH', { month: 'short', year: '2-digit' });
-
-    const [newCount, returningCount] = await Promise.all([
-      prisma.patient.count({
-        where: { clinicId, createdAt: { gte: start, lt: end } }
-      }),
-      prisma.appointment.findMany({
-        where: { 
-          clinicId, 
-          scheduledAt: { gte: start, lt: end },
-          status: AppointmentStatus.COMPLETED
-        },
-        select: { patientId: true, patient: { select: { createdAt: true } } }
-      })
-    ]);
-
-    // Returning = appointments in month where patient was created BEFORE start of month
-    const returningPatients = new Set(returningCount.filter(a => a.patient.createdAt < start).map(a => a.patientId)).size;
-
+    d.setUTCDate(1);
+    const key = d.toISOString().slice(0, 7);
+    const monthLabel = d.toLocaleString("en-PH", { month: "short", year: "2-digit", timeZone: "UTC" });
     patientGrowth.push({
       month: monthLabel,
-      newPatients: newCount,
-      returningPatients
+      newPatients: newMap.get(key) ?? 0,
+      returningPatients: retMap.get(key) ?? 0,
     });
   }
 
   // 5. HMO Share (Pie Chart data)
-  const [totalPayments, hmoPayments] = await Promise.all([
+  const [totalPayments] = await Promise.all([
     prisma.payment.aggregate({
       where: { invoice: { clinicId } },
       _sum: { amount: true }
     }),
-    prisma.payment.aggregate({
-      where: { invoice: { clinicId }, method: "PHILHEALTH" }, // Standard PH insurance check
-      _sum: { amount: true }
-    })
   ]);
 
   // Actually check for any payment linked to an invoice that has HMO claims
@@ -164,4 +166,49 @@ export async function getAnalyticsOverview(clinicId: string): Promise<AnalyticsO
     patientGrowth,
     hmoShare
   };
+}
+
+export async function getArAgingReport(clinicId: string) {
+  const invoices = await prisma.invoice.findMany({
+    where: {
+      clinicId,
+      status: { in: ["UNPAID", "PARTIAL"] },
+    },
+    include: {
+      patient: { select: { id: true, firstName: true, lastName: true, phone: true } },
+      payments: { select: { amount: true } },
+    },
+    orderBy: { createdAt: "desc" },
+  });
+
+  const now = new Date();
+  const report = {
+    current: 0,
+    overdue30: 0,
+    overdue60: 0,
+    overdue90: 0,
+    details: [] as any[],
+  };
+
+  for (const inv of invoices) {
+    const paidSum = inv.payments.reduce((sum, p) => sum + Number(p.amount), 0);
+    const balance = Math.max(0, Number(inv.total) - paidSum);
+    if (balance <= 0) continue;
+    const ageDays = Math.floor((now.getTime() - new Date(inv.createdAt).getTime()) / (1000 * 60 * 60 * 24));
+    if (ageDays <= 30) report.current += balance;
+    else if (ageDays <= 60) report.overdue30 += balance;
+    else if (ageDays <= 90) report.overdue60 += balance;
+    else report.overdue90 += balance;
+    report.details.push({
+      id: inv.id,
+      patientId: inv.patient.id,
+      patientName: `${inv.patient.firstName} ${inv.patient.lastName}`,
+      patientPhone: inv.patient.phone,
+      total: Number(inv.total),
+      balance: Number(balance.toFixed(2)),
+      ageDays,
+      createdAt: inv.createdAt,
+    });
+  }
+  return report;
 }

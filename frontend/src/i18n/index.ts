@@ -88,8 +88,8 @@ void i18n
     /** Default UI language: English. tr/ph apply when chosen or stored in localStorage. */
     lng: "en",
     resources: {
-      en: { translation: { ...en, ...landingPreviewEn, pages: pagesEn } },
-      tr: { translation: { ...tr, ...landingPreviewTr, pages: pagesTr } },
+      en: { translation: { ...en, ...landingPreviewEn, pages: JSON.parse(JSON.stringify(pagesEn)) } },
+      tr: { translation: { ...tr, ...landingPreviewTr, pages: JSON.parse(JSON.stringify(pagesTr)) } },
       ph: { translation: { ...ph, ...landingPreviewPh, pages: pagesForPh } },
     },
     fallbackLng: "en",

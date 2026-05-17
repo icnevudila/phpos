@@ -15,13 +15,15 @@ import {
   myAppointmentsHandler,
   portalDownloadInvoicePdfHandler,
   portalDownloadPatientFileHandler,
+  portalFileSignedUrlHandler,
   portalPatientFilesHandler,
   portalPaymongoHandler,
+  registerPortalHandler,
   requestOtpHandler,
   resolveClinicHandler,
   verifyOtpHandler,
 } from "../controllers/portal.controller.js";
-import { portalAuthenticate } from "../middleware/portalAuth.js";
+import { portalAuthenticate, portalOptionalAuthenticate } from "../middleware/portalAuth.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 
 export const portalRouter = Router();
@@ -55,7 +57,15 @@ const portalVerifyOtpLimiter = rateLimit({
 // Public — OTP ve slug çözümü
 portalRouter.get("/clinics/:slug", asyncHandler(resolveClinicHandler));
 portalRouter.post("/auth/request-otp", portalRequestOtpLimiter, asyncHandler(requestOtpHandler));
+portalRouter.post("/auth/register", portalRequestOtpLimiter, asyncHandler(registerPortalHandler));
 portalRouter.post("/auth/verify-otp", portalVerifyOtpLimiter, asyncHandler(verifyOtpHandler));
+
+/** JWT veya `?token=` (signed-url) ile dosya indirme */
+portalRouter.get(
+  "/files/:fileId/download",
+  portalOptionalAuthenticate,
+  asyncHandler(portalDownloadPatientFileHandler),
+);
 
 // Protected — hasta token'ı gerekir
 portalRouter.use(portalAuthenticate);
@@ -73,4 +83,4 @@ portalRouter.put("/medical-history", asyncHandler(medicalHistoryUpdateHandler));
 portalRouter.post("/invoices/:id/paymongo", asyncHandler(portalPaymongoHandler));
 portalRouter.get("/invoices/:id/pdf", asyncHandler(portalDownloadInvoicePdfHandler));
 portalRouter.get("/files", asyncHandler(portalPatientFilesHandler));
-portalRouter.get("/files/:fileId/download", asyncHandler(portalDownloadPatientFileHandler));
+portalRouter.get("/files/:fileId/signed-url", asyncHandler(portalFileSignedUrlHandler));

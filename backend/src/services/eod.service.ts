@@ -1,4 +1,6 @@
-import { AppointmentStatus, InventoryTransactionType, PaymentMethod, Prisma } from "@prisma/client";
+import { AppointmentStatus } from "@prisma/client";
+
+import { dbTasks } from "../lib/dbTasks.js";
 import { prisma } from "../lib/prisma.js";
 
 export interface EodSummary {
@@ -35,26 +37,31 @@ export async function getDailyEodSummary(clinicId: string, date: Date): Promise<
     invTransactions,
     hmoClaims,
     lowStockCount
-  ] = await Promise.all([
-    prisma.appointment.findMany({
-      where: { clinicId, scheduledAt: { gte: startOfDay, lte: endOfDay } },
-      select: { status: true }
-    }),
-    prisma.payment.findMany({
-      where: { invoice: { clinicId }, paidAt: { gte: startOfDay, lte: endOfDay } },
-      select: { amount: true, method: true }
-    }),
-    prisma.inventoryTransaction.count({
-      where: { inventory: { clinicId }, createdAt: { gte: startOfDay, lte: endOfDay } }
-    }),
-    prisma.hmoClaim.findMany({
-      where: { clinicId, createdAt: { gte: startOfDay, lte: endOfDay } },
-      select: { totalAmount: true }
-    }),
-    prisma.inventory.count({
-      where: { clinicId, quantity: { lte: prisma.inventory.fields.minimumStock } }
-    })
-  ]);
+  ] = await dbTasks([
+    () =>
+      prisma.appointment.findMany({
+        where: { clinicId, scheduledAt: { gte: startOfDay, lte: endOfDay } },
+        select: { status: true },
+      }),
+    () =>
+      prisma.payment.findMany({
+        where: { invoice: { clinicId }, paidAt: { gte: startOfDay, lte: endOfDay } },
+        select: { amount: true, method: true },
+      }),
+    () =>
+      prisma.inventoryTransaction.count({
+        where: { inventory: { clinicId }, createdAt: { gte: startOfDay, lte: endOfDay } },
+      }),
+    () =>
+      prisma.hmoClaim.findMany({
+        where: { clinicId, createdAt: { gte: startOfDay, lte: endOfDay } },
+        select: { requestedAmount: true },
+      }),
+    () =>
+      prisma.inventory.count({
+        where: { clinicId, quantity: { lte: prisma.inventory.fields.minimumStock } },
+      }),
+  ] as const);
 
   const revenueByMethod: Record<string, number> = {};
   let totalRevenue = 0;
@@ -82,7 +89,7 @@ export async function getDailyEodSummary(clinicId: string, date: Date): Promise<
     },
     hmo: {
       claimsSubmitted: hmoClaims.length,
-      totalAmount: hmoClaims.reduce((sum, c) => sum + Number(c.totalAmount), 0)
+      totalAmount: hmoClaims.reduce((sum, c) => sum + Number(c.requestedAmount), 0)
     }
   };
 }

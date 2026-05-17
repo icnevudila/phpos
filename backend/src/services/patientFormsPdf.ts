@@ -11,6 +11,18 @@ import { MEDICAL_CONDITION_CODES } from "../validation/medicalHistory.schemas.js
 
 type Doc = PDFKit.PDFDocument;
 
+function fontBold(doc: Doc): void {
+  doc.font("Helvetica-Bold");
+}
+
+function fontRegular(doc: Doc): void {
+  doc.font("Helvetica");
+}
+
+function fontItalic(doc: Doc): void {
+  doc.font("Helvetica-Oblique");
+}
+
 interface ClinicHeaderData {
   name: string;
   address: string | null;
@@ -795,6 +807,305 @@ export async function generateOrthodonticRecordPdf(
 
   signatureBlock(doc, "Patient signature", "Orthodontist");
   drawFooter(doc, "Orthodontic treatment record — v1");
+  doc.end();
+  return promise;
+}
+
+/* -------------------------------------------------------------------------- */
+/* PDF 6 — Medical Certificate                                                */
+/* -------------------------------------------------------------------------- */
+
+export async function generateMedicalCertificatePdf(
+  clinicId: string,
+  patientId: string,
+  content: string,
+  dentistId?: string,
+): Promise<Buffer> {
+  const clinic = await fetchClinicHeader(clinicId);
+  const p = await prisma.patient.findUnique({ where: { id: patientId } });
+  if (!p) throw new Error("Patient not found");
+
+  const dentist = dentistId ? await prisma.user.findUnique({ 
+    where: { id: dentistId },
+    select: { firstName: true, lastName: true, prcNumber: true }
+  }) : null;
+
+  const { doc, promise } = buildDoc();
+  drawHeader(doc, clinic, "Medical Certificate");
+
+  doc.moveDown(2);
+  doc.fontSize(10).fillColor("#64748b").text(`Date: ${formatDate(new Date())}`, { align: "right" });
+  doc.moveDown(2);
+  
+  doc.fontSize(12).fillColor("#0f172a");
+  fontBold(doc);
+  doc.text("TO WHOM IT MAY CONCERN:");
+  fontRegular(doc);
+  doc.moveDown(1.5);
+  
+  const fullName = [p.firstName, p.middleName, p.lastName].filter(Boolean).join(" ");
+  const certText = content || `This is to certify that ${fullName}, ${ageFromBirthDate(p.birthDate)} years old, was examined and treated at this clinic on ${formatDate(new Date())}.`;
+  
+  doc.fontSize(11).fillColor("#0f172a").text(certText, { align: "justify", lineGap: 4 });
+  
+  doc.moveDown(4);
+  if (dentist) {
+    const dName = `Dr. ${dentist.firstName} ${dentist.lastName}`;
+    doc.fontSize(11);
+    fontBold(doc);
+    doc.text(dName, 320, doc.y, { width: 227, align: "center" });
+    fontRegular(doc);
+    doc.strokeColor("#0f172a").lineWidth(0.7).moveTo(320, doc.y).lineTo(547, doc.y).stroke();
+    doc.fontSize(9).fillColor("#64748b").text(`License No: ${dentist.prcNumber || "—"}`, 320, doc.y + 4, { width: 227, align: "center" });
+  } else {
+    signatureBlock(doc, "", "Attending Dentist");
+  }
+
+  drawFooter(doc);
+  doc.end();
+  return promise;
+}
+
+/* -------------------------------------------------------------------------- */
+/* PDF 7 — Referral Letter                                                    */
+/* -------------------------------------------------------------------------- */
+
+export async function generateReferralLetterPdf(
+  clinicId: string,
+  patientId: string,
+  toName: string,
+  reason: string,
+): Promise<Buffer> {
+  const clinic = await fetchClinicHeader(clinicId);
+  const p = await prisma.patient.findUnique({ where: { id: patientId } });
+  if (!p) throw new Error("Patient not found");
+
+  const { doc, promise } = buildDoc();
+  drawHeader(doc, clinic, "Referral Letter");
+
+  doc.moveDown(2);
+  doc.fontSize(10).fillColor("#64748b").text(`Date: ${formatDate(new Date())}`);
+  doc.moveDown(1.5);
+  
+  doc.fontSize(11).fillColor("#0f172a");
+  fontBold(doc);
+  doc.text(`To: ${toName}`);
+  fontRegular(doc);
+  doc.moveDown(1);
+  doc.text("Dear Colleague,");
+  doc.moveDown(1);
+  
+  const fullName = [p.firstName, p.middleName, p.lastName].filter(Boolean).join(" ");
+  doc.text(`I am referring ${fullName}, ${ageFromBirthDate(p.birthDate)} years old, for your specialized evaluation and management regarding:`);
+  doc.moveDown(1.5);
+  
+  doc.fontSize(11).fillColor("#0f172a").text(reason, { align: "justify", lineGap: 4 });
+  
+  doc.moveDown(2);
+  doc.text("Thank you for your kind attention to this matter.");
+  
+  doc.moveDown(4);
+  signatureBlock(doc, "", "Referring Dentist");
+
+  drawFooter(doc);
+  doc.end();
+  return promise;
+}
+
+/* -------------------------------------------------------------------------- */
+/* PDF 8 — Lab Order Form                                                     */
+/* -------------------------------------------------------------------------- */
+
+export async function generateLabOrderPdf(
+  clinicId: string,
+  labOrderId: string,
+): Promise<Buffer> {
+  const clinic = await fetchClinicHeader(clinicId);
+  const order = await prisma.labOrder.findUnique({
+    where: { id: labOrderId },
+    include: { patient: true, dentist: true }
+  });
+  if (!order) throw new Error("Lab order not found");
+
+  const { doc, promise } = buildDoc();
+  drawHeader(doc, clinic, "Laboratory Work Order");
+
+  sectionTitle(doc, "Patient & Doctor");
+  const p = order.patient;
+  const fullName = [p.firstName, p.middleName, p.lastName].filter(Boolean).join(" ");
+  twoColGrid(doc, [
+    ["Patient", fullName],
+    ["Dentist", `Dr. ${order.dentist.firstName} ${order.dentist.lastName}`],
+    ["Order Date", formatDate(order.createdAt)],
+    ["Due Date", formatDate(order.dueDate)],
+  ]);
+
+  sectionTitle(doc, "Laboratory details");
+  twoColGrid(doc, [
+    ["Lab Name", order.labName || "—"],
+    ["Case Status", order.status],
+  ]);
+
+  sectionTitle(doc, "Item description");
+  doc.fontSize(12);
+  fontBold(doc);
+  doc.text(order.itemDescription);
+  fontRegular(doc);
+  doc.moveDown(0.5);
+  twoColGrid(doc, [
+    ["Shade", order.shade || "—"],
+    ["Mould", order.mould || "—"],
+  ]);
+
+  if (order.notes) {
+    sectionTitle(doc, "Special Instructions");
+    doc.fontSize(10).text(order.notes, { width: 499 });
+  }
+
+  signatureBlock(doc, "Dentist signature", "Lab Technician received");
+
+  drawFooter(doc);
+  doc.end();
+  return promise;
+}
+
+/* -------------------------------------------------------------------------- */
+/* PDF 9 — Statement of Account (SOA)                                         */
+/* -------------------------------------------------------------------------- */
+
+export async function generateSoaPdf(
+  clinicId: string,
+  patientId: string,
+): Promise<Buffer> {
+  const clinic = await fetchClinicHeader(clinicId);
+  const p = await prisma.patient.findUnique({
+    where: { id: patientId },
+    include: {
+      invoices: {
+        where: { status: { in: ["UNPAID", "PARTIAL"] } },
+        orderBy: { createdAt: "asc" },
+        include: { payments: true },
+      },
+    }
+  });
+  if (!p) throw new Error("Patient not found");
+
+  const { doc, promise } = buildDoc();
+  drawHeader(doc, clinic, "Statement of Account");
+
+  sectionTitle(doc, "Patient");
+  const fullName = [p.firstName, p.middleName, p.lastName].filter(Boolean).join(" ");
+  twoColGrid(doc, [
+    ["Full name", fullName],
+    ["Phone", p.phone],
+    ["Date", formatDate(new Date())],
+  ]);
+
+  sectionTitle(doc, "Outstanding balances");
+  if (p.invoices.length === 0) {
+    doc.fontSize(10).fillColor("#64748b").text("No outstanding balances for this patient.");
+  } else {
+    let totalDue = 0;
+    const col = { date: 48, or: 150, total: 250, paid: 350, balance: 450 };
+    doc.fontSize(9).fillColor("#64748b");
+    doc.text("DATE", col.date, doc.y);
+    doc.text("OR #", col.or, doc.y);
+    doc.text("TOTAL", col.total, doc.y, { align: "right", width: 80 });
+    doc.text("PAID", col.paid, doc.y, { align: "right", width: 80 });
+    doc.text("BALANCE", col.balance, doc.y, { align: "right", width: 80 });
+    doc.strokeColor("#cbd5e1").moveTo(48, doc.y + 11).lineTo(547, doc.y + 11).stroke();
+    doc.moveDown(1.5);
+
+    for (const inv of p.invoices) {
+      if (doc.y > 770) doc.addPage();
+      const y = doc.y;
+      const total = Number(inv.total);
+      const paid = inv.payments.reduce((sum, p) => sum + Number(p.amount), 0);
+      const balance = Math.max(0, total - paid);
+      totalDue += balance;
+
+      doc.fontSize(10).fillColor("#0f172a");
+      doc.text(formatDate(inv.createdAt), col.date, y);
+      doc.text(inv.orNumber || "Draft", col.or, y);
+      doc.text(money(total), col.total, y, { align: "right", width: 80 });
+      doc.text(money(paid), col.paid, y, { align: "right", width: 80 });
+      fontBold(doc);
+      doc.text(money(balance), col.balance, y, { align: "right", width: 80 });
+      fontRegular(doc);
+      doc.moveDown(1.5);
+    }
+
+    doc.strokeColor("#0f172a").lineWidth(1).moveTo(350, doc.y).lineTo(547, doc.y).stroke();
+    doc.moveDown(0.5);
+    doc.fontSize(12);
+    fontBold(doc);
+    doc.text(`Total Amount Due: ${money(totalDue)}`, { align: "right" });
+    fontRegular(doc);
+  }
+
+  doc.moveDown(3);
+  doc.fontSize(10).text("Please settle the above balance at your earliest convenience. Thank you!");
+
+  drawFooter(doc);
+  doc.end();
+  return promise;
+}
+
+/* -------------------------------------------------------------------------- */
+/* PDF 10 — Treatment Plan                                                    */
+/* -------------------------------------------------------------------------- */
+
+export async function generateTreatmentPlanPdf(
+  clinicId: string,
+  patientId: string,
+  phases: any[],
+): Promise<Buffer> {
+  const clinic = await fetchClinicHeader(clinicId);
+  const p = await prisma.patient.findUnique({ where: { id: patientId } });
+  if (!p) throw new Error("Patient not found");
+
+  const { doc, promise } = buildDoc();
+  drawHeader(doc, clinic, "Proposed Treatment Plan");
+
+  sectionTitle(doc, "Patient");
+  const fullName = [p.firstName, p.middleName, p.lastName].filter(Boolean).join(" ");
+  twoColGrid(doc, [
+    ["Patient", fullName],
+    ["Date", formatDate(new Date())],
+  ]);
+
+  sectionTitle(doc, "Treatment roadmap");
+  if (!phases || phases.length === 0) {
+    doc.fontSize(10).fillColor("#64748b").text("No treatment phases defined.");
+  } else {
+    for (const phase of phases) {
+      if (doc.y > 700) doc.addPage();
+      doc.moveDown(0.5);
+      doc.fontSize(11).fillColor("#10b981");
+      fontBold(doc);
+      doc.text(`Phase ${phase.order}: ${phase.title}`);
+      doc.fontSize(10).fillColor("#475569");
+      fontItalic(doc);
+      doc.text(phase.description || "");
+      fontRegular(doc);
+      doc.moveDown(0.3);
+      if (phase.treatments && phase.treatments.length > 0) {
+        doc.fontSize(9).fillColor("#0f172a");
+        for (const t of phase.treatments) {
+          doc.text(`• ${t}`);
+        }
+      }
+      doc.moveDown(0.5);
+      doc.strokeColor("#f1f5f9").lineWidth(0.5).moveTo(48, doc.y).lineTo(547, doc.y).stroke();
+    }
+  }
+
+  doc.moveDown(2);
+  doc.fontSize(10).fillColor("#64748b").text("Note: This plan is an estimate and may change based on clinical findings during the course of treatment.", { align: "justify" });
+
+  signatureBlock(doc, "Patient acceptance", "Attending Dentist");
+
+  drawFooter(doc);
   doc.end();
   return promise;
 }

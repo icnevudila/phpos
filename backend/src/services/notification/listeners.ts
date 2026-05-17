@@ -3,7 +3,9 @@ import { subscribeInvoiceEvents } from "../../events/invoiceEvents.js";
 import { prisma } from "../../lib/prisma.js";
 
 import * as T from "./smsTemplates.js";
+import * as ET from "./emailTemplates.js";
 import { sendSMS } from "./smsService.js";
+import { sendEmail } from "./emailService.js";
 
 const tz = "Asia/Manila";
 
@@ -30,7 +32,7 @@ function money(v: string | number): string {
   });
 }
 
-async function fetchAppointmentForSms(appointmentId: string) {
+async function fetchAppointmentForNotif(appointmentId: string) {
   return prisma.appointment.findUnique({
     where: { id: appointmentId },
     select: {
@@ -38,7 +40,7 @@ async function fetchAppointmentForSms(appointmentId: string) {
       clinicId: true,
       patientId: true,
       scheduledAt: true,
-      patient: { select: { firstName: true, lastName: true, phone: true } },
+      patient: { select: { firstName: true, lastName: true, phone: true, email: true } },
       dentist: { select: { firstName: true, lastName: true } },
       clinic: { select: { phone: true, name: true } },
     },
@@ -47,52 +49,110 @@ async function fetchAppointmentForSms(appointmentId: string) {
 
 /**
  * Uygulama startup'ında bir kez çağrılır. Olay abonelerini kurar.
+ * Her olay için hem SMS (Semaphore) hem Email (Resend) paralel gönderilir.
+ * Herhangi birinin başarısız olması diğerini bloke etmez.
  */
 export function registerNotificationListeners(): void {
   subscribeAppointmentEvents(async (event) => {
-    const appointment = await fetchAppointmentForSms(event.appointmentId);
+    const appointment = await fetchAppointmentForNotif(event.appointmentId);
     if (!appointment) return;
     const patientName = `${appointment.patient.firstName} ${appointment.patient.lastName}`.trim();
     const date = fmtDate(appointment.scheduledAt);
     const time = fmtTime(appointment.scheduledAt);
+    const dentistName = `${appointment.dentist.firstName} ${appointment.dentist.lastName}`.trim();
+    const clinicName = appointment.clinic.name;
+    const clinicPhone = appointment.clinic.phone ?? undefined;
+    const patientEmail = appointment.patient.email ?? null;
 
     if (event.type === "appointment.created") {
-      await sendSMS({
-        clinicId: appointment.clinicId,
-        patientId: appointment.patientId,
-        appointmentId: appointment.id,
-        kind: "APPOINTMENT_CONFIRMED",
-        to: appointment.patient.phone,
-        message: T.appointmentConfirmed({ patientName, date, time }),
-      });
+      const sends: Promise<unknown>[] = [
+        sendSMS({
+          clinicId: appointment.clinicId,
+          patientId: appointment.patientId,
+          appointmentId: appointment.id,
+          kind: "APPOINTMENT_CONFIRMED",
+          to: appointment.patient.phone,
+          message: T.appointmentConfirmed({ patientName, date, time }),
+        }),
+      ];
+      if (patientEmail) {
+        const tpl = ET.appointmentConfirmedEmail({ patientName, dentistName, date, time, clinicName });
+        sends.push(
+          sendEmail({
+            clinicId: appointment.clinicId,
+            patientId: appointment.patientId,
+            appointmentId: appointment.id,
+            kind: "APPOINTMENT_CONFIRMED",
+            to: patientEmail,
+            subject: tpl.subject,
+            html: tpl.html,
+            text: tpl.text,
+          }),
+        );
+      }
+      await Promise.allSettled(sends);
       return;
     }
 
     if (event.type === "appointment.cancelled") {
-      await sendSMS({
-        clinicId: appointment.clinicId,
-        patientId: appointment.patientId,
-        appointmentId: appointment.id,
-        kind: "APPOINTMENT_CANCELLED",
-        to: appointment.patient.phone,
-        message: T.appointmentCancelled({ patientName, date, time }),
-      });
+      const sends: Promise<unknown>[] = [
+        sendSMS({
+          clinicId: appointment.clinicId,
+          patientId: appointment.patientId,
+          appointmentId: appointment.id,
+          kind: "APPOINTMENT_CANCELLED",
+          to: appointment.patient.phone,
+          message: T.appointmentCancelled({ patientName, date, time }),
+        }),
+      ];
+      if (patientEmail) {
+        const tpl = ET.appointmentCancelledEmail({ patientName, date, time, clinicName, clinicPhone });
+        sends.push(
+          sendEmail({
+            clinicId: appointment.clinicId,
+            patientId: appointment.patientId,
+            appointmentId: appointment.id,
+            kind: "APPOINTMENT_CANCELLED",
+            to: patientEmail,
+            subject: tpl.subject,
+            html: tpl.html,
+            text: tpl.text,
+          }),
+        );
+      }
+      await Promise.allSettled(sends);
       return;
     }
 
     if (event.type === "appointment.rescheduled") {
-      await sendSMS({
-        clinicId: appointment.clinicId,
-        patientId: appointment.patientId,
-        appointmentId: appointment.id,
-        kind: "APPOINTMENT_RESCHEDULED",
-        to: appointment.patient.phone,
-        message: T.appointmentRescheduled({ patientName, date, time }),
-      });
+      const sends: Promise<unknown>[] = [
+        sendSMS({
+          clinicId: appointment.clinicId,
+          patientId: appointment.patientId,
+          appointmentId: appointment.id,
+          kind: "APPOINTMENT_RESCHEDULED",
+          to: appointment.patient.phone,
+          message: T.appointmentRescheduled({ patientName, date, time }),
+        }),
+      ];
+      if (patientEmail) {
+        const tpl = ET.appointmentConfirmedEmail({ patientName, dentistName, date, time, clinicName });
+        sends.push(
+          sendEmail({
+            clinicId: appointment.clinicId,
+            patientId: appointment.patientId,
+            appointmentId: appointment.id,
+            kind: "APPOINTMENT_RESCHEDULED",
+            to: patientEmail,
+            subject: `Appointment Rescheduled — ${date}`,
+            html: tpl.html,
+            text: tpl.text,
+          }),
+        );
+      }
+      await Promise.allSettled(sends);
       return;
     }
-
-    // status_changed — no default SMS; cancellations cancelled event ile gelir
   });
 
   subscribeInvoiceEvents(async (event) => {
@@ -104,22 +164,48 @@ export function registerNotificationListeners(): void {
         clinicId: true,
         patientId: true,
         orNumber: true,
-        patient: { select: { firstName: true, lastName: true, phone: true } },
+        patient: { select: { firstName: true, lastName: true, phone: true, email: true } },
+        clinic: { select: { name: true, phone: true } },
       },
     });
     if (!invoice) return;
     const patientName = `${invoice.patient.firstName} ${invoice.patient.lastName}`.trim();
-    await sendSMS({
-      clinicId: invoice.clinicId,
-      patientId: invoice.patientId,
-      invoiceId: invoice.id,
-      kind: "PAYMENT_RECEIVED",
-      to: invoice.patient.phone,
-      message: T.paymentReceived({
-        patientName,
-        amount: money(event.amount),
-        orNumber: invoice.orNumber,
+    const clinicName = invoice.clinic.name;
+    const patientEmail = invoice.patient.email ?? null;
+    const amountStr = money(event.amount);
+
+    const sends: Promise<unknown>[] = [
+      sendSMS({
+        clinicId: invoice.clinicId,
+        patientId: invoice.patientId,
+        invoiceId: invoice.id,
+        kind: "PAYMENT_RECEIVED",
+        to: invoice.patient.phone,
+        message: T.paymentReceived({ patientName, amount: amountStr, orNumber: invoice.orNumber }),
       }),
-    });
+    ];
+
+    if (patientEmail) {
+      const tpl = ET.paymentReceivedEmail({
+        patientName,
+        amount: amountStr,
+        orNumber: invoice.orNumber,
+        clinicName,
+      });
+      sends.push(
+        sendEmail({
+          clinicId: invoice.clinicId,
+          patientId: invoice.patientId,
+          invoiceId: invoice.id,
+          kind: "PAYMENT_RECEIVED",
+          to: patientEmail,
+          subject: tpl.subject,
+          html: tpl.html,
+          text: tpl.text,
+        }),
+      );
+    }
+
+    await Promise.allSettled(sends);
   });
 }

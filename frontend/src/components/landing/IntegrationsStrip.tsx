@@ -10,8 +10,8 @@ const INTEGRATIONS = [
   "Maxicare",
   "Intellicare",
   "Medicard",
-  "Google Calendar",
-  "Excel / CSV",
+  "Resend Email",
+  "Excel export",
 ];
 
 export function IntegrationsStrip(): JSX.Element {
@@ -20,7 +20,7 @@ export function IntegrationsStrip(): JSX.Element {
   const loop = [...INTEGRATIONS, ...INTEGRATIONS];
 
   return (
-    <div className="rounded-3xl border border-slate-200 bg-white/70 px-6 py-6 shadow-sm backdrop-blur sm:px-8 dark:border-slate-800 dark:bg-slate-900/60">
+    <div className="rounded-3xl border border-slate-200 bg-white px-6 py-6 shadow-sm sm:px-8 dark:border-slate-800 dark:bg-slate-900">
       <p className="mb-4 text-center text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
         {t("landing.integrationsTitle")}
       </p>

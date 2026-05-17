@@ -1,4 +1,4 @@
-import { apiFetch } from "./api";
+import api from "./api";
 
 export type PerioSiteCode = "MB" | "B" | "DB" | "ML" | "L" | "DL";
 
@@ -45,14 +45,14 @@ interface ApiEnvelope<T> {
 }
 
 export async function listPerioExams(patientId: string): Promise<PerioExamSummary[]> {
-  const res = await apiFetch<ApiEnvelope<PerioExamSummary[]>>(
+  const res = await api.get<ApiEnvelope<PerioExamSummary[]>>(
     `/patients/${patientId}/perio-exams`,
-  );
+  ) as any;
   return res.data;
 }
 
 export async function getPerioExam(examId: string): Promise<PerioExamDetail> {
-  const res = await apiFetch<ApiEnvelope<PerioExamDetail>>(`/perio-exams/${examId}`);
+  const res = await api.get<ApiEnvelope<PerioExamDetail>>(`/perio-exams/${examId}`) as any;
   return res.data;
 }
 
@@ -66,13 +66,10 @@ export async function createPerioExam(
   patientId: string,
   input: CreatePerioExamInput,
 ): Promise<PerioExamDetail> {
-  const res = await apiFetch<ApiEnvelope<PerioExamDetail>>(
+  const res = await api.post<ApiEnvelope<PerioExamDetail>>(
     `/patients/${patientId}/perio-exams`,
-    {
-      method: "POST",
-      body: JSON.stringify(input),
-    },
-  );
+    input
+  ) as any;
   return res.data;
 }
 
@@ -80,13 +77,10 @@ export async function updatePerioExam(
   examId: string,
   input: Partial<CreatePerioExamInput>,
 ): Promise<PerioExamDetail> {
-  const res = await apiFetch<ApiEnvelope<PerioExamDetail>>(`/perio-exams/${examId}`, {
-    method: "PUT",
-    body: JSON.stringify(input),
-  });
+  const res = await api.put<ApiEnvelope<PerioExamDetail>>(`/perio-exams/${examId}`, input) as any;
   return res.data;
 }
 
 export async function deletePerioExam(examId: string): Promise<void> {
-  await apiFetch<ApiEnvelope<null>>(`/perio-exams/${examId}`, { method: "DELETE" });
+  await api.delete(`/perio-exams/${examId}`);
 }
