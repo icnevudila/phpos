@@ -127,4 +127,34 @@ test.describe("A–Z page audit — staff (admin)", () => {
     expect(href).toBeTruthy();
     await assertPageHealthy(page, href!);
   });
+
+  const PATIENT_TABS = [
+    "overview",
+    "medical",
+    "soap",
+    "chart",
+    "perio",
+    "advanced-perio",
+    "tmj",
+    "treatment-timeline",
+    "before-after",
+    "hmo",
+    "appointments",
+    "treatments",
+    "invoices",
+    "documents",
+    "prescriptions",
+    "xray",
+    "intraoral",
+    "lab",
+    "family",
+    "consents",
+    "referral",
+  ] as const;
+
+  for (const tabKey of PATIENT_TABS) {
+    test(`Patient tab: ${tabKey}`, async ({ page }) => {
+      await assertPageHealthy(page, `/patients/${DEMO_PATIENT_ID}?tab=${tabKey}`);
+    });
+  }
 });
