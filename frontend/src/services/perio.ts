@@ -1,4 +1,5 @@
 import api from "./api";
+import { unpackApiData } from "../utils/unpackApiData";
 
 export type PerioSiteCode = "MB" | "B" | "DB" | "ML" | "L" | "DL";
 
@@ -39,21 +40,14 @@ export interface PerioExamDetail extends PerioExamSummary {
   teeth: PerioToothDto[];
 }
 
-interface ApiEnvelope<T> {
-  success: true;
-  data: T;
-}
-
 export async function listPerioExams(patientId: string): Promise<PerioExamSummary[]> {
-  const res = await api.get<ApiEnvelope<PerioExamSummary[]>>(
-    `/patients/${patientId}/perio-exams`,
-  ) as any;
-  return res.data;
+  const res = await api.get(`/patients/${patientId}/perio-exams`);
+  return unpackApiData<PerioExamSummary[]>(res);
 }
 
 export async function getPerioExam(examId: string): Promise<PerioExamDetail> {
-  const res = await api.get<ApiEnvelope<PerioExamDetail>>(`/perio-exams/${examId}`) as any;
-  return res.data;
+  const res = await api.get(`/perio-exams/${examId}`);
+  return unpackApiData<PerioExamDetail>(res);
 }
 
 export interface CreatePerioExamInput {
@@ -66,19 +60,16 @@ export async function createPerioExam(
   patientId: string,
   input: CreatePerioExamInput,
 ): Promise<PerioExamDetail> {
-  const res = await api.post<ApiEnvelope<PerioExamDetail>>(
-    `/patients/${patientId}/perio-exams`,
-    input
-  ) as any;
-  return res.data;
+  const res = await api.post(`/patients/${patientId}/perio-exams`, input);
+  return unpackApiData<PerioExamDetail>(res);
 }
 
 export async function updatePerioExam(
   examId: string,
   input: Partial<CreatePerioExamInput>,
 ): Promise<PerioExamDetail> {
-  const res = await api.put<ApiEnvelope<PerioExamDetail>>(`/perio-exams/${examId}`, input) as any;
-  return res.data;
+  const res = await api.put(`/perio-exams/${examId}`, input);
+  return unpackApiData<PerioExamDetail>(res);
 }
 
 export async function deletePerioExam(examId: string): Promise<void> {

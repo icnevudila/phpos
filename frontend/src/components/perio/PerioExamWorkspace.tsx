@@ -72,6 +72,12 @@ export function PerioExamWorkspace({ patientId }: PerioExamWorkspaceProps): JSX.
     }
   }, [exams, examId, loadExam]);
 
+  useEffect(() => {
+    if (!listLoading && exams.length === 0 && teeth.length === 0 && examId == null) {
+      startNewExam();
+    }
+  }, [listLoading, exams.length, teeth.length, examId]);
+
   function startNewExam(): void {
     setExamId(null);
     setNotes("");

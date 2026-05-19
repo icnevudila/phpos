@@ -7,9 +7,12 @@ test.describe("Perio chart ↔ grid sync", () => {
 
   test.beforeEach(async ({ page }) => {
     await page.goto(`/patients/${patientId}?tab=perio`);
-    await expect(page.getByTestId("patient-tab-perio")).toHaveAttribute("aria-selected", "true", {
-      timeout: 30_000,
-    });
+    await page.getByTestId("patient-tab-overview").waitFor({ state: "visible", timeout: 60_000 });
+    const perioTab = page.getByTestId("patient-tab-perio");
+    await perioTab.scrollIntoViewIfNeeded();
+    if ((await perioTab.getAttribute("aria-selected")) !== "true") {
+      await perioTab.click();
+    }
     await page.getByTestId("perio-tooth-btn-3").waitFor({ state: "visible", timeout: 60_000 });
   });
 

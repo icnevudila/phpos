@@ -352,6 +352,7 @@ export function PatientDetailPage(): JSX.Element {
                       key={def.key}
                       type="button"
                       role="tab"
+                      data-testid={`patient-tab-${def.key}`}
                       aria-selected={isActive}
                       onClick={() => selectTab(def.key)}
                       className={`
