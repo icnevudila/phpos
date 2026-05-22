@@ -112,7 +112,7 @@ export function FamilyNetworkTab({ patientId }: FamilyNetworkTabProps): JSX.Elem
                 value={familyName}
                 onChange={(e) => setFamilyName(e.target.value)}
                 placeholder={t("pages.patientDetail.family.householdPlaceholder")}
-                className="mt-1 h-11 w-56 rounded-xl border border-slate-200 px-3 text-sm dark:border-slate-700 dark:bg-slate-900"
+                className="mt-1 h-11 w-56 rounded-xl border border-slate-200 px-3 text-sm"
               />
             </label>
             <button
@@ -144,9 +144,9 @@ export function FamilyNetworkTab({ patientId }: FamilyNetworkTabProps): JSX.Elem
               key={member.id}
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="group flex items-center gap-4 rounded-3xl border border-slate-100 bg-slate-50 p-6 dark:border-slate-800 dark:bg-slate-800/50"
+              className="group flex items-center gap-4 rounded-3xl border border-slate-100 bg-slate-50 p-6"
             >
-              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white text-indigo-500 shadow-sm dark:bg-slate-800">
+              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white text-indigo-500 shadow-sm">
                 <Heart size={24} className={member.id === patientId ? "fill-indigo-500" : ""} />
               </div>
               <div className="min-w-0 flex-1">
@@ -178,11 +178,11 @@ export function FamilyNetworkTab({ patientId }: FamilyNetworkTabProps): JSX.Elem
           ))}
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center rounded-[3rem] border border-dashed border-slate-200 bg-slate-50 py-20 text-center dark:border-slate-800 dark:bg-slate-800/50">
-          <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-3xl bg-white text-slate-300 dark:bg-slate-800">
+        <div className="flex flex-col items-center justify-center rounded-[3rem] border border-dashed border-slate-200 bg-slate-50 py-20 text-center">
+          <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-3xl bg-white text-slate-300">
             <Users size={40} />
           </div>
-          <h4 className="text-lg font-black text-slate-900 dark:text-white">
+          <h4 className="text-lg font-black text-slate-900">
             {t("pages.patientDetail.family.emptyTitle")}
           </h4>
           <p className="mt-2 max-w-xs text-sm text-slate-500">
@@ -193,11 +193,11 @@ export function FamilyNetworkTab({ patientId }: FamilyNetworkTabProps): JSX.Elem
 
       {linkOpen ? (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-white/50 p-4"
           role="dialog"
           aria-modal="true"
         >
-          <div className="w-full max-w-md rounded-3xl bg-white p-6 shadow-2xl dark:bg-slate-900">
+          <div className="w-full max-w-md rounded-3xl bg-white p-6 shadow-2xl">
             <div className="mb-4 flex items-center justify-between">
               <h4 className="text-lg font-black">{t("pages.patientDetail.family.linkTitle")}</h4>
               <button
@@ -215,7 +215,7 @@ export function FamilyNetworkTab({ patientId }: FamilyNetworkTabProps): JSX.Elem
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder={t("pages.patientDetail.family.searchPlaceholder")}
-              className="mb-4 h-12 w-full rounded-xl border border-slate-200 px-4 text-sm dark:border-slate-700 dark:bg-slate-800"
+              className="mb-4 h-12 w-full rounded-xl border border-slate-200 px-4 text-sm"
               autoFocus
             />
             <ul className="max-h-64 space-y-2 overflow-y-auto">
@@ -225,7 +225,7 @@ export function FamilyNetworkTab({ patientId }: FamilyNetworkTabProps): JSX.Elem
                     type="button"
                     disabled={linkMut.isPending}
                     onClick={() => linkMut.mutate(p.id)}
-                    className="flex w-full items-center justify-between rounded-xl px-4 py-3 text-left hover:bg-slate-50 dark:hover:bg-slate-800"
+                    className="flex w-full items-center justify-between rounded-xl px-4 py-3 text-left hover:bg-slate-50"
                   >
                     <span className="font-bold">
                       {p.firstName} {p.lastName}

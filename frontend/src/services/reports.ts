@@ -271,3 +271,16 @@ export async function downloadBirJournalCsv(year: number, month: number): Promis
   const mm = String(month).padStart(2, "0");
   await downloadAuthedFile(`/reports/bir-journal.csv?year=${year}&month=${month}`, `bir-journal-${year}-${mm}.csv`);
 }
+
+export interface OrGapAuditResult {
+  year: number;
+  totalIssued: number;
+  expectedCount: number;
+  missingCount: number;
+  missingSequences: string[];
+}
+
+export async function fetchOrGapAudit(year: number): Promise<OrGapAuditResult> {
+  const res = await api.get<ApiEnvelope<OrGapAuditResult>>(`/reports/or-gap-audit`, { params: { year } }) as any;
+  return res.data;
+}

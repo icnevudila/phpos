@@ -18,7 +18,7 @@ export function LanguageSwitcher({ className = "" }: { className?: string }): JS
       <select
         value={current}
         onChange={(e) => void i18n.changeLanguage(e.target.value)}
-        className="max-w-[11rem] rounded-lg border border-slate-300 bg-white/80 px-2 py-1 text-sm font-medium text-slate-700 shadow-sm backdrop-blur hover:bg-white focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 sm:max-w-none dark:border-slate-600 dark:bg-slate-900/80 dark:text-slate-100"
+        className="max-w-[11rem] rounded-lg border border-slate-300 bg-white/80 px-2 py-1 text-sm font-medium text-slate-700 shadow-sm backdrop-blur hover:bg-white focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500 sm:max-w-none"
       >
         {SUPPORTED_LANGUAGES.map((lng) => (
           <option key={lng} value={lng}>

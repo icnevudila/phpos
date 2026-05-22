@@ -511,9 +511,9 @@ export function PerioGraphicVisualizer({
                  {normalizedTeeth.reduce((acc, t) => acc + getSiteList(t).filter(hasPlaque).length, 0)}
               </p>
            </div>
-           <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-100">
-              <p className="text-[10px] font-black uppercase tracking-widest text-emerald-500 mb-1">Deep Pockets ({">"}4mm)</p>
-              <p className="text-2xl font-black text-emerald-700 tracking-tighter">
+           <div className="p-4 rounded-2xl bg-teal-50 border border-teal-100">
+              <p className="text-[10px] font-black uppercase tracking-widest text-teal-500 mb-1">Deep Pockets ({">"}4mm)</p>
+              <p className="text-2xl font-black text-teal-700 tracking-tighter">
                  {normalizedTeeth.reduce((acc, t) => acc + getSiteList(t).filter(s => getSitePocketDepth(s) > 4).length, 0)}
               </p>
            </div>

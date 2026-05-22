@@ -36,19 +36,19 @@ export function QueueBulkToolbar({
 
   if (!hasOverdue && !hasNext) {
     return (
-      <p className="rounded-2xl border border-dashed border-slate-200 bg-slate-50/80 px-4 py-3 text-center text-xs font-bold uppercase tracking-widest text-slate-400 dark:border-slate-700 dark:bg-slate-900/40">
+      <p className="rounded-2xl border border-dashed border-slate-200 bg-slate-50/80 px-4 py-3 text-center text-xs font-bold uppercase tracking-widest text-slate-400">
         {t("pages.dashboard.bulkNone")}
       </p>
     );
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+    <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
       <span className="mr-1 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
         {t("pages.dashboard.bulkLabel")}
       </span>
       {syncLabel ? (
-        <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400">{syncLabel}</span>
+        <span className="text-[10px] font-bold text-teal-600">{syncLabel}</span>
       ) : null}
       {hasOverdue ? (
         <>
@@ -56,7 +56,7 @@ export function QueueBulkToolbar({
             type="button"
             disabled={disabled}
             onClick={() => void onBulkCheckInOverdue()}
-            className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-600 px-3 py-2 text-[10px] font-black uppercase tracking-widest text-white disabled:opacity-50"
+            className="inline-flex items-center gap-1.5 rounded-xl bg-teal-600 px-3 py-2 text-[10px] font-black uppercase tracking-widest text-white disabled:opacity-50"
           >
             <UserCheck size={14} />
             {t("pages.dashboard.bulkCheckInOverdue", { count: overdue.length })}
@@ -65,7 +65,7 @@ export function QueueBulkToolbar({
             type="button"
             disabled={disabled}
             onClick={() => void onBulkAlertOverdue()}
-            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-[10px] font-black uppercase tracking-widest text-slate-700 disabled:opacity-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-[10px] font-black uppercase tracking-widest text-slate-700 disabled:opacity-50"
           >
             <Bell size={14} />
             {t("pages.dashboard.bulkAlertOverdue", { count: overdue.length })}

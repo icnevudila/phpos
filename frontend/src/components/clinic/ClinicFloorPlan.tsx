@@ -100,7 +100,7 @@ export default function ClinicFloorPlan({ chairs, waiting, onAssignChair, onUpda
     <DndProvider backend={HTML5Backend}>
       <div className={`space-y-3 ${className}`.trim()}>
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <h3 className="text-sm font-semibold text-slate-900">Clinic Floor Plan</h3>
+          <h3 className="text-sm font-semibold text-slate-800">Clinic Floor Plan</h3>
           <div className="flex items-center gap-3 text-[11px]">
             <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-sm bg-green-500" />Empty</span>
             <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-sm bg-red-500" />Occupied</span>
@@ -137,7 +137,7 @@ export default function ClinicFloorPlan({ chairs, waiting, onAssignChair, onUpda
 
           <div className="w-56 space-y-3">
             <div className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
-              <h4 className="text-xs font-semibold text-slate-900 mb-2">Waiting ({waiting.length})</h4>
+              <h4 className="text-xs font-semibold text-slate-800 mb-2">Waiting ({waiting.length})</h4>
               <div className="space-y-1.5 max-h-64 overflow-y-auto">
                 {waiting.length === 0 && <p className="text-[10px] text-slate-400">No patients waiting</p>}
                 {waiting.map((p) => <DraggablePatient key={p.id} patient={p} />)}
@@ -146,10 +146,10 @@ export default function ClinicFloorPlan({ chairs, waiting, onAssignChair, onUpda
 
             {selected && onUpdateChairStatus && (
               <div className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
-                <h4 className="text-xs font-semibold text-slate-900 mb-2">{selected.name}</h4>
+                <h4 className="text-xs font-semibold text-slate-800 mb-2">{selected.name}</h4>
                 <div className="grid grid-cols-2 gap-1.5">
                   {(['empty', 'occupied', 'cleaning', 'reserved'] as ChairStatus[]).map((s) => (
-                    <button key={s} onClick={() => onUpdateChairStatus(selected.id, s)} className={`px-2 py-1 rounded text-[10px] font-medium border capitalize ${selected.status === s ? 'bg-slate-900 text-white border-slate-900' : 'bg-white text-slate-600 border-slate-200'}`}>
+                    <button key={s} onClick={() => onUpdateChairStatus(selected.id, s)} className={`px-2 py-1 rounded text-[10px] font-medium border capitalize ${selected.status === s ? 'bg-teal-600 text-white border-teal-600' : 'bg-white text-slate-600 border-slate-200'}`}>
                       {s}
                     </button>
                   ))}
@@ -162,4 +162,3 @@ export default function ClinicFloorPlan({ chairs, waiting, onAssignChair, onUpda
     </DndProvider>
   );
 }
-

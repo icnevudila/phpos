@@ -6,10 +6,10 @@ export type EmptyStateAction =
   | { kind: "hash"; href: string; label: string };
 
 const primaryCls =
-  "inline-flex min-h-11 items-center justify-center rounded-lg bg-sky-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-sky-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-2 dark:ring-offset-slate-950";
+  "inline-flex min-h-11 items-center justify-center rounded-lg bg-sky-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-sky-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-2 ";
 
 const secondaryCls =
-  "inline-flex min-h-11 items-center justify-center rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-800 shadow-sm hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800 dark:ring-offset-slate-950";
+  "inline-flex min-h-11 items-center justify-center rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-800 shadow-sm hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2     ";
 
 function EmptyAction({ action, variant }: { action: EmptyStateAction; variant: "solid" | "outline" }): JSX.Element {
   const cls = variant === "solid" ? primaryCls : secondaryCls;
@@ -138,11 +138,11 @@ export function ListEmptyState({
       role="status"
       className="flex flex-col items-center justify-center gap-3 px-4 py-10 text-center sm:py-12"
     >
-      <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400">
+      <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-slate-500">
         <Ico />
       </div>
-      <h2 className="text-base font-semibold text-slate-900 dark:text-white">{title}</h2>
-      <p className="max-w-md text-sm text-slate-600 dark:text-slate-400">{description}</p>
+      <h2 className="text-base font-semibold text-slate-900">{title}</h2>
+      <p className="max-w-md text-sm text-slate-600">{description}</p>
       {primary || secondary ? (
         <div className="mt-1 flex flex-wrap items-center justify-center gap-3">
           {primary ? <EmptyAction action={primary} variant="solid" /> : null}

@@ -30,7 +30,7 @@ function RouteErrorFallback({ message }: { message?: string }): JSX.Element {
   const { t } = useTranslation();
   return (
     <div className="flex min-h-[50vh] flex-col items-center justify-center gap-4 p-8 text-center">
-      <h1 className="text-xl font-black text-slate-900 dark:text-white">{t(`${NS}.title`)}</h1>
+      <h1 className="text-xl font-black text-slate-900">{t(`${NS}.title`)}</h1>
       <p className="max-w-md text-sm text-slate-500">{t(`${NS}.subtitle`)}</p>
       {message ? <p className="max-w-lg rounded-xl bg-rose-50 px-4 py-2 text-xs text-rose-700">{message}</p> : null}
       <Link

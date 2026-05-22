@@ -74,11 +74,11 @@ function CalendarEventContent({ arg }: { arg: EventContentArg }): JSX.Element {
   return (
     <div className="flex flex-col gap-0.5 overflow-hidden px-2 py-1.5 text-[10px] leading-tight group">
       <div className="flex items-center justify-between gap-1">
-         <span className="truncate font-black uppercase tracking-tighter opacity-80">{arg.timeText}</span>
+         <span className="truncate font-semibold uppercase tracking-tight opacity-80">{arg.timeText}</span>
          <div className="h-1.5 w-1.5 rounded-full bg-white opacity-40 group-hover:opacity-100 transition-opacity" />
       </div>
-      <span className="truncate font-black text-xs uppercase tracking-tighter leading-none mb-0.5">{a.patient.fullName}</span>
-      <span className="truncate font-bold opacity-60 uppercase tracking-[0.05em] text-[8px]">
+      <span className="truncate font-bold text-xs uppercase tracking-tight leading-none mb-0.5">{a.patient.fullName}</span>
+      <span className="truncate font-medium opacity-60 uppercase tracking-wide text-[8px]">
         {t("pages.appointments.eventDentist", { lastName: a.dentist.lastName })}
       </span>
     </div>
@@ -228,48 +228,48 @@ export function AppointmentsPage(): JSX.Element {
   }
 
   return (
-    <div className="min-h-screen w-full pb-24 bg-[#fafbfc] dark:bg-slate-950">
-      <div className="mx-auto max-w-[1500px] px-4 sm:px-6 lg:px-10 space-y-12 pt-10">
+    <div className="min-h-screen w-full pb-24 bg-[#f5f7f9]">
+      <div className="mx-auto max-w-[1500px] px-4 sm:px-6 lg:px-10 space-y-6 pt-8">
         
         {/* Header */}
-        <header className="flex flex-col lg:flex-row lg:items-center justify-between gap-10">
-           <div className="space-y-4">
-              <div className="flex items-center gap-3">
-                 <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                 <span className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400">{t("pages.appointments.deskKicker")}</span>
-              </div>
-              <h1 className="text-5xl lg:text-7xl font-black tracking-tighter text-slate-900 dark:text-white">
-                {t("pages.appointments.heroTitle")}<span className="text-emerald-500">.</span>
-              </h1>
-              <p className="text-lg font-medium text-slate-400 max-w-xl">{t("pages.appointments.subtitle")}</p>
-           </div>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <div className="h-2 w-2 rounded-full bg-teal-500 animate-pulse" />
+              <span className="text-xs font-semibold uppercase tracking-widest text-slate-400">{t("pages.appointments.deskKicker")}</span>
+            </div>
+            <h1 className="page-header-title">
+              {t("pages.appointments.heroTitle")}<span className="text-teal-500">.</span>
+            </h1>
+            <p className="page-header-sub">{t("pages.appointments.subtitle")}</p>
+          </div>
 
-           <div className="flex items-center gap-4">
-              <button
-                type="button"
-                disabled={!appointments.length}
-                onClick={onExportCsv}
-                className="flex h-16 items-center gap-2 rounded-[1.5rem] border border-slate-200 bg-white px-6 text-slate-700 shadow-sm transition-all hover:bg-slate-50 disabled:opacity-40 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
-              >
-                <Download size={18} />
-                <span className="text-[10px] font-black uppercase tracking-widest">{t("pages.appointments.exportCsv")}</span>
-              </button>
-              <button 
-                onClick={() => openNew()}
-                className="flex h-16 items-center gap-3 rounded-[1.5rem] bg-slate-900 px-8 text-white shadow-2xl transition-all hover:scale-105 active:scale-95 dark:bg-white dark:text-slate-900"
-              >
-                 <Plus size={20} />
-                 <span className="text-[10px] font-black uppercase tracking-widest">{t("pages.appointments.new")}</span>
-              </button>
-           </div>
-        </header>
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              disabled={!appointments.length}
+              onClick={onExportCsv}
+              className="btn-secondary flex items-center gap-2 disabled:opacity-40"
+            >
+              <Download size={16} />
+              <span className="text-xs font-semibold uppercase tracking-widest">{t("pages.appointments.exportCsv")}</span>
+            </button>
+            <button 
+              onClick={() => openNew()}
+              className="btn-primary flex items-center gap-2"
+            >
+               <Plus size={18} />
+               <span className="text-xs font-semibold uppercase tracking-widest">{t("pages.appointments.new")}</span>
+            </button>
+          </div>
+        </div>
 
-        {/* Calendar Intelligence Strip */}
-        <div className="grid gap-8 grid-cols-1 lg:grid-cols-12">
+        {/* Calendar Controls Strip */}
+        <div className="grid gap-4 grid-cols-1 lg:grid-cols-12">
            
            {/* View Selection & Filters */}
-           <div className="lg:col-span-8 flex flex-wrap items-center gap-4 bg-white dark:bg-slate-900 p-4 rounded-[2.5rem] shadow-xl ring-1 ring-slate-100 dark:ring-slate-800">
-              <div className="flex gap-1 p-1 bg-slate-50 dark:bg-slate-800 rounded-2xl">
+           <div className="lg:col-span-8 flex flex-wrap items-center gap-4 bg-white p-4 rounded-2xl shadow-sm ring-1 ring-slate-100">
+              <div className="flex gap-1 p-1 bg-slate-50 rounded-xl">
                 {[
                   { key: "timeGridDay", label: t("pages.appointments.viewDay"), icon: List },
                   { key: "timeGridWeek", label: t("pages.appointments.viewWeek"), icon: LayoutGrid },
@@ -278,7 +278,7 @@ export function AppointmentsPage(): JSX.Element {
                    <button
                      key={v.key}
                      onClick={() => changeView(v.key as CalView)}
-                     className={`flex items-center gap-2 px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${fcView === v.key ? 'bg-white dark:bg-slate-950 text-emerald-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                     className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all ${fcView === v.key ? 'bg-white text-teal-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
                    >
                      <v.icon size={14} />
                      {v.label}
@@ -286,17 +286,17 @@ export function AppointmentsPage(): JSX.Element {
                 ))}
               </div>
 
-              <div className="h-10 w-px bg-slate-100 dark:bg-slate-800 mx-2 hidden md:block" />
+              <div className="h-8 w-px bg-slate-100 mx-1 hidden md:block" />
 
-              <div className="flex-1 flex items-center gap-4">
+              <div className="flex-1 flex items-center gap-3">
                  <div className="flex items-center gap-1">
-                    <button onClick={goPrev} className="h-12 w-12 flex items-center justify-center rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-400 hover:bg-slate-900 hover:text-white transition-all"><ChevronLeft size={18} /></button>
-                    <button onClick={goToday} className="h-12 px-6 rounded-xl bg-slate-50 dark:bg-slate-800 text-[10px] font-black uppercase tracking-widest text-slate-600 dark:text-slate-300 hover:bg-slate-900 hover:text-white transition-all">{t("pages.appointments.today")}</button>
-                    <button onClick={goNext} className="h-12 w-12 flex items-center justify-center rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-400 hover:bg-slate-900 hover:text-white transition-all"><ChevronRight size={18} /></button>
+                    <button onClick={goPrev} className="h-10 w-10 flex items-center justify-center rounded-xl bg-slate-50 text-slate-400 hover:bg-teal-500 hover:text-white transition-all"><ChevronLeft size={16} /></button>
+                    <button onClick={goToday} className="h-10 px-4 rounded-xl bg-slate-50 text-xs font-semibold uppercase tracking-wider text-slate-600 hover:bg-teal-500 hover:text-white transition-all">{t("pages.appointments.today")}</button>
+                    <button onClick={goNext} className="h-10 w-10 flex items-center justify-center rounded-xl bg-slate-50 text-slate-400 hover:bg-teal-500 hover:text-white transition-all"><ChevronRight size={16} /></button>
                  </div>
                  
                  <div className="relative flex-1">
-                    <CalendarIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={16} />
+                    <CalendarIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-300" size={14} />
                     <input 
                       type="date" 
                       value={range.from}
@@ -304,22 +304,22 @@ export function AppointmentsPage(): JSX.Element {
                         const v = e.target.value;
                         if (v) calendarRef.current?.getApi().gotoDate(`${v}T12:00:00+08:00`);
                       }}
-                      className="h-12 w-full pl-12 pr-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 text-[10px] font-black uppercase outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
+                      className="h-10 w-full pl-10 pr-3 rounded-xl bg-slate-50 text-xs font-medium outline-none focus:ring-2 focus:ring-teal-500 transition-all"
                     />
                  </div>
               </div>
            </div>
 
            {/* Metrics & Provider Selection */}
-           <div className="lg:col-span-4 flex items-center justify-between bg-white dark:bg-slate-900 p-4 rounded-[2.5rem] shadow-xl ring-1 ring-slate-100 dark:ring-slate-800">
-              <div className="flex-1 px-4">
-                 <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-1">{t("pages.appointments.countsTotalLabel")}</p>
+           <div className="lg:col-span-4 flex items-center justify-between bg-white p-4 rounded-2xl shadow-sm ring-1 ring-slate-100">
+              <div className="flex-1 px-3">
+                 <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">{t("pages.appointments.countsTotalLabel")}</p>
                  <div className="flex items-baseline gap-2">
-                    <span className="text-3xl font-black text-slate-900 dark:text-white tabular-nums">{counts.total}</span>
-                    <span className="text-[10px] font-bold text-emerald-500">+{counts.confirmed} OK</span>
+                    <span className="text-2xl font-bold text-slate-800 tabular-nums">{counts.total}</span>
+                    <span className="text-xs font-semibold text-teal-500">+{counts.confirmed} OK</span>
                  </div>
               </div>
-              <div className="h-10 w-px bg-slate-100 dark:bg-slate-800 mx-4" />
+              <div className="h-8 w-px bg-slate-100 mx-3" />
               <div className="flex-1">
                  <DentistSelect
                    dentists={dentists}
@@ -337,29 +337,29 @@ export function AppointmentsPage(): JSX.Element {
             <motion.div 
                initial={{ opacity: 0, y: 20 }}
                animate={{ opacity: 1, y: 0 }}
-               className="rounded-[2.5rem] bg-indigo-500/5 border border-indigo-500/10 p-6 backdrop-blur-sm"
+               className="rounded-2xl bg-teal-50 border border-teal-100 p-5"
             >
-               <div className="flex items-center gap-4 mb-4">
-                  <div className="h-2 w-2 rounded-full bg-indigo-500 animate-pulse" />
-                  <p className="text-[10px] font-black uppercase tracking-[0.3em] text-indigo-500">{t("pages.appointments.queueStripTitle")}</p>
+               <div className="flex items-center gap-3 mb-3">
+                  <div className="h-2 w-2 rounded-full bg-teal-500 animate-pulse" />
+                  <p className="text-xs font-semibold uppercase tracking-wider text-teal-600">{t("pages.appointments.queueStripTitle")}</p>
                </div>
-               <div className="flex flex-wrap gap-3">
+               <div className="flex flex-wrap gap-2">
                   {queueItems.map((a) => (
                     <button
                       key={a.id}
                       type="button"
                       aria-label={a.patient.fullName}
                       onClick={() => setSelected(a)}
-                      className="group relative flex items-center gap-4 bg-white dark:bg-slate-900 pl-4 pr-6 py-3 rounded-2xl shadow-sm ring-1 ring-indigo-500/10 hover:ring-indigo-500 transition-all active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+                      className="group flex items-center gap-3 bg-white pl-3 pr-5 py-2.5 rounded-xl shadow-sm ring-1 ring-teal-100 hover:ring-teal-400 transition-all active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500"
                     >
-                      <div className={`h-8 px-3 rounded-xl flex items-center justify-center text-[8px] font-black uppercase tracking-tighter ${a.status === "IN_PROGRESS" ? "bg-fuchsia-50 text-fuchsia-600" : "bg-sky-50 text-sky-600"}`}>
+                      <div className={`h-7 px-2.5 rounded-lg flex items-center justify-center text-[9px] font-bold uppercase tracking-wide ${a.status === "IN_PROGRESS" ? "bg-teal-50 text-teal-600" : "bg-sky-50 text-sky-600"}`}>
                          {a.status === "IN_PROGRESS"
                            ? t("pages.appointments.queueBadgeChair")
                            : t("pages.appointments.queueBadgeLobby")}
                       </div>
                       <div className="text-left">
-                         <p className="text-xs font-black text-slate-900 dark:text-white uppercase leading-none">{a.patient.fullName}</p>
-                         <p className="text-[10px] font-bold text-slate-400 mt-0.5">
+                         <p className="text-xs font-bold text-slate-800 uppercase leading-none">{a.patient.fullName}</p>
+                         <p className="text-[10px] font-medium text-slate-400 mt-0.5">
                             {new Date(a.scheduledAt).toLocaleTimeString("en-PH", { hour: 'numeric', minute: '2-digit' })}
                          </p>
                       </div>
@@ -370,16 +370,9 @@ export function AppointmentsPage(): JSX.Element {
           )}
         </AnimatePresence>
 
-        {/* Main Workspace */}
+        {/* Main Calendar Workspace */}
         <div className="relative">
-           {/* Date Display Sidebar Floating */}
-           <div className="absolute -left-10 top-0 h-full hidden xl:block">
-              <div className="sticky top-10 flex flex-col items-center gap-1 py-4">
-                 <span className="[writing-mode:vertical-lr] rotate-180 text-[10px] font-black uppercase tracking-[0.5em] text-slate-200">{rangeLabel}</span>
-              </div>
-           </div>
-
-           <div className="relative rounded-[3.5rem] bg-white dark:bg-slate-900 shadow-2xl p-8 lg:p-10 ring-1 ring-slate-100 dark:ring-slate-800">
+           <div className="relative rounded-2xl bg-white shadow-sm p-6 lg:p-8 ring-1 ring-slate-100">
               <div className={`calendar-diagnostic-hub ${fcView === "dayGridMonth" ? "min-h-[600px]" : "h-[70vh] min-h-[600px]"}`}>
                  <FullCalendar
                    ref={calendarRef}
@@ -412,7 +405,7 @@ export function AppointmentsPage(): JSX.Element {
                  />
               </div>
               {isFetched && !isFetching && appointments.length === 0 ? (
-                <div className="pointer-events-none absolute inset-8 flex items-center justify-center rounded-[2.5rem] bg-white/80 backdrop-blur-sm dark:bg-slate-900/85">
+                <div className="pointer-events-none absolute inset-6 flex items-center justify-center rounded-2xl bg-white/80 backdrop-blur-sm">
                   <div className="pointer-events-auto">
                     <ListEmptyState
                       icon="chart"

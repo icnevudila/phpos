@@ -4,8 +4,8 @@ import React from "react";
 function LaptopFrame({ children }: { children: React.ReactNode }): JSX.Element {
   return (
     <div className="relative">
-      <div className="rounded-[18px] bg-slate-900 p-2.5 shadow-2xl ring-1 ring-slate-800">
-        <div className="rounded-[10px] bg-slate-950 p-1">
+      <div className="rounded-[18px] bg-white p-2.5 shadow-2xl ring-1 ring-slate-100">
+        <div className="rounded-[10px] bg-[#f5f7f9] p-1">
           <div className="aspect-[16/10] overflow-hidden rounded-md bg-white">{children}</div>
         </div>
       </div>
@@ -24,10 +24,10 @@ function PhoneFrame({
 }): JSX.Element {
   return (
     <div
-      className={`relative w-[180px] shrink-0 rounded-[32px] bg-slate-900 p-1.5 shadow-2xl ring-1 ring-slate-800 ${className}`}
+      className={`relative w-[180px] shrink-0 rounded-[32px] bg-white p-1.5 shadow-2xl ring-1 ring-slate-100 ${className}`}
     >
       <div className="relative overflow-hidden rounded-[26px] bg-white">
-        <div className="absolute left-1/2 top-1.5 z-10 h-4 w-14 -translate-x-1/2 rounded-full bg-slate-900" />
+        <div className="absolute left-1/2 top-1.5 z-10 h-4 w-14 -translate-x-1/2 rounded-full bg-white" />
         <div className="aspect-[9/19] overflow-hidden">{children}</div>
       </div>
     </div>
@@ -43,12 +43,12 @@ export function LaptopDashboardMock(): JSX.Element {
       <LaptopFrame>
       <div className="flex h-full text-[7px]">
         {/* Sidebar */}
-        <aside className="flex w-[18%] flex-col gap-1 bg-gradient-to-b from-emerald-50 to-sky-50 p-2">
+        <aside className="flex w-[18%] flex-col gap-1 bg-gradient-to-b from-teal-50 to-sky-50 p-2">
           <div className="flex items-center gap-1 pb-1">
-            <div className="h-3 w-3 rounded bg-gradient-to-br from-emerald-500 to-sky-500" />
+            <div className="h-3 w-3 rounded bg-gradient-to-br from-teal-500 to-sky-500" />
             <span className="text-[6px] font-bold text-slate-800">DentEase</span>
           </div>
-          <div className="rounded bg-white px-1.5 py-1 font-semibold text-emerald-700 shadow-sm">
+          <div className="rounded bg-white px-1.5 py-1 font-semibold text-teal-700 shadow-sm">
             Dashboard
           </div>
           {["Appointments", "Patients", "Billing", "HMO Claims", "Inventory", "Staff"].map((x) => (
@@ -62,13 +62,13 @@ export function LaptopDashboardMock(): JSX.Element {
           <div className="flex items-center justify-between">
             <span className="text-[8px] font-bold text-slate-900">Staff Dashboard</span>
             <div className="flex -space-x-1">
-              <div className="h-3 w-3 rounded-full bg-emerald-400 ring-1 ring-white" />
+              <div className="h-3 w-3 rounded-full bg-teal-400 ring-1 ring-white" />
               <div className="h-3 w-3 rounded-full bg-sky-400 ring-1 ring-white" />
             </div>
           </div>
           <div className="mt-2 grid grid-cols-4 gap-1">
             {[
-              { l: "Today's appts", v: "24", cls: "bg-emerald-50 text-emerald-700 [&>p.v]:text-emerald-900" },
+              { l: "Today's appts", v: "24", cls: "bg-teal-50 text-teal-700 [&>p.v]:text-teal-900" },
               { l: "New patients", v: "11", cls: "bg-sky-50 text-sky-700 [&>p.v]:text-sky-900" },
               { l: "HMO claims", v: "6", cls: "bg-amber-50 text-amber-700 [&>p.v]:text-amber-900" },
               { l: "Alerts", v: "3", cls: "bg-rose-50 text-rose-700 [&>p.v]:text-rose-900" },
@@ -83,7 +83,7 @@ export function LaptopDashboardMock(): JSX.Element {
             <div className="rounded border border-slate-200 p-1.5">
               <p className="text-[6px] font-semibold text-slate-700">Today's clinic queue</p>
               {[
-                { n: "Juan dela Cruz", t: "9:00 AM", dot: "bg-emerald-300" },
+                { n: "Juan dela Cruz", t: "9:00 AM", dot: "bg-teal-300" },
                 { n: "Maria Santos", t: "10:00 AM", dot: "bg-amber-300" },
                 { n: "Jose Rizal", t: "11:00 AM", dot: "bg-sky-300" },
                 { n: "Ana Cruz", t: "12:00 PM", dot: "bg-amber-300" },
@@ -106,15 +106,7 @@ export function LaptopDashboardMock(): JSX.Element {
                 {Array.from({ length: 16 }).map((_, i) => (
                   <div
                     key={i}
-                    className={`h-2 rounded-sm ${
-                      [2, 5, 9].includes(i)
-                        ? "bg-rose-400"
-                        : [1, 7].includes(i)
-                          ? "bg-sky-400"
-                          : [11].includes(i)
-                            ? "bg-amber-400"
-                            : "bg-slate-200"
-                    }`}
+                    className={`h-2 rounded-sm ${ [2, 5, 9].includes(i) ? "bg-rose-400" : [1, 7].includes(i) ? "bg-sky-400" : [11].includes(i) ? "bg-amber-400" : "bg-slate-200" }`}
                   />
                 ))}
               </div>
@@ -122,13 +114,7 @@ export function LaptopDashboardMock(): JSX.Element {
                 {Array.from({ length: 16 }).map((_, i) => (
                   <div
                     key={i}
-                    className={`h-2 rounded-sm ${
-                      [4, 10].includes(i)
-                        ? "bg-violet-400"
-                        : [6].includes(i)
-                          ? "bg-sky-400"
-                          : "bg-slate-200"
-                    }`}
+                    className={`h-2 rounded-sm ${ [4, 10].includes(i) ? "bg-teal-400" : [6].includes(i) ? "bg-sky-400" : "bg-slate-200" }`}
                   />
                 ))}
               </div>
@@ -137,7 +123,7 @@ export function LaptopDashboardMock(): JSX.Element {
                 <span className="text-slate-600">Decay</span>
                 <span className="inline-block h-1.5 w-1.5 rounded-full bg-sky-400" />
                 <span className="text-slate-600">Filled</span>
-                <span className="inline-block h-1.5 w-1.5 rounded-full bg-violet-400" />
+                <span className="inline-block h-1.5 w-1.5 rounded-full bg-teal-400" />
                 <span className="text-slate-600">RCT</span>
               </div>
             </div>
@@ -157,7 +143,7 @@ export function LaptopInventoryMock(): JSX.Element {
           <div className="h-3 w-8 rounded bg-slate-200 mb-2" />
           <div className="space-y-1">
             {Array.from({ length: 5 }).map((_, i) => (
-              <div key={i} className={`h-2 rounded ${i === 2 ? 'bg-emerald-100' : 'bg-slate-100'}`} />
+              <div key={i} className={`h-2 rounded ${i === 2 ? 'bg-teal-100' : 'bg-slate-100'}`} />
             ))}
           </div>
         </aside>
@@ -186,7 +172,7 @@ export function LaptopInventoryMock(): JSX.Element {
               <tbody className="text-slate-700">
                 {[
                   { n: "Lidocaine 2%", s: "4", st: "Critical", cls: "text-rose-600" },
-                  { n: "Composite A2", s: "18", st: "OK", cls: "text-emerald-600" },
+                  { n: "Composite A2", s: "18", st: "OK", cls: "text-teal-600" },
                   { n: "Sterile Gloves", s: "2", st: "Low", cls: "text-amber-600" },
                 ].map(r => (
                   <tr key={r.n} className="border-t border-slate-50">
@@ -207,9 +193,9 @@ export function LaptopInventoryMock(): JSX.Element {
 function PhoneBooking(): JSX.Element {
   return (
     <PhoneFrame>
-      <div className="flex h-full flex-col bg-gradient-to-b from-emerald-50 to-white p-2 text-[7px]">
+      <div className="flex h-full flex-col bg-gradient-to-b from-teal-50 to-white p-2 text-[7px]">
         <div className="mt-2 flex items-center gap-1 pt-1">
-          <div className="h-2.5 w-2.5 rounded bg-gradient-to-br from-emerald-500 to-sky-500" />
+          <div className="h-2.5 w-2.5 rounded bg-gradient-to-br from-teal-500 to-sky-500" />
           <span className="text-[7px] font-bold text-slate-800">DentEase</span>
         </div>
         <p className="mt-2 text-[9px] font-bold text-slate-900">Book your appointment</p>
@@ -236,9 +222,7 @@ function PhoneBooking(): JSX.Element {
             return (
               <div
                 key={i}
-                className={`flex h-3.5 items-center justify-center rounded text-[5px] ${
-                  active ? "bg-emerald-500 text-white" : "bg-slate-100 text-slate-700"
-                }`}
+                className={`flex h-3.5 items-center justify-center rounded text-[5px] ${ active ? "bg-teal-500 text-white" : "bg-slate-100 text-slate-700" }`}
               >
                 {d}
               </div>
@@ -255,7 +239,7 @@ function PhoneBooking(): JSX.Element {
             </div>
           ))}
         </div>
-        <div className="mt-auto rounded-lg bg-gradient-to-br from-emerald-500 to-sky-500 py-1.5 text-center text-[7px] font-bold text-white">
+        <div className="mt-auto rounded-lg bg-gradient-to-br from-teal-500 to-sky-500 py-1.5 text-center text-[7px] font-bold text-white">
           Review & Confirm
         </div>
       </div>
@@ -268,7 +252,7 @@ function PhoneChart(): JSX.Element {
     <PhoneFrame>
       <div className="flex h-full flex-col bg-white p-2 text-[7px]">
         <div className="mt-2 flex items-center gap-1 pt-1">
-          <div className="h-2.5 w-2.5 rounded bg-gradient-to-br from-emerald-500 to-sky-500" />
+          <div className="h-2.5 w-2.5 rounded bg-gradient-to-br from-teal-500 to-sky-500" />
           <span className="text-[7px] font-bold text-slate-800">Treatment View</span>
         </div>
         <p className="mt-1.5 text-[8px] font-bold text-slate-900">Tooth #3</p>
@@ -276,9 +260,7 @@ function PhoneChart(): JSX.Element {
           {Array.from({ length: 16 }).map((_, i) => (
             <div
               key={i}
-              className={`h-3 rounded-sm ${
-                [2].includes(i) ? "bg-rose-400" : i === 5 ? "bg-violet-400" : "bg-slate-200"
-              }`}
+              className={`h-3 rounded-sm ${ [2].includes(i) ? "bg-rose-400" : i === 5 ? "bg-teal-400" : "bg-slate-200" }`}
             />
           ))}
         </div>
@@ -286,9 +268,7 @@ function PhoneChart(): JSX.Element {
           {Array.from({ length: 16 }).map((_, i) => (
             <div
               key={i}
-              className={`h-3 rounded-sm ${
-                [6].includes(i) ? "bg-sky-400" : [10].includes(i) ? "bg-amber-400" : "bg-slate-200"
-              }`}
+              className={`h-3 rounded-sm ${ [6].includes(i) ? "bg-sky-400" : [10].includes(i) ? "bg-amber-400" : "bg-slate-200" }`}
             />
           ))}
         </div>
@@ -298,11 +278,11 @@ function PhoneChart(): JSX.Element {
             Root canal therapy started. Next visit in 7 days for crown fitting.
           </p>
         </div>
-        <div className="mt-1.5 flex items-center justify-between rounded-lg bg-emerald-50 p-1.5">
-          <span className="text-[6px] font-semibold text-emerald-800">RCT · Crown</span>
-          <span className="text-[6px] font-bold text-emerald-800">₱3,000</span>
+        <div className="mt-1.5 flex items-center justify-between rounded-lg bg-teal-50 p-1.5">
+          <span className="text-[6px] font-semibold text-teal-800">RCT · Crown</span>
+          <span className="text-[6px] font-bold text-teal-800">₱3,000</span>
         </div>
-        <div className="mt-auto rounded-lg bg-slate-900 py-1.5 text-center text-[7px] font-bold text-white">
+        <div className="mt-auto rounded-lg bg-white py-1.5 text-center text-[7px] font-bold text-white">
           Save treatment
         </div>
       </div>
@@ -315,7 +295,7 @@ function PhoneBilling(): JSX.Element {
     <PhoneFrame>
       <div className="flex h-full flex-col bg-white p-2 text-[7px]">
         <div className="mt-2 flex items-center gap-1 pt-1">
-          <div className="h-2.5 w-2.5 rounded bg-gradient-to-br from-emerald-500 to-sky-500" />
+          <div className="h-2.5 w-2.5 rounded bg-gradient-to-br from-teal-500 to-sky-500" />
           <span className="text-[7px] font-bold text-slate-800">Bill & HMO</span>
         </div>
         <div className="mt-1.5 flex items-center gap-1">
@@ -339,15 +319,15 @@ function PhoneBilling(): JSX.Element {
             <span className="text-[6px] font-semibold text-slate-900">{it.v}</span>
           </div>
         ))}
-        <div className="mt-1.5 flex items-center justify-between rounded bg-emerald-50 px-1.5 py-1">
-          <span className="text-[6px] font-bold text-emerald-800">Total</span>
-          <span className="text-[8px] font-extrabold text-emerald-800">₱1,350</span>
+        <div className="mt-1.5 flex items-center justify-between rounded bg-teal-50 px-1.5 py-1">
+          <span className="text-[6px] font-bold text-teal-800">Total</span>
+          <span className="text-[8px] font-extrabold text-teal-800">₱1,350</span>
         </div>
         <p className="mt-2 text-[6px] font-semibold text-slate-700">HMO Coverage</p>
         {[
-          { n: "Maxicare", s: "Approved", cls: "bg-emerald-100 text-emerald-700" },
+          { n: "Maxicare", s: "Approved", cls: "bg-teal-100 text-teal-700" },
           { n: "Intellicare", s: "Pending", cls: "bg-amber-100 text-amber-700" },
-          { n: "Medicard", s: "Approved", cls: "bg-emerald-100 text-emerald-700" },
+          { n: "Medicard", s: "Approved", cls: "bg-teal-100 text-teal-700" },
         ].map((h) => (
           <div key={h.n} className="mt-0.5 flex items-center justify-between">
             <span className="text-[6px] text-slate-700">{h.n}</span>
@@ -356,7 +336,7 @@ function PhoneBilling(): JSX.Element {
             </span>
           </div>
         ))}
-        <div className="mt-auto rounded-lg bg-gradient-to-br from-emerald-500 to-sky-500 py-1.5 text-center text-[7px] font-bold text-white">
+        <div className="mt-auto rounded-lg bg-gradient-to-br from-teal-500 to-sky-500 py-1.5 text-center text-[7px] font-bold text-white">
           Pay with GCash
         </div>
       </div>
@@ -372,8 +352,8 @@ export function PhoneReports(): JSX.Element {
         <div className="mt-4 flex-1">
           <div className="flex items-end gap-1.5 h-20">
             {[30, 45, 25, 60, 80, 55, 40].map((h, i) => (
-              <div key={i} className="flex-1 bg-emerald-500/20 rounded-t-sm relative group">
-                <div className="absolute bottom-0 w-full bg-emerald-500 rounded-t-sm" style={{ height: `${h}%` }} />
+              <div key={i} className="flex-1 bg-teal-500/20 rounded-t-sm relative group">
+                <div className="absolute bottom-0 w-full bg-teal-500 rounded-t-sm" style={{ height: `${h}%` }} />
               </div>
             ))}
           </div>
@@ -384,7 +364,7 @@ export function PhoneReports(): JSX.Element {
         <div className="mt-4 space-y-2">
           <div className="rounded-xl bg-slate-50 p-2 flex justify-between items-center">
             <span className="font-bold">Total Revenue</span>
-            <span className="text-emerald-600 font-black">₱42.5k</span>
+            <span className="text-teal-600 font-black">₱42.5k</span>
           </div>
           <div className="rounded-xl bg-slate-50 p-2 flex justify-between items-center">
             <span className="font-bold">New Patients</span>

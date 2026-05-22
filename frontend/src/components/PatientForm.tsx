@@ -258,7 +258,7 @@ export function PatientForm({ open, onClose, onSaved, patientId }: PatientFormPr
   }
 
   const inputClass =
-    "mt-1 w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 shadow-sm transition-all focus:border-sky-500 focus:outline-none focus:ring-4 focus:ring-sky-500/10 dark:border-slate-800 dark:bg-slate-950 dark:text-white";
+    "mt-1 w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 shadow-sm transition-all focus:border-sky-500 focus:outline-none focus:ring-4 focus:ring-sky-500/10   ";
 
   return (
     <AnimatePresence>
@@ -269,21 +269,21 @@ export function PatientForm({ open, onClose, onSaved, patientId }: PatientFormPr
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="absolute inset-0 bg-slate-950/40 backdrop-blur-sm"
+            className="absolute inset-0 bg-[#f5f7f9]/40 backdrop-blur-sm"
           />
           <motion.div
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="relative h-full max-h-[92vh] w-full max-w-4xl overflow-hidden rounded-[2.5rem] bg-white shadow-2xl dark:bg-slate-900"
+            className="relative h-full max-h-[92vh] w-full max-w-4xl overflow-hidden rounded-[2.5rem] bg-white shadow-2xl"
             role="dialog"
             aria-modal
           >
             <div className="flex h-full flex-col">
               {/* Header */}
-              <div className="flex items-center justify-between border-b border-slate-100 px-8 py-6 dark:border-slate-800">
+              <div className="flex items-center justify-between border-b border-slate-100 px-8 py-6">
                 <div>
-                  <h2 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">
+                  <h2 className="text-2xl font-black tracking-tight text-slate-900">
                     {patientId ? t("patientForm.titleEdit") : t("patientForm.titleNew")}
                   </h2>
                   <p className="text-xs font-bold uppercase tracking-widest text-slate-400">
@@ -294,7 +294,7 @@ export function PatientForm({ open, onClose, onSaved, patientId }: PatientFormPr
                   type="button"
                   onClick={onClose}
                   aria-label="Close"
-                  className="rounded-2xl bg-slate-50 p-3 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 dark:bg-slate-800 dark:hover:bg-slate-700"
+                  className="rounded-2xl bg-slate-50 p-3 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600"
                 >
                   <X size={20} />
                 </button>
@@ -405,7 +405,7 @@ export function PatientForm({ open, onClose, onSaved, patientId }: PatientFormPr
                             {...register("isSeniorCitizen")}
                             className="h-5 w-5 rounded-lg border-slate-300 text-sky-600 transition-all focus:ring-sky-500/20"
                           />
-                          <label htmlFor="patient-isSenior" className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                          <label htmlFor="patient-isSenior" className="text-sm font-semibold text-slate-700">
                             {t("patientForm.labelSeniorCitizen")}
                           </label>
                         </div>
@@ -508,7 +508,7 @@ export function PatientForm({ open, onClose, onSaved, patientId }: PatientFormPr
                           {allergies.map((a) => (
                             <span
                               key={a}
-                              className="inline-flex items-center gap-1.5 rounded-xl bg-rose-50 px-3 py-1 text-xs font-black uppercase tracking-widest text-rose-600 dark:bg-rose-950/30 dark:text-rose-400"
+                              className="inline-flex items-center gap-1.5 rounded-xl bg-rose-50 px-3 py-1 text-xs font-black uppercase tracking-widest text-rose-600"
                             >
                               {a}
                               <button
@@ -537,7 +537,7 @@ export function PatientForm({ open, onClose, onSaved, patientId }: PatientFormPr
                           <button
                             type="button"
                             onClick={addAllergy}
-                            className="inline-flex h-11 items-center gap-2 rounded-xl bg-slate-100 px-6 text-sm font-bold text-slate-700 transition-colors hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
+                            className="inline-flex h-11 items-center gap-2 rounded-xl bg-slate-100 px-6 text-sm font-bold text-slate-700 transition-colors hover:bg-slate-200"
                           >
                             <Plus size={16} />
                             {t("patientForm.btnAdd")}
@@ -573,11 +573,11 @@ export function PatientForm({ open, onClose, onSaved, patientId }: PatientFormPr
               </div>
 
               {/* Footer */}
-              <div className="flex items-center justify-end gap-3 border-t border-slate-100 px-8 py-6 dark:border-slate-800">
+              <div className="flex items-center justify-end gap-3 border-t border-slate-100 px-8 py-6">
                 <button
                   type="button"
                   onClick={onClose}
-                  className="inline-flex h-12 items-center justify-center rounded-2xl border border-slate-200 px-8 text-sm font-black uppercase tracking-widest text-slate-600 transition-all hover:bg-slate-50 dark:border-slate-800 dark:text-slate-400 dark:hover:bg-slate-800"
+                  className="inline-flex h-12 items-center justify-center rounded-2xl border border-slate-200 px-8 text-sm font-black uppercase tracking-widest text-slate-600 transition-all hover:bg-slate-50"
                 >
                   {t("patientForm.btnCancel")}
                 </button>
@@ -585,7 +585,7 @@ export function PatientForm({ open, onClose, onSaved, patientId }: PatientFormPr
                   type="submit"
                   form="patient-form"
                   disabled={isSubmitting}
-                  className="inline-flex h-12 items-center justify-center gap-2 rounded-2xl bg-emerald-600 px-10 text-sm font-black uppercase tracking-widest text-white shadow-xl shadow-emerald-500/20 transition-all hover:bg-emerald-700 hover:shadow-emerald-500/40 disabled:opacity-60 active:scale-95"
+                  className="inline-flex h-12 items-center justify-center gap-2 rounded-2xl bg-teal-600 px-10 text-sm font-black uppercase tracking-widest text-white shadow-xl shadow-teal-500/20 transition-all hover:bg-teal-700 hover:shadow-teal-500/40 disabled:opacity-60 active:scale-95"
                 >
                   {isSubmitting ? (
                     <>
@@ -612,12 +612,12 @@ function FormSection({ title, icon, children }: { title: string; icon: React.Rea
   return (
     <div className="group space-y-6">
       <div className="flex items-center gap-3">
-        <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-sky-50 text-sky-600 dark:bg-sky-950/40 dark:text-sky-400">
+        <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-sky-50 text-sky-600">
           {icon}
         </div>
         <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-400 group-hover:text-sky-600 transition-colors">{title}</h3>
       </div>
-      <div className="rounded-3xl border border-slate-100 bg-slate-50/30 p-8 dark:border-slate-800/50 dark:bg-slate-900/50">
+      <div className="rounded-3xl border border-slate-100 bg-slate-50/30 p-8">
         <div className="space-y-4">{children}</div>
       </div>
     </div>

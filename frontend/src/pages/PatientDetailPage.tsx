@@ -276,8 +276,8 @@ export function PatientDetailPage(): JSX.Element {
   if (!id) {
     return (
       <div className="flex h-[50vh] flex-col items-center justify-center space-y-4">
-        <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">{t("pages.patientDetail.invalid")}</p>
-        <Link to="/patients" className="inline-flex items-center gap-2 text-sky-600 hover:underline">
+        <p className="text-sm font-semibold text-slate-500 uppercase tracking-widest">{t("pages.patientDetail.invalid")}</p>
+        <Link to="/patients" className="inline-flex items-center gap-2 text-teal-600 hover:underline">
           <ChevronLeft size={16} /> {t("pages.patientDetail.back")}
         </Link>
       </div>
@@ -285,12 +285,12 @@ export function PatientDetailPage(): JSX.Element {
   }
 
   return (
-    <div className="mx-auto max-w-[1600px] space-y-8 px-4 pb-20 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-[1600px] space-y-6 px-4 pb-20 sm:px-6 lg:px-8">
       {/* Navigation Header */}
       <div className="flex items-center justify-between">
         <Link 
           to="/patients" 
-          className="group inline-flex items-center gap-2 rounded-xl bg-white px-4 py-2 text-sm font-black uppercase tracking-widest text-slate-500 shadow-sm transition-all hover:bg-slate-50 hover:text-sky-600 dark:bg-slate-900 dark:text-slate-400 dark:hover:bg-slate-800"
+          className="group inline-flex items-center gap-2 rounded-xl bg-white px-4 py-2 text-sm font-semibold uppercase tracking-widest text-slate-500 shadow-sm ring-1 ring-slate-100 transition-all hover:bg-slate-50 hover:text-teal-600"
         >
           <ChevronLeft size={16} className="transition-transform group-hover:-translate-x-1" />
           {t("pages.patientDetail.back")}
@@ -298,7 +298,7 @@ export function PatientDetailPage(): JSX.Element {
 
         {data && (
           <div className="flex items-center gap-3">
-             <span className="hidden text-xs font-bold text-slate-400 sm:block">
+             <span className="hidden text-xs font-medium text-slate-400 sm:block">
                {t("pages.patientDetail.lastUpdated")}: {new Intl.DateTimeFormat(dateLocale).format(new Date())}
              </span>
           </div>
@@ -306,22 +306,22 @@ export function PatientDetailPage(): JSX.Element {
       </div>
 
       {loading ? (
-        <div className="flex flex-col items-center justify-center gap-6 rounded-[3rem] border border-slate-100 bg-white px-6 py-32 text-center shadow-xl dark:border-slate-800 dark:bg-slate-900">
+        <div className="flex flex-col items-center justify-center gap-4 rounded-2xl border border-slate-100 bg-white px-6 py-24 text-center shadow-sm">
           <div className="relative">
-            <div className="h-20 w-20 animate-spin rounded-full border-4 border-sky-500/20 border-t-sky-500" />
+            <div className="h-16 w-16 animate-spin rounded-full border-4 border-teal-500/20 border-t-teal-500" />
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="h-10 w-10 animate-pulse rounded-full bg-sky-500/10" />
+              <div className="h-8 w-8 animate-pulse rounded-full bg-teal-500/10" />
             </div>
           </div>
           <div>
-            <p className="text-xl font-black tracking-tight text-slate-900 dark:text-white">{t("pages.patientDetail.loading")}</p>
+            <p className="text-base font-semibold tracking-tight text-slate-800">{t("pages.patientDetail.loading")}</p>
             <p className="mt-1 text-sm font-medium text-slate-400">{t("pages.patientDetail.syncingRecords")}</p>
           </div>
         </div>
       ) : !data ? (
-        <div className="rounded-[3rem] border border-rose-100 bg-rose-50 px-8 py-20 text-center dark:border-rose-900/20 dark:bg-rose-950/20">
-          <p className="text-xl font-black tracking-tight text-rose-900 dark:text-rose-100">{t("pages.patientDetail.notFound")}</p>
-          <Link to="/patients" className="mt-4 inline-block text-sm font-bold text-rose-600 hover:underline">
+        <div className="rounded-2xl border border-rose-100 bg-rose-50 px-8 py-16 text-center">
+          <p className="text-base font-semibold tracking-tight text-rose-900">{t("pages.patientDetail.notFound")}</p>
+          <Link to="/patients" className="mt-4 inline-block text-sm font-semibold text-rose-600 hover:underline">
              {t("pages.patientDetail.returnToDirectory")}
           </Link>
         </div>
@@ -329,7 +329,7 @@ export function PatientDetailPage(): JSX.Element {
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="space-y-8"
+          className="space-y-6"
         >
           <PatientHeader
             data={data}
@@ -341,10 +341,10 @@ export function PatientDetailPage(): JSX.Element {
           />
 
           {/* Main Workspace Area */}
-          <div className="overflow-hidden rounded-[3rem] border border-slate-100 bg-white shadow-2xl shadow-slate-200/50 dark:border-slate-800 dark:bg-slate-900 dark:shadow-none">
+          <div className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
             {/* Tab Navigation */}
-            <div className="flex items-center overflow-x-auto border-b border-slate-50 bg-slate-50/30 px-6 dark:border-slate-800 dark:bg-slate-800/30">
-              <div className="flex gap-2 py-3">
+            <div className="flex items-center overflow-x-auto border-b border-slate-100 bg-slate-50/50 px-4">
+              <div className="flex gap-1 py-2">
                 {tabDefs.map((def) => {
                   const isActive = tab === def.key;
                   return (
@@ -355,19 +355,14 @@ export function PatientDetailPage(): JSX.Element {
                       data-testid={`patient-tab-${def.key}`}
                       aria-selected={isActive}
                       onClick={() => selectTab(def.key)}
-                      className={`
-                        relative flex items-center gap-2.5 whitespace-nowrap rounded-2xl px-5 py-3 text-[11px] font-black uppercase tracking-[0.1em] transition-all
-                        ${isActive 
-                          ? "bg-white text-sky-600 shadow-sm dark:bg-slate-950 dark:text-sky-400" 
-                          : "text-slate-400 hover:bg-white/50 hover:text-slate-600 dark:hover:bg-slate-800/50 dark:hover:text-slate-200"}
-                      `}
+                      className={`relative flex items-center gap-2 whitespace-nowrap rounded-xl px-4 py-2 text-xs font-semibold uppercase tracking-wide transition-all ${isActive ? "bg-white text-teal-600 shadow-sm" : "text-slate-400 hover:bg-white/70 hover:text-slate-600"}`}
                     >
-                      <span className={isActive ? "text-sky-500" : "text-slate-300"}>{def.icon}</span>
+                      <span className={isActive ? "text-teal-500" : "text-slate-300"}>{def.icon}</span>
                       {def.label}
                       {isActive && (
                         <motion.div 
                           layoutId="activeTab"
-                          className="absolute -bottom-[12px] left-1/2 h-1.5 w-8 -translate-x-1/2 rounded-t-full bg-sky-500"
+                          className="absolute -bottom-[9px] left-1/2 h-1 w-6 -translate-x-1/2 rounded-t-full bg-teal-500"
                         />
                       )}
                     </button>
@@ -377,7 +372,7 @@ export function PatientDetailPage(): JSX.Element {
             </div>
 
             {/* Tab Content Area */}
-            <div className="min-h-[600px] p-4 sm:p-8 lg:p-10">
+            <div className="min-h-[600px] p-4 sm:p-6 lg:p-8">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={tab}
@@ -397,8 +392,8 @@ export function PatientDetailPage(): JSX.Element {
                   )}
                   {tab === "chart" && (
                     teethLoading ? (
-                      <div className="flex h-[400px] items-center justify-center rounded-[2.5rem] bg-slate-50 dark:bg-slate-800/50">
-                         <div className="h-10 w-10 border-4 border-sky-500 border-t-transparent rounded-full animate-spin" />
+                      <div className="flex h-[400px] items-center justify-center rounded-2xl bg-slate-50">
+                         <div className="h-8 w-8 border-4 border-teal-500 border-t-transparent rounded-full animate-spin" />
                       </div>
                     ) : (
                       <LazyDentalChart

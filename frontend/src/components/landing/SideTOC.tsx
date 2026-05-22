@@ -58,19 +58,13 @@ export function SideTOC(): JSX.Element {
             <li key={s.id}>
               <a
                 href={`#${s.id}`}
-                className={`group relative flex items-center gap-2 rounded-full px-2 py-1.5 transition ${
-                  isActive ? "bg-slate-900 text-white" : "text-slate-500 hover:text-slate-900"
-                }`}
+                className={`group relative flex items-center gap-2 rounded-full px-2 py-1.5 transition ${ isActive ? "bg-white text-white" : "text-slate-500 hover:text-slate-900" }`}
               >
                 <span
-                  className={`h-1.5 w-1.5 rounded-full transition ${
-                    isActive ? "bg-emerald-400" : "bg-slate-300 group-hover:bg-slate-500"
-                  }`}
+                  className={`h-1.5 w-1.5 rounded-full transition ${ isActive ? "bg-teal-400" : "bg-slate-300 group-hover:bg-slate-500" }`}
                 />
                 <span
-                  className={`overflow-hidden whitespace-nowrap text-[10px] font-bold uppercase tracking-widest transition-all duration-300 ${
-                    isActive ? "max-w-[80px] pr-1 opacity-100" : "max-w-0 opacity-0 group-hover:max-w-[80px] group-hover:pr-1 group-hover:opacity-100"
-                  }`}
+                  className={`overflow-hidden whitespace-nowrap text-[10px] font-bold uppercase tracking-widest transition-all duration-300 ${ isActive ? "max-w-[80px] pr-1 opacity-100" : "max-w-0 opacity-0 group-hover:max-w-[80px] group-hover:pr-1 group-hover:opacity-100" }`}
                 >
                   {t(s.labelKey)}
                 </span>

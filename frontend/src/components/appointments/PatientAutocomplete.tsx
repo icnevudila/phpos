@@ -349,7 +349,7 @@ export function PatientAutocomplete({
 
         autoComplete="off"
 
-        className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-100"
+        className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:border-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-100"
 
       />
 
@@ -385,7 +385,7 @@ export function PatientAutocomplete({
 
                 to="/patients"
 
-                className="mt-2 inline-flex min-h-10 items-center font-semibold text-emerald-700 hover:underline"
+                className="mt-2 inline-flex min-h-10 items-center font-semibold text-teal-700 hover:underline"
 
               >
 
@@ -421,11 +421,7 @@ export function PatientAutocomplete({
 
                 }}
 
-                className={`flex w-full items-center justify-between px-3 py-2 text-left ${
-
-                  activeIndex === i ? "bg-emerald-100" : "hover:bg-emerald-50"
-
-                }`}
+                className={`flex w-full items-center justify-between px-3 py-2 text-left ${ activeIndex === i ? "bg-teal-100" : "hover:bg-teal-50" }`}
 
               >
 

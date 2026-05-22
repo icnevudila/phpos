@@ -38,7 +38,7 @@ const STATUS_ACTIONS: { from: AppointmentStatus[]; to: AppointmentStatus; labelK
     from: ["CONFIRMED", "PENDING", "CHECKED_IN", "IN_PROGRESS"],
     to: "COMPLETED",
     labelKey: `${SB}.actionMarkCompleted`,
-    cls: "bg-emerald-600 hover:bg-emerald-700 text-white",
+    cls: "bg-teal-600 hover:bg-teal-700 text-white",
   },
   {
     from: ["PENDING", "CONFIRMED"],

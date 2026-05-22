@@ -110,19 +110,19 @@ const STATUS_CLASSES: Record<string, string> = {
   active: "border-amber-200 bg-amber-50 text-amber-900",
   inprogress: "border-amber-200 bg-amber-50 text-amber-900",
   in_progress: "border-amber-200 bg-amber-50 text-amber-900",
-  completed: "border-emerald-200 bg-emerald-50 text-emerald-900",
-  done: "border-emerald-200 bg-emerald-50 text-emerald-900",
-  healing: "border-violet-200 bg-violet-50 text-violet-900",
-  recovering: "border-violet-200 bg-violet-50 text-violet-900",
+  completed: "border-teal-200 bg-teal-50 text-teal-900",
+  done: "border-teal-200 bg-teal-50 text-teal-900",
+  healing: "border-teal-200 bg-teal-50 text-teal-900",
+  recovering: "border-teal-200 bg-teal-50 text-teal-900",
   cancelled: "border-rose-200 bg-rose-50 text-rose-900",
   paused: "border-slate-200 bg-slate-50 text-slate-900",
 };
 
 const FALLBACK_PHASE_CLASSES = [
   "border-sky-200 bg-sky-50 text-sky-900",
-  "border-violet-200 bg-violet-50 text-violet-900",
+  "border-teal-200 bg-teal-50 text-teal-900",
   "border-amber-200 bg-amber-50 text-amber-900",
-  "border-emerald-200 bg-emerald-50 text-emerald-900",
+  "border-teal-200 bg-teal-50 text-teal-900",
   "border-indigo-200 bg-indigo-50 text-indigo-900",
 ];
 
@@ -704,11 +704,11 @@ export default function TreatmentRoadmapTimeline({
                   {gapDays > 0 ? (
                     <div className="mb-3 flex items-stretch">
                       <div
-                        className="flex flex-shrink-0 items-center justify-center rounded-2xl border border-dashed border-emerald-200 bg-emerald-50/70 px-4 text-center text-[11px] font-medium text-emerald-700"
+                        className="flex flex-shrink-0 items-center justify-center rounded-2xl border border-dashed border-teal-200 bg-teal-50/70 px-4 text-center text-[11px] font-medium text-teal-700"
                         style={{ width: Math.max(gapDays * DAY_WIDTH_PX, 72) }}
                       >
                         <div>
-                          <div className="uppercase tracking-[0.16em] text-emerald-600">{t(`${TRM}.idleHealing`)}</div>
+                          <div className="uppercase tracking-[0.16em] text-teal-600">{t(`${TRM}.idleHealing`)}</div>
                           <div className="mt-1 text-sm font-semibold">
                             +{t(`${TRM}.days`, { count: gapDays })}
                           </div>
@@ -718,9 +718,7 @@ export default function TreatmentRoadmapTimeline({
                   ) : null}
 
                   <div
-                    className={`rounded-2xl border p-4 shadow-sm transition-all duration-150 ${phaseShellClass} ${
-                      isPhaseDragged ? "ring-2 ring-sky-300" : ""
-                    }`}
+                    className={`rounded-2xl border p-4 shadow-sm transition-all duration-150 ${phaseShellClass} ${ isPhaseDragged ? "ring-2 ring-sky-300" : "" }`}
                     style={{ width }}
                   >
                     <div className="mb-3 flex items-start justify-between gap-3">
@@ -748,29 +746,17 @@ export default function TreatmentRoadmapTimeline({
 
                     <div className="mb-3 flex flex-wrap gap-2 text-[11px]">
                       <span
-                        className={`rounded-full border px-2.5 py-1 font-medium ${
-                          phase.synthetic
-                            ? "border-slate-200 bg-white text-slate-600"
-                            : "border-white/60 bg-white/90 text-slate-700"
-                        }`}
+                        className={`rounded-full border px-2.5 py-1 font-medium ${ phase.synthetic ? "border-slate-200 bg-white text-slate-600" : "border-white/60 bg-white/90 text-slate-700" }`}
                       >
                         {t(`${TRM}.phaseVisits`, { count: phase.visits.length })}
                       </span>
                       <span
-                        className={`rounded-full border px-2.5 py-1 font-medium ${
-                          phase.synthetic
-                            ? "border-slate-200 bg-white text-slate-600"
-                            : "border-white/60 bg-white/90 text-slate-700"
-                        }`}
+                        className={`rounded-full border px-2.5 py-1 font-medium ${ phase.synthetic ? "border-slate-200 bg-white text-slate-600" : "border-white/60 bg-white/90 text-slate-700" }`}
                       >
                         {formatDuration(phase.durationDays)}
                       </span>
                       <span
-                        className={`rounded-full border px-2.5 py-1 font-medium ${
-                          phase.synthetic
-                            ? "border-slate-200 bg-white text-slate-600"
-                            : "border-white/60 bg-white/90 text-slate-700"
-                        }`}
+                        className={`rounded-full border px-2.5 py-1 font-medium ${ phase.synthetic ? "border-slate-200 bg-white text-slate-600" : "border-white/60 bg-white/90 text-slate-700" }`}
                       >
                         {phase.status}
                       </span>
@@ -800,13 +786,7 @@ export default function TreatmentRoadmapTimeline({
                                 visitId: visit.id,
                               })}
                               onDragEnd={handleDragEnd}
-                              className={`inline-flex max-w-full cursor-grab items-center gap-2 rounded-full border px-3 py-1 text-[11px] shadow-sm transition ${
-                                isVisitDragged ? "opacity-60" : "opacity-100"
-                              } ${
-                                phase.synthetic
-                                  ? "border-slate-200 bg-white text-slate-700"
-                                  : "border-white/60 bg-white/90 text-slate-700"
-                              } active:cursor-grabbing`}
+                              className={`inline-flex max-w-full cursor-grab items-center gap-2 rounded-full border px-3 py-1 text-[11px] shadow-sm transition ${ isVisitDragged ? "opacity-60" : "opacity-100" } ${ phase.synthetic ? "border-slate-200 bg-white text-slate-700" : "border-white/60 bg-white/90 text-slate-700" } active:cursor-grabbing`}
                               title={t(`${TRM}.dragVisitTitle`)}
                             >
                               <span className="inline-flex h-2 w-2 flex-shrink-0 rounded-full bg-current/70" />

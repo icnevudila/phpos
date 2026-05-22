@@ -76,6 +76,33 @@ export async function sendSMS(params: SendSmsParams): Promise<SendSmsResult> {
     return { id: log.id, status: "FAILED", errorMessage: log.errorMessage };
   }
 
+  // Enforce quiet hours (9:00 PM to 8:00 AM Manila Time)
+  const manilaHourStr = new Intl.DateTimeFormat("en-US", {
+    timeZone: "Asia/Manila",
+    hour: "numeric",
+    hour12: false,
+  }).format(new Date());
+  const hour = parseInt(manilaHourStr, 10);
+
+  if ((hour >= 21 || hour < 8) && params.kind !== "GENERIC") {
+    const log = await prisma.notification.create({
+      data: {
+        clinicId: params.clinicId ?? null,
+        patientId: params.patientId ?? null,
+        userId: params.userId ?? null,
+        appointmentId: params.appointmentId ?? null,
+        invoiceId: params.invoiceId ?? null,
+        channel: "SMS",
+        kind: params.kind,
+        recipient: normalized.e164,
+        message: params.message,
+        status: "FAILED",
+        errorMessage: "Blocked by Quiet Hours (9:00 PM - 8:00 AM Manila Time)",
+      },
+    });
+    return { id: log.id, status: "FAILED", errorMessage: log.errorMessage };
+  }
+
   if (params.dedupeByAppointment && params.appointmentId) {
     const existing = await prisma.notification.findFirst({
       where: {

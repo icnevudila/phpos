@@ -104,12 +104,12 @@ export function TreatmentsTab({
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-col gap-2 rounded-xl border border-emerald-100 bg-emerald-50/40 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-2 rounded-xl border border-teal-100 bg-teal-50/40 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="text-[10px] font-bold uppercase tracking-wider text-emerald-800">
+          <p className="text-[10px] font-bold uppercase tracking-wider text-teal-800">
             {t("pages.patientDetail.treatmentSummaryTitle")}
           </p>
-          <p className="mt-1 text-sm text-emerald-950">
+          <p className="mt-1 text-sm text-teal-950">
             <span className="font-bold">{items.length}</span> {t("pages.patientDetail.treatmentLineCount")} ·{" "}
             <span className="font-bold">{money(totalPhp)}</span> {t("pages.patientDetail.treatmentTotal")}
           </p>
@@ -120,7 +120,7 @@ export function TreatmentsTab({
               type="button"
               disabled={invoiceBusy || !billingAppointment}
               onClick={() => void onCreateInvoiceFromTreatments()}
-              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-emerald-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800 disabled:opacity-50"
+              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-teal-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-teal-800 disabled:opacity-50"
             >
               <Receipt size={16} />
               {invoiceBusy ? t("pages.patientDetail.createInvoiceBusy") : t("pages.patientDetail.createInvoiceFromTreatments")}
@@ -133,7 +133,7 @@ export function TreatmentsTab({
                 toast.error(t("pages.patientDetail.treatmentPdfFailed")),
               )
             }
-            className="inline-flex min-h-11 items-center justify-center rounded-lg border border-emerald-300 bg-white px-4 py-2 text-sm font-semibold text-emerald-900 shadow-sm hover:bg-emerald-50"
+            className="inline-flex min-h-11 items-center justify-center rounded-lg border border-teal-300 bg-white px-4 py-2 text-sm font-semibold text-teal-900 shadow-sm hover:bg-teal-50"
           >
             {t("pages.patientDetail.treatmentPdf")}
           </button>
@@ -305,7 +305,7 @@ function QuickTreatmentEntry({
           type="button"
           disabled={busy}
           onClick={() => void save()}
-          className="rounded bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-700 disabled:opacity-60"
+          className="rounded bg-teal-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-teal-700 disabled:opacity-60"
         >
           {t("pages.patientDetail.treatments.addTreatment")}
         </button>

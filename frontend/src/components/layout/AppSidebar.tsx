@@ -3,9 +3,8 @@ import { Link, useLocation } from "react-router-dom";
 
 import { prefetchRouteData } from "../../services/routePrefetch";
 import type { UserRole } from "../../types/user";
-import { ChevronLeftIcon, ChevronRightIcon, ToothIcon } from "./icons";
+import { ChevronLeftIcon, ChevronRightIcon } from "./icons";
 import { filterNavForRole, groupNavBySection, isActiveItem } from "./navItems";
-import { DentQLLogo } from "../ui/DentQLLogo";
 
 interface AppSidebarProps {
   role: UserRole | undefined;
@@ -30,53 +29,67 @@ export function AppSidebar({
   const widthClass = isDrawer
     ? "w-[min(22rem,calc(100vw-3rem))] sm:w-72"
     : collapsed
-      ? "w-[72px]"
-      : "w-60 md:w-64";
-  const asideSurface =
-    "flex h-full flex-col border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900 transition-[width] duration-200 ease-out motion-reduce:transition-none " +
-    "supports-[padding:max(0px)]:pt-[max(0.5rem,env(safe-area-inset-top))]";
+      ? "w-[68px]"
+      : "w-56 md:w-60";
 
-  const linkShell = (active: boolean, isCollapsedDesktop: boolean): string => {
-    const touch = isDrawer ? "min-h-12 px-3 py-3 text-base gap-3.5" : isCollapsedDesktop ? "min-h-11 justify-center px-2" : "min-h-11 px-3 py-2.5 text-sm gap-3";
-    const colors = active
-      ? "bg-sky-50 text-sky-800 dark:bg-sky-500/10 dark:text-sky-400"
-      : "text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100";
+  function linkCls(active: boolean, isCollapsedDesktop: boolean): string {
+    const size = isDrawer
+      ? "min-h-12 px-3 py-3 text-base gap-3.5"
+      : isCollapsedDesktop
+        ? "min-h-11 justify-center px-2"
+        : "min-h-10 px-3 py-2 text-sm gap-3";
+
+    const color = active
+      ? "bg-white text-teal-700 font-semibold shadow-sm"
+      : "text-teal-800/70 hover:bg-white/60 hover:text-teal-800 font-medium";
+
     return (
-      `group relative flex w-full items-center rounded-xl font-medium transition-colors motion-reduce:transition-none ` +
-      `focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-900 ` +
-      `${touch} ${colors}`
+      `group relative flex w-full items-center rounded-xl transition-colors ` +
+      `focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-1 ` +
+      `${size} ${color}`
     );
-  };
+  }
 
   return (
     <aside
-      className={`${asideSurface} border-r ${widthClass}`}
+      className={`flex h-full flex-col border-r border-teal-200/60 transition-[width] duration-200 ease-out motion-reduce:transition-none ${widthClass}`}
+      style={{ background: "var(--color-sidebar-bg)" }}
       aria-label={t("nav.primaryNavAria")}
     >
-      {/* Brand — taller on drawer for thumb reach */}
+      {/* Brand */}
       <div
-        className={`flex items-center gap-2 border-b border-slate-100 dark:border-slate-800 px-3 sm:px-4 ${
-          isDrawer ? "min-h-[3.5rem] py-2 sm:min-h-16" : "h-14"
-        }`}
+        className={`flex items-center gap-3 border-b border-teal-200/50 px-3 sm:px-4 ${ isDrawer ? "min-h-[3.5rem] py-2 sm:min-h-16" : "h-14" }`}
       >
-        <div className="flex items-center justify-center py-1">
-          <img src="/Firefly.png" alt="Firefly" className="h-11 w-11 sm:h-12 sm:w-12" />
+        <div className="flex items-center justify-center py-1 shrink-0">
+          <img
+            src="/Firefly.png"
+            alt="DentQL"
+            className="h-8 w-8 sm:h-9 sm:w-9 object-contain rounded-lg"
+          />
         </div>
-
+        {!collapsed || isDrawer ? (
+          <span className="font-black text-base tracking-tight text-teal-900">
+            DentQL<span className="text-teal-500">.</span>
+          </span>
+        ) : null}
       </div>
 
-      <nav className="flex flex-1 flex-col overflow-y-auto overscroll-contain px-2 py-3 supports-[padding:max(0px)]:pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:px-2.5 sm:py-4">
-        <div className="space-y-5 sm:space-y-6">
+      {/* Nav */}
+      <nav
+        className="flex flex-1 flex-col overflow-y-auto overscroll-contain scrollbar-thin px-2 py-3 sm:px-2.5 sm:py-4"
+        style={{ paddingBottom: "max(0.75rem, env(safe-area-inset-bottom))" }}
+      >
+        <div className="space-y-4 sm:space-y-5">
           {groups.map(({ section, items: sectionItems }) => (
             <div key={section}>
               {!collapsed || isDrawer ? (
-                <p className="mb-2 px-3 text-[10px] font-bold uppercase tracking-[0.14em] text-slate-400 dark:text-slate-500 sm:text-[11px]">
+                <p className="mb-1.5 px-3 text-[10px] font-bold uppercase tracking-[0.14em] text-teal-700/50 sm:text-[11px]">
                   {t(`nav.section.${section}`)}
                 </p>
               ) : (
-                <div className="mx-auto mb-2 h-px w-8 bg-slate-200 dark:bg-slate-800" aria-hidden />
+                <div className="mx-auto mb-2 h-px w-8 bg-teal-300/40" aria-hidden />
               )}
-              <ul className="space-y-1 sm:space-y-1.5">
+              <ul className="space-y-0.5 sm:space-y-1">
                 {sectionItems.map((item) => {
                   const active = isActiveItem(item, pathname);
                   const Icon = item.icon;
@@ -87,25 +100,25 @@ export function AppSidebar({
                         onClick={onNavigate}
                         onMouseEnter={() => prefetchRouteData(item.to)}
                         onFocus={() => prefetchRouteData(item.to)}
-                        className={linkShell(active, collapsed && !isDrawer)}
+                        className={linkCls(active, collapsed && !isDrawer)}
                         title={collapsed && !isDrawer ? t(`nav.${item.key}`) : undefined}
                         aria-current={active ? "page" : undefined}
                       >
                         {active ? (
                           <span
                             aria-hidden
-                            className="absolute inset-y-1.5 left-0 w-1 rounded-r-full bg-sky-500"
+                            className="absolute inset-y-1.5 left-0 w-0.5 rounded-r-full bg-teal-500"
                           />
                         ) : null}
                         <span
-                          className={`flex shrink-0 items-center justify-center ${
-                            collapsed && !isDrawer ? "h-9 w-9" : "h-6 w-6 sm:h-7 sm:w-7"
-                          } ${active ? "text-sky-600 dark:text-sky-400" : "text-slate-400 group-hover:text-slate-600 dark:text-slate-500 dark:group-hover:text-slate-300"}`}
+                          className={`flex shrink-0 items-center justify-center ${ collapsed && !isDrawer ? "h-9 w-9" : "h-5 w-5 sm:h-6 sm:w-6" } ${active ? "text-teal-600" : "text-teal-600/60 group-hover:text-teal-700"}`}
                         >
-                          <Icon size={collapsed && !isDrawer ? 20 : isDrawer ? 22 : 19} />
+                          <Icon size={collapsed && !isDrawer ? 20 : isDrawer ? 21 : 17} />
                         </span>
                         {!collapsed || isDrawer ? (
-                          <span className="min-w-0 flex-1 truncate text-left leading-snug">{t(`nav.${item.key}`)}</span>
+                          <span className="min-w-0 flex-1 truncate text-left leading-snug">
+                            {t(`nav.${item.key}`)}
+                          </span>
                         ) : null}
                       </Link>
                     </li>
@@ -117,17 +130,18 @@ export function AppSidebar({
         </div>
       </nav>
 
+      {/* Collapse toggle */}
       {!onNavigate ? (
-        <div className="border-t border-slate-100 dark:border-slate-800 p-2 sm:p-2.5 supports-[padding:max(0px)]:pb-[max(0.5rem,env(safe-area-inset-bottom))]">
+        <div className="border-t border-teal-200/40 p-2 sm:p-2.5" style={{ paddingBottom: "max(0.5rem, env(safe-area-inset-bottom))" }}>
           <button
             type="button"
             onClick={onToggleCollapse}
-            className="flex min-h-11 w-full items-center justify-center gap-2 rounded-xl px-3 text-xs font-semibold text-slate-500 transition hover:bg-slate-50 hover:text-slate-800 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200 sm:text-sm"
+            className="flex min-h-10 w-full items-center justify-center gap-2 rounded-xl px-3 text-xs font-semibold text-teal-700/60 transition hover:bg-white/60 hover:text-teal-800 sm:text-sm"
             aria-label={collapsed ? t("nav.sidebarExpand") : t("nav.sidebarCollapse")}
           >
-            {collapsed ? <ChevronRightIcon size={18} /> : (
+            {collapsed ? <ChevronRightIcon size={16} /> : (
               <>
-                <ChevronLeftIcon size={18} />
+                <ChevronLeftIcon size={16} />
                 <span>{t("nav.sidebarCollapse")}</span>
               </>
             )}

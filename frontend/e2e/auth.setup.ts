@@ -13,6 +13,11 @@ setup("admin storage state", async ({ page }) => {
   await page.getByTestId("login-email").fill(process.env.E2E_EMAIL ?? "admin@dentease.ph");
   await page.getByTestId("login-password").fill(process.env.E2E_PASSWORD ?? "admin123");
   await page.getByTestId("login-submit").click();
-  await page.waitForURL(/\/(dashboard|appointments|patients)/, { timeout: 60_000 });
+  try {
+    await page.waitForURL(/\/(dashboard|appointments|patients)/, { timeout: 15_000 });
+  } catch (err) {
+    await page.screenshot({ path: "C:/Users/TP2/Desktop/login-failure.png", fullPage: true });
+    throw err;
+  }
   await page.context().storageState({ path: AUTH_FILE });
 });

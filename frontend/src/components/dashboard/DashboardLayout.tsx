@@ -14,24 +14,24 @@ export function ChartCard({
   accent?: "emerald" | "sky" | "indigo" | "amber";
 }): JSX.Element {
   const accentColors: Record<string, string> = {
-    emerald: "bg-emerald-500",
+    emerald: "bg-teal-500",
     sky: "bg-sky-500",
     indigo: "bg-indigo-500",
     amber: "bg-amber-500",
   };
   return (
-    <section className="group relative rounded-[3rem] border border-white bg-white/50 p-8 shadow-[0_20px_60px_rgba(0,0,0,0.03)] backdrop-blur-2xl transition-all duration-500 hover:shadow-[0_30px_90px_rgba(0,0,0,0.06)] dark:border-slate-800 dark:bg-slate-950/40">
-      <div className="mb-8 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className={`h-2.5 w-2.5 rounded-full ${accentColors[accent] || "bg-emerald-500"} animate-pulse`} />
+    <section className="card">
+      <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
+        <div className="flex items-center gap-2">
+          <div className={`h-2 w-2 shrink-0 rounded-full ${accentColors[accent] || "bg-teal-500"}`} />
           <div>
-            <h3 className="text-xs font-black uppercase tracking-[0.25em] text-slate-400 dark:text-slate-500">{title}</h3>
-            {subtitle ? <p className="mt-0.5 text-sm font-bold text-slate-700 dark:text-slate-300">{subtitle}</p> : null}
+            <h3 className="text-sm font-semibold text-slate-800">{title}</h3>
+            {subtitle ? <p className="mt-0.5 text-xs text-slate-500">{subtitle}</p> : null}
           </div>
         </div>
         {right}
       </div>
-      <div className="relative overflow-hidden rounded-3xl">{children}</div>
+      <div className="relative overflow-hidden rounded-xl">{children}</div>
     </section>
   );
 }
@@ -67,15 +67,15 @@ export function ViewportLazy({
         children
       ) : (
         <div
-          className="rounded-2xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900 p-5 shadow-sm"
+          className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
           style={{ minHeight }}
           role="status"
           aria-live="polite"
         >
           <div className="animate-pulse space-y-3">
-            <div className="h-3 w-40 rounded bg-slate-200 dark:bg-slate-800" />
-            <div className="h-2 w-56 rounded bg-slate-100 dark:bg-slate-800/50" />
-            <div className="mt-5 h-44 rounded-xl bg-slate-100 dark:bg-slate-800/50" />
+            <div className="h-3 w-40 rounded bg-slate-200" />
+            <div className="h-2 w-56 rounded bg-slate-100" />
+            <div className="mt-5 h-44 rounded-xl bg-slate-100" />
           </div>
         </div>
       )}

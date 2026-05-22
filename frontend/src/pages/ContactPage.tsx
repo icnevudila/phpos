@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { MarketingShell } from "../components/marketing/MarketingShell";
 
 const inp =
-  "mt-1 w-full min-h-11 rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm dark:border-slate-600 dark:bg-slate-950 dark:text-slate-100";
+  "mt-1 w-full min-h-11 rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm   ";
 
 export function ContactPage(): JSX.Element {
   const { t } = useTranslation();
@@ -39,8 +39,8 @@ export function ContactPage(): JSX.Element {
   return (
     <MarketingShell documentTitleKey="pages.contact.title">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-4xl">{t("pages.contact.title")}</h1>
-        <p className="mt-3 max-w-2xl text-slate-600 dark:text-slate-400">{t("pages.contact.subtitle")}</p>
+        <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">{t("pages.contact.title")}</h1>
+        <p className="mt-3 max-w-2xl text-slate-600">{t("pages.contact.subtitle")}</p>
 
         <AnimatePresence mode="wait">
           {sent ? (
@@ -48,11 +48,11 @@ export function ContactPage(): JSX.Element {
               key="done"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mt-10 rounded-2xl border border-emerald-200 bg-emerald-50/80 p-6 text-center dark:border-emerald-900/50 dark:bg-emerald-950/40"
+              className="mt-10 rounded-2xl border border-teal-200 bg-teal-50/80 p-6 text-center"
             >
-              <p className="text-lg font-bold text-emerald-900 dark:text-emerald-100">{t("pages.contact.successTitle")}</p>
-              <p className="mt-2 text-sm text-emerald-800/90 dark:text-emerald-200/90">{t("pages.contact.successBody")}</p>
-              <Link to="/" className="mt-4 inline-block text-sm font-semibold text-sky-700 underline-offset-2 hover:underline dark:text-sky-400">
+              <p className="text-lg font-bold text-teal-900">{t("pages.contact.successTitle")}</p>
+              <p className="mt-2 text-sm text-teal-800/90">{t("pages.contact.successBody")}</p>
+              <Link to="/" className="mt-4 inline-block text-sm font-semibold text-sky-700 underline-offset-2 hover:underline">
                 {t("pages.marketingShell.navHome")}
               </Link>
             </motion.div>
@@ -67,19 +67,19 @@ export function ContactPage(): JSX.Element {
             >
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="sm:col-span-2">
-                  <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
                     {t("pages.contact.fieldClinic")}
                   </label>
                   <input className={inp} required value={clinic} onChange={(e) => setClinic(e.target.value)} />
                 </div>
                 <div>
-                  <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
                     {t("pages.contact.fieldName")}
                   </label>
                   <input className={inp} required value={name} onChange={(e) => setName(e.target.value)} />
                 </div>
                 <div>
-                  <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
                     {t("pages.contact.fieldRole")}
                   </label>
                   <input
@@ -90,19 +90,19 @@ export function ContactPage(): JSX.Element {
                   />
                 </div>
                 <div>
-                  <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
                     {t("pages.contact.fieldEmail")}
                   </label>
                   <input type="email" className={inp} required value={email} onChange={(e) => setEmail(e.target.value)} />
                 </div>
                 <div>
-                  <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
                     {t("pages.contact.fieldPhone")}
                   </label>
                   <input className={inp} value={phone} onChange={(e) => setPhone(e.target.value)} inputMode="tel" />
                 </div>
                 <div className="sm:col-span-2">
-                  <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
                     {t("pages.contact.fieldChairs")}
                   </label>
                   <select className={inp} value={chairs} onChange={(e) => setChairs(e.target.value)}>
@@ -113,7 +113,7 @@ export function ContactPage(): JSX.Element {
                   </select>
                 </div>
                 <div className="sm:col-span-2">
-                  <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
                     {t("pages.contact.fieldMessage")}
                   </label>
                   <textarea
@@ -124,20 +124,20 @@ export function ContactPage(): JSX.Element {
                   />
                 </div>
               </div>
-              <label className="flex cursor-pointer items-start gap-3 text-sm text-slate-700 dark:text-slate-300">
+              <label className="flex cursor-pointer items-start gap-3 text-sm text-slate-700">
                 <input
                   type="checkbox"
                   checked={agree}
                   onChange={(e) => setAgree(e.target.checked)}
-                  className="mt-1 h-4 w-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500"
+                  className="mt-1 h-4 w-4 rounded border-slate-300 text-teal-600 focus:ring-teal-500"
                 />
                 <span>{t("pages.contact.privacyCheck")}</span>
               </label>
-              <p className="text-xs text-slate-500 dark:text-slate-500">{t("pages.contact.finePrint")}</p>
+              <p className="text-xs text-slate-500">{t("pages.contact.finePrint")}</p>
               <button
                 type="submit"
                 disabled={busy}
-                className="min-h-12 w-full rounded-xl bg-gradient-to-r from-emerald-500 to-sky-600 text-sm font-bold text-white shadow-md disabled:opacity-60 sm:w-auto sm:px-10"
+                className="min-h-12 w-full rounded-xl bg-gradient-to-r from-teal-500 to-sky-600 text-sm font-bold text-white shadow-md disabled:opacity-60 sm:w-auto sm:px-10"
               >
                 {busy ? t("pages.contact.submitting") : t("pages.contact.submit")}
               </button>

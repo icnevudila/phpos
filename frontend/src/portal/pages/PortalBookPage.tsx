@@ -115,17 +115,17 @@ export function PortalBookPage(): JSX.Element {
     (availability.slots?.some((s) => s.available) ?? false);
 
   const fieldFocus =
-    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:focus-visible:ring-offset-slate-950";
+    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2    ";
 
   return (
-    <div className="min-w-0 space-y-5 px-4 pb-8 pt-5 dark:text-slate-100">
+    <div className="min-w-0 space-y-5 px-4 pb-8 pt-5">
       <div>
-        <h1 className="text-xl font-black text-slate-900 dark:text-white">{t("pages.portal.book.title")}</h1>
+        <h1 className="text-xl font-black text-slate-900">{t("pages.portal.book.title")}</h1>
         <div className="mt-2 flex gap-1">
           {[1, 2, 3, 4].map((n) => (
             <div
               key={n}
-              className={`h-1 flex-1 rounded-full ${n <= step ? "bg-emerald-500" : "bg-slate-200"}`}
+              className={`h-1 flex-1 rounded-full ${n <= step ? "bg-teal-500" : "bg-slate-200"}`}
             />
           ))}
         </div>
@@ -154,20 +154,14 @@ export function PortalBookPage(): JSX.Element {
                   key={d.id}
                   type="button"
                   onClick={() => setSelectedDentist(d.id)}
-                  className={`flex min-h-[44px] flex-col items-center justify-center rounded-2xl border-2 p-3 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-950 ${
-                    active
-                      ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-950/40"
-                      : "border-slate-200 bg-white hover:border-emerald-300 dark:border-slate-600 dark:bg-slate-900"
-                  }`}
+                  className={`flex min-h-[44px] flex-col items-center justify-center rounded-2xl border-2 p-3 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2 ${ active ? "border-teal-500 bg-teal-50 " : "border-slate-200 bg-white hover:border-teal-300 " }`}
                 >
                   <div
-                    className={`flex h-16 w-16 items-center justify-center rounded-full text-xl font-black ${
-                      active ? "bg-emerald-500 text-white" : "bg-slate-100 text-slate-700"
-                    }`}
+                    className={`flex h-16 w-16 items-center justify-center rounded-full text-xl font-black ${ active ? "bg-teal-500 text-white" : "bg-slate-100 text-slate-700" }`}
                   >
                     {d.initials}
                   </div>
-                  <p className="mt-2 text-center text-sm font-bold text-slate-900 dark:text-white">
+                  <p className="mt-2 text-center text-sm font-bold text-slate-900">
                     {t("pages.common.drPrefix")} {d.firstName} {d.lastName}
                   </p>
                 </button>
@@ -194,13 +188,7 @@ export function PortalBookPage(): JSX.Element {
                     type="button"
                     disabled={isSunday}
                     onClick={() => setSelectedDate(iso)}
-                    className={`flex min-h-[44px] min-w-[64px] flex-col items-center justify-center rounded-xl border-2 px-3 py-2 ${
-                      isSunday
-                        ? "cursor-not-allowed border-rose-200 bg-rose-50 text-rose-500"
-                        : active
-                          ? "border-emerald-500 bg-emerald-50 text-emerald-900"
-                          : "border-slate-200 bg-white text-slate-700 hover:border-emerald-300"
-                    }`}
+                    className={`flex min-h-[44px] min-w-[64px] flex-col items-center justify-center rounded-xl border-2 px-3 py-2 ${ isSunday ? "cursor-not-allowed border-rose-200 bg-rose-50 text-rose-500" : active ? "border-teal-500 bg-teal-50 text-teal-900" : "border-slate-200 bg-white text-slate-700 hover:border-teal-300" }`}
                   >
                     <span className="text-[10px] font-bold uppercase">
                       {d.toLocaleDateString(locale, { weekday: "short" })}
@@ -251,13 +239,7 @@ export function PortalBookPage(): JSX.Element {
                     type="button"
                     disabled={!s.available}
                     onClick={() => setSelectedSlot(s.iso)}
-                    className={`min-h-[44px] rounded-xl border py-2.5 text-sm font-bold transition ${
-                      !s.available
-                        ? "cursor-not-allowed border-slate-200 bg-slate-100 text-slate-400 line-through"
-                        : active
-                          ? "border-emerald-500 bg-emerald-600 text-white shadow-md shadow-emerald-600/25"
-                          : "border-slate-200 bg-white text-slate-700 hover:border-emerald-400"
-                    }`}
+                    className={`min-h-[44px] rounded-xl border py-2.5 text-sm font-bold transition ${ !s.available ? "cursor-not-allowed border-slate-200 bg-slate-100 text-slate-400 line-through" : active ? "border-teal-500 bg-teal-600 text-white shadow-md shadow-teal-600/25" : "border-slate-200 bg-white text-slate-700 hover:border-teal-400" }`}
                   >
                     {s.time}
                   </button>
@@ -280,11 +262,7 @@ export function PortalBookPage(): JSX.Element {
                   key={key}
                   type="button"
                   onClick={() => setType(key)}
-                  className={`min-h-11 rounded-full border px-3 py-2 text-xs font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-950 ${
-                    type === key
-                      ? "border-emerald-500 bg-emerald-500 text-white"
-                      : "border-slate-200 bg-white text-slate-700 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-200"
-                  }`}
+                  className={`min-h-11 rounded-full border px-3 py-2 text-xs font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2 ${ type === key ? "border-teal-500 bg-teal-500 text-white" : "border-slate-200 bg-white text-slate-700 " }`}
                 >
                   {t(`pages.portal.book.types.${key}`)}
                 </button>
@@ -299,7 +277,7 @@ export function PortalBookPage(): JSX.Element {
             />
           </section>
 
-          <section className="rounded-2xl bg-slate-900 p-4 text-white">
+          <section className="rounded-2xl bg-white p-4 text-white">
             <p className="text-[11px] font-bold uppercase tracking-widest text-slate-300">
               {t("pages.portal.book.summary")}
             </p>
@@ -324,7 +302,7 @@ export function PortalBookPage(): JSX.Element {
             </div>
           ) : null}
           {success ? (
-            <div className="rounded-lg bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-800">
+            <div className="rounded-lg bg-teal-50 px-3 py-2 text-xs font-semibold text-teal-800">
               {success}
             </div>
           ) : null}
@@ -333,7 +311,7 @@ export function PortalBookPage(): JSX.Element {
             type="button"
             onClick={onConfirm}
             disabled={booking}
-            className="w-full min-h-[44px] rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 py-3.5 text-sm font-black text-white shadow-lg shadow-emerald-500/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300 focus-visible:ring-offset-2 disabled:opacity-50 dark:focus-visible:ring-offset-slate-950"
+            className="w-full min-h-[44px] rounded-xl bg-gradient-to-r from-teal-600 to-teal-600 py-3.5 text-sm font-black text-white shadow-lg shadow-teal-500/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-300 focus-visible:ring-offset-2 disabled:opacity-50"
           >
             {booking ? t("pages.portal.book.booking") : t("pages.portal.book.confirm")}
           </button>

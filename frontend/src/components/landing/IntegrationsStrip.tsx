@@ -20,15 +20,15 @@ export function IntegrationsStrip(): JSX.Element {
   const loop = [...INTEGRATIONS, ...INTEGRATIONS];
 
   return (
-    <div className="rounded-3xl border border-slate-200 bg-white px-6 py-6 shadow-sm sm:px-8 dark:border-slate-800 dark:bg-slate-900">
-      <p className="mb-4 text-center text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
+    <div className="rounded-3xl border border-slate-200 bg-white px-6 py-6 shadow-sm sm:px-8">
+      <p className="mb-4 text-center text-xs font-bold uppercase tracking-widest text-slate-500">
         {t("landing.integrationsTitle")}
       </p>
       <div className="overflow-hidden [mask-image:linear-gradient(90deg,transparent,black_10%,black_90%,transparent)]">
         {reduce ? (
           <div className="flex flex-wrap justify-center gap-x-8 gap-y-3">
             {INTEGRATIONS.map((n) => (
-              <span key={n} className="text-sm font-semibold text-slate-600 dark:text-slate-300">
+              <span key={n} className="text-sm font-semibold text-slate-600">
                 {n}
               </span>
             ))}
@@ -43,7 +43,7 @@ export function IntegrationsStrip(): JSX.Element {
             {loop.map((n, i) => (
               <span
                 key={i}
-                className="text-base font-semibold text-slate-500 transition hover:text-slate-800 dark:text-slate-400 dark:hover:text-white"
+                className="text-base font-semibold text-slate-500 transition hover:text-slate-800"
               >
                 {n}
               </span>

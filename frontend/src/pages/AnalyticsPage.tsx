@@ -55,7 +55,7 @@ export function AnalyticsPage() {
         <motion.div 
           animate={{ rotate: 360 }}
           transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
-          className="h-12 w-12 rounded-full border-4 border-emerald-500 border-t-transparent shadow-[0_0_20px_-5px_rgba(16,185,129,0.5)]"
+          className="h-12 w-12 rounded-full border-4 border-teal-500 border-t-transparent shadow-[0_0_20px_-5px_rgba(16,185,129,0.5)]"
         />
       </div>
     );
@@ -69,11 +69,11 @@ export function AnalyticsPage() {
       <header className="relative pt-4">
         <div className="relative flex flex-col justify-between gap-8 md:flex-row md:items-end">
           <div className="space-y-4">
-            <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-emerald-700 ring-1 ring-emerald-200/50">
-              <span className="flex h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-500" />
+            <div className="inline-flex items-center gap-2 rounded-full bg-teal-50 px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-teal-700 ring-1 ring-teal-200/50">
+              <span className="flex h-1.5 w-1.5 animate-pulse rounded-full bg-teal-500" />
               {t("pages.analytics.liveInsights")}
             </div>
-            <h1 className="text-4xl font-black tracking-tighter text-slate-900 dark:text-white sm:text-6xl">
+            <h1 className="text-4xl font-black tracking-tighter text-slate-900 sm:text-6xl">
               {t("pages.analytics.title")} <span className="text-gradient">{t("pages.analytics.hub")}</span>
             </h1>
             <p className="max-w-xl text-lg font-medium text-slate-500 leading-relaxed">
@@ -100,7 +100,7 @@ export function AnalyticsPage() {
               </p>
               <h3 className="text-xl font-black text-slate-900 mt-1">{t("pages.analytics.retentionVelocity")}</h3>
             </div>
-            <div className="h-10 w-10 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600">
+            <div className="h-10 w-10 rounded-xl bg-teal-50 flex items-center justify-center text-teal-600">
               <IconTrendingUp size={20} />
             </div>
           </div>
@@ -261,25 +261,25 @@ export function AnalyticsPage() {
               </BarChart>
             </ResponsiveContainer>
           </div>
-          <div className="mt-6 flex items-center justify-between rounded-3xl bg-emerald-50/50 p-6 ring-1 ring-emerald-100">
+          <div className="mt-6 flex items-center justify-between rounded-3xl bg-teal-50/50 p-6 ring-1 ring-teal-100">
             <div className="flex items-center gap-4">
-              <div className="h-12 w-12 rounded-2xl bg-emerald-500 flex items-center justify-center text-white shadow-xl shadow-emerald-500/20">
+              <div className="h-12 w-12 rounded-2xl bg-teal-500 flex items-center justify-center text-white shadow-xl shadow-teal-500/20">
                 <IconArrowUpRight size={24} />
               </div>
               <div>
-                <p className="text-[10px] font-black uppercase text-emerald-700 tracking-[0.2em]">{t("pages.analytics.topPerformer")}</p>
-                <p className="text-lg font-black text-emerald-950">{data.dentistProductivity[0]?.name || "N/A"}</p>
+                <p className="text-[10px] font-black uppercase text-teal-700 tracking-[0.2em]">{t("pages.analytics.topPerformer")}</p>
+                <p className="text-lg font-black text-teal-950">{data.dentistProductivity[0]?.name || "N/A"}</p>
               </div>
             </div>
             <div className="text-right">
-               <p className="text-[10px] font-black uppercase text-emerald-700 tracking-[0.2em]">{t("pages.analytics.growth")}</p>
-               <p className="text-lg font-black text-emerald-950">+12.4%</p>
+               <p className="text-[10px] font-black uppercase text-teal-700 tracking-[0.2em]">{t("pages.analytics.growth")}</p>
+               <p className="text-lg font-black text-teal-950">+12.4%</p>
             </div>
           </div>
         </div>
 
         {/* Cashflow Source - Medium */}
-        <div className="glass-premium md:col-span-6 lg:col-span-5 bg-gradient-to-br from-white/80 to-emerald-50/30">
+        <div className="glass-premium md:col-span-6 lg:col-span-5 bg-gradient-to-br from-white/80 to-teal-50/30">
           <div className="mb-8 flex items-center justify-between">
             <div>
               <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
@@ -287,7 +287,7 @@ export function AnalyticsPage() {
               </p>
               <h3 className="text-xl font-black text-slate-900 mt-1">{t("pages.analytics.fundingMix")}</h3>
             </div>
-            <div className="h-10 w-10 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600">
+            <div className="h-10 w-10 rounded-xl bg-teal-50 flex items-center justify-center text-teal-600">
               <IconWallet size={20} />
             </div>
           </div>
@@ -313,14 +313,14 @@ export function AnalyticsPage() {
             </ResponsiveContainer>
             <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
               <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest">{t("pages.analytics.ratio")}</span>
-              <span className="text-xl font-black text-emerald-600">{t("pages.analytics.hmoLead")}</span>
+              <span className="text-xl font-black text-teal-600">{t("pages.analytics.hmoLead")}</span>
             </div>
           </div>
           <div className="mt-4 space-y-3">
              {data.hmoShare.map((item, idx) => (
                <div key={idx} className="flex items-center justify-between rounded-[1.5rem] bg-white p-4 shadow-sm ring-1 ring-slate-100">
                  <div className="flex items-center gap-4">
-                   <div className={`h-10 w-10 rounded-xl flex items-center justify-center ${idx === 0 ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"}`}>
+                   <div className={`h-10 w-10 rounded-xl flex items-center justify-center ${idx === 0 ? "bg-teal-100 text-teal-700" : "bg-amber-100 text-amber-700"}`}>
                      {idx === 0 ? <IconStethoscope size={20} /> : <IconUsers size={20} />}
                    </div>
                    <span className="text-sm font-black text-slate-800 uppercase tracking-tight">{item.name}</span>

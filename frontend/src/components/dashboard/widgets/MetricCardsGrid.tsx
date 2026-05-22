@@ -70,14 +70,14 @@ export function MetricCardsGrid({ dashboard, canSeeManagementCards }: MetricCard
   ];
 
   return (
-    <div className="grid gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
-      {cards.map((card, idx) => {
-        const Content = (
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      {cards.map((card) => {
+        const content = (
           <MetricCard
             label={card.label}
             value={card.value}
             sub={card.sub}
-            accent={card.accent as any}
+            accent={card.accent as "emerald" | "teal" | "amber" | "slate" | "indigo" | "rose"}
             icon={card.icon}
           />
         );
@@ -85,20 +85,16 @@ export function MetricCardsGrid({ dashboard, canSeeManagementCards }: MetricCard
         return (
           <motion.div
             key={card.label}
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: card.delay }}
+            transition={{ delay: card.delay, duration: 0.2 }}
           >
             {card.to ? (
-              <Link to={card.to} className="block group focus:outline-none">
-                <div className="transition-all duration-300 group-hover:-translate-y-2 group-hover:scale-[1.02]">
-                  {Content}
-                </div>
+              <Link to={card.to} className="block rounded-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-500">
+                {content}
               </Link>
             ) : (
-              <div className="hover:-translate-y-1 transition-transform">
-                {Content}
-              </div>
+              content
             )}
           </motion.div>
         );

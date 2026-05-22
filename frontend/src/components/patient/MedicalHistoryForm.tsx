@@ -227,7 +227,7 @@ export function MedicalHistoryForm({ patientId, patientGender, canEdit }: Props)
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-24 gap-4 bg-slate-50/50 rounded-[2.5rem] border border-dashed border-slate-200">
-        <div className="h-10 w-10 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+        <div className="h-10 w-10 border-4 border-teal-500 border-t-transparent rounded-full animate-spin" />
         <p className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400">{t("medicalHistory.loading")}</p>
       </div>
     );
@@ -241,7 +241,7 @@ export function MedicalHistoryForm({ patientId, patientGender, canEdit }: Props)
         <p className="text-sm font-medium text-slate-500 mb-8 max-w-xs mx-auto">{loadError}</p>
         <button
           onClick={() => setReloadKey((k) => k + 1)}
-          className="inline-flex items-center gap-2 rounded-2xl bg-slate-900 px-8 py-3 text-[11px] font-black uppercase tracking-widest text-white transition-transform hover:scale-105 active:scale-95"
+          className="inline-flex items-center gap-2 rounded-2xl bg-white px-8 py-3 text-[11px] font-black uppercase tracking-widest text-white transition-transform hover:scale-105 active:scale-95"
         >
           <RotateCcw size={14} />
           Retry Connection
@@ -256,16 +256,16 @@ export function MedicalHistoryForm({ patientId, patientGender, canEdit }: Props)
   return (
     <div className="mx-auto max-w-5xl space-y-10 pb-20">
       {/* Form Header Area */}
-      <header className="flex flex-col sm:flex-row items-start justify-between gap-6 rounded-[2.5rem] bg-slate-900 p-8 text-white shadow-2xl">
+      <header className="flex flex-col sm:flex-row items-start justify-between gap-6 rounded-[2.5rem] bg-white p-8 text-white shadow-2xl">
         <div className="flex items-center gap-5">
-           <div className="flex h-16 w-16 items-center justify-center rounded-[1.5rem] bg-emerald-500 text-white shadow-lg shadow-emerald-500/20">
+           <div className="flex h-16 w-16 items-center justify-center rounded-[1.5rem] bg-teal-500 text-white shadow-lg shadow-teal-500/20">
               <Stethoscope size={32} />
            </div>
            <div>
               <h2 className="text-2xl font-black tracking-tight uppercase tracking-wider">{t("medicalHistory.title")}</h2>
               <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-bold text-slate-400">
                  <span className="flex items-center gap-1.5 rounded-full bg-slate-800 px-3 py-1">
-                    <CheckCircle2 size={12} className="text-emerald-400" />
+                    <CheckCircle2 size={12} className="text-teal-400" />
                     v{version ?? 1}
                  </span>
                  {recordedBy && (
@@ -287,7 +287,7 @@ export function MedicalHistoryForm({ patientId, patientGender, canEdit }: Props)
           <button
             onClick={() => void submit()}
             disabled={saving}
-            className="group inline-flex h-14 items-center gap-3 rounded-[1.5rem] bg-emerald-500 px-8 text-sm font-black uppercase tracking-widest text-white shadow-xl shadow-emerald-500/20 transition-all hover:bg-emerald-600 hover:shadow-emerald-500/40 active:scale-95 disabled:opacity-50"
+            className="group inline-flex h-14 items-center gap-3 rounded-[1.5rem] bg-teal-500 px-8 text-sm font-black uppercase tracking-widest text-white shadow-xl shadow-teal-500/20 transition-all hover:bg-teal-600 hover:shadow-teal-500/40 active:scale-95 disabled:opacity-50"
           >
             {saving ? (
               <div className="h-5 w-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -302,7 +302,7 @@ export function MedicalHistoryForm({ patientId, patientGender, canEdit }: Props)
       {/* General health */}
       <section className="space-y-6">
         <div className="flex items-center gap-3 px-4">
-           <Activity className="text-emerald-500" size={20} />
+           <Activity className="text-teal-500" size={20} />
            <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-400">{t("medicalHistory.sections.general")}</h3>
         </div>
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
@@ -332,7 +332,7 @@ export function MedicalHistoryForm({ patientId, patientGender, canEdit }: Props)
                 onChange={(e) =>
                   setField("hospitalizedYear", e.target.value === "" ? null : Number(e.target.value))
                 }
-                className="mt-3 h-10 w-24 rounded-xl border-none bg-slate-50 px-3 text-xs font-bold text-slate-900 ring-1 ring-slate-200 transition-all focus:ring-2 focus:ring-sky-500 dark:bg-slate-900 dark:text-white dark:ring-slate-800"
+                className="mt-3 h-10 w-24 rounded-xl border-none bg-slate-50 px-3 text-xs font-bold text-slate-900 ring-1 ring-slate-200 transition-all focus:ring-2 focus:ring-sky-500"
               />
             }
           />
@@ -363,23 +363,15 @@ export function MedicalHistoryForm({ patientId, patientGender, canEdit }: Props)
            <ShieldAlert className="text-amber-500" size={20} />
            <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-400">{t("medicalHistory.sections.conditions")}</h3>
         </div>
-        <div className="rounded-[2.5rem] border border-slate-100 bg-white p-8 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+        <div className="rounded-[2.5rem] border border-slate-100 bg-white p-8 shadow-sm">
            <div className="grid grid-cols-1 gap-x-12 gap-y-3 sm:grid-cols-2">
              {MEDICAL_CONDITION_CODES.map((code) => (
                <label
                  key={code}
-                 className={`group flex cursor-pointer items-center justify-between rounded-xl px-4 py-3 transition-colors ${
-                   state.conditions.includes(code) 
-                    ? "bg-emerald-50/50 dark:bg-emerald-950/20" 
-                    : "hover:bg-slate-50 dark:hover:bg-slate-800/50"
-                 }`}
+                 className={`group flex cursor-pointer items-center justify-between rounded-xl px-4 py-3 transition-colors ${ state.conditions.includes(code) ? "bg-teal-50/50 " : "hover:bg-slate-50 " }`}
                >
                  <div className="flex items-center gap-3">
-                   <div className={`flex h-6 w-6 items-center justify-center rounded-lg border transition-all ${
-                     state.conditions.includes(code)
-                      ? "bg-emerald-500 border-emerald-500 text-white"
-                      : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800"
-                   }`}>
+                   <div className={`flex h-6 w-6 items-center justify-center rounded-lg border transition-all ${ state.conditions.includes(code) ? "bg-teal-500 border-teal-500 text-white" : "border-slate-200 bg-white " }`}>
                      <AnimatePresence>
                         {state.conditions.includes(code) && (
                           <motion.div initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}>
@@ -388,9 +380,7 @@ export function MedicalHistoryForm({ patientId, patientGender, canEdit }: Props)
                         )}
                      </AnimatePresence>
                    </div>
-                   <span className={`text-xs font-bold transition-colors ${
-                     state.conditions.includes(code) ? "text-slate-900 dark:text-white" : "text-slate-500"
-                   }`}>
+                   <span className={`text-xs font-bold transition-colors ${ state.conditions.includes(code) ? "text-slate-900 " : "text-slate-500" }`}>
                      {t(`medicalHistory.conditions.${code}`) || code.replace(/_/g, ' ')}
                    </span>
                  </div>
@@ -414,7 +404,7 @@ export function MedicalHistoryForm({ patientId, patientGender, canEdit }: Props)
                rows={3}
                value={state.conditionsOther ?? ""}
                onChange={(e) => setField("conditionsOther", e.target.value)}
-               className="w-full rounded-[1.5rem] border-none bg-slate-50 p-4 text-sm font-bold text-slate-900 ring-1 ring-slate-100 transition-all focus:ring-4 focus:ring-sky-500/10 dark:bg-slate-950 dark:text-white dark:ring-slate-800"
+               className="w-full rounded-[1.5rem] border-none bg-slate-50 p-4 text-sm font-bold text-slate-900 ring-1 ring-slate-100 transition-all focus:ring-4 focus:ring-sky-500/10"
              />
            </div>
         </div>
@@ -426,7 +416,7 @@ export function MedicalHistoryForm({ patientId, patientGender, canEdit }: Props)
            <Flame className="text-rose-500" size={20} />
            <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-400">{t("medicalHistory.sections.allergies")}</h3>
         </div>
-        <div className="rounded-[2.5rem] border border-slate-100 bg-white p-8 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+        <div className="rounded-[2.5rem] border border-slate-100 bg-white p-8 shadow-sm">
           <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
             {([
               ["allergyAnesthetic", "medicalHistory.allergies.anesthetic"],
@@ -437,18 +427,12 @@ export function MedicalHistoryForm({ patientId, patientGender, canEdit }: Props)
             ] as const).map(([key, labelKey]) => (
               <label
                 key={key}
-                className={`group flex cursor-pointer flex-col items-center gap-4 rounded-2xl border p-5 text-center transition-all ${
-                  state[key]
-                    ? "border-rose-200 bg-rose-50/50 shadow-sm dark:border-rose-900/40 dark:bg-rose-950/20"
-                    : "border-slate-100 bg-slate-50/30 hover:border-slate-200 dark:border-slate-800 dark:bg-slate-800/30"
-                }`}
+                className={`group flex cursor-pointer flex-col items-center gap-4 rounded-2xl border p-5 text-center transition-all ${ state[key] ? "border-rose-200 bg-rose-50/50 shadow-sm " : "border-slate-100 bg-slate-50/30 hover:border-slate-200 " }`}
               >
-                <div className={`flex h-10 w-10 items-center justify-center rounded-xl transition-all ${
-                  state[key] ? "bg-rose-500 text-white" : "bg-white text-slate-300 dark:bg-slate-800"
-                }`}>
+                <div className={`flex h-10 w-10 items-center justify-center rounded-xl transition-all ${ state[key] ? "bg-rose-500 text-white" : "bg-white text-slate-300 " }`}>
                    <ShieldAlert size={20} />
                 </div>
-                <span className={`text-[10px] font-black uppercase tracking-widest ${state[key] ? "text-rose-700 dark:text-rose-400" : "text-slate-400"}`}>
+                <span className={`text-[10px] font-black uppercase tracking-widest ${state[key] ? "text-rose-700 " : "text-slate-400"}`}>
                    {t(labelKey)}
                 </span>
                 <input
@@ -468,7 +452,7 @@ export function MedicalHistoryForm({ patientId, patientGender, canEdit }: Props)
                type="text"
                value={state.allergyOther ?? ""}
                onChange={(e) => setField("allergyOther", e.target.value)}
-               className="h-14 w-full rounded-2xl border-none bg-slate-50 px-6 text-sm font-bold text-slate-900 ring-1 ring-slate-100 transition-all focus:ring-4 focus:ring-rose-500/10 dark:bg-slate-950 dark:text-white dark:ring-slate-800"
+               className="h-14 w-full rounded-2xl border-none bg-slate-50 px-6 text-sm font-bold text-slate-900 ring-1 ring-slate-100 transition-all focus:ring-4 focus:ring-rose-500/10"
              />
           </div>
         </div>
@@ -482,7 +466,7 @@ export function MedicalHistoryForm({ patientId, patientGender, canEdit }: Props)
         </div>
         <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
           {(["smoker", "alcohol", "recreationalDrug"] as const).map((key) => (
-            <div key={key} className="rounded-[2rem] border border-slate-100 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+            <div key={key} className="rounded-[2rem] border border-slate-100 bg-white p-6 shadow-sm">
               <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-4 block">
                 {key === "smoker" ? t("medicalHistory.lifestyle.smoking") : key === "alcohol" ? t("medicalHistory.lifestyle.alcohol") : t("medicalHistory.lifestyle.drugs")}
               </label>
@@ -492,11 +476,7 @@ export function MedicalHistoryForm({ patientId, patientGender, canEdit }: Props)
                     key={o}
                     disabled={disabled}
                     onClick={() => setField(key, o)}
-                    className={`flex h-12 w-full items-center justify-between rounded-xl px-4 text-xs font-bold transition-all ${
-                      state[key] === o
-                        ? "bg-slate-900 text-white shadow-lg dark:bg-white dark:text-slate-900"
-                        : "bg-slate-50 text-slate-500 hover:bg-slate-100 dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700"
-                    }`}
+                    className={`flex h-12 w-full items-center justify-between rounded-xl px-4 text-xs font-bold transition-all ${ state[key] === o ? "bg-white text-white shadow-lg " : "bg-slate-50 text-slate-500 hover:bg-slate-100 " }`}
                   >
                     {t(`medicalHistory.lifestyle.opts.${o}`)}
                     {state[key] === o && <CheckCircle2 size={14} />}
@@ -515,7 +495,7 @@ export function MedicalHistoryForm({ patientId, patientGender, canEdit }: Props)
              <Droplet className="text-pink-500" size={20} />
              <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-400">{t("medicalHistory.sections.female")}</h3>
           </div>
-          <div className="rounded-[2.5rem] border border-slate-100 bg-white p-8 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+          <div className="rounded-[2.5rem] border border-slate-100 bg-white p-8 shadow-sm">
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
                <FemaleToggle 
                  label={t("medicalHistory.questions.pregnant")} 
@@ -532,7 +512,7 @@ export function MedicalHistoryForm({ patientId, patientGender, canEdit }: Props)
                    onChange={(e) =>
                      setField("pregnancyMonths", e.target.value === "" ? null : Number(e.target.value))
                    }
-                   className="h-12 w-full rounded-xl border-none bg-slate-50 px-4 text-xs font-bold text-slate-900 ring-1 ring-slate-200 transition-all focus:ring-2 focus:ring-pink-500 dark:bg-slate-950 dark:text-white dark:ring-slate-800"
+                   className="h-12 w-full rounded-xl border-none bg-slate-50 px-4 text-xs font-bold text-slate-900 ring-1 ring-slate-200 transition-all focus:ring-2 focus:ring-pink-500"
                  />
                </div>
                <FemaleToggle 
@@ -558,14 +538,14 @@ export function MedicalHistoryForm({ patientId, patientGender, canEdit }: Props)
            <Zap className="text-indigo-500" size={20} />
            <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-400">{t("medicalHistory.sections.notes")}</h3>
         </div>
-        <div className="rounded-[2.5rem] border border-slate-100 bg-white p-8 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+        <div className="rounded-[2.5rem] border border-slate-100 bg-white p-8 shadow-sm">
           <textarea
             disabled={disabled}
             rows={5}
             value={state.notes ?? ""}
             placeholder={t("medicalHistory.fields.additionalNotes")}
             onChange={(e) => setField("notes", e.target.value)}
-            className="w-full rounded-3xl border-none bg-slate-50 p-6 text-sm font-bold text-slate-900 ring-1 ring-slate-100 transition-all focus:ring-4 focus:ring-indigo-500/10 dark:bg-slate-950 dark:text-white dark:ring-slate-800"
+            className="w-full rounded-3xl border-none bg-slate-50 p-6 text-sm font-bold text-slate-900 ring-1 ring-slate-100 transition-all focus:ring-4 focus:ring-indigo-500/10"
           />
         </div>
       </section>
@@ -577,15 +557,9 @@ function FemaleToggle({ label, checked, onChange, disabled }: { label: string, c
   return (
     <button
       onClick={() => !disabled && onChange(!checked)}
-      className={`group flex flex-col items-center justify-center gap-3 rounded-2xl border p-5 transition-all ${
-        checked 
-          ? "border-pink-200 bg-pink-50/50 text-pink-700 shadow-sm dark:border-pink-900/40 dark:bg-pink-950/20 dark:text-pink-400" 
-          : "border-slate-100 bg-slate-50/30 text-slate-400 hover:border-slate-200 dark:border-slate-800 dark:bg-slate-800/30"
-      }`}
+      className={`group flex flex-col items-center justify-center gap-3 rounded-2xl border p-5 transition-all ${ checked ? "border-pink-200 bg-pink-50/50 text-pink-700 shadow-sm " : "border-slate-100 bg-slate-50/30 text-slate-400 hover:border-slate-200 " }`}
     >
-       <div className={`flex h-10 w-10 items-center justify-center rounded-xl transition-all ${
-         checked ? "bg-pink-500 text-white" : "bg-white text-slate-200 dark:bg-slate-800"
-       }`}>
+       <div className={`flex h-10 w-10 items-center justify-center rounded-xl transition-all ${ checked ? "bg-pink-500 text-white" : "bg-white text-slate-200 " }`}>
           <CheckCircle2 size={20} />
        </div>
        <span className="text-[10px] font-black uppercase tracking-widest">{label}</span>
@@ -616,21 +590,15 @@ function YesNoWithReason({
 }: YesNoProps): JSX.Element {
   const { t } = useTranslation();
   return (
-    <div className={`rounded-[2rem] border transition-all p-6 ${
-      checked 
-        ? "border-sky-100 bg-sky-50/30 dark:border-sky-900/20 dark:bg-sky-950/10" 
-        : "border-slate-100 bg-white dark:border-slate-800 dark:bg-slate-900"
-    }`}>
+    <div className={`rounded-[2rem] border transition-all p-6 ${ checked ? "border-sky-100 bg-sky-50/30 " : "border-slate-100 bg-white " }`}>
       <div className="flex flex-col gap-5">
-        <p className="text-sm font-black tracking-tight text-slate-800 dark:text-white">{label}</p>
+        <p className="text-sm font-black tracking-tight text-slate-800">{label}</p>
         <div className="flex gap-2">
           <button
             type="button"
             disabled={disabled}
             onClick={() => onToggle(true)}
-            className={`h-11 flex-1 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${
-              checked ? "bg-emerald-500 text-white shadow-lg" : "bg-slate-50 text-slate-400 hover:bg-slate-100 dark:bg-slate-800"
-            }`}
+            className={`h-11 flex-1 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${ checked ? "bg-teal-500 text-white shadow-lg" : "bg-slate-50 text-slate-400 hover:bg-slate-100 " }`}
           >
             {t("medicalHistory.yes")}
           </button>
@@ -638,9 +606,7 @@ function YesNoWithReason({
             type="button"
             disabled={disabled}
             onClick={() => onToggle(false)}
-            className={`h-11 flex-1 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${
-              !checked ? "bg-slate-900 text-white shadow-lg dark:bg-white dark:text-slate-900" : "bg-slate-50 text-slate-400 hover:bg-slate-100 dark:bg-slate-800"
-            }`}
+            className={`h-11 flex-1 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${ !checked ? "bg-white text-white shadow-lg " : "bg-slate-50 text-slate-400 hover:bg-slate-100 " }`}
           >
             {t("medicalHistory.no")}
           </button>
@@ -654,14 +620,14 @@ function YesNoWithReason({
             exit={{ opacity: 0, height: 0 }}
             className="overflow-hidden"
           >
-            <div className="mt-5 space-y-4 pt-4 border-t border-sky-100 dark:border-sky-900/40">
+            <div className="mt-5 space-y-4 pt-4 border-t border-sky-100">
               <input
                 type="text"
                 disabled={disabled}
                 placeholder={reasonPlaceholder ?? t("medicalHistory.specifyDetailsPlaceholder")}
                 value={reason}
                 onChange={(e) => onReason(e.target.value)}
-                className="h-12 w-full rounded-xl border-none bg-white px-4 text-xs font-bold text-slate-900 ring-1 ring-sky-200 transition-all focus:ring-2 focus:ring-sky-500 dark:bg-slate-950 dark:text-white dark:ring-slate-800"
+                className="h-12 w-full rounded-xl border-none bg-white px-4 text-xs font-bold text-slate-900 ring-1 ring-sky-200 transition-all focus:ring-2 focus:ring-sky-500"
               />
               {extra}
             </div>

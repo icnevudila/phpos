@@ -5,6 +5,7 @@ import { prisma } from "../../lib/prisma.js";
 
 import * as T from "./smsTemplates.js";
 import { runDailyEodEmailNow } from "./eodEmailJob.js";
+import { runBirthdayCampaignNow, runRecallCampaignNow, runReviewInviteCampaignNow } from "./campaignService.js";
 import { sendSMS } from "./smsService.js";
 
 const tz = "Asia/Manila";
@@ -175,8 +176,39 @@ export function startNotificationScheduler(): void {
       },
       { timezone: tz },
     );
-    tasks.push(eod);
-    console.info("[cron] EOD email scheduler started (20:00 Asia/Manila)");
+
+    const birthday = cron.schedule(
+      "0 10 * * *",
+      () => {
+        void runBirthdayCampaignNow()
+          .then((r) => console.info("[cron] birthday campaign", r))
+          .catch((e: unknown) => console.error("[cron] birthday campaign error", e));
+      },
+      { timezone: tz },
+    );
+
+    const recall = cron.schedule(
+      "0 11 * * *",
+      () => {
+        void runRecallCampaignNow()
+          .then((r) => console.info("[cron] recall campaign", r))
+          .catch((e: unknown) => console.error("[cron] recall campaign error", e));
+      },
+      { timezone: tz },
+    );
+
+    const reviewInvite = cron.schedule(
+      "0 12 * * *",
+      () => {
+        void runReviewInviteCampaignNow()
+          .then((r) => console.info("[cron] Google review invite campaign", r))
+          .catch((e: unknown) => console.error("[cron] Google review invite campaign error", e));
+      },
+      { timezone: tz },
+    );
+
+    tasks.push(eod, birthday, recall, reviewInvite);
+    console.info("[cron] EOD & Campaigns email scheduler started (10:00 birthday, 11:00 recall, 12:00 review invite, 20:05 EOD Asia/Manila)");
   }
 }
 

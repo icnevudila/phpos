@@ -63,7 +63,7 @@ export function VoiceNoteWidget({ onTranscriptionComplete }: VoiceNoteWidgetProp
   };
 
   return (
-    <div className="bg-slate-50 dark:bg-slate-800/50 rounded-3xl p-6 border border-slate-100 dark:border-slate-800">
+    <div className="bg-slate-50 rounded-3xl p-6 border border-slate-100">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-sm font-black uppercase tracking-widest text-slate-400 flex items-center gap-2">
           <Volume2 className="w-4 h-4" />
@@ -81,7 +81,7 @@ export function VoiceNoteWidget({ onTranscriptionComplete }: VoiceNoteWidgetProp
         </div>
       </div>
 
-      <div className="relative min-h-[120px] bg-white dark:bg-slate-950 rounded-2xl p-4 border border-slate-100 dark:border-slate-800 mb-4 text-slate-700 dark:text-slate-300 text-sm leading-relaxed">
+      <div className="relative min-h-[120px] bg-white rounded-2xl p-4 border border-slate-100 mb-4 text-slate-700 text-sm leading-relaxed">
         {transcript || (
           <span className="text-slate-400 italic">{t(`${VN}.placeholder`)}</span>
         )}
@@ -100,11 +100,7 @@ export function VoiceNoteWidget({ onTranscriptionComplete }: VoiceNoteWidgetProp
       <div className="flex gap-3">
         <button
           onClick={toggleListening}
-          className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-2xl font-bold transition-all ${
-            isListening 
-              ? "bg-rose-500 text-white shadow-lg shadow-rose-200" 
-              : "bg-white text-slate-700 border border-slate-100 hover:border-sky-500 hover:text-sky-600"
-          }`}
+          className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-2xl font-bold transition-all ${ isListening ? "bg-rose-500 text-white shadow-lg shadow-rose-200" : "bg-white text-slate-700 border border-slate-100 hover:border-sky-500 hover:text-sky-600" }`}
         >
           {isListening ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
           {isListening ? t(`${VN}.stopListening`) : t(`${VN}.startDictation`)}
@@ -122,7 +118,7 @@ export function VoiceNoteWidget({ onTranscriptionComplete }: VoiceNoteWidgetProp
         <button
           disabled={!transcript || isListening}
           onClick={() => onTranscriptionComplete(transcript)}
-          className="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 disabled:bg-slate-400 text-white rounded-2xl font-bold flex items-center gap-2 transition-all shadow-lg shadow-emerald-100"
+          className="px-6 py-3 bg-teal-600 hover:bg-teal-700 disabled:opacity-50 disabled:bg-slate-400 text-white rounded-2xl font-bold flex items-center gap-2 transition-all shadow-lg shadow-teal-100"
         >
           <Save className="w-5 h-5" />
           {t(`${VN}.applyNotes`)}

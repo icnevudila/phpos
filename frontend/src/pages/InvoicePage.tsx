@@ -18,7 +18,8 @@ import {
   RefreshCw, 
   Phone,
   MoreVertical,
-  Zap
+  Zap,
+  Star
 } from "lucide-react";
 
 import { InvoiceHmoClaimChips } from "../components/invoices/InvoiceHmoClaimChips";
@@ -143,9 +144,10 @@ export function InvoicePage(): JSX.Element {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center py-40 gap-4">
-        <RefreshCw className="h-10 w-10 animate-spin text-emerald-500" />
-        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Syncing Ledger...</p>
+      <div className="flex items-center justify-center py-20">
+        <div className="h-8 w-8 rounded-xl bg-teal-50 flex items-center justify-center">
+          <RefreshCw className="h-4 w-4 animate-spin text-teal-500" />
+        </div>
       </div>
     );
   }
@@ -157,10 +159,10 @@ export function InvoicePage(): JSX.Element {
            <FileText size={40} />
         </div>
         <div>
-          <p className="text-xl font-black text-slate-900 dark:text-white">{error ?? t("pages.invoice.notFound")}</p>
+          <p className="text-xl font-bold text-slate-800">{error ?? t("pages.invoice.notFound")}</p>
           <p className="mt-2 text-sm font-medium text-slate-400">The requested financial record could not be retrieved.</p>
         </div>
-        <Link to="/invoices" className="rounded-2xl bg-slate-900 px-8 py-4 text-xs font-black text-white uppercase tracking-widest shadow-xl transition-all hover:scale-105">
+        <Link to="/invoices" className="btn-primary">
           {t("pages.invoice.backList")}
         </Link>
       </div>
@@ -216,66 +218,65 @@ export function InvoicePage(): JSX.Element {
   }
 
   return (
-    <div className={`min-h-screen w-full pb-24 bg-[#fafbfc] dark:bg-slate-950 print:bg-white ${!isPaid && balance > 0 ? "pb-32 md:pb-24" : ""}`}>
-      <div className="mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-10 space-y-12 pt-10">
+    <div className={`min-h-screen w-full pb-24 bg-[#f5f7f9] print:bg-white ${!isPaid && balance > 0 ? "pb-32 md:pb-24" : ""}`}>
+      <div className="mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-10 space-y-8 pt-8">
         
         {/* Navigation & Actions */}
-        <header className="flex flex-col gap-8 lg:flex-row lg:items-center justify-between print:hidden">
+        <header className="flex flex-col gap-4 sm:flex-row sm:items-center justify-between print:hidden">
            <Link 
              to="/invoices" 
-             className="group flex items-center gap-4 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-emerald-500 transition-all"
+             className="group flex items-center gap-3 text-xs font-semibold uppercase tracking-widest text-slate-500 hover:text-teal-500 transition-all"
            >
-             <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white dark:bg-slate-900 shadow-xl ring-1 ring-slate-100 dark:ring-slate-800 group-hover:scale-110 transition-all">
-                <ArrowLeft size={20} />
+             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white shadow-sm ring-1 ring-slate-100 group-hover:scale-110 transition-all">
+                <ArrowLeft size={18} />
              </div>
              {t("pages.invoice.backInvoices")}
            </Link>
 
-           <div className="flex items-center gap-4">
+           <div className="flex items-center gap-3">
               <button
                 onClick={() => window.print()}
-                className="flex h-14 items-center gap-3 px-6 rounded-2xl bg-white dark:bg-slate-900 text-slate-400 shadow-xl ring-1 ring-slate-100 dark:ring-slate-800 transition-all hover:text-emerald-500"
+                className="btn-secondary flex items-center gap-2"
               >
-                <Printer size={18} />
-                <span className="text-[10px] font-black uppercase tracking-widest">{t("pages.invoice.print")}</span>
+                <Printer size={16} />
+                <span className="text-xs font-semibold uppercase tracking-widest">{t("pages.invoice.print")}</span>
               </button>
               <button
                 onClick={() => openInvoicePdf(invoice.id).catch(() => toast.error(t("pages.invoice.pdfFailed")))}
-                className="flex h-14 items-center gap-3 px-6 rounded-2xl bg-white dark:bg-slate-900 text-slate-400 shadow-xl ring-1 ring-slate-100 dark:ring-slate-800 transition-all hover:text-emerald-500"
+                className="btn-secondary flex items-center gap-2"
               >
-                <Download size={18} />
-                <span className="text-[10px] font-black uppercase tracking-widest">PDF</span>
+                <Download size={16} />
+                <span className="text-xs font-semibold uppercase tracking-widest">PDF</span>
               </button>
               {invoice.patient.philhealthNo && (
                 <button
                   onClick={() => openPhilhealthWorksheetPdf(invoice.id).catch(() => toast.error(t("pages.invoice.philhealthWorksheetPdfFailed")))}
-                  className="flex h-14 items-center gap-3 px-6 rounded-2xl bg-amber-50 text-amber-600 shadow-xl ring-1 ring-amber-100 transition-all hover:bg-amber-500 hover:text-white"
+                  className="flex h-10 items-center gap-2 px-4 rounded-xl bg-amber-50 text-amber-600 ring-1 ring-amber-100 transition-all hover:bg-amber-500 hover:text-white"
                 >
-                  <FileText size={18} />
-                  <span className="text-[10px] font-black uppercase tracking-widest">{t("pages.invoice.philhealthBtn")}</span>
+                  <FileText size={16} />
+                  <span className="text-xs font-semibold uppercase tracking-widest">{t("pages.invoice.philhealthBtn")}</span>
                 </button>
               )}
               <button
                 onClick={() => openBir2307Pdf(invoice.id).catch(() => toast.error(t("pages.invoice.bir2307Failed")))}
-                className="flex h-14 items-center gap-3 px-6 rounded-2xl bg-blue-50 text-blue-600 shadow-xl ring-1 ring-blue-100 transition-all hover:bg-blue-500 hover:text-white"
+                className="flex h-10 items-center gap-2 px-4 rounded-xl bg-blue-50 text-blue-600 ring-1 ring-blue-100 transition-all hover:bg-blue-500 hover:text-white"
               >
-                <Shield size={18} />
-                <span className="text-[10px] font-black uppercase tracking-widest">{t("pages.invoice.bir2307Label")}</span>
+                <Shield size={16} />
+                <span className="text-xs font-semibold uppercase tracking-widest">{t("pages.invoice.bir2307Label")}</span>
               </button>
            </div>
         </header>
 
         {/* Hero Section */}
-        <section className="relative rounded-[3.5rem] bg-white dark:bg-slate-900 p-10 lg:p-16 shadow-2xl shadow-slate-200/40 dark:shadow-none ring-1 ring-slate-100 dark:ring-slate-800 overflow-hidden">
-           <div className="absolute top-0 right-0 h-96 w-96 bg-emerald-500/5 blur-[120px] pointer-events-none" />
-           <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-              <div className="space-y-8">
-                 <div className="space-y-4">
-                    <div className="flex items-center gap-4">
-                       <span className="text-[10px] font-black uppercase tracking-[0.4em] text-emerald-500">{t("pages.invoice.officialReceipt")}</span>
+        <section className="card overflow-hidden">
+           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+              <div className="space-y-6">
+                 <div className="space-y-3">
+                    <div className="flex items-center gap-3">
+                       <span className="text-xs font-semibold uppercase tracking-widest text-teal-500">{t("pages.invoice.officialReceipt")}</span>
                        <InvoiceStatusBadge status={invoice.status} />
                     </div>
-                    <h1 className="text-5xl lg:text-7xl font-black tracking-tighter text-slate-900 dark:text-white font-mono leading-none">
+                    <h1 className="text-2xl font-bold tracking-tight text-slate-800 font-mono">
                        {invoice.orNumber || t("pages.invoice.orNumberPending")}
                     </h1>
                     <p className="text-sm font-medium text-slate-400">
@@ -283,16 +284,16 @@ export function InvoicePage(): JSX.Element {
                     </p>
                  </div>
 
-                 <div className="flex items-center gap-6">
-                    <div className="h-16 w-16 rounded-[2rem] bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400">
-                       <User size={32} />
+                 <div className="flex items-center gap-4">
+                    <div className="h-12 w-12 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400">
+                       <User size={24} />
                     </div>
                     <div>
-                       <p className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight">{invoice.patient.fullName}</p>
-                       <div className="flex items-center gap-4 mt-1 text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                       <p className="text-lg font-bold text-slate-800 uppercase tracking-tight">{invoice.patient.fullName}</p>
+                       <div className="flex items-center gap-3 mt-1 text-xs font-medium text-slate-400 uppercase tracking-widest">
                           <span className="flex items-center gap-1.5"><Phone size={12} className="opacity-40" /> {invoice.patient.phone}</span>
                           {invoice.patient.philhealthNo && (
-                            <span className="flex items-center gap-1.5 text-emerald-500"><Shield size={12} className="opacity-40" /> PH: {invoice.patient.philhealthNo}</span>
+                            <span className="flex items-center gap-1.5 text-teal-500"><Shield size={12} className="opacity-40" /> PH: {invoice.patient.philhealthNo}</span>
                           )}
                        </div>
                     </div>
@@ -300,24 +301,30 @@ export function InvoicePage(): JSX.Element {
 
                  <div className="flex flex-wrap gap-2">
                     {invoice.patient.isSeniorCitizen && (
-                       <span className="px-4 py-1.5 rounded-xl bg-amber-50 text-amber-700 text-[9px] font-black uppercase tracking-widest border border-amber-100">SC Discount Active</span>
+                       <span className="px-3 py-1 rounded-lg bg-amber-50 text-amber-700 text-xs font-semibold uppercase tracking-widest border border-amber-100">SC Discount Active</span>
                     )}
                     {invoice.patient.pwdIdNo && (
-                       <span className="px-4 py-1.5 rounded-xl bg-sky-50 text-sky-700 text-[9px] font-black uppercase tracking-widest border border-sky-100">PWD Discount Active</span>
+                       <span className="px-3 py-1 rounded-lg bg-sky-50 text-sky-700 text-xs font-semibold uppercase tracking-widest border border-sky-100">PWD Discount Active</span>
+                    )}
+                    {invoice.patient.loyaltyPoints !== undefined && (
+                       <span className="flex items-center gap-1 px-3 py-1 rounded-lg bg-amber-50 text-amber-600 text-xs font-semibold uppercase tracking-widest border border-amber-100">
+                          <Star size={10} className="fill-amber-500" />
+                          {invoice.patient.loyaltyPoints} Loyalty Points
+                       </span>
                     )}
                  </div>
               </div>
 
-              <div className="space-y-8">
+              <div className="space-y-4">
                  {invoice.appointment && (
-                    <div className="p-8 rounded-[2.5rem] bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 space-y-4">
-                       <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Appointment Session</p>
-                       <div className="flex items-start gap-4">
-                          <Calendar className="text-emerald-500 mt-1" size={20} />
+                    <div className="p-5 rounded-2xl bg-slate-50 border border-slate-100 space-y-3">
+                       <p className="text-xs font-semibold uppercase tracking-widest text-slate-400">Appointment Session</p>
+                       <div className="flex items-start gap-3">
+                          <Calendar className="text-teal-500 mt-1" size={18} />
                           <div>
-                             <p className="text-lg font-black text-slate-900 dark:text-white">{fmtDateTime(invoice.appointment.scheduledAt)}</p>
-                             <p className="text-sm font-bold text-slate-500 mt-1">Dr. {invoice.appointment.dentist.fullName}</p>
-                             <div className="mt-3 inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-emerald-500/10 text-emerald-600 text-[10px] font-black uppercase tracking-tighter">
+                             <p className="text-base font-bold text-slate-800">{fmtDateTime(invoice.appointment.scheduledAt)}</p>
+                             <p className="text-sm font-medium text-slate-500 mt-1">Dr. {invoice.appointment.dentist.fullName}</p>
+                             <div className="mt-2 inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-teal-50 text-teal-600 text-xs font-semibold uppercase tracking-tight">
                                 {invoice.appointment.type?.replace(/_/g, " ")}
                              </div>
                           </div>
@@ -326,8 +333,8 @@ export function InvoicePage(): JSX.Element {
                  )}
 
                  {(invoice.hmoClaims?.length ?? 0) > 0 && (
-                    <div className="p-8 rounded-[2.5rem] bg-indigo-50/30 dark:bg-indigo-950/20 border border-indigo-100 dark:border-indigo-900/30 space-y-4">
-                       <p className="text-[10px] font-black uppercase tracking-widest text-indigo-400">Integrated HMO Claims</p>
+                    <div className="p-5 rounded-2xl bg-indigo-50/50 border border-indigo-100 space-y-3">
+                       <p className="text-xs font-semibold uppercase tracking-widest text-indigo-400">Integrated HMO Claims</p>
                        <InvoiceHmoClaimChips claims={invoice.hmoClaims ?? []} />
                     </div>
                  )}
@@ -335,36 +342,36 @@ export function InvoicePage(): JSX.Element {
            </div>
         </section>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
            {/* Ledger Table */}
-           <div className="lg:col-span-8 space-y-12">
-              <section className="rounded-[3.5rem] bg-white dark:bg-slate-900 shadow-2xl shadow-slate-200/40 dark:shadow-none ring-1 ring-slate-100 dark:ring-slate-800 overflow-hidden">
-                 <div className="px-10 py-8 border-b border-slate-50 dark:border-slate-800 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                       <FileText size={20} className="text-slate-400" />
-                       <h2 className="text-xl font-black tracking-tight text-slate-900 dark:text-white">Treatments & Procedures</h2>
+           <div className="lg:col-span-8 space-y-6">
+              <section className="card p-0 overflow-hidden">
+                 <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                       <FileText size={18} className="text-slate-400" />
+                       <h2 className="text-base font-semibold text-slate-800">Treatments & Procedures</h2>
                     </div>
-                    <span className="px-3 py-1 rounded-lg bg-slate-50 dark:bg-slate-800 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                    <span className="px-3 py-1 rounded-lg bg-slate-50 text-xs font-semibold text-slate-400 uppercase tracking-widest">
                        {invoice.treatments.length} Items
                     </span>
                  </div>
-                 <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse">
+                 <div className="data-table-wrapper">
+                    <table className="data-table">
                        <thead>
-                          <tr className="bg-slate-50/30 dark:bg-slate-800/30">
-                             <th className="px-10 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400">Procedure</th>
-                             <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400 text-right">Qty</th>
-                             <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400 text-right">Unit Price</th>
-                             <th className="px-10 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400 text-right">Total</th>
+                          <tr>
+                             <th>Procedure</th>
+                             <th className="text-right">Qty</th>
+                             <th className="text-right">Unit Price</th>
+                             <th className="text-right">Total</th>
                           </tr>
                        </thead>
-                       <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
+                       <tbody>
                           {invoice.treatments.map((row) => (
-                             <tr key={row.id} className="group hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-all">
-                                <td className="px-10 py-8">
+                             <tr key={row.id}>
+                                <td>
                                    <div className="space-y-1">
-                                      <p className="text-base font-black text-slate-900 dark:text-white uppercase leading-none">{row.procedure.replace(/_/g, " ")}</p>
-                                      <div className="flex items-center gap-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                                      <p className="text-sm font-semibold text-slate-800 uppercase leading-none">{row.procedure.replace(/_/g, " ")}</p>
+                                      <div className="flex items-center gap-2 text-xs font-medium text-slate-400 uppercase tracking-widest">
                                          <span>
                                            {row.toothIds.length
                                              ? t("pages.invoice.toothLine", { teeth: row.toothIds.join(", ") })
@@ -379,9 +386,9 @@ export function InvoicePage(): JSX.Element {
                                       </div>
                                    </div>
                                 </td>
-                                <td className="px-8 py-8 text-right font-black text-slate-500 tabular-nums">{row.quantity}</td>
-                                <td className="px-8 py-8 text-right font-black text-slate-500 tabular-nums">{formatPHP(row.unitPrice)}</td>
-                                <td className="px-10 py-8 text-right font-black text-slate-900 dark:text-white tabular-nums">{formatPHP(row.lineTotal)}</td>
+                                <td className="text-right font-semibold text-slate-500 tabular-nums">{row.quantity}</td>
+                                <td className="text-right font-semibold text-slate-500 tabular-nums">{formatPHP(row.unitPrice)}</td>
+                                <td className="text-right font-semibold text-slate-800 tabular-nums">{formatPHP(row.lineTotal)}</td>
                              </tr>
                           ))}
                        </tbody>
@@ -389,15 +396,15 @@ export function InvoicePage(): JSX.Element {
                  </div>
 
                  {/* Totals Summary */}
-                 <div className="p-10 bg-slate-50/50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-800 flex flex-col items-end gap-4">
+                 <div className="p-6 bg-slate-50/50 border-t border-slate-100 flex flex-col items-end gap-3">
                     <div className="w-full max-w-xs space-y-3">
-                       <div className="flex justify-between text-xs font-black uppercase tracking-widest text-slate-400">
+                       <div className="flex justify-between text-xs font-semibold uppercase tracking-widest text-slate-400">
                           <span>Subtotal</span>
-                          <span className="text-slate-900 dark:text-white">{formatPHP(invoice.subtotal)}</span>
+                          <span className="text-slate-800">{formatPHP(invoice.subtotal)}</span>
                        </div>
-                       <div className="flex justify-between items-center text-xs font-black uppercase tracking-widest text-slate-400">
+                       <div className="flex justify-between items-center text-xs font-semibold uppercase tracking-widest text-slate-400">
                           <span>Discount</span>
-                          <div className="flex items-center gap-3">
+                          <div className="flex items-center gap-2">
                              {editingDiscount && !isPaid ? (
                                 <div className="flex items-center gap-2">
                                    <input
@@ -405,58 +412,61 @@ export function InvoicePage(): JSX.Element {
                                       step="0.01"
                                       value={discountDraft}
                                       onChange={(e) => setDiscountDraft(e.target.value)}
-                                      className="w-24 h-10 rounded-xl bg-white dark:bg-slate-900 border-none ring-1 ring-slate-200 dark:ring-slate-700 px-3 text-right text-sm font-black focus:ring-2 focus:ring-emerald-500 outline-none"
+                                      className="w-24 h-9 rounded-xl bg-white border-none ring-1 ring-slate-200 px-3 text-right text-sm font-semibold focus:ring-2 focus:ring-teal-500 outline-none"
                                    />
-                                   <button onClick={saveDiscount} className="h-10 w-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center hover:bg-emerald-600 transition-all shadow-lg shadow-emerald-500/20"><CheckCircle2 size={18} /></button>
-                                   <button onClick={() => { setEditingDiscount(false); setDiscountDraft(invoice.discount); }} className="h-10 w-10 rounded-xl bg-slate-200 text-slate-600 flex items-center justify-center hover:bg-slate-300 transition-all"><MoreVertical size={18} /></button>
+                                   <button onClick={saveDiscount} className="h-9 w-9 rounded-xl bg-teal-500 text-white flex items-center justify-center hover:bg-teal-600 transition-all shadow-sm"><CheckCircle2 size={16} /></button>
+                                   <button onClick={() => { setEditingDiscount(false); setDiscountDraft(invoice.discount); }} className="h-9 w-9 rounded-xl bg-slate-200 text-slate-600 flex items-center justify-center hover:bg-slate-300 transition-all"><MoreVertical size={16} /></button>
                                 </div>
                              ) : (
-                                <div className="flex items-center gap-3">
+                                <div className="flex items-center gap-2">
                                    <span className="text-rose-500">-{formatPHP(invoice.discount)}</span>
-                                   {!isPaid && <button onClick={() => setEditingDiscount(true)} className="h-8 w-8 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 hover:text-emerald-500 transition-all"><Plus size={14} /></button>}
+                                   {!isPaid && <button onClick={() => setEditingDiscount(true)} className="h-7 w-7 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400 hover:text-teal-500 transition-all"><Plus size={12} /></button>}
                                 </div>
                              )}
                           </div>
                        </div>
-                       <div className="pt-4 border-t border-slate-200 dark:border-slate-700 flex justify-between items-center">
-                          <span className="text-sm font-black uppercase tracking-[0.2em] text-slate-900 dark:text-white">Total Amount</span>
-                          <span className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter">{formatPHP(invoice.total)}</span>
+                       <div className="pt-3 border-t border-slate-200 flex justify-between items-center">
+                          <span className="text-sm font-semibold uppercase tracking-widest text-slate-800">Total Amount</span>
+                          <span className="text-2xl font-bold text-slate-800 tracking-tight">{formatPHP(invoice.total)}</span>
                        </div>
                     </div>
                  </div>
               </section>
 
               {/* Payments Ledger */}
-              <section className="rounded-[3.5rem] bg-white dark:bg-slate-900 shadow-2xl shadow-slate-200/40 dark:shadow-none ring-1 ring-slate-100 dark:ring-slate-800 overflow-hidden">
-                 <div className="px-10 py-8 border-b border-slate-50 dark:border-slate-800 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                       <CreditCard size={20} className="text-slate-400" />
-                       <h2 className="text-xl font-black tracking-tight text-slate-900 dark:text-white">Payment Ledger</h2>
+              <section className="card p-0 overflow-hidden">
+                 <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                       <CreditCard size={18} className="text-slate-400" />
+                       <h2 className="text-base font-semibold text-slate-800">Payment Ledger</h2>
                     </div>
                     {!isPaid && (
                        <button
                          onClick={() => setModalOpen(true)}
-                         className="flex h-12 items-center gap-3 px-6 rounded-2xl bg-emerald-500 text-white text-[10px] font-black uppercase tracking-widest shadow-xl shadow-emerald-500/20 hover:scale-105 active:scale-95 transition-all"
+                         className="btn-primary flex items-center gap-2"
                        >
-                         <Plus size={16} /> Record Payment
+                         <Plus size={14} /> Record Payment
                        </button>
                     )}
                  </div>
-                 <div className="p-10 space-y-6">
+                 <div className="p-6 space-y-4">
                     {invoice.payments.length === 0 ? (
-                       <div className="py-12 text-center border-2 border-dashed border-slate-100 dark:border-slate-800 rounded-[2.5rem]">
-                          <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">No payments recorded yet</p>
+                       <div className="flex flex-col items-center justify-center py-16 text-center">
+                          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-50">
+                            <CreditCard className="h-6 w-6 text-slate-300" />
+                          </div>
+                          <p className="text-sm font-medium text-slate-500">No payments recorded yet</p>
                        </div>
                     ) : (
                        invoice.payments.map((p) => (
-                          <div key={p.id} className="flex items-center justify-between p-6 rounded-[2rem] bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 group">
-                             <div className="flex items-center gap-6">
-                                <div className="h-14 w-14 rounded-2xl bg-white dark:bg-slate-900 flex items-center justify-center text-emerald-500 shadow-sm font-black text-xs uppercase">
+                          <div key={p.id} className="flex items-center justify-between p-4 rounded-2xl bg-slate-50 border border-slate-100 group">
+                             <div className="flex items-center gap-4">
+                                <div className="h-12 w-12 rounded-xl bg-white flex items-center justify-center text-teal-500 shadow-sm font-bold text-xs uppercase">
                                    {p.method.slice(0, 3)}
                                 </div>
                                 <div>
-                                   <p className="text-lg font-black text-slate-900 dark:text-white">{formatPHP(p.amount)}</p>
-                                   <div className="flex items-center gap-3 mt-1 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                                   <p className="text-base font-bold text-slate-800">{formatPHP(p.amount)}</p>
+                                   <div className="flex items-center gap-2 mt-1 text-xs font-medium text-slate-400 uppercase tracking-widest">
                                       <span>{fmtDateTime(p.paidAt)}</span>
                                       {p.referenceNo && (
                                          <>
@@ -475,65 +485,66 @@ export function InvoicePage(): JSX.Element {
               </section>
            </div>
 
-           {/* Workspace Intelligence */}
-           <div className="lg:col-span-4 space-y-12">
-              <section className="rounded-[3rem] bg-slate-900 p-10 shadow-2xl relative overflow-hidden group">
-                 <div className="absolute top-0 right-0 h-40 w-40 bg-emerald-500/10 blur-[80px]" />
-                 <div className="relative z-10 space-y-8">
+           {/* Sidebar */}
+           <div className="lg:col-span-4 space-y-6">
+              {/* Balance Card */}
+              <section className="card bg-slate-800 p-8 relative overflow-hidden">
+                 <div className="absolute top-0 right-0 h-40 w-40 bg-teal-500/10 blur-[80px]" />
+                 <div className="relative z-10 space-y-6">
                     <div>
-                       <p className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-400 mb-2">Remaining Ledger Balance</p>
-                       <p className="text-5xl font-black text-white tracking-tighter">{formatPHP(invoice.balance)}</p>
+                       <p className="text-xs font-semibold uppercase tracking-widest text-teal-400 mb-2">Remaining Ledger Balance</p>
+                       <p className="text-3xl font-bold text-white">{formatPHP(invoice.balance)}</p>
                     </div>
-                    <div className="space-y-4 pt-8 border-t border-white/5">
-                       <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest text-slate-500">
+                    <div className="space-y-3 pt-6 border-t border-white/5">
+                       <div className="flex justify-between items-center text-xs font-semibold uppercase tracking-widest text-slate-500">
                           <span>Collection Progress</span>
                           <span className="text-white">{Math.round((Number(invoice.paid) / Number(invoice.total)) * 100)}%</span>
                        </div>
-                       <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
+                       <div className="h-2 w-full bg-slate-700 rounded-full overflow-hidden">
                           <motion.div 
                             initial={{ width: 0 }}
                             animate={{ width: `${(Number(invoice.paid) / Number(invoice.total)) * 100}%` }}
                             transition={{ duration: 1, ease: "easeOut" }}
-                            className="h-full bg-emerald-500" 
+                            className="h-full bg-teal-500" 
                           />
                        </div>
                     </div>
                     {isPaid ? (
-                       <div className="flex items-center gap-4 p-6 rounded-[2rem] bg-emerald-500 text-white shadow-xl shadow-emerald-500/20">
-                          <CheckCircle2 size={32} />
+                       <div className="flex items-center gap-3 p-4 rounded-2xl bg-teal-500 text-white shadow-sm">
+                          <CheckCircle2 size={24} />
                           <div>
-                             <p className="text-sm font-black uppercase tracking-widest">Settled in Full</p>
-                             <p className="text-[10px] font-bold opacity-80">{invoice.paidAt ? fmtDateTime(invoice.paidAt) : "Completed"}</p>
+                             <p className="text-sm font-semibold uppercase tracking-widest">Settled in Full</p>
+                             <p className="text-xs font-medium opacity-80">{invoice.paidAt ? fmtDateTime(invoice.paidAt) : "Completed"}</p>
                           </div>
                        </div>
                     ) : (
                        <button
                          disabled={busyGcash || balance <= 0}
                          onClick={onGcashClick}
-                         className="w-full flex flex-col items-center justify-center gap-2 p-8 rounded-[2.5rem] bg-white text-slate-900 hover:scale-[1.02] active:scale-95 transition-all shadow-2xl"
+                         className="w-full flex flex-col items-center justify-center gap-2 p-6 rounded-2xl bg-white text-slate-900 hover:scale-[1.02] active:scale-95 transition-all shadow-lg"
                        >
                           <div className="flex items-center gap-3">
-                             <div className="h-10 w-20 bg-[#007DFE] flex items-center justify-center rounded-lg text-white font-black italic text-[10px]">GCash</div>
-                             <div className="h-10 w-20 bg-[#D9FD0D] flex items-center justify-center rounded-lg text-slate-900 font-black italic text-[10px]">Maya</div>
+                             <div className="h-8 w-16 bg-[#007DFE] flex items-center justify-center rounded-lg text-white font-bold italic text-xs">GCash</div>
+                             <div className="h-8 w-16 bg-[#D9FD0D] flex items-center justify-center rounded-lg text-slate-900 font-bold italic text-xs">Maya</div>
                           </div>
-                          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mt-2">{t("pages.invoice.openPaymentGateway")}</p>
+                          <p className="text-xs font-semibold uppercase tracking-widest text-slate-400 mt-1">{t("pages.invoice.openPaymentGateway")}</p>
                        </button>
                     )}
                  </div>
               </section>
 
-              <section className="rounded-[3rem] bg-white dark:bg-slate-900 p-10 shadow-xl ring-1 ring-slate-100 dark:ring-slate-800 overflow-hidden relative">
-                 <div className="absolute top-0 right-0 h-32 w-32 bg-sky-500/5 blur-3xl pointer-events-none" />
-                 <div className="flex items-center justify-between mb-10">
-                    <div className="flex items-center gap-3">
-                       <Shield size={20} className="text-sky-500" />
-                       <h2 className="text-xl font-black tracking-tight text-slate-900 dark:text-white">HMO Integration</h2>
+              {/* HMO Integration */}
+              <section className="card overflow-hidden">
+                 <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center gap-2">
+                       <Shield size={18} className="text-sky-500" />
+                       <h2 className="text-base font-semibold text-slate-800">HMO Integration</h2>
                     </div>
                     <button
                       onClick={() => setClaimOpen(!claimOpen)}
-                      className={`h-10 w-10 flex items-center justify-center rounded-xl transition-all ${claimOpen ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900' : 'bg-slate-100 dark:bg-slate-800 text-slate-400 hover:bg-sky-500 hover:text-white'}`}
+                      className={`h-9 w-9 flex items-center justify-center rounded-xl transition-all ${claimOpen ? 'bg-slate-800 text-white' : 'bg-slate-100 text-slate-400 hover:bg-sky-500 hover:text-white'}`}
                     >
-                      <Plus size={20} className={claimOpen ? "rotate-45" : ""} />
+                      <Plus size={18} className={claimOpen ? "rotate-45" : ""} />
                     </button>
                  </div>
 
@@ -543,14 +554,14 @@ export function InvoicePage(): JSX.Element {
                          initial={{ height: 0, opacity: 0 }}
                          animate={{ height: "auto", opacity: 1 }}
                          exit={{ height: 0, opacity: 0 }}
-                         className="space-y-6 overflow-hidden"
+                         className="space-y-4 overflow-hidden"
                        >
                           <div className="space-y-2">
-                             <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-4 mb-2 block">Provider Authority</label>
+                             <label className="text-xs font-semibold uppercase tracking-widest text-slate-400 ml-2 mb-1 block">Provider Authority</label>
                              <select
                                value={claimProviderId}
                                onChange={(e) => setClaimProviderId(e.target.value)}
-                               className="h-16 w-full rounded-2xl bg-slate-50 dark:bg-slate-800/50 px-6 text-sm font-bold outline-none ring-1 ring-slate-100 dark:ring-slate-800 focus:ring-2 focus:ring-sky-500 transition-all"
+                               className="h-12 w-full rounded-xl bg-slate-50 px-4 text-sm font-medium outline-none ring-1 ring-slate-100 focus:ring-2 focus:ring-teal-500 transition-all"
                              >
                                 <option value="">Select Provider...</option>
                                 {providers.map((p) => {
@@ -564,13 +575,13 @@ export function InvoicePage(): JSX.Element {
                              </select>
                           </div>
 
-                          <div className="p-6 rounded-[2rem] bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 space-y-4">
-                             <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Treatment Mapping</p>
+                          <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-3">
+                             <p className="text-xs font-semibold uppercase tracking-widest text-slate-400">Treatment Mapping</p>
                              <div className="space-y-2">
                                 {invoice.treatments.map((row) => (
                                    <label key={row.id} className="flex items-center justify-between group cursor-pointer">
-                                      <div className="flex items-center gap-3">
-                                         <div className={`h-5 w-5 rounded-md border-2 transition-all flex items-center justify-center ${claimSelectedLineIds.includes(row.id) ? 'bg-sky-500 border-sky-500' : 'border-slate-200 dark:border-slate-700'}`}>
+                                      <div className="flex items-center gap-2">
+                                         <div className={`h-5 w-5 rounded-md border-2 transition-all flex items-center justify-center ${claimSelectedLineIds.includes(row.id) ? 'bg-teal-500 border-teal-500' : 'border-slate-200'}`}>
                                             {claimSelectedLineIds.includes(row.id) && <CheckCircle2 size={12} className="text-white" />}
                                          </div>
                                          <input
@@ -581,36 +592,36 @@ export function InvoicePage(): JSX.Element {
                                                setClaimSelectedLineIds((prev) => e.target.checked ? [...prev, row.id] : prev.filter((id) => id !== row.id));
                                             }}
                                          />
-                                         <span className="text-[11px] font-black text-slate-600 dark:text-slate-300 uppercase truncate max-w-[120px]">{row.procedure}</span>
+                                         <span className="text-xs font-semibold text-slate-600 uppercase truncate max-w-[120px]">{row.procedure}</span>
                                       </div>
-                                      <span className="text-[11px] font-black text-slate-400">{formatPHP(row.lineTotal)}</span>
+                                      <span className="text-xs font-semibold text-slate-400">{formatPHP(row.lineTotal)}</span>
                                    </label>
                                 ))}
                              </div>
                           </div>
 
-                          <div className="grid grid-cols-2 gap-4">
+                          <div className="grid grid-cols-2 gap-3">
                              <div className="space-y-2">
-                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-4 mb-2 block">Patient Copay</label>
+                                <label className="text-xs font-semibold uppercase tracking-widest text-slate-400 ml-2 mb-1 block">Patient Copay</label>
                                 <input
                                   type="number"
                                   value={claimCopay}
                                   onChange={(e) => setClaimCopay(Number(e.target.value) || 0)}
-                                  className="h-16 w-full rounded-2xl bg-slate-50 dark:bg-slate-800/50 px-6 text-sm font-bold outline-none ring-1 ring-slate-100 dark:ring-slate-800 focus:ring-2 focus:ring-sky-500 transition-all"
+                                  className="h-12 w-full rounded-xl bg-slate-50 px-4 text-sm font-medium outline-none ring-1 ring-slate-100 focus:ring-2 focus:ring-teal-500 transition-all"
                                 />
                              </div>
-                             <div className="p-4 rounded-2xl bg-sky-50 dark:bg-sky-950/30 border border-sky-100 dark:border-sky-800/50 flex flex-col justify-center">
-                                <p className="text-[8px] font-black text-sky-600 uppercase tracking-widest">Coverage Estimate</p>
-                                <p className="text-xl font-black text-sky-700 dark:text-sky-400 tracking-tighter">{formatPHP(claimCoverage)}</p>
+                             <div className="p-3 rounded-xl bg-sky-50 border border-sky-100 flex flex-col justify-center">
+                                <p className="text-xs font-semibold text-sky-600 uppercase tracking-widest">Coverage</p>
+                                <p className="text-lg font-bold text-sky-700">{formatPHP(claimCoverage)}</p>
                              </div>
                           </div>
 
                           <button
                             disabled={claimBusy}
                             onClick={() => void submitClaim()}
-                            className="w-full h-16 rounded-2xl bg-sky-500 text-white text-[10px] font-black uppercase tracking-widest shadow-xl shadow-sky-500/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3"
+                            className="btn-primary w-full flex items-center justify-center gap-2"
                           >
-                             {claimBusy ? <RefreshCw className="animate-spin" size={18} /> : <Zap size={18} />}
+                             {claimBusy ? <RefreshCw className="animate-spin" size={16} /> : <Zap size={16} />}
                              {t("pages.invoice.submitClinicalClaim")}
                           </button>
                        </motion.div>
@@ -621,9 +632,9 @@ export function InvoicePage(): JSX.Element {
               </section>
 
               {invoice.notes && (
-                 <section className="rounded-[3rem] bg-white dark:bg-slate-900 p-10 shadow-xl ring-1 ring-slate-100 dark:ring-slate-800">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-6">Internal Notes</p>
-                    <p className="text-sm font-medium text-slate-600 dark:text-slate-300 leading-relaxed italic">"{invoice.notes}"</p>
+                 <section className="card">
+                    <p className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-4">Internal Notes</p>
+                    <p className="text-sm font-medium text-slate-600 leading-relaxed italic">"{invoice.notes}"</p>
                  </section>
               )}
            </div>
@@ -637,18 +648,18 @@ export function InvoicePage(): JSX.Element {
            animate={{ y: 0 }}
            className="fixed inset-x-0 bottom-10 z-50 mx-auto max-w-xl px-6"
          >
-            <div className="bg-slate-900 text-white p-6 rounded-[2.5rem] shadow-2xl flex items-center justify-between ring-1 ring-white/10 backdrop-blur-xl">
-               <div className="flex items-center gap-5">
-                  <div className="h-12 w-12 rounded-2xl bg-white/10 flex items-center justify-center text-emerald-400">
-                     <Clock size={24} className="animate-pulse" />
+            <div className="bg-slate-800 text-white p-5 rounded-2xl shadow-2xl flex items-center justify-between ring-1 ring-white/10 backdrop-blur-xl">
+               <div className="flex items-center gap-4">
+                  <div className="h-10 w-10 rounded-xl bg-white/10 flex items-center justify-center text-teal-400">
+                     <Clock size={20} className="animate-pulse" />
                   </div>
                   <div>
-                     <p className="text-sm font-black uppercase tracking-widest">Waiting for Gateway...</p>
-                     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter truncate max-w-[200px]">{paymongoUrl}</p>
+                     <p className="text-sm font-semibold uppercase tracking-widest">Waiting for Gateway...</p>
+                     <p className="text-xs font-medium text-slate-400 uppercase tracking-tight truncate max-w-[200px]">{paymongoUrl}</p>
                   </div>
                </div>
                {paymongoMock && (
-                  <button onClick={onMockPaid} className="px-6 py-3 rounded-xl bg-emerald-500 text-white text-[10px] font-black uppercase tracking-widest shadow-lg shadow-emerald-500/20 hover:scale-105 transition-all">Simulate Success</button>
+                  <button onClick={onMockPaid} className="px-4 py-2 rounded-xl bg-teal-500 text-white text-xs font-semibold uppercase tracking-widest shadow-sm hover:scale-105 transition-all">Simulate Success</button>
                )}
             </div>
          </motion.div>

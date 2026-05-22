@@ -57,7 +57,7 @@ export function FinancialOverview({
 }: FinancialOverviewProps): JSX.Element {
   const { t } = useTranslation();
 
-  const fieldFocus = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:focus-visible:ring-offset-slate-950";
+  const fieldFocus = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2    ";
 
   return (
     <>
@@ -221,18 +221,18 @@ export function FinancialOverview({
             subtitle={t("pages.dashboard.chartApptStatusSubtitle", { count: statusTotal })}
           >
             {statusTotal === 0 ? (
-              <p className="py-8 text-center text-sm text-slate-500 dark:text-slate-400">
+              <p className="py-8 text-center text-sm text-slate-500">
                 {t("pages.dashboard.chartApptStatusEmpty")}
               </p>
             ) : (
               <div className="space-y-2">
                 {statusRows.map((r) => (
                   <div key={r.key}>
-                    <div className="flex justify-between text-xs font-semibold text-slate-600 dark:text-slate-300">
+                    <div className="flex justify-between text-xs font-semibold text-slate-600">
                       <span>{r.label}</span>
                       <span>{r.value}</span>
                     </div>
-                    <div className="mt-1 h-2 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
+                    <div className="mt-1 h-2 overflow-hidden rounded-full bg-slate-100">
                       <div
                         className={`h-full ${r.color}`}
                         style={{

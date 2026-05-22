@@ -13,7 +13,7 @@ import {
 } from "../services/portalApi";
 
 const fieldRing =
-  "rounded-xl border border-slate-200 bg-white px-3 py-3 text-base text-slate-900 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 dark:border-slate-600 dark:bg-slate-950 dark:text-slate-100";
+  "rounded-xl border border-slate-200 bg-white px-3 py-3 text-base text-slate-900 outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100   ";
 
 export function PortalRegisterPage(): JSX.Element {
   const { t } = useTranslation();
@@ -97,10 +97,10 @@ export function PortalRegisterPage(): JSX.Element {
   return (
     <div>
       <div className="mx-auto w-full max-w-sm px-4 py-8">
-        <h2 className="text-center text-xl font-black text-slate-900 dark:text-white">
+        <h2 className="text-center text-xl font-black text-slate-900">
           {step === "form" ? t("pages.portal.register.title") : t("pages.portal.login.titleCode")}
         </h2>
-        <p className="mt-2 text-center text-sm text-slate-600 dark:text-slate-400">
+        <p className="mt-2 text-center text-sm text-slate-600">
           {step === "form" ? t("pages.portal.register.subtitle") : t("pages.portal.login.subtitleCode", { phone })}
         </p>
 
@@ -139,7 +139,7 @@ export function PortalRegisterPage(): JSX.Element {
             <button
               type="submit"
               disabled={loading}
-              className="w-full min-h-12 rounded-xl bg-emerald-600 py-3 text-sm font-bold text-white disabled:opacity-50"
+              className="w-full min-h-12 rounded-xl bg-teal-600 py-3 text-sm font-bold text-white disabled:opacity-50"
             >
               {loading ? t("pages.portal.register.submitting") : t("pages.portal.register.submit")}
             </button>
@@ -159,7 +159,7 @@ export function PortalRegisterPage(): JSX.Element {
             <button
               type="submit"
               disabled={loading || code.length !== 6}
-              className="w-full min-h-12 rounded-xl bg-emerald-600 py-3 text-sm font-bold text-white disabled:opacity-50"
+              className="w-full min-h-12 rounded-xl bg-teal-600 py-3 text-sm font-bold text-white disabled:opacity-50"
             >
               {loading ? t("pages.portal.login.verifying") : t("pages.portal.login.verifyEnter")}
             </button>
@@ -167,7 +167,7 @@ export function PortalRegisterPage(): JSX.Element {
               type="button"
               disabled={loading || cooldown > 0}
               onClick={() => void onResendOtp()}
-              className="w-full text-xs font-bold text-emerald-600 disabled:opacity-40"
+              className="w-full text-xs font-bold text-teal-600 disabled:opacity-40"
             >
               {cooldown > 0
                 ? t("pages.portal.login.resendIn", { seconds: cooldown })
@@ -178,7 +178,7 @@ export function PortalRegisterPage(): JSX.Element {
 
         <p className="mt-6 text-center text-xs text-slate-500">
           {t("pages.portal.register.haveAccount")}{" "}
-          <Link to={`/${slug}/portal/login${kioskSuffix}`} className="font-bold text-emerald-600">
+          <Link to={`/${slug}/portal/login${kioskSuffix}`} className="font-bold text-teal-600">
             {t("pages.portal.register.signIn")}
           </Link>
         </p>

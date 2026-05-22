@@ -57,8 +57,8 @@ export function DentistLicensesPanel() {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center p-20 gap-4 bg-white dark:bg-slate-900 rounded-[2.5rem] ring-1 ring-slate-100 dark:ring-slate-800">
-        <Loader2 className="h-10 w-10 animate-spin text-emerald-500" />
+      <div className="flex flex-col items-center justify-center p-20 gap-4 bg-white rounded-[2.5rem] ring-1 ring-slate-100">
+        <Loader2 className="h-10 w-10 animate-spin text-teal-500" />
         <p className="text-xs font-black uppercase tracking-widest text-slate-400">{t("common.loading")}</p>
       </div>
     );
@@ -68,16 +68,16 @@ export function DentistLicensesPanel() {
     <motion.section 
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="rounded-[3rem] bg-white dark:bg-slate-900 p-10 shadow-xl shadow-slate-200/40 dark:shadow-none ring-1 ring-slate-100 dark:ring-slate-800 overflow-hidden relative"
+      className="rounded-[3rem] bg-white p-10 shadow-xl shadow-slate-200/40 ring-1 ring-slate-100 overflow-hidden relative"
     >
-      <div className="absolute top-0 right-0 h-40 w-40 bg-emerald-500/5 blur-3xl pointer-events-none" />
+      <div className="absolute top-0 right-0 h-40 w-40 bg-teal-500/5 blur-3xl pointer-events-none" />
       
-      <div className="flex items-center gap-6 mb-10 border-b border-slate-50 dark:border-slate-800 pb-10">
-        <div className="flex h-16 w-16 items-center justify-center rounded-[1.5rem] bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400">
+      <div className="flex items-center gap-6 mb-10 border-b border-slate-50 pb-10">
+        <div className="flex h-16 w-16 items-center justify-center rounded-[1.5rem] bg-teal-50 text-teal-600">
            <ShieldCheck size={32} />
         </div>
         <div>
-           <h2 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">
+           <h2 className="text-2xl font-black tracking-tight text-slate-900">
              {t("pages.settings.licenses.title")}
            </h2>
            <p className="text-sm font-medium text-slate-400 mt-1 max-w-md">
@@ -93,7 +93,7 @@ export function DentistLicensesPanel() {
               {t("pages.settings.licenses.prc")}
            </div>
            <input
-             className="h-16 w-full rounded-2xl bg-slate-50 dark:bg-slate-800/50 px-6 text-sm font-bold outline-none ring-1 ring-slate-100 dark:ring-slate-800 focus:ring-2 focus:ring-emerald-500 transition-all"
+             className="h-16 w-full rounded-2xl bg-slate-50 px-6 text-sm font-bold outline-none ring-1 ring-slate-100 focus:ring-2 focus:ring-teal-500 transition-all"
              value={draft.prcNumber}
              onChange={(e) => setDraft({ ...draft, prcNumber: e.target.value })}
              placeholder={t("pages.settings.licenses.prcPlaceholder")}
@@ -106,7 +106,7 @@ export function DentistLicensesPanel() {
               {t("pages.settings.licenses.ptr")}
            </div>
            <input
-             className="h-16 w-full rounded-2xl bg-slate-50 dark:bg-slate-800/50 px-6 text-sm font-bold outline-none ring-1 ring-slate-100 dark:ring-slate-800 focus:ring-2 focus:ring-emerald-500 transition-all"
+             className="h-16 w-full rounded-2xl bg-slate-50 px-6 text-sm font-bold outline-none ring-1 ring-slate-100 focus:ring-2 focus:ring-teal-500 transition-all"
              value={draft.ptrNumber}
              onChange={(e) => setDraft({ ...draft, ptrNumber: e.target.value })}
              placeholder={t("pages.settings.licenses.ptrPlaceholder")}
@@ -119,7 +119,7 @@ export function DentistLicensesPanel() {
               {t("pages.settings.licenses.s2")}
            </div>
            <input
-             className="h-16 w-full rounded-2xl bg-slate-50 dark:bg-slate-800/50 px-6 text-sm font-bold outline-none ring-1 ring-slate-100 dark:ring-slate-800 focus:ring-2 focus:ring-emerald-500 transition-all"
+             className="h-16 w-full rounded-2xl bg-slate-50 px-6 text-sm font-bold outline-none ring-1 ring-slate-100 focus:ring-2 focus:ring-teal-500 transition-all"
              value={draft.s2License}
              onChange={(e) => setDraft({ ...draft, s2License: e.target.value })}
              placeholder={t("pages.settings.licenses.s2Placeholder")}
@@ -132,7 +132,7 @@ export function DentistLicensesPanel() {
               {t("pages.settings.licenses.tin")}
            </div>
            <input
-             className="h-16 w-full rounded-2xl bg-slate-50 dark:bg-slate-800/50 px-6 text-sm font-bold outline-none ring-1 ring-slate-100 dark:ring-slate-800 focus:ring-2 focus:ring-emerald-500 transition-all"
+             className="h-16 w-full rounded-2xl bg-slate-50 px-6 text-sm font-bold outline-none ring-1 ring-slate-100 focus:ring-2 focus:ring-teal-500 transition-all"
              value={draft.tinNumber}
              onChange={(e) => setDraft({ ...draft, tinNumber: e.target.value })}
              placeholder={t("pages.settings.licenses.tinPlaceholder")}
@@ -140,11 +140,11 @@ export function DentistLicensesPanel() {
         </div>
       </div>
 
-      <div className="mt-12 pt-10 border-t border-slate-50 dark:border-slate-800 flex justify-end">
+      <div className="mt-12 pt-10 border-t border-slate-50 flex justify-end">
         <button
           disabled={saving}
           onClick={save}
-          className="group flex h-16 items-center gap-3 rounded-[1.5rem] bg-slate-900 dark:bg-white px-10 text-xs font-black uppercase tracking-widest text-white dark:text-slate-900 shadow-2xl transition-all hover:scale-105 active:scale-95 disabled:opacity-60"
+          className="group flex h-16 items-center gap-3 rounded-[1.5rem] bg-white px-10 text-xs font-black uppercase tracking-widest text-white shadow-2xl transition-all hover:scale-105 active:scale-95 disabled:opacity-60"
         >
           {saving ? (
             <Loader2 className="animate-spin" size={18} />

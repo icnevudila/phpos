@@ -3,6 +3,7 @@ import { HmoClaimStatus, InvoiceStatus, Prisma, type PaymentMethod } from "@pris
 import { emitInvoiceEvent } from "../events/invoiceEvents.js";
 import { isPgBouncerSingleConnection } from "../lib/dbTasks.js";
 import { prisma } from "../lib/prisma.js";
+import { awardPointsForPayment } from "./loyalty.service.js";
 import { AppError } from "../utils/errors.js";
 import { computePhStatutoryDiscounts } from "../utils/phStatutoryDiscount.js";
 import type {
@@ -93,6 +94,7 @@ const publicSelect = {
       isSeniorCitizen: true,
       oscaIdNo: true,
       pwdIdNo: true,
+      loyaltyPoints: true,
     },
   },
   appointment: {
@@ -635,6 +637,13 @@ export async function addPayment(
       },
     }),
   ]);
+
+  // Award loyalty points
+  try {
+    await awardPointsForPayment(payment.id);
+  } catch (err) {
+    console.error(`[Loyalty] Failed to award points for payment ${payment.id}:`, err);
+  }
 
   emitInvoiceEvent({
     type: "invoice.payment_received",

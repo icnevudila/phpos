@@ -85,7 +85,7 @@ export function TMJFaceAnatomy({
   return (
     <div className={`grid grid-cols-1 lg:grid-cols-12 gap-6 min-h-[500px] ${className}`}>
       {/* 3D-Like Anatomy Canvas */}
-      <div className="lg:col-span-7 relative flex items-center justify-center rounded-[2.5rem] bg-slate-50 dark:bg-slate-950/40 border border-slate-200 dark:border-slate-800 overflow-hidden shadow-inner p-6">
+      <div className="lg:col-span-7 relative flex items-center justify-center rounded-[2.5rem] bg-slate-50 border border-slate-200 overflow-hidden shadow-inner p-6">
         <svg viewBox="0 0 400 400" className="w-full h-full max-w-[400px] drop-shadow-2xl">
           <defs>
             <radialGradient id="headGrad" cx="50%" cy="40%" r="60%">
@@ -105,13 +105,12 @@ export function TMJFaceAnatomy({
           <path 
             d="M 200,40 C 140,40 100,80 100,160 C 100,240 140,340 200,340 C 260,340 300,240 300,160 C 300,80 260,40 200,40 Z" 
             fill="url(#headGrad)" 
-            stroke="currentColor" 
-            className="text-slate-200 dark:text-slate-800" 
+            stroke="#e2e8f0"
             strokeWidth="1.5" 
           />
           
           {/* Internal Structures - Simplified Anatomical Landmarks */}
-          <g opacity="0.4" className="text-slate-300 dark:text-slate-700">
+          <g opacity="0.4" stroke="#cbd5e1">
             {/* Zygomatic Arches */}
             <path d="M 120,150 Q 200,160 280,150" fill="none" stroke="currentColor" strokeWidth="1" />
             {/* Mandible */}
@@ -171,9 +170,9 @@ export function TMJFaceAnatomy({
                 {/* Label Tooltip - Subtle */}
                 {(activePoint === point.id || isSelected) && (
                   <foreignObject x={point.x + 12} y={point.y - 12} width="150" height="40">
-                    <div className="flex items-center gap-1.5 rounded-full bg-white/90 dark:bg-slate-900/90 px-2 py-1 shadow-sm backdrop-blur-sm border border-slate-200 dark:border-slate-800">
+                    <div className="flex items-center gap-1.5 rounded-full bg-white/90 px-2 py-1 shadow-sm backdrop-blur-sm border border-slate-200">
                        <div className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: color }} />
-                       <span className="text-[9px] font-black uppercase text-slate-700 dark:text-slate-300 whitespace-nowrap">
+                       <span className="text-[9px] font-semibold uppercase text-slate-700 whitespace-nowrap">
                           {point.label.replace(' Temporomandibular Joint', ' TMJ')}
                        </span>
                     </div>
@@ -186,22 +185,22 @@ export function TMJFaceAnatomy({
 
         {/* Floating Controls */}
         <div className="absolute top-6 left-6 right-6 flex items-center justify-between pointer-events-none">
-           <div className="flex items-center gap-2 pointer-events-auto rounded-full bg-white/80 dark:bg-slate-900/80 p-1.5 shadow-lg backdrop-blur-md border border-white dark:border-slate-800">
+           <div className="flex items-center gap-2 pointer-events-auto rounded-full bg-white/80 p-1.5 shadow-lg backdrop-blur-md border border-slate-100">
               <button 
                 onClick={() => setSelectedSeverity('mild')}
-                className={`px-3 py-1 rounded-full text-[10px] font-black uppercase transition-all ${selectedSeverity === 'mild' ? 'bg-amber-400 text-amber-950' : 'text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800'}`}
+                className={`px-3 py-1 rounded-full text-[10px] font-semibold uppercase transition-all ${selectedSeverity === 'mild' ? 'bg-amber-400 text-amber-950' : 'text-slate-500 hover:bg-slate-100'}`}
               >
                 Mild
               </button>
               <button 
                 onClick={() => setSelectedSeverity('moderate')}
-                className={`px-3 py-1 rounded-full text-[10px] font-black uppercase transition-all ${selectedSeverity === 'moderate' ? 'bg-orange-500 text-white' : 'text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800'}`}
+                className={`px-3 py-1 rounded-full text-[10px] font-semibold uppercase transition-all ${selectedSeverity === 'moderate' ? 'bg-orange-500 text-white' : 'text-slate-500 hover:bg-slate-100'}`}
               >
                 Moderate
               </button>
               <button 
                 onClick={() => setSelectedSeverity('severe')}
-                className={`px-3 py-1 rounded-full text-[10px] font-black uppercase transition-all ${selectedSeverity === 'severe' ? 'bg-rose-600 text-white' : 'text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800'}`}
+                className={`px-3 py-1 rounded-full text-[10px] font-semibold uppercase transition-all ${selectedSeverity === 'severe' ? 'bg-rose-600 text-white' : 'text-slate-500 hover:bg-slate-100'}`}
               >
                 Severe
               </button>
@@ -209,7 +208,7 @@ export function TMJFaceAnatomy({
            
            <button 
              onClick={() => selectedPoints.forEach(p => onPointClear?.(p))}
-             className="pointer-events-auto flex items-center gap-2 rounded-full bg-slate-900 dark:bg-white px-4 py-2 text-[10px] font-black uppercase text-white dark:text-slate-900 shadow-xl"
+             className="pointer-events-auto flex items-center gap-2 rounded-full bg-teal-600 px-4 py-2 text-[10px] font-semibold uppercase text-white shadow-xl"
            >
              <RotateCcw size={12} /> {t('common.clear')}
            </button>
@@ -218,21 +217,21 @@ export function TMJFaceAnatomy({
 
       {/* Diagnostic Insight Panel */}
       <div className="lg:col-span-5 flex flex-col gap-4">
-        <section className="flex-1 rounded-[2rem] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 shadow-xl shadow-slate-200/40 dark:shadow-none">
+        <section className="flex-1 rounded-[2rem] bg-white border border-slate-200 p-6 shadow-xl shadow-slate-200/40">
            <div className="flex items-center gap-3 mb-6">
               <div className="h-10 w-10 rounded-2xl bg-sky-500/10 flex items-center justify-center text-sky-600">
                  <Activity size={20} />
               </div>
               <div>
-                 <h3 className="text-sm font-black uppercase tracking-widest text-slate-400">Diagnostic Hub</h3>
-                 <p className="text-xs font-bold text-slate-900 dark:text-white">Active Findings</p>
+                 <h3 className="text-xs font-semibold uppercase tracking-widest text-slate-400">Diagnostic Hub</h3>
+                 <p className="text-xs font-bold text-slate-800">Active Findings</p>
               </div>
            </div>
 
            <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
               {selectedPoints.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-12 text-center">
-                   <div className="h-12 w-12 rounded-full border-2 border-dashed border-slate-200 dark:border-slate-800 flex items-center justify-center mb-4 text-slate-300">
+                   <div className="h-12 w-12 rounded-full border-2 border-dashed border-slate-200 flex items-center justify-center mb-4 text-slate-300">
                       <Shield size={20} />
                    </div>
                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">No Points Marked</p>
@@ -250,16 +249,16 @@ export function TMJFaceAnatomy({
                       key={pid}
                       initial={{ x: 20, opacity: 0 }}
                       animate={{ x: 0, opacity: 1 }}
-                      className="group relative rounded-2xl bg-slate-50 dark:bg-slate-950/40 border border-slate-100 dark:border-slate-800 p-4 transition-all hover:shadow-lg"
+                      className="group relative rounded-2xl bg-slate-50 border border-slate-100 p-4 transition-all hover:shadow-lg"
                     >
                       <div className="flex items-center justify-between mb-2">
                          <div className="flex items-center gap-2">
                             <div className="h-2 w-2 rounded-full" style={{ backgroundColor: TYPE_COLORS[point?.type || 'tmj'] }} />
-                            <span className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-tight">
+                            <span className="text-xs font-bold text-slate-800 uppercase tracking-tight">
                                {point?.label}
                             </span>
                          </div>
-                         <div className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase ${colors.bg} ${colors.text} ${colors.glow} shadow-lg`}>
+                         <div className={`px-2 py-0.5 rounded-full text-[9px] font-bold uppercase ${colors.bg} ${colors.text} ${colors.glow} shadow-lg`}>
                             {severity}
                          </div>
                       </div>
@@ -282,10 +281,10 @@ export function TMJFaceAnatomy({
            </div>
 
            {selectedPoints.length > 0 && (
-             <div className="mt-8 pt-6 border-t border-slate-100 dark:border-slate-800">
-                <button className="w-full flex items-center justify-between rounded-2xl bg-sky-500 p-4 text-white shadow-xl shadow-sky-500/20 group overflow-hidden relative">
+             <div className="mt-8 pt-6 border-t border-slate-100">
+                <button className="w-full flex items-center justify-between rounded-2xl bg-teal-500 p-4 text-white shadow-xl shadow-teal-500/20 group overflow-hidden relative">
                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
-                   <span className="text-xs font-black uppercase tracking-widest">Generate Analysis</span>
+                   <span className="text-xs font-semibold uppercase tracking-widest">Generate Analysis</span>
                    <ChevronRight size={16} />
                 </button>
              </div>

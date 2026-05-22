@@ -51,25 +51,25 @@ export function DpaErasureDialog({
       aria-modal="true"
       aria-labelledby="dpa-erasure-title"
     >
-      <motion.div className="w-full max-w-lg rounded-3xl bg-white p-8 shadow-2xl dark:bg-slate-900">
+      <motion.div className="w-full max-w-lg rounded-3xl bg-white p-8 shadow-2xl">
         <motion.div className="mb-6 flex items-start justify-between gap-4">
-          <motion.div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-rose-100 text-rose-600 dark:bg-rose-950/50">
+          <motion.div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-rose-100 text-rose-600">
             <AlertTriangle size={24} aria-hidden />
           </motion.div>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-xl p-2 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
+            className="rounded-xl p-2 text-slate-400 hover:bg-slate-100"
             aria-label={t("pages.common.close", { defaultValue: "Close" })}
           >
             <X size={20} />
           </button>
         </motion.div>
 
-        <h2 id="dpa-erasure-title" className="text-xl font-black text-slate-900 dark:text-white">
+        <h2 id="dpa-erasure-title" className="text-xl font-black text-slate-900">
           {t("pages.patientDetail.dpaErasureTitle")}
         </h2>
-        <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
+        <p className="mt-2 text-sm text-slate-600">
           {t("pages.patientDetail.dpaErasureHint", { name: patientName })}
         </p>
 
@@ -80,7 +80,7 @@ export function DpaErasureDialog({
             value={confirmId}
             onChange={(e) => setConfirmId(e.target.value)}
             placeholder={patientId}
-            className="mt-2 h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 font-mono text-sm dark:border-slate-700 dark:bg-slate-950"
+            className="mt-2 h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 font-mono text-sm"
             autoComplete="off"
           />
         </label>
@@ -91,7 +91,7 @@ export function DpaErasureDialog({
             value={reason}
             onChange={(e) => setReason(e.target.value)}
             rows={3}
-            className="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm dark:border-slate-700 dark:bg-slate-950"
+            className="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm"
           />
         </label>
 
@@ -106,7 +106,7 @@ export function DpaErasureDialog({
             type="button"
             onClick={onClose}
             disabled={busy}
-            className="flex-1 rounded-xl border border-slate-200 px-4 py-3 text-sm font-bold text-slate-700 dark:border-slate-700 dark:text-slate-200"
+            className="flex-1 rounded-xl border border-slate-200 px-4 py-3 text-sm font-bold text-slate-700"
           >
             {t("pages.common.cancel", { defaultValue: "Cancel" })}
           </button>

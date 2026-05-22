@@ -171,7 +171,7 @@ export function PatientHeader({
 
   return (
     <>
-    <div className="relative overflow-hidden rounded-[3.5rem] bg-white dark:bg-slate-900 p-10 shadow-2xl shadow-slate-200/50 dark:shadow-none ring-1 ring-slate-100 dark:ring-slate-800">
+    <div className="relative overflow-hidden rounded-[3.5rem] bg-white p-10 shadow-2xl shadow-slate-200/50 ring-1 ring-slate-100">
       <motion.div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-sky-500/5 blur-3xl" />
 
       <div className="relative flex flex-col lg:flex-row lg:items-center justify-between gap-10">
@@ -204,7 +204,7 @@ export function PatientHeader({
                 />
               </>
             ) : null}
-            <div className="absolute -bottom-2 -right-2 h-8 w-8 rounded-xl bg-emerald-500 border-4 border-white dark:border-slate-900 flex items-center justify-center text-white">
+            <div className="absolute -bottom-2 -right-2 h-8 w-8 rounded-xl bg-teal-500 border-4 border-white flex items-center justify-center text-white">
               <Heart size={14} fill="currentColor" />
             </div>
           </div>
@@ -214,12 +214,12 @@ export function PatientHeader({
               <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">
                 {t("pages.patientDetail.headerBadgeProfile")}
               </span>
-              <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-500">
+              <div className="h-1.5 w-1.5 rounded-full bg-teal-500" />
+              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-teal-500">
                 {t("pages.patientDetail.headerBadgeActive")}
               </span>
             </div>
-            <h1 className="text-4xl lg:text-5xl font-black tracking-tighter text-slate-900 dark:text-white leading-none">
+            <h1 className="text-4xl lg:text-5xl font-black tracking-tighter text-slate-900 leading-none">
               {fullName}
             </h1>
 
@@ -229,25 +229,25 @@ export function PatientHeader({
                 {data.phone}
               </div>
               <div className="flex items-center gap-2 text-sm font-bold text-slate-500 uppercase tracking-tight">
-                <Calendar size={14} className="text-violet-500" />
+                <Calendar size={14} className="text-teal-500" />
                 {formatDate(data.birthDate, dash, dateLocale)}
                 {age !== null && (
                   <span className="ml-1 text-slate-300">({t("pages.patientDetail.yrs", { age })})</span>
                 )}
               </div>
               {data.gender && (
-                <div className="px-3 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-[10px] font-black uppercase tracking-widest text-slate-600 dark:text-slate-400">
+                <div className="px-3 py-1 rounded-lg bg-slate-100 text-[10px] font-black uppercase tracking-widest text-slate-600">
                   {data.gender}
                 </div>
               )}
               {data.philhealthType && (
-                <div className="flex items-center gap-2 px-3 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-100 dark:border-emerald-800 text-[10px] font-black uppercase tracking-widest text-emerald-700 dark:text-emerald-400">
-                  <ShieldAlert size={12} className="text-emerald-500" />
+                <div className="flex items-center gap-2 px-3 py-1 rounded-lg bg-teal-50 border border-teal-100 text-[10px] font-black uppercase tracking-widest text-teal-700">
+                  <ShieldAlert size={12} className="text-teal-500" />
                   {t("pages.patientDetail.phicLabel", { type: data.philhealthType.replace("_", " ") })}
                 </div>
               )}
               {data.loyaltyPoints !== undefined && (
-                <div className="flex items-center gap-2 px-3 py-1 rounded-lg bg-amber-50 dark:bg-amber-900/30 border border-amber-100 dark:border-amber-800 text-[10px] font-black uppercase tracking-widest text-amber-700 dark:text-amber-400">
+                <div className="flex items-center gap-2 px-3 py-1 rounded-lg bg-amber-50 border border-amber-100 text-[10px] font-black uppercase tracking-widest text-amber-700">
                   <Star size={12} className="text-amber-500 fill-amber-500" />
                   {t("pages.patientDetail.loyaltyPts", { points: data.loyaltyPoints })}
                 </div>
@@ -259,10 +259,10 @@ export function PatientHeader({
                 {data.allergies.map((a) => (
                   <div
                     key={a}
-                    className="flex items-center gap-2 rounded-xl bg-rose-50 dark:bg-rose-950/30 px-4 py-2 border border-rose-100 dark:border-rose-900/20"
+                    className="flex items-center gap-2 rounded-xl bg-rose-50 px-4 py-2 border border-rose-100"
                   >
                     <ShieldAlert size={14} className="text-rose-500" />
-                    <span className="text-[10px] font-black uppercase tracking-widest text-rose-700 dark:text-rose-400">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-rose-700">
                       {a}
                     </span>
                   </div>
@@ -278,7 +278,7 @@ export function PatientHeader({
               <button
                 type="button"
                 onClick={() => void onDpaExport()}
-                className="h-16 px-8 flex items-center gap-3 rounded-2xl bg-white dark:bg-slate-800 text-[10px] font-black uppercase tracking-widest text-slate-900 dark:text-white shadow-xl ring-1 ring-slate-100 dark:ring-slate-700 hover:bg-slate-50 transition-all active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500"
+                className="h-16 px-8 flex items-center gap-3 rounded-2xl bg-white text-[10px] font-black uppercase tracking-widest text-slate-900 shadow-xl ring-1 ring-slate-100 hover:bg-slate-50 transition-all active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500"
               >
                 <Download size={18} aria-hidden />
                 {t("pages.patientDetail.dpaExport")}
@@ -286,7 +286,7 @@ export function PatientHeader({
               <button
                 type="button"
                 onClick={() => setErasureOpen(true)}
-                className="h-16 px-8 flex items-center gap-3 rounded-2xl bg-rose-50 text-[10px] font-black uppercase tracking-widest text-rose-700 shadow-xl ring-1 ring-rose-100 hover:bg-rose-100 transition-all active:scale-95 dark:bg-rose-950/40 dark:text-rose-300 dark:ring-rose-900/50"
+                className="h-16 px-8 flex items-center gap-3 rounded-2xl bg-rose-50 text-[10px] font-black uppercase tracking-widest text-rose-700 shadow-xl ring-1 ring-rose-100 hover:bg-rose-100 transition-all active:scale-95"
               >
                 <Trash2 size={18} aria-hidden />
                 {t("pages.patientDetail.dpaErasure")}
@@ -296,7 +296,7 @@ export function PatientHeader({
           <button
             type="button"
             onClick={() => void handlePrintLabel()}
-            className="h-16 px-8 flex items-center gap-3 rounded-2xl bg-white dark:bg-slate-800 text-[10px] font-black uppercase tracking-widest text-slate-900 dark:text-white shadow-xl ring-1 ring-slate-100 dark:ring-slate-700 hover:bg-slate-50 transition-all active:scale-95"
+            className="h-16 px-8 flex items-center gap-3 rounded-2xl bg-white text-[10px] font-black uppercase tracking-widest text-slate-900 shadow-xl ring-1 ring-slate-100 hover:bg-slate-50 transition-all active:scale-95"
           >
             <Printer size={18} aria-hidden />
             {t("pages.patientDetail.printLabel")}
@@ -311,7 +311,7 @@ export function PatientHeader({
           <button
             type="button"
             onClick={onEdit}
-            className="h-16 px-8 flex items-center gap-3 rounded-2xl bg-slate-900 dark:bg-white text-[10px] font-black uppercase tracking-widest text-white dark:text-slate-900 shadow-2xl transition-all hover:scale-105 active:scale-95"
+            className="h-16 px-8 flex items-center gap-3 rounded-2xl bg-white text-[10px] font-black uppercase tracking-widest text-white shadow-2xl transition-all hover:scale-105 active:scale-95"
           >
             <Edit3 size={18} />
             {t("pages.patientDetail.edit")}

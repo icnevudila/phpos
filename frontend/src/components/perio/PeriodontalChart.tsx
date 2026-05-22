@@ -353,9 +353,7 @@ export function PeriodontalChart(props: PeriodontalChartProps): JSX.Element {
                       <td className="sticky left-0 z-10 border-b border-r border-slate-200 bg-inherit px-4 py-3 align-top">
                         <div className="flex items-start gap-3">
                           <div
-                            className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border text-sm font-semibold ${
-                              selected ? 'border-sky-300 bg-sky-100 text-sky-700' : 'border-slate-200 bg-white text-slate-700'
-                            }`}
+                            className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border text-sm font-semibold ${ selected ? 'border-sky-300 bg-sky-100 text-sky-700' : 'border-slate-200 bg-white text-slate-700' }`}
                           >
                             {toothNumber}
                           </div>

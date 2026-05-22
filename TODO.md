@@ -22,6 +22,6 @@
 - [x] Add BIR footer text — DONE (2026-04-26)
 
 ## Phase 5: Test & Verify
-- [ ] `prisma db push`
-- [ ] `prisma db seed`
-- [ ] `npm run lint && npm run build`
+- [x] `prisma db push`
+- [x] `prisma db seed`
+- [x] `npm run lint && npm run build`

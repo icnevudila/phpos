@@ -36,13 +36,13 @@ export function ConsentsTab({ patientId, canWrite }: { patientId: string; canWri
     <div className="space-y-10">
       <div className="flex items-center justify-between">
          <div className="space-y-1">
-            <h3 className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">{t(`${CONSENT_NS}.title`)}</h3>
+            <h3 className="text-xl font-black text-slate-900 uppercase tracking-tight">{t(`${CONSENT_NS}.title`)}</h3>
             <p className="text-xs font-bold text-slate-400">{t(`${CONSENT_NS}.subtitle`)}</p>
          </div>
          {canWrite && (
            <button 
              onClick={() => setIsCreating(true)}
-             className="flex h-12 items-center gap-2 rounded-2xl bg-slate-900 text-white px-6 text-xs font-black uppercase tracking-widest shadow-lg transition-all hover:scale-105 active:scale-95"
+             className="flex h-12 items-center gap-2 rounded-2xl bg-white text-white px-6 text-xs font-black uppercase tracking-widest shadow-lg transition-all hover:scale-105 active:scale-95"
            >
              <Plus size={18} /> {t(`${CONSENT_NS}.newDocument`)}
            </button>
@@ -62,13 +62,13 @@ export function ConsentsTab({ patientId, canWrite }: { patientId: string; canWri
 
       <div className="grid gap-6">
         {forms.map((form) => (
-          <div key={form.id} className="group flex items-center justify-between p-8 rounded-[2.5rem] bg-white shadow-xl shadow-slate-200/40 dark:bg-slate-900 dark:shadow-none ring-1 ring-slate-100 dark:ring-slate-800 transition-all hover:shadow-2xl">
+          <div key={form.id} className="group flex items-center justify-between p-8 rounded-[2.5rem] bg-white shadow-xl shadow-slate-200/40 ring-1 ring-slate-100 transition-all hover:shadow-2xl">
              <div className="flex items-center gap-6">
-                <div className={`flex h-14 w-14 items-center justify-center rounded-2xl ${form.signedAt ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-50 text-slate-400'}`}>
+                <div className={`flex h-14 w-14 items-center justify-center rounded-2xl ${form.signedAt ? 'bg-teal-50 text-teal-600' : 'bg-slate-50 text-slate-400'}`}>
                    {form.signedAt ? <FileCheck size={28} /> : <Clock size={28} />}
                 </div>
                 <div>
-                   <h4 className="text-lg font-black text-slate-900 dark:text-white">{form.title}</h4>
+                   <h4 className="text-lg font-black text-slate-900">{form.title}</h4>
                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
                       {form.signedAt
                         ? t(`${CONSENT_NS}.signedOn`, { date: new Date(form.signedAt).toLocaleDateString() })
@@ -86,11 +86,11 @@ export function ConsentsTab({ patientId, canWrite }: { patientId: string; canWri
                   </button>
                 )}
                 {form.signedAt && (
-                   <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-500 text-white shadow-lg shadow-emerald-500/20">
+                   <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-teal-500 text-white shadow-lg shadow-teal-500/20">
                       <ShieldCheck size={24} />
                    </div>
                 )}
-                <button className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-50 text-slate-400 hover:bg-slate-900 hover:text-white transition-all">
+                <button className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-50 text-slate-400 hover:bg-white hover:text-white transition-all">
                    <Eye size={20} />
                 </button>
              </div>
@@ -141,7 +141,7 @@ function AddConsentForm({ patientId, onCancel, onSuccess }: any) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="p-10 rounded-[3rem] bg-slate-900 text-white shadow-2xl mb-12 space-y-8">
+    <form onSubmit={handleSubmit} className="p-10 rounded-[3rem] bg-white text-white shadow-2xl mb-12 space-y-8">
        <div className="space-y-2">
           <label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 ml-4">
             {t(`${CONSENT_NS}.documentTitle`)}
@@ -218,24 +218,24 @@ function SignatureModal({ formId, onClose, onSuccess }: any) {
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-950/80 backdrop-blur-md">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-[#f5f7f9]/80 backdrop-blur-md">
        <motion.div 
          initial={{ opacity: 0, scale: 0.9 }}
          animate={{ opacity: 1, scale: 1 }}
-         className="w-full max-w-2xl bg-white dark:bg-slate-900 rounded-[3rem] overflow-hidden shadow-2xl"
+         className="w-full max-w-2xl bg-white rounded-[3rem] overflow-hidden shadow-2xl"
        >
-          <div className="p-10 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
+          <div className="p-10 border-b border-slate-100 flex justify-between items-center">
              <div>
-                <h3 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight">{t(`${CONSENT_NS}.eSignatureTitle`)}</h3>
+                <h3 className="text-2xl font-black text-slate-900 uppercase tracking-tight">{t(`${CONSENT_NS}.eSignatureTitle`)}</h3>
                 <p className="text-xs font-bold text-slate-400 mt-1">{t(`${CONSENT_NS}.eSignatureHint`)}</p>
              </div>
-             <button onClick={onClose} className="h-12 w-12 flex items-center justify-center rounded-2xl bg-slate-50 dark:bg-slate-800 text-slate-400 hover:text-rose-500 transition-colors">
+             <button onClick={onClose} className="h-12 w-12 flex items-center justify-center rounded-2xl bg-slate-50 text-slate-400 hover:text-rose-500 transition-colors">
                 <X size={24} />
              </button>
           </div>
 
           <div className="p-10 space-y-8">
-             <div className="relative aspect-[2/1] w-full rounded-[2rem] bg-slate-50 dark:bg-slate-950/40 border-2 border-dashed border-slate-200 dark:border-slate-800 cursor-crosshair overflow-hidden">
+             <div className="relative aspect-[2/1] w-full rounded-[2rem] bg-slate-50 border-2 border-dashed border-slate-200 cursor-crosshair overflow-hidden">
                 <Stage
                   width={600}
                   height={300}
@@ -260,15 +260,15 @@ function SignatureModal({ formId, onClose, onSuccess }: any) {
                 </Stage>
                 <button 
                   onClick={clear}
-                  className="absolute bottom-6 right-6 px-4 py-2 rounded-xl bg-white dark:bg-slate-800 text-[10px] font-black uppercase tracking-widest text-rose-500 shadow-sm border border-slate-100 dark:border-slate-800 hover:bg-rose-500 hover:text-white transition-all"
+                  className="absolute bottom-6 right-6 px-4 py-2 rounded-xl bg-white text-[10px] font-black uppercase tracking-widest text-rose-500 shadow-sm border border-slate-100 hover:bg-rose-500 hover:text-white transition-all"
                 >
                   {t(`${CONSENT_NS}.clearSignature`)}
                 </button>
              </div>
 
-             <div className="flex items-center gap-4 p-6 bg-amber-50 dark:bg-amber-950/20 rounded-2xl border border-amber-100 dark:border-amber-900/30">
+             <div className="flex items-center gap-4 p-6 bg-amber-50 rounded-2xl border border-amber-100">
                 <AlertCircle className="text-amber-600 shrink-0" size={20} />
-                <p className="text-xs font-bold text-amber-900 dark:text-amber-200 leading-relaxed">
+                <p className="text-xs font-bold text-amber-900 leading-relaxed">
                    {t(`${CONSENT_NS}.signLegalNotice`)}
                 </p>
              </div>
@@ -284,7 +284,7 @@ function SignatureModal({ formId, onClose, onSuccess }: any) {
                 <button 
                   disabled={busy}
                   onClick={handleSign}
-                  className="flex-[2] h-16 rounded-2xl bg-emerald-500 text-white text-xs font-black uppercase tracking-widest shadow-xl shadow-emerald-500/20 transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-50"
+                  className="flex-[2] h-16 rounded-2xl bg-teal-500 text-white text-xs font-black uppercase tracking-widest shadow-xl shadow-teal-500/20 transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-50"
                 >
                    {busy ? t(`${CONSENT_NS}.applyingSignature`) : t(`${CONSENT_NS}.applySignature`)}
                 </button>

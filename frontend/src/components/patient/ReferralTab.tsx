@@ -58,9 +58,9 @@ export function ReferralTab({ patientId }: { patientId: string }): JSX.Element {
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8">
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-start gap-3">
-          <Share2 className="mt-1 text-violet-500" size={22} />
+          <Share2 className="mt-1 text-teal-500" size={22} />
           <div>
-            <h3 className="text-lg font-black text-slate-900 dark:text-white">{t(`${NS}.title`)}</h3>
+            <h3 className="text-lg font-black text-slate-900">{t(`${NS}.title`)}</h3>
             <p className="text-sm text-slate-500">{t(`${NS}.subtitle`)}</p>
           </div>
         </div>
@@ -68,7 +68,7 @@ export function ReferralTab({ patientId }: { patientId: string }): JSX.Element {
           type="button"
           onClick={() => void load()}
           disabled={loading}
-          className="inline-flex items-center gap-1 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-bold text-slate-600 dark:border-slate-700"
+          className="inline-flex items-center gap-1 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-bold text-slate-600"
         >
           <RefreshCw size={14} className={loading ? "animate-spin" : ""} />
           {t(`${NS}.refresh`)}
@@ -77,50 +77,50 @@ export function ReferralTab({ patientId }: { patientId: string }): JSX.Element {
 
       <form
         onSubmit={(e) => void handleSave(e)}
-        className="grid gap-4 rounded-2xl border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900"
+        className="grid gap-4 rounded-2xl border border-slate-200 bg-white p-6"
       >
-        <label className="block text-xs font-bold text-slate-600 dark:text-slate-400">
+        <label className="block text-xs font-bold text-slate-600">
           {t(`${NS}.referredTo`)}
           <input
             value={form.referredTo}
             onChange={(e) => setForm({ ...form, referredTo: e.target.value })}
-            className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-950"
+            className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm"
             placeholder={t(`${NS}.referredToPlaceholder`)}
           />
         </label>
-        <label className="block text-xs font-bold text-slate-600 dark:text-slate-400">
+        <label className="block text-xs font-bold text-slate-600">
           {t(`${NS}.specialty`)}
           <input
             value={form.specialty}
             onChange={(e) => setForm({ ...form, specialty: e.target.value })}
-            className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-950"
+            className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm"
             placeholder={t(`${NS}.specialtyPlaceholder`)}
           />
         </label>
-        <label className="block text-xs font-bold text-slate-600 dark:text-slate-400">
+        <label className="block text-xs font-bold text-slate-600">
           {t(`${NS}.reason`)}
           <textarea
             value={form.reason}
             onChange={(e) => setForm({ ...form, reason: e.target.value })}
             rows={2}
-            className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-950"
+            className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm"
             placeholder={t(`${NS}.reasonPlaceholder`)}
           />
         </label>
-        <label className="block text-xs font-bold text-slate-600 dark:text-slate-400">
+        <label className="block text-xs font-bold text-slate-600">
           {t(`${NS}.notes`)}
           <textarea
             value={form.notes}
             onChange={(e) => setForm({ ...form, notes: e.target.value })}
             rows={2}
-            className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-950"
+            className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm"
             placeholder={t(`${NS}.notesPlaceholder`)}
           />
         </label>
         <button
           type="submit"
           disabled={saving}
-          className="inline-flex items-center justify-center gap-2 rounded-xl bg-violet-600 px-5 py-2.5 text-xs font-black uppercase text-white disabled:opacity-50"
+          className="inline-flex items-center justify-center gap-2 rounded-xl bg-teal-600 px-5 py-2.5 text-xs font-black uppercase text-white disabled:opacity-50"
         >
           <Save size={14} /> {saving ? t(`${NS}.saving`) : t(`${NS}.save`)}
         </button>
@@ -135,16 +135,16 @@ export function ReferralTab({ patientId }: { patientId: string }): JSX.Element {
           {items.map((r) => (
             <li
               key={r.id}
-              className="rounded-2xl border border-slate-100 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-900/50"
+              className="rounded-2xl border border-slate-100 bg-slate-50 p-4"
             >
               <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
                 {new Date(r.createdAt).toLocaleString()} · Dr. {r.author.lastName}
               </p>
-              <p className="mt-2 font-bold text-slate-900 dark:text-white">
+              <p className="mt-2 font-bold text-slate-900">
                 {r.referredTo || t(`${NS}.unknownClinic`)}
               </p>
               {r.specialty.trim() ? <p className="text-xs text-slate-500">{r.specialty}</p> : null}
-              {r.reason.trim() ? <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">{r.reason}</p> : null}
+              {r.reason.trim() ? <p className="mt-2 text-sm text-slate-600">{r.reason}</p> : null}
               {r.notes.trim() ? <p className="mt-1 text-xs text-slate-500">{r.notes}</p> : null}
             </li>
           ))}

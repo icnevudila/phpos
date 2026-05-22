@@ -35,7 +35,7 @@ export function CapabilitiesList(): JSX.Element {
       icon: <I d="M20 7H4M20 12H4M20 17H10M4 4h16a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1Z" />,
       title: t("landing.cap1Title"),
       desc: t("landing.cap1Desc"),
-      accent: "text-emerald-600 bg-emerald-50 ring-emerald-100",
+      accent: "text-teal-600 bg-teal-50 ring-teal-100",
     },
     {
       icon: <I d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2m19-4a4 4 0 0 0-3-7.75M16 3.13a4 4 0 0 1 0 7.75M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" />,
@@ -47,7 +47,7 @@ export function CapabilitiesList(): JSX.Element {
       icon: <I d="M14 3h7v7M10 14 21 3M21 14v7h-7M3 10V3h7M3 21l7-7" />,
       title: t("landing.cap3Title"),
       desc: t("landing.cap3Desc"),
-      accent: "text-violet-600 bg-violet-50 ring-violet-100",
+      accent: "text-teal-600 bg-teal-50 ring-teal-100",
     },
     {
       icon: <I d="M2 4h20v16H2zM2 9h20M6 14h4M6 17h2" />,
@@ -73,23 +73,23 @@ export function CapabilitiesList(): JSX.Element {
     <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
       <div>
         <SectionEyebrow label={t("landing.capEyebrow")} icon={IconGrid} accent="emerald" />
-        <h2 className="mt-3 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl dark:text-white">
+        <h2 className="mt-3 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
           {t("landing.capTitle")}
         </h2>
-        <p className="mt-4 text-slate-600 dark:text-slate-400">{t("landing.capSubtitle")}</p>
-        <div className="mt-6 inline-flex items-center gap-2 rounded-full bg-slate-900 px-4 py-2 text-xs font-semibold text-white dark:bg-slate-800">
+        <p className="mt-4 text-slate-600">{t("landing.capSubtitle")}</p>
+        <div className="mt-6 inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-xs font-semibold text-white">
           <span className="flex h-2 w-2 items-center justify-center">
-            <span className="h-2 w-2 animate-ping rounded-full bg-emerald-400 opacity-70" />
-            <span className="absolute h-1.5 w-1.5 rounded-full bg-emerald-400" />
+            <span className="h-2 w-2 animate-ping rounded-full bg-teal-400 opacity-70" />
+            <span className="absolute h-1.5 w-1.5 rounded-full bg-teal-400" />
           </span>
           {t("landing.capCloud")}
         </div>
       </div>
 
       <div className="relative">
-        <div className="absolute -inset-4 rounded-3xl bg-gradient-to-br from-emerald-100/40 to-sky-100/40 blur-2xl" />
-        <div className="relative rounded-3xl border border-slate-200 bg-white/90 p-6 shadow-sm backdrop-blur sm:p-8 dark:border-slate-800 dark:bg-slate-900/80">
-          <ul className="divide-y divide-slate-100 dark:divide-slate-800">
+        <div className="absolute -inset-4 rounded-3xl bg-gradient-to-br from-teal-100/40 to-sky-100/40 blur-2xl" />
+        <div className="relative rounded-3xl border border-slate-200 bg-white/90 p-6 shadow-sm backdrop-blur sm:p-8">
+          <ul className="divide-y divide-slate-100">
             {rows.map((r, i) => (
               <motion.li
                 key={r.title}
@@ -103,8 +103,8 @@ export function CapabilitiesList(): JSX.Element {
                   {r.icon}
                 </span>
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm font-bold text-slate-900 dark:text-white">{r.title}</p>
-                  <p className="mt-0.5 text-sm leading-relaxed text-slate-600 dark:text-slate-400">{r.desc}</p>
+                  <p className="text-sm font-bold text-slate-900">{r.title}</p>
+                  <p className="mt-0.5 text-sm leading-relaxed text-slate-600">{r.desc}</p>
                 </div>
               </motion.li>
             ))}

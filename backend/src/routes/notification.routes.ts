@@ -8,6 +8,7 @@ import {
   triggerEodEmailHandler,
   triggerSoonReminderHandler,
   sendBulkSmsHandler,
+  retryNotificationHandler,
 } from "../controllers/notification.controller.js";
 import { authenticate } from "../middleware/authMiddleware.js";
 import { roleGuard } from "../middleware/roleGuard.js";
@@ -45,4 +46,10 @@ notificationRouter.post(
   "/bulk",
   roleGuard([UserRole.ADMIN]),
   asyncHandler(sendBulkSmsHandler),
+);
+
+notificationRouter.post(
+  "/retry/:id",
+  roleGuard([UserRole.ADMIN, UserRole.RECEPTIONIST]),
+  asyncHandler(retryNotificationHandler),
 );

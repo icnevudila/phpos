@@ -47,7 +47,7 @@ export function AppLayout(): JSX.Element {
     return () => window.removeEventListener("storage", onStorage);
   }, []);
 
-  /** `GET /auth/me` — JWT ile kullanıcıyı doğrula ve profili güncelle (`GAP-011`). */
+  /** `GET /auth/me` — JWT ile kullanıcıyı doğrula ve profili güncelle. */
   useEffect(() => {
     let cancelled = false;
     void (async () => {
@@ -68,13 +68,14 @@ export function AppLayout(): JSX.Element {
   }, []);
 
   return (
-    <div className="flex h-[100dvh] min-h-0 w-full bg-slate-50 text-slate-900 transition-colors duration-300 dark:bg-slate-950 dark:text-slate-100">
+    <div className="flex h-[100dvh] min-h-0 w-full bg-[#f5f7f9] text-slate-800">
       <a
         href="#main"
-        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-xl focus:bg-emerald-600 focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white focus:shadow-lg"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-xl focus:bg-teal-600 focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white focus:shadow-lg"
       >
         {t("nav.skipToContent")}
       </a>
+
       {/* Desktop sidebar */}
       <div className="hidden min-h-0 lg:block">
         <AppSidebar
@@ -84,7 +85,7 @@ export function AppLayout(): JSX.Element {
         />
       </div>
 
-      {/* Mobile / tablet drawer — wide panel, safe areas, motion */}
+      {/* Mobile / tablet drawer */}
       {drawerOpen ? (
         <div
           className="fixed inset-0 z-40 flex lg:hidden"
@@ -94,12 +95,12 @@ export function AppLayout(): JSX.Element {
         >
           <button
             type="button"
-            className="absolute inset-0 bg-slate-950/50 backdrop-blur-[2px] transition-opacity"
+            className="absolute inset-0 bg-white/30 backdrop-blur-[2px] transition-opacity"
             onClick={() => setDrawerOpen(false)}
             aria-label={t("nav.closeBackdrop")}
           />
           <div
-            className="relative z-10 flex h-full max-w-[min(22rem,calc(100vw-2.5rem))] flex-col shadow-2xl shadow-slate-900/20 motion-safe:animate-nav-drawer-in sm:max-w-[24rem]"
+            className="relative z-10 flex h-full max-w-[min(22rem,calc(100vw-2.5rem))] flex-col shadow-2xl shadow-slate-900/10 motion-safe:animate-nav-drawer-in sm:max-w-[24rem]"
             style={{
               paddingLeft: "max(0px, env(safe-area-inset-left))",
               paddingBottom: "max(0px, env(safe-area-inset-bottom))",
@@ -114,11 +115,11 @@ export function AppLayout(): JSX.Element {
             <button
               type="button"
               onClick={() => setDrawerOpen(false)}
-              className="absolute right-2 top-2 flex min-h-11 min-w-11 items-center justify-center rounded-xl border border-slate-200 bg-white/95 text-slate-600 shadow-sm backdrop-blur hover:bg-slate-50 sm:right-3 sm:top-3"
+              className="absolute right-2 top-2 flex min-h-11 min-w-11 items-center justify-center rounded-xl border border-teal-200 bg-white/90 text-teal-700 shadow-sm backdrop-blur hover:bg-teal-50 sm:right-3 sm:top-3"
               style={{ top: "max(0.5rem, env(safe-area-inset-top))", right: "max(0.5rem, env(safe-area-inset-right))" }}
               aria-label={t("nav.closeMenu")}
             >
-              <XIcon size={20} />
+              <XIcon size={18} />
             </button>
           </div>
         </div>
@@ -130,13 +131,14 @@ export function AppLayout(): JSX.Element {
         <main
           id="main"
           tabIndex={-1}
-          className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden overscroll-y-contain outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/30 focus-visible:ring-inset"
+          className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden overscroll-y-contain outline-none focus-visible:ring-2 focus-visible:ring-teal-500/30 focus-visible:ring-inset scrollbar-thin"
         >
           <div
-            className="mx-auto w-full min-w-0 max-w-7xl px-3 py-4 pb-[max(1.25rem,env(safe-area-inset-bottom))] sm:px-5 sm:py-6 md:px-7 md:py-8 lg:px-8 lg:py-10"
+            className="mx-auto w-full min-w-0 max-w-7xl px-4 py-5 sm:px-6 sm:py-6 md:px-8 md:py-8"
             style={{
-              paddingLeft: "max(0.75rem, env(safe-area-inset-left))",
-              paddingRight: "max(0.75rem, env(safe-area-inset-right))",
+              paddingLeft: "max(1rem, env(safe-area-inset-left))",
+              paddingRight: "max(1rem, env(safe-area-inset-right))",
+              paddingBottom: "max(1.25rem, env(safe-area-inset-bottom))",
             }}
           >
             {meReady ? <Outlet /> : <AppShellLoading />}

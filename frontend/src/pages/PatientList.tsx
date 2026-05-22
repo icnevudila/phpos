@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, Plus, User, Phone, Calendar, ArrowRight, Filter, ChevronLeft, ChevronRight, Hash, Download, Upload } from "lucide-react";
+import { Search, Plus, User, Phone, Calendar, ArrowRight, Filter, ChevronLeft, ChevronRight, Hash, Download, Upload, RefreshCw } from "lucide-react";
 import { downloadCsv, rowsToCsv } from "../utils/downloadCsv";
 
 import { ListEmptyState } from "../components/ListEmptyState";
@@ -45,7 +45,7 @@ function PatientHmoBadges({
   noneLabel: string;
 }): JSX.Element {
   if (!memberships.length) {
-    return <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">{noneLabel}</span>;
+    return <span className="text-xs font-medium text-slate-400">{noneLabel}</span>;
   }
   const sorted = [...memberships].sort((a, b) => {
     if (a.isPrimary === b.isPrimary) return a.providerCode.localeCompare(b.providerCode);
@@ -58,13 +58,13 @@ function PatientHmoBadges({
         <span
           key={m.id}
           title={m.providerName}
-          className="truncate rounded-lg bg-sky-50 px-2 py-0.5 text-[10px] font-black uppercase tracking-widest text-sky-700 dark:bg-sky-950/40 dark:text-sky-400"
+          className="truncate rounded-lg bg-sky-50 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-widest text-sky-700"
         >
           {m.providerCode}
         </span>
       ))}
       {memberships.length > 2 ? (
-        <span className="text-[10px] font-black text-slate-400">+{memberships.length - 2}</span>
+        <span className="text-[10px] font-semibold text-slate-400">+{memberships.length - 2}</span>
       ) : null}
     </div>
   );
@@ -182,26 +182,18 @@ export function PatientList(): JSX.Element {
   };
 
   return (
-    <div className="mx-auto max-w-[1600px] space-y-8 px-4 pb-20 sm:px-6 lg:px-8">
-      {/* Header Area */}
-      <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+    <div className="page-wrapper">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <div className="mb-2 flex items-center gap-2">
-            <span className="inline-flex items-center rounded-full bg-sky-50 px-2.5 py-0.5 text-[10px] font-black uppercase tracking-widest text-sky-600 dark:bg-sky-950/40 dark:text-sky-400">
-              {t("nav.section.clinical")}
-            </span>
-          </div>
-          <h1 className="text-4xl font-black tracking-tight text-slate-900 dark:text-white">
-            {t("nav.patients")}
-          </h1>
-          <p className="mt-2 text-sm font-medium text-slate-500">
+          <h1 className="page-header-title">{t("nav.patients")}</h1>
+          <p className="page-header-sub">
             {data?.total ?? 0} {t("pages.patients.totalCountLabel") || "patients registered"}
           </p>
         </div>
-
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <label
-            className={`inline-flex h-12 cursor-pointer items-center gap-2 rounded-2xl bg-white px-5 text-sm font-black uppercase tracking-widest text-slate-600 shadow-sm ring-1 ring-slate-100 transition hover:bg-slate-50 dark:bg-slate-900 dark:text-slate-300 dark:ring-slate-800 ${importBusy ? "pointer-events-none opacity-50" : ""}`}
+            className={`btn-secondary inline-flex items-center gap-2 cursor-pointer ${importBusy ? "pointer-events-none opacity-50" : ""}`}
           >
             <Upload size={16} />
             {t("pages.patients.importCsv", { defaultValue: "Import CSV" })}
@@ -221,25 +213,25 @@ export function PatientList(): JSX.Element {
             type="button"
             disabled={exportBusy || (data?.total ?? 0) === 0}
             onClick={() => void onExportCsv()}
-            className="inline-flex h-12 items-center gap-2 rounded-2xl bg-white px-5 text-sm font-black uppercase tracking-widest text-slate-600 shadow-sm ring-1 ring-slate-100 transition hover:bg-slate-50 disabled:opacity-40 dark:bg-slate-900 dark:text-slate-300 dark:ring-slate-800"
+            className="btn-secondary inline-flex items-center gap-2 disabled:opacity-40"
           >
             <Download size={16} />
             {exportBusy ? t("pages.patients.exporting") : t("pages.patients.exportCsv")}
           </button>
           <button
             onClick={() => setModalOpen(true)}
-            className="group inline-flex h-12 items-center gap-2 rounded-2xl bg-emerald-600 px-6 text-sm font-black uppercase tracking-widest text-white shadow-xl shadow-emerald-500/20 transition-all hover:bg-emerald-700 hover:shadow-emerald-500/40 active:scale-95"
+            className="btn-primary inline-flex items-center gap-2"
           >
-            <Plus size={18} className="transition-transform group-hover:rotate-90" />
+            <Plus size={16} />
             {t("pages.patients.newPatient")}
           </button>
         </div>
       </div>
 
-      {/* Filters & Search */}
-      <div className="flex flex-col gap-4 rounded-[2rem] border border-slate-100 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900 sm:flex-row sm:items-center">
+      {/* Search + Filters */}
+      <div className="card flex flex-col gap-3 sm:flex-row sm:items-center">
         <div className="relative flex-1">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
           <input
             type="text"
             placeholder={t("pages.patients.searchPlaceholder")}
@@ -248,28 +240,28 @@ export function PatientList(): JSX.Element {
               setQInput(e.target.value);
               setPage(1);
             }}
-            className="h-12 w-full rounded-2xl border-none bg-slate-50 pl-12 pr-4 text-sm font-bold text-slate-900 transition-all focus:ring-4 focus:ring-sky-500/10 dark:bg-slate-800 dark:text-white"
+            className="h-11 w-full rounded-xl border-none bg-slate-50 pl-11 pr-4 text-sm font-medium text-slate-800 transition-all focus:ring-2 focus:ring-teal-500/20 outline-none"
           />
         </div>
         <div className="flex items-center gap-2">
-          <button className="inline-flex h-12 items-center gap-2 rounded-2xl bg-slate-50 px-5 text-sm font-black uppercase tracking-widest text-slate-500 transition-colors hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700">
-            <Filter size={16} />
+          <button className="btn-secondary inline-flex items-center gap-2">
+            <Filter size={14} />
             {t("common.filter") || "Filters"}
           </button>
         </div>
       </div>
 
-      {/* Table Area */}
-      <div className="overflow-hidden rounded-[2.5rem] border border-slate-100 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left">
+      {/* Table */}
+      <div className="card p-0 overflow-hidden">
+        <div className="data-table-wrapper">
+          <table className="data-table">
             <thead>
-              <tr className="border-b border-slate-50 bg-slate-50/50 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:border-slate-800 dark:bg-slate-800/50">
-                <th className="px-8 py-5">{t("pages.patients.colPatient")}</th>
-                <th className="px-8 py-5">{t("pages.patients.colBirthDate")}</th>
-                <th className="px-8 py-5">{t("pages.patients.colHmo")}</th>
-                <th className="px-8 py-5">{t("pages.patients.colLastVisit")}</th>
-                <th className="px-8 py-5 text-right"></th>
+              <tr>
+                <th>{t("pages.patients.colPatient")}</th>
+                <th>{t("pages.patients.colBirthDate")}</th>
+                <th>{t("pages.patients.colHmo")}</th>
+                <th>{t("pages.patients.colLastVisit")}</th>
+                <th className="text-right"></th>
               </tr>
             </thead>
             <AnimatePresence mode="wait">
@@ -278,19 +270,19 @@ export function PatientList(): JSX.Element {
                 variants={containerVariants}
                 initial="hidden"
                 animate="visible"
-                className="divide-y divide-slate-50 dark:divide-slate-800"
+                className="divide-y divide-slate-50"
               >
                 {loading ? (
                   Array.from({ length: 5 }).map((_, i) => (
                     <tr key={i} className="animate-pulse">
-                      <td colSpan={5} className="px-8 py-8">
-                        <div className="h-12 rounded-2xl bg-slate-100 dark:bg-slate-800" />
+                      <td colSpan={5} className="px-6 py-5">
+                        <div className="h-10 rounded-xl bg-slate-100" />
                       </td>
                     </tr>
                   ))
                 ) : data?.data.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="px-8 py-20">
+                    <td colSpan={5} className="px-6 py-20">
                       <ListEmptyState
                         icon="users"
                         title={t("pages.patients.emptyTitle")}
@@ -304,49 +296,49 @@ export function PatientList(): JSX.Element {
                       key={p.id}
                       variants={itemVariants}
                       onClick={() => navigate(`/patients/${p.id}`)}
-                      className="group cursor-pointer transition-colors hover:bg-slate-50/80 dark:hover:bg-slate-800/50"
+                      className="group cursor-pointer transition-colors hover:bg-teal-50/30"
                     >
-                      <td className="px-8 py-5">
-                        <div className="flex items-center gap-4">
-                          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-sky-50 text-sky-600 transition-transform group-hover:scale-110 dark:bg-sky-950/40 dark:text-sky-400">
-                            <User size={20} />
+                      <td>
+                        <div className="flex items-center gap-3">
+                          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-50 text-sky-600 transition-transform group-hover:scale-110">
+                            <User size={18} />
                           </div>
                           <div>
-                            <p className="font-black tracking-tight text-slate-900 dark:text-white">
+                            <p className="font-semibold tracking-tight text-slate-800">
                               {p.lastName}, {p.firstName}
                             </p>
-                            <div className="mt-1 flex items-center gap-3 text-[11px] font-bold text-slate-400">
+                            <div className="mt-0.5 flex items-center gap-2 text-[11px] text-slate-400">
                               <span className="flex items-center gap-1 font-mono uppercase tracking-widest">
-                                <Hash size={10} />
+                                <Hash size={9} />
                                 {p.id.slice(-8)}
                               </span>
                               <span className="h-1 w-1 rounded-full bg-slate-300" />
                               <span className="flex items-center gap-1">
-                                <Phone size={10} />
+                                <Phone size={9} />
                                 {p.phone}
                               </span>
                             </div>
                           </div>
                         </div>
                       </td>
-                      <td className="px-8 py-5">
-                        <div className="flex items-center gap-2 text-sm font-bold text-slate-600 dark:text-slate-300">
-                          <Calendar size={14} className="text-slate-400" />
+                      <td>
+                        <div className="flex items-center gap-2 text-sm font-medium text-slate-600">
+                          <Calendar size={13} className="text-slate-400" />
                           {formatDisplayDate(p.birthDate, empty)}
                         </div>
                       </td>
-                      <td className="px-8 py-5">
+                      <td>
                         <PatientHmoBadges memberships={p.hmoMemberships} noneLabel={empty} />
                       </td>
-                      <td className="px-8 py-5">
-                        <div className="text-sm font-bold text-slate-600 dark:text-slate-300">
+                      <td>
+                        <div className="text-sm font-medium text-slate-600">
                           {formatDisplayDate(p.lastVisitAt, empty)}
                         </div>
                       </td>
-                      <td className="px-8 py-5 text-right">
+                      <td className="text-right">
                         <div className="flex justify-end">
-                          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 text-slate-400 opacity-0 transition-all group-hover:opacity-100 dark:bg-slate-800">
-                            <ArrowRight size={18} />
+                          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-100 text-slate-400 opacity-0 transition-all group-hover:opacity-100">
+                            <ArrowRight size={16} />
                           </div>
                         </div>
                       </td>
@@ -358,9 +350,9 @@ export function PatientList(): JSX.Element {
           </table>
         </div>
 
-        {/* Pagination Footer */}
-        <div className="flex items-center justify-between border-t border-slate-50 bg-slate-50/50 px-8 py-6 dark:border-slate-800 dark:bg-slate-800/50">
-          <p className="text-xs font-bold uppercase tracking-widest text-slate-400">
+        {/* Pagination */}
+        <div className="flex items-center justify-between border-t border-slate-100 bg-slate-50/50 px-6 py-4">
+          <p className="text-xs font-medium text-slate-400">
             {t("pages.patients.pagination", {
               page,
               totalPages,
@@ -371,16 +363,16 @@ export function PatientList(): JSX.Element {
             <button
               disabled={page <= 1}
               onClick={() => setPage((p) => p - 1)}
-              className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-slate-600 shadow-sm transition-all hover:bg-slate-50 disabled:opacity-30 dark:bg-slate-900 dark:text-slate-400 dark:hover:bg-slate-800"
+              className="flex h-9 w-9 items-center justify-center rounded-lg bg-white text-slate-600 shadow-sm transition-all hover:bg-slate-50 disabled:opacity-30"
             >
-              <ChevronLeft size={18} />
+              <ChevronLeft size={16} />
             </button>
             <button
               disabled={page >= totalPages}
               onClick={() => setPage((p) => p + 1)}
-              className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-slate-600 shadow-sm transition-all hover:bg-slate-50 disabled:opacity-30 dark:bg-slate-900 dark:text-slate-400 dark:hover:bg-slate-800"
+              className="flex h-9 w-9 items-center justify-center rounded-lg bg-white text-slate-600 shadow-sm transition-all hover:bg-slate-50 disabled:opacity-30"
             >
-              <ChevronRight size={18} />
+              <ChevronRight size={16} />
             </button>
           </div>
         </div>

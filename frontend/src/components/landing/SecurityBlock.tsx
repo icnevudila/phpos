@@ -31,7 +31,7 @@ export function SecurityBlock(): JSX.Element {
       title: t("landing.sec1Title"),
       desc: t("landing.sec1Desc"),
       long: "Strict adherence to RA 10173. We implement end-to-end data minimization, ensuring only necessary clinical data is collected and processed with explicit patient consent.",
-      accent: "from-emerald-400 to-teal-500",
+      accent: "from-teal-400 to-teal-500",
     },
     {
       icon: <I d="M16 11V7a4 4 0 1 0-8 0v4m-3 0h14v10H5zM12 15v3" />,
@@ -45,7 +45,7 @@ export function SecurityBlock(): JSX.Element {
       title: t("landing.sec3Title"),
       desc: t("landing.sec3Desc"),
       long: "Every clinical update, billing change, and login is logged with a permanent timestamp. We provide a transparent trail for compliance and clinical safety audits.",
-      accent: "from-violet-400 to-fuchsia-500",
+      accent: "from-teal-400 to-fuchsia-500",
     },
     {
       icon: <I d="M12 2a10 10 0 1 0 10 10h-10V2zM12 2v10l8.66 5" />,
@@ -75,15 +75,15 @@ export function SecurityBlock(): JSX.Element {
       <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
         <div className="lg:sticky lg:top-28">
           <SectionEyebrow label={t("landing.secEyebrow")} icon={IconShield} accent="emerald" />
-          <h2 className="mt-3 text-3xl font-black tracking-tight text-slate-900 sm:text-4xl dark:text-white">
+          <h2 className="mt-3 text-3xl font-black tracking-tight text-slate-900 sm:text-4xl">
             {t("landing.secTitle")}
           </h2>
-          <p className="mt-4 text-lg font-medium text-slate-600 dark:text-slate-400">{t("landing.secSubtitle")}</p>
-          <div className="mt-8 rounded-[2.5rem] border border-slate-200 bg-gradient-to-br from-slate-50 to-white p-8 shadow-sm dark:border-slate-800 dark:from-slate-900 dark:to-slate-900/60">
-            <p className="text-xs font-black uppercase tracking-[0.2em] text-emerald-700 dark:text-emerald-400">
+          <p className="mt-4 text-lg font-medium text-slate-600">{t("landing.secSubtitle")}</p>
+          <div className="mt-8 rounded-[2.5rem] border border-slate-200 bg-gradient-to-br from-slate-50 to-white p-8 shadow-sm">
+            <p className="text-xs font-black uppercase tracking-[0.2em] text-teal-700">
               {t("landing.secPromiseLabel")}
             </p>
-            <p className="mt-4 text-base leading-relaxed text-slate-700 dark:text-slate-300">
+            <p className="mt-4 text-base leading-relaxed text-slate-700">
               {t("landing.secPromise")}
             </p>
           </div>
@@ -101,31 +101,27 @@ export function SecurityBlock(): JSX.Element {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.3 }}
                 transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-                className={`group relative cursor-pointer overflow-hidden rounded-3xl border transition-all duration-500 p-6 ${
-                  isExpanded 
-                    ? "border-emerald-500 bg-emerald-50/10 shadow-xl ring-1 ring-emerald-500 dark:bg-emerald-950/20" 
-                    : "border-slate-200 bg-white shadow-sm hover:-translate-y-1 hover:shadow-lg dark:border-slate-800 dark:bg-slate-900"
-                }`}
+                className={`group relative cursor-pointer overflow-hidden rounded-3xl border transition-all duration-500 p-6 ${ isExpanded ? "border-teal-500 bg-teal-50/10 shadow-xl ring-1 ring-teal-500 " : "border-slate-200 bg-white shadow-sm hover:-translate-y-1 hover:shadow-lg " }`}
               >
                 <div
                   className={`relative inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br ${it.accent} text-white shadow-lg transition-transform duration-500 group-hover:scale-110`}
                 >
                   {it.icon}
                 </div>
-                <h3 className="mt-5 text-lg font-black text-slate-900 dark:text-white leading-tight">{it.title}</h3>
-                <p className="mt-2 text-sm font-medium leading-relaxed text-slate-600 dark:text-slate-400">{it.desc}</p>
+                <h3 className="mt-5 text-lg font-black text-slate-900 leading-tight">{it.title}</h3>
+                <p className="mt-2 text-sm font-medium leading-relaxed text-slate-600">{it.desc}</p>
                 
                 {isExpanded && (
                   <motion.div
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: "auto" }}
-                    className="mt-6 border-t border-emerald-500/20 pt-4"
+                    className="mt-6 border-t border-teal-500/20 pt-4"
                   >
-                    <p className="text-sm font-medium leading-relaxed text-slate-700 dark:text-slate-300">
+                    <p className="text-sm font-medium leading-relaxed text-slate-700">
                       {it.long}
                     </p>
-                    <div className="mt-4 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-emerald-600">
-                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                    <div className="mt-4 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-teal-600">
+                      <span className="h-1.5 w-1.5 rounded-full bg-teal-500 animate-pulse" />
                       Active compliance
                     </div>
                   </motion.div>

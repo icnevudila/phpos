@@ -25,7 +25,7 @@ export function DentistSelect({
       value={value}
       onChange={(e) => onChange(e.target.value)}
       disabled={disabled}
-      className={`min-h-11 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-100 ${className}`}
+      className={`min-h-11 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:border-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-100 ${className}`}
     >
       {includeAll ? (
         <option value="">{t("pages.appointments.allDentists")}</option>

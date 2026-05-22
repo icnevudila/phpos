@@ -32,20 +32,20 @@ export function MobileStickyCTA(): JSX.Element {
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 80, opacity: 0 }}
           transition={{ type: "spring", stiffness: 240, damping: 24 }}
-          className="fixed inset-x-3 z-[55] flex items-stretch gap-2 rounded-2xl border border-emerald-200 bg-white/95 p-2 shadow-2xl backdrop-blur dark:border-emerald-800/80 dark:bg-slate-900/95 md:hidden"
+          className="fixed inset-x-3 z-[55] flex items-stretch gap-2 rounded-2xl border border-teal-200 bg-white/95 p-2 shadow-2xl backdrop-blur md:hidden"
           style={{ bottom: "max(0.75rem, env(safe-area-inset-bottom))" }}
         >
           <div className="flex flex-1 flex-col justify-center pl-2">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-emerald-700 dark:text-emerald-400">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-teal-700">
               {t("landing.announceBadge")}
             </p>
-            <p className="text-xs font-semibold text-slate-900 dark:text-slate-100">
+            <p className="text-xs font-semibold text-slate-900">
               {t("landing.announceTitle")}
             </p>
           </div>
           <Link
             to="/contact"
-            className="group relative inline-flex min-h-11 shrink-0 items-center gap-1.5 overflow-hidden rounded-xl bg-gradient-to-br from-emerald-500 to-sky-500 px-4 text-xs font-bold text-white shadow-lg shadow-emerald-500/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-900"
+            className="group relative inline-flex min-h-11 shrink-0 items-center gap-1.5 overflow-hidden rounded-xl bg-gradient-to-br from-teal-500 to-sky-500 px-4 text-xs font-bold text-white shadow-lg shadow-teal-500/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-300 focus-visible:ring-offset-2 focus-visible:ring-offset-white"
           >
             <span
               aria-hidden

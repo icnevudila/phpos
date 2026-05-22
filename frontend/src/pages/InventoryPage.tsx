@@ -291,377 +291,371 @@ export function InventoryPage(): JSX.Element {
   const emptyDash = t("pages.common.empty");
 
   return (
-    <div className="min-h-screen w-full pb-24 bg-[#fafbfc] dark:bg-slate-950">
-      <div className="mx-auto max-w-[1400px] px-6 lg:px-10 space-y-12 pt-10">
-        
-        {/* Clinical Header */}
-        <header className="flex flex-col gap-10 lg:flex-row lg:items-end lg:justify-between">
-          <div className="space-y-4">
-            <div className="flex items-center gap-3">
-               <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400">
-                  <Package size={18} />
-               </span>
-               <span className="text-xs font-black uppercase tracking-[0.3em] text-slate-400">
-                  {t("pages.reports.eyebrow")}
-               </span>
+    <div className="page-wrapper">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <div className="flex items-center gap-2 mb-1">
+            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-teal-50 text-teal-600">
+              <Package size={15} />
+            </span>
+            <span className="text-xs font-semibold uppercase tracking-widest text-slate-400">
+              {t("pages.reports.eyebrow")}
+            </span>
+          </div>
+          <h1 className="page-header-title">{t("pages.inventory.title")}</h1>
+          <p className="page-header-sub">
+            {t("pages.inventory.subtitle", {
+              count: totals.count,
+              value: money(totals.totalValue),
+            })}
+          </p>
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <label
+            className={`btn-secondary inline-flex items-center gap-2 cursor-pointer ${importBusy ? "pointer-events-none opacity-50" : ""}`}
+          >
+            <Upload size={15} />
+            {t("pages.inventory.importCsv")}
+            <input
+              type="file"
+              accept=".csv,text/csv"
+              className="sr-only"
+              disabled={importBusy}
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                e.target.value = "";
+                if (file) void onImportCsv(file);
+              }}
+            />
+          </label>
+          <button
+            onClick={downloadCsv}
+            className="btn-secondary flex items-center gap-2"
+          >
+            <Download size={15} /> {t("pages.inventory.exportCsv")}
+          </button>
+          <button
+            onClick={() => setScannerOpen(true)}
+            className="btn-secondary flex items-center gap-2"
+          >
+            <Camera size={15} /> Scan QR
+          </button>
+          <button
+            onClick={() => {
+              setEditing(null);
+              setFormOpen(true);
+            }}
+            className="btn-primary flex items-center gap-2"
+          >
+            <Plus size={16} /> {t("pages.inventory.newItem")}
+          </button>
+        </div>
+      </div>
+
+      {/* Alert Banner */}
+      <AnimatePresence>
+        {alertBanner && (
+          <motion.div
+            initial={{ opacity: 0, y: -16 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -16 }}
+            className="flex flex-col gap-4 lg:flex-row lg:items-center justify-between rounded-2xl bg-rose-50 p-5 ring-1 ring-rose-100"
+          >
+            <div className="flex items-start lg:items-center gap-4">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-rose-500 text-white shadow-sm">
+                <AlertTriangle size={24} />
+              </div>
+              <div>
+                <h4 className="text-sm font-semibold uppercase tracking-wider text-rose-800">
+                  {t("pages.inventory.alertsTitle")}
+                </h4>
+                <p className="text-sm font-medium text-rose-700 mt-0.5">
+                  {alertBanner.join(" · ")}
+                </p>
+              </div>
             </div>
-            <h1 className="text-5xl font-black tracking-tight text-slate-900 dark:text-white lg:text-6xl">
-              {t("pages.inventory.title")}
-            </h1>
-            <p className="max-w-2xl text-lg font-medium text-slate-400 leading-relaxed">
-              {t("pages.inventory.subtitle", {
-                count: totals.count,
-                value: money(totals.totalValue),
-              })}
-            </p>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-4">
-             <label
-               className={`flex h-16 cursor-pointer items-center gap-3 rounded-[1.5rem] bg-white px-8 text-xs font-black uppercase tracking-widest text-slate-900 shadow-xl ring-1 ring-slate-100 transition-all hover:scale-105 active:scale-95 dark:bg-slate-900 dark:text-white dark:ring-slate-800 ${importBusy ? "pointer-events-none opacity-50" : ""}`}
-             >
-               <Upload size={18} />
-               {t("pages.inventory.importCsv")}
-               <input
-                 type="file"
-                 accept=".csv,text/csv"
-                 className="sr-only"
-                 disabled={importBusy}
-                 onChange={(e) => {
-                   const file = e.target.files?.[0];
-                   e.target.value = "";
-                   if (file) void onImportCsv(file);
-                 }}
-               />
-             </label>
-             <button
-               onClick={downloadCsv}
-               className="flex h-16 items-center gap-3 rounded-[1.5rem] bg-white dark:bg-slate-900 px-8 text-xs font-black uppercase tracking-widest text-slate-900 dark:text-white shadow-xl shadow-slate-200/50 dark:shadow-none ring-1 ring-slate-100 dark:ring-slate-800 transition-all hover:scale-105 active:scale-95"
-             >
-               <Download size={18} /> {t("pages.inventory.exportCsv")}
-             </button>
-             <button
-               onClick={() => setScannerOpen(true)}
-               className="flex h-16 items-center gap-3 rounded-[1.5rem] bg-indigo-50 dark:bg-indigo-900/30 px-8 text-xs font-black uppercase tracking-widest text-indigo-600 dark:text-indigo-400 shadow-xl shadow-indigo-100 dark:shadow-none ring-1 ring-indigo-100 dark:ring-indigo-800 transition-all hover:scale-105 active:scale-95"
-             >
-               <Camera size={18} /> Scan QR
-             </button>
-             <button
-               onClick={() => {
-                 setEditing(null);
-                 setFormOpen(true);
-               }}
-               className="flex h-16 items-center gap-3 rounded-[1.5rem] bg-slate-900 dark:bg-white px-8 text-xs font-black uppercase tracking-widest text-white dark:text-slate-900 shadow-2xl transition-all hover:scale-105 active:scale-95"
-             >
-               <Plus size={20} /> {t("pages.inventory.newItem")}
-             </button>
-          </div>
-        </header>
-
-        {/* Dynamic Alerts */}
-        <AnimatePresence>
-          {alertBanner && (
-            <motion.div 
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="relative flex flex-col gap-6 lg:flex-row lg:items-center justify-between rounded-[2.5rem] bg-rose-50 dark:bg-rose-950/20 p-8 ring-1 ring-rose-100 dark:ring-rose-900/30 overflow-hidden"
+            <button
+              onClick={() => setLowStockOnly(true)}
+              className="flex h-10 items-center gap-2 rounded-xl bg-white px-4 text-xs font-semibold uppercase tracking-widest text-rose-600 shadow-sm ring-1 ring-rose-200 transition-all hover:bg-rose-50"
             >
-               <div className="absolute top-0 right-0 h-full w-32 bg-rose-500/5 blur-3xl pointer-events-none" />
-               <div className="flex items-start lg:items-center gap-6">
-                  <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-rose-500 text-white shadow-xl shadow-rose-500/20">
-                     <AlertTriangle size={32} />
-                  </div>
-                  <div className="space-y-1">
-                     <h4 className="text-sm font-black uppercase tracking-[0.2em] text-rose-900 dark:text-rose-400">
-                        {t("pages.inventory.alertsTitle")}
-                     </h4>
-                     <p className="text-lg font-bold text-rose-800 dark:text-rose-300">
-                        {alertBanner.join(" · ")}
-                     </p>
-                  </div>
-               </div>
-               <button
-                 onClick={() => setLowStockOnly(true)}
-                 className="flex h-12 items-center gap-2 rounded-xl bg-white dark:bg-slate-900 px-6 text-[10px] font-black uppercase tracking-widest text-rose-600 dark:text-rose-400 shadow-sm ring-1 ring-rose-200 dark:ring-rose-800 transition-all hover:bg-rose-50"
-               >
-                 <Filter size={14} /> {t("pages.inventory.filterLowStock")}
-               </button>
-            </motion.div>
+              <Filter size={13} /> {t("pages.inventory.filterLowStock")}
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Filters */}
+      <div className="card flex flex-col gap-4 lg:flex-row lg:items-center justify-between">
+        <div className="flex-1 flex flex-col lg:flex-row gap-3">
+          <div className="relative group flex-1">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-teal-500 transition-colors" size={16} />
+            <input
+              type="text"
+              value={qInput}
+              onChange={(e) => setQInput(e.target.value)}
+              placeholder={t("pages.inventory.searchPlaceholder")}
+              className="h-11 w-full rounded-xl bg-slate-50 pl-11 pr-4 text-sm font-medium outline-none ring-1 ring-slate-100 focus:ring-2 focus:ring-teal-500 transition-all"
+            />
+          </div>
+          <div className="flex items-center gap-3">
+            <select
+              value={category}
+              onChange={(e) => setCategory(e.target.value as InventoryCategory | "")}
+              className="h-11 rounded-xl bg-slate-50 px-4 text-xs font-semibold uppercase tracking-widest outline-none ring-1 ring-slate-100 focus:ring-2 focus:ring-teal-500 transition-all cursor-pointer"
+            >
+              <option value="">{t("pages.inventory.all")}</option>
+              {INVENTORY_CATEGORIES.map((c) => (
+                <option key={c} value={c}>
+                  {t(`pages.inventory.categories.${INVENTORY_CATEGORY_I18N_KEY[c]}`)}
+                </option>
+              ))}
+            </select>
+            <label className="flex h-11 items-center gap-3 rounded-xl bg-slate-50 px-4 cursor-pointer ring-1 ring-slate-100 hover:bg-slate-100 transition-all">
+              <input
+                type="checkbox"
+                checked={lowStockOnly}
+                onChange={(e) => setLowStockOnly(e.target.checked)}
+                className="h-4 w-4 rounded border-slate-300 text-teal-500 focus:ring-teal-500"
+              />
+              <span className="text-xs font-semibold uppercase tracking-widest text-slate-500">
+                {t("pages.inventory.lowStockCheck")}
+              </span>
+            </label>
+          </div>
+        </div>
+        <div className="flex items-center gap-3">
+          {hasInventoryFilters && (
+            <button
+              onClick={resetInventoryFilters}
+              className="btn-secondary flex items-center gap-2 text-rose-500"
+            >
+              <RefreshCw size={13} /> {t("pages.inventory.resetFilters")}
+            </button>
           )}
-        </AnimatePresence>
-
-        {/* Advanced Filters */}
-        <div className="flex flex-col gap-8 lg:flex-row lg:items-center justify-between bg-white dark:bg-slate-900 p-8 rounded-[3rem] shadow-xl shadow-slate-200/40 dark:shadow-none ring-1 ring-slate-100 dark:ring-slate-800">
-          <div className="flex-1 flex flex-col lg:flex-row gap-6">
-             <div className="relative group flex-1">
-                <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-emerald-500 transition-colors" size={20} />
-                <input 
-                  type="text"
-                  value={qInput}
-                  onChange={(e) => setQInput(e.target.value)}
-                  placeholder={t("pages.inventory.searchPlaceholder")}
-                  className="h-16 w-full rounded-2xl bg-slate-50 dark:bg-slate-800/50 pl-16 pr-6 text-sm font-bold outline-none ring-1 ring-slate-100 dark:ring-slate-800 focus:ring-2 focus:ring-emerald-500 transition-all"
-                />
-             </div>
-             
-             <div className="flex items-center gap-4">
-                <select
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value as InventoryCategory | "")}
-                  className="h-16 rounded-2xl bg-slate-50 dark:bg-slate-800/50 px-6 text-xs font-black uppercase tracking-widest outline-none ring-1 ring-slate-100 dark:ring-slate-800 focus:ring-2 focus:ring-emerald-500 transition-all cursor-pointer"
-                >
-                  <option value="">{t("pages.inventory.all")}</option>
-                  {INVENTORY_CATEGORIES.map((c) => (
-                    <option key={c} value={c}>
-                      {t(`pages.inventory.categories.${INVENTORY_CATEGORY_I18N_KEY[c]}`)}
-                    </option>
-                  ))}
-                </select>
-
-                <label className="flex h-16 items-center gap-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 px-6 cursor-pointer ring-1 ring-slate-100 dark:ring-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">
-                  <input
-                    type="checkbox"
-                    checked={lowStockOnly}
-                    onChange={(e) => setLowStockOnly(e.target.checked)}
-                    className="h-5 w-5 rounded-lg border-slate-300 text-emerald-500 focus:ring-emerald-500"
-                  />
-                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">
-                    {t("pages.inventory.lowStockCheck")}
-                  </span>
-                </label>
-             </div>
+          <div className="h-10 w-px bg-slate-100 mx-1 hidden lg:block" />
+          <div className="flex items-center gap-2">
+            <div className={`h-2.5 w-2.5 rounded-full ${rowsFetching ? 'bg-teal-500 animate-pulse' : 'bg-slate-200'}`} />
+            <span className="text-xs font-medium text-slate-400">
+              {rowsFetching ? t("pages.inventory.syncing") : t("pages.inventory.upToDate")}
+            </span>
           </div>
+        </div>
+      </div>
 
-          <div className="flex items-center gap-4">
-             {hasInventoryFilters && (
-               <button
-                 onClick={resetInventoryFilters}
-                 className="h-16 flex items-center gap-2 rounded-2xl bg-white dark:bg-slate-900 px-6 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-rose-500 transition-all"
-               >
-                 <RefreshCw size={14} /> {t("pages.inventory.resetFilters")}
-               </button>
-             )}
-             <div className="h-12 w-px bg-slate-100 dark:bg-slate-800 mx-2 hidden lg:block" />
-             <div className="flex items-center gap-3">
-                <div className={`h-3 w-3 rounded-full ${rowsFetching ? 'bg-emerald-500 animate-pulse' : 'bg-slate-200 dark:bg-slate-700'}`} />
-                <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
-                   {rowsFetching ? t("pages.inventory.syncing") : t("pages.inventory.upToDate")}
-                </span>
-             </div>
+      {/* Inventory Table */}
+      <div className="card p-0 overflow-hidden">
+        <div className="data-table-wrapper">
+          <table className="data-table min-w-[1100px]">
+            <thead>
+              <tr>
+                <th>{t("pages.inventory.colItem")}</th>
+                <th>{t("pages.inventory.colCategory")}</th>
+                <th className="text-right">{t("pages.inventory.colStock")}</th>
+                <th className="text-right">{t("pages.inventory.colMin")}</th>
+                <th className="text-right">{t("pages.inventory.colUnitCost")}</th>
+                <th>{t("pages.inventory.colExpiry")}</th>
+                <th>{t("pages.inventory.colStatus")}</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <AnimatePresence mode="popLayout">
+                {loading && rows.length === 0 ? (
+                  <motion.tr initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                    <td colSpan={8} className="py-20 text-center">
+                      <div className="flex items-center justify-center">
+                        <div className="h-8 w-8 rounded-xl bg-teal-50 flex items-center justify-center">
+                          <RefreshCw className="h-4 w-4 animate-spin text-teal-500" />
+                        </div>
+                      </div>
+                    </td>
+                  </motion.tr>
+                ) : error ? (
+                  <motion.tr initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                    <td colSpan={8} className="py-20 text-center">
+                      <div className="flex flex-col items-center justify-center py-16 text-center">
+                        <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-rose-50">
+                          <AlertTriangle className="h-6 w-6 text-rose-400" />
+                        </div>
+                        <p className="text-sm font-medium text-rose-600">{error}</p>
+                      </div>
+                    </td>
+                  </motion.tr>
+                ) : rows.length === 0 ? (
+                  <motion.tr initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                    <td colSpan={8} className="p-0">
+                      <ListEmptyState
+                        icon="box"
+                        title={t("pages.inventory.emptyTitle")}
+                        description={t("pages.inventory.emptyHint")}
+                        primary={{
+                          kind: "button",
+                          onClick: () => {
+                            setEditing(null);
+                            setFormOpen(true);
+                          },
+                          label: t("pages.inventory.newItem"),
+                        }}
+                      />
+                    </td>
+                  </motion.tr>
+                ) : (
+                  rows.map((r, idx) => {
+                    const style = INVENTORY_STATUS_STYLES[r.status];
+                    const eb = expiryBadge(t, r.daysUntilExpiry);
+                    return (
+                      <motion.tr
+                        key={r.id}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: idx * 0.02 }}
+                        className="group hover:bg-teal-50/30 transition-colors"
+                      >
+                        <td>
+                          <div className="flex items-center gap-3">
+                            <div className="h-11 w-11 rounded-xl bg-slate-100 flex items-center justify-center text-slate-400 group-hover:bg-teal-500 group-hover:text-white transition-all">
+                              <Box size={20} />
+                            </div>
+                            <div>
+                              <p className="text-sm font-semibold text-slate-800 leading-tight">{r.itemName}</p>
+                              {r.supplier && (
+                                <div className="flex items-center gap-1 mt-0.5 text-slate-400">
+                                  <Truck size={10} className="opacity-40" />
+                                  <span className="text-[10px] font-medium uppercase tracking-widest">{r.supplier}</span>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          <span className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-50 px-2.5 py-1 rounded-lg border border-slate-100">
+                            {t(`pages.inventory.categories.${INVENTORY_CATEGORY_I18N_KEY[r.category]}`)}
+                          </span>
+                        </td>
+                        <td className="text-right">
+                          <div className="flex flex-col items-end">
+                            <p className="text-lg font-bold text-slate-800 tabular-nums">{r.quantity}</p>
+                            <span className="text-[10px] font-medium text-slate-400 uppercase tracking-widest">{r.unit}</span>
+                          </div>
+                        </td>
+                        <td className="text-right font-semibold text-slate-400 tabular-nums">{r.minimumStock}</td>
+                        <td className="text-right font-semibold text-slate-800 tabular-nums">{money(r.unitCost)}</td>
+                        <td>
+                          <div className="space-y-1.5">
+                            <div className="flex items-center gap-1.5 text-sm font-medium text-slate-600">
+                              <Calendar size={13} className="opacity-40" />
+                              {fmtDate(r.expiryDate, emptyDash)}
+                            </div>
+                            {eb && (
+                              <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[10px] font-semibold uppercase tracking-widest w-fit ${eb.tone}`}>
+                                <div className={`h-1.5 w-1.5 rounded-full ${eb.dot}`} />
+                                {eb.text}
+                              </div>
+                            )}
+                          </div>
+                        </td>
+                        <td>
+                          <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-[10px] font-semibold uppercase tracking-wider ${style.pillBg} ${style.pillText} ${style.ring}`}>
+                            <div className={`h-1.5 w-1.5 rounded-full ${style.dot}`} />
+                            {t(`pages.inventory.status.${r.status}`)}
+                          </div>
+                        </td>
+                        <td>
+                          <div className="flex items-center justify-end gap-1.5">
+                            <div className="flex gap-1.5 mr-4 opacity-0 group-hover:opacity-100 transition-all translate-x-3 group-hover:translate-x-0">
+                              <button
+                                onClick={() => { setAdjustMode("in"); setAdjustItem(r); }}
+                                className="h-9 w-9 flex items-center justify-center rounded-lg bg-teal-50 text-teal-600 hover:bg-teal-500 hover:text-white transition-all"
+                                title={t("pages.inventory.titleStockIn")}
+                              >
+                                <PlusCircle size={16} />
+                              </button>
+                              <button
+                                onClick={() => { setAdjustMode("out"); setAdjustItem(r); }}
+                                className="h-9 w-9 flex items-center justify-center rounded-lg bg-rose-50 text-rose-500 hover:bg-rose-500 hover:text-white transition-all"
+                                title={t("pages.inventory.titleStockOut")}
+                              >
+                                <MinusCircle size={16} />
+                              </button>
+                              <button
+                                onClick={() => void handlePrintLabel(r)}
+                                className="h-9 w-9 flex items-center justify-center rounded-lg bg-sky-50 text-sky-600 hover:bg-sky-500 hover:text-white transition-all"
+                                title={t("pages.inventory.printLabel")}
+                              >
+                                <Printer size={16} />
+                              </button>
+                              <button
+                                onClick={() => { setEditing(r); setFormOpen(true); }}
+                                className="h-9 w-9 flex items-center justify-center rounded-lg bg-slate-50 text-slate-600 hover:bg-slate-800 hover:text-white transition-all"
+                              >
+                                <Edit3 size={16} />
+                              </button>
+                              <button
+                                onClick={() => void handleDelete(r)}
+                                className="h-9 w-9 flex items-center justify-center rounded-lg bg-slate-50 text-slate-400 hover:bg-rose-500 hover:text-white transition-all"
+                              >
+                                <Trash2 size={16} />
+                              </button>
+                            </div>
+                            <button className="h-9 w-9 flex items-center justify-center rounded-lg bg-slate-50 text-slate-400 hover:bg-teal-500 hover:text-white transition-all">
+                              <ChevronRight size={18} />
+                            </button>
+                          </div>
+                        </td>
+                      </motion.tr>
+                    );
+                  })
+                )}
+              </AnimatePresence>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Stock Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="stat-card">
+          <div className="flex items-center gap-2 mb-4">
+            <div className="h-9 w-9 rounded-xl bg-sky-50 flex items-center justify-center text-sky-600">
+              <Layers size={18} />
+            </div>
+            <span className="stat-card-label">{t("pages.inventory.inventoryDepth")}</span>
+          </div>
+          <div className="flex items-baseline gap-2">
+            <p className="text-3xl font-bold text-slate-800 tabular-nums">{totals.count}</p>
+            <span className="text-xs font-semibold text-slate-400 uppercase tracking-widest">SKUS</span>
           </div>
         </div>
 
-        {/* Inventory Workspace */}
-        <div className="rounded-[3.5rem] bg-white dark:bg-slate-900 shadow-2xl shadow-slate-200/50 dark:shadow-none overflow-hidden ring-1 ring-slate-100 dark:ring-slate-800">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse min-w-[1200px]">
-              <thead>
-                <tr className="bg-slate-50/50 dark:bg-slate-800/50">
-                  <th className="px-10 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">{t("pages.inventory.colItem")}</th>
-                  <th className="px-8 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">{t("pages.inventory.colCategory")}</th>
-                  <th className="px-8 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 text-right">{t("pages.inventory.colStock")}</th>
-                  <th className="px-8 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 text-right">{t("pages.inventory.colMin")}</th>
-                  <th className="px-8 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 text-right">{t("pages.inventory.colUnitCost")}</th>
-                  <th className="px-8 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">{t("pages.inventory.colExpiry")}</th>
-                  <th className="px-8 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">{t("pages.inventory.colStatus")}</th>
-                  <th className="px-10 py-8"></th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
-                <AnimatePresence mode="popLayout">
-                  {loading && rows.length === 0 ? (
-                    <motion.tr initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                      <td colSpan={8} className="py-32 text-center">
-                         <RefreshCw className="h-10 w-10 animate-spin text-slate-200 mx-auto mb-4" />
-                         <p className="text-xs font-black uppercase tracking-widest text-slate-400">{t("pages.inventory.loading")}</p>
-                      </td>
-                    </motion.tr>
-                  ) : error ? (
-                    <motion.tr initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                      <td colSpan={8} className="py-32 text-center">
-                         <div className="h-16 w-16 rounded-2xl bg-rose-50 text-rose-500 flex items-center justify-center mx-auto mb-4">
-                            <AlertTriangle size={32} />
-                         </div>
-                         <p className="text-sm font-black text-rose-600">{error}</p>
-                      </td>
-                    </motion.tr>
-                  ) : rows.length === 0 ? (
-                    <motion.tr initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                      <td colSpan={8} className="p-0">
-                        <ListEmptyState
-                          icon="box"
-                          title={t("pages.inventory.emptyTitle")}
-                          description={t("pages.inventory.emptyHint")}
-                          primary={{
-                            kind: "button",
-                            onClick: () => {
-                              setEditing(null);
-                              setFormOpen(true);
-                            },
-                            label: t("pages.inventory.newItem"),
-                          }}
-                        />
-                      </td>
-                    </motion.tr>
-                  ) : (
-                    rows.map((r, idx) => {
-                      const style = INVENTORY_STATUS_STYLES[r.status];
-                      const eb = expiryBadge(t, r.daysUntilExpiry);
-                      return (
-                        <motion.tr 
-                          key={r.id}
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: idx * 0.02 }}
-                          className="group hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors"
-                        >
-                          <td className="px-10 py-8">
-                             <div className="flex items-center gap-5">
-                                <div className="h-14 w-14 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 font-black group-hover:bg-emerald-500 group-hover:text-white transition-all">
-                                   <Box size={24} />
-                                </div>
-                                <div>
-                                   <p className="text-lg font-black text-slate-900 dark:text-white leading-tight">{r.itemName}</p>
-                                   {r.supplier && (
-                                     <div className="flex items-center gap-1.5 mt-1 text-slate-400">
-                                        <Truck size={12} className="opacity-40" />
-                                        <span className="text-[10px] font-black uppercase tracking-widest">{r.supplier}</span>
-                                     </div>
-                                   )}
-                                </div>
-                             </div>
-                          </td>
-                          <td className="px-8 py-8">
-                             <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 bg-slate-50 dark:bg-slate-800/50 px-3 py-1.5 rounded-xl border border-slate-100 dark:border-slate-800">
-                                {t(`pages.inventory.categories.${INVENTORY_CATEGORY_I18N_KEY[r.category]}`)}
-                             </span>
-                          </td>
-                          <td className="px-8 py-8 text-right">
-                             <div className="flex flex-col items-end">
-                                <p className="text-2xl font-black text-slate-900 dark:text-white tabular-nums">{r.quantity}</p>
-                                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{r.unit}</span>
-                             </div>
-                          </td>
-                          <td className="px-8 py-8 text-right font-black text-slate-400 tabular-nums">{r.minimumStock}</td>
-                          <td className="px-8 py-8 text-right font-black text-slate-900 dark:text-white tabular-nums">{money(r.unitCost)}</td>
-                          <td className="px-8 py-8">
-                             <div className="space-y-2">
-                                <div className="flex items-center gap-2 text-sm font-bold text-slate-600 dark:text-slate-300">
-                                   <Calendar size={14} className="opacity-40" />
-                                   {fmtDate(r.expiryDate, emptyDash)}
-                                </div>
-                                {eb && (
-                                  <div className={`flex items-center gap-2 px-3 py-1 rounded-lg border text-[10px] font-black uppercase tracking-widest w-fit ${eb.tone}`}>
-                                     <div className={`h-1.5 w-1.5 rounded-full ${eb.dot}`} />
-                                     {eb.text}
-                                  </div>
-                                )}
-                             </div>
-                          </td>
-                          <td className="px-8 py-8">
-                             <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-2xl border text-[10px] font-black uppercase tracking-[0.1em] ${style.pillBg} ${style.pillText} ${style.ring}`}>
-                                <div className={`h-2 w-2 rounded-full ${style.dot}`} />
-                                {t(`pages.inventory.status.${r.status}`)}
-                             </div>
-                          </td>
-                          <td className="px-10 py-8">
-                             <div className="flex items-center justify-end gap-2">
-                                <div className="flex gap-2 mr-6 opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0">
-                                   <button
-                                     onClick={() => { setAdjustMode("in"); setAdjustItem(r); }}
-                                     className="h-10 w-10 flex items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 hover:bg-emerald-500 hover:text-white transition-all"
-                                     title={t("pages.inventory.titleStockIn")}
-                                   >
-                                     <PlusCircle size={18} />
-                                   </button>
-                                   <button
-                                     onClick={() => { setAdjustMode("out"); setAdjustItem(r); }}
-                                     className="h-10 w-10 flex items-center justify-center rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-500 hover:text-white transition-all"
-                                     title={t("pages.inventory.titleStockOut")}
-                                   >
-                                     <MinusCircle size={18} />
-                                   </button>
-                                   <button
-                                     onClick={() => void handlePrintLabel(r)}
-                                     className="h-10 w-10 flex items-center justify-center rounded-xl bg-sky-50 text-sky-600 hover:bg-sky-500 hover:text-white transition-all"
-                                     title={t("pages.inventory.printLabel")}
-                                   >
-                                     <Printer size={18} />
-                                   </button>
-                                   <button
-                                     onClick={() => { setEditing(r); setFormOpen(true); }}
-                                     className="h-10 w-10 flex items-center justify-center rounded-xl bg-slate-50 text-slate-600 hover:bg-slate-900 hover:text-white dark:hover:bg-white dark:hover:text-slate-900 transition-all"
-                                   >
-                                     <Edit3 size={18} />
-                                   </button>
-                                   <button
-                                     onClick={() => void handleDelete(r)}
-                                     className="h-10 w-10 flex items-center justify-center rounded-xl bg-slate-50 text-slate-400 hover:bg-rose-500 hover:text-white transition-all"
-                                   >
-                                     <Trash2 size={18} />
-                                   </button>
-                                </div>
-                                <button className="h-12 w-12 flex items-center justify-center rounded-2xl bg-slate-50 dark:bg-slate-800 text-slate-400 hover:bg-slate-900 hover:text-white dark:hover:bg-white dark:hover:text-slate-900 transition-all">
-                                   <ChevronRight size={24} />
-                                </button>
-                             </div>
-                          </td>
-                        </motion.tr>
-                      );
-                    })
-                  )}
-                </AnimatePresence>
-              </tbody>
-            </table>
+        <div className="stat-card">
+          <div className="flex items-center gap-2 mb-4">
+            <div className="h-9 w-9 rounded-xl bg-teal-50 flex items-center justify-center text-teal-600">
+              <TrendingUp size={18} />
+            </div>
+            <span className="stat-card-label">{t("pages.inventory.totalAssetValue")}</span>
+          </div>
+          <div className="flex items-baseline gap-2">
+            <p className="text-3xl font-bold text-slate-800 tabular-nums">{money(totals.totalValue).split('.')[0]}</p>
+            <span className="text-xs font-semibold text-slate-400 uppercase tracking-widest">PHP</span>
           </div>
         </div>
 
-        {/* Global Stock Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-           <div className="rounded-[2.5rem] bg-white dark:bg-slate-900 p-8 shadow-xl ring-1 ring-slate-100 dark:ring-slate-800">
-              <div className="flex items-center gap-3 mb-6">
-                 <div className="h-10 w-10 rounded-xl bg-sky-50 dark:bg-sky-950/30 flex items-center justify-center text-sky-600">
-                    <Layers size={20} />
-                 </div>
-                 <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{t("pages.inventory.inventoryDepth")}</span>
-              </div>
-              <div className="flex items-baseline gap-3">
-                 <p className="text-4xl font-black text-slate-900 dark:text-white tabular-nums">{totals.count}</p>
-                 <span className="text-xs font-black text-slate-400 uppercase tracking-widest">SKUS</span>
-              </div>
-           </div>
-           
-           <div className="rounded-[2.5rem] bg-white dark:bg-slate-900 p-8 shadow-xl ring-1 ring-slate-100 dark:ring-slate-800">
-              <div className="flex items-center gap-3 mb-6">
-                 <div className="h-10 w-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 flex items-center justify-center text-emerald-600">
-                    <TrendingUp size={20} />
-                 </div>
-                 <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{t("pages.inventory.totalAssetValue")}</span>
-              </div>
-              <div className="flex items-baseline gap-3">
-                 <p className="text-4xl font-black text-slate-900 dark:text-white tabular-nums">{money(totals.totalValue).split('.')[0]}</p>
-                 <span className="text-xs font-black text-slate-400 uppercase tracking-widest">PHP</span>
-              </div>
-           </div>
-
-           <div className="rounded-[2.5rem] bg-slate-900 p-8 shadow-xl border border-slate-800 relative overflow-hidden group">
-              <div className="absolute -bottom-10 -right-10 h-32 w-32 bg-emerald-500/10 rounded-full blur-3xl group-hover:scale-150 transition-all duration-700" />
-              <div className="flex items-center gap-3 mb-6 relative z-10">
-                 <div className="h-10 w-10 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-400">
-                    <ShieldCheck size={20} />
-                 </div>
-                 <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
-                   {t("pages.inventory.opsIntegrity")}
-                 </span>
-              </div>
-              <div className="flex items-baseline gap-3 relative z-10">
-                 <p className="text-4xl font-black text-white tabular-nums">99.8%</p>
-                 <span className="text-xs font-black text-emerald-400 uppercase tracking-widest">
-                   {t("pages.common.syncHealthy")}
-                 </span>
-              </div>
-           </div>
+        <div className="stat-card bg-slate-800 ring-0 text-white">
+          <div className="flex items-center gap-2 mb-4">
+            <div className="h-9 w-9 rounded-xl bg-teal-500/20 flex items-center justify-center text-teal-400">
+              <ShieldCheck size={18} />
+            </div>
+            <span className="text-[10px] font-semibold uppercase tracking-widest text-slate-400">
+              {t("pages.inventory.opsIntegrity")}
+            </span>
+          </div>
+          <div className="flex items-baseline gap-2">
+            <p className="text-3xl font-bold text-white tabular-nums">99.8%</p>
+            <span className="text-xs font-semibold text-teal-400 uppercase tracking-widest">
+              {t("pages.common.syncHealthy")}
+            </span>
+          </div>
         </div>
       </div>
 
@@ -684,7 +678,7 @@ export function InventoryPage(): JSX.Element {
       />
 
       {scannerOpen && (
-        <QRScannerOverlay 
+        <QRScannerOverlay
           onClose={() => setScannerOpen(false)}
           onScan={(data) => {
             setScannerOpen(false);

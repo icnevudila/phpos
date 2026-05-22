@@ -66,7 +66,7 @@ export function PaymentModal({ open, invoice, onClose, onSaved }: Props): JSX.El
   }
 
   return (
-    <div className="fixed inset-0 z-40 flex items-center justify-center bg-slate-900/40 p-4">
+    <div className="fixed inset-0 z-40 flex items-center justify-center bg-white/40 p-4">
       <div className="w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-2xl">
         <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
           <div>
@@ -102,7 +102,7 @@ export function PaymentModal({ open, invoice, onClose, onSaved }: Props): JSX.El
                 max={balance}
                 value={amount}
                 onChange={(e) => setAmount(Number(e.target.value))}
-                className="w-full rounded-lg border border-slate-300 bg-white py-2 pl-8 pr-3 text-sm focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-100"
+                className="w-full rounded-lg border border-slate-300 bg-white py-2 pl-8 pr-3 text-sm focus:border-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-100"
               />
             </div>
             <div className="mt-1 flex gap-2 text-xs">
@@ -133,11 +133,7 @@ export function PaymentModal({ open, invoice, onClose, onSaved }: Props): JSX.El
                   type="button"
                   key={m.value}
                   onClick={() => setMethod(m.value)}
-                  className={`rounded-lg border px-2 py-2 text-xs font-semibold ${
-                    method === m.value
-                      ? "border-emerald-500 bg-emerald-50 text-emerald-800"
-                      : "border-slate-300 bg-white text-slate-700 hover:bg-slate-50"
-                  }`}
+                  className={`rounded-lg border px-2 py-2 text-xs font-semibold ${ method === m.value ? "border-teal-500 bg-teal-50 text-teal-800" : "border-slate-300 bg-white text-slate-700 hover:bg-slate-50" }`}
                 >
                   {m.label}
                 </button>
@@ -154,7 +150,7 @@ export function PaymentModal({ open, invoice, onClose, onSaved }: Props): JSX.El
               value={referenceNo}
               onChange={(e) => setReferenceNo(e.target.value)}
               placeholder={methodMeta?.needsRef ? "Transaction ID" : "Optional"}
-              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-100"
+              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:border-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-100"
             />
           </div>
 
@@ -166,7 +162,7 @@ export function PaymentModal({ open, invoice, onClose, onSaved }: Props): JSX.El
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               rows={2}
-              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-100"
+              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:border-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-100"
             />
           </div>
 
@@ -187,7 +183,7 @@ export function PaymentModal({ open, invoice, onClose, onSaved }: Props): JSX.El
             <button
               type="submit"
               disabled={submitting}
-              className="rounded-lg bg-gradient-to-br from-emerald-500 to-sky-500 px-5 py-2 text-sm font-semibold text-white shadow hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-70"
+              className="rounded-lg bg-gradient-to-br from-teal-500 to-sky-500 px-5 py-2 text-sm font-semibold text-white shadow hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-70"
             >
               {submitting ? "Saving…" : "Record payment"}
             </button>

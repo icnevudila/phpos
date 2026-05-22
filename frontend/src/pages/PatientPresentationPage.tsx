@@ -54,7 +54,7 @@ export function PatientPresentationPage() {
   if (!patient) return null;
 
   return (
-    <div className="fixed inset-0 bg-slate-950 text-white z-[9999] flex flex-col overflow-hidden selection:bg-indigo-500/30">
+    <div className="fixed inset-0 bg-[#f5f7f9] text-white z-[9999] flex flex-col overflow-hidden selection:bg-indigo-500/30">
       {/* Dynamic Background */}
       <div className="absolute inset-0 z-0">
          <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-indigo-500/10 blur-[150px] animate-pulse" />
@@ -170,7 +170,7 @@ export function PatientPresentationPage() {
       </main>
 
       {/* Footer Controls */}
-      <footer className="relative z-10 p-12 flex items-center justify-between border-t border-white/5 bg-slate-950/50 backdrop-blur-xl">
+      <footer className="relative z-10 p-12 flex items-center justify-between border-t border-white/5 bg-[#f5f7f9]/50 backdrop-blur-xl">
          <div className="flex items-center gap-8">
             <div className="flex items-center gap-3 text-slate-500">
                <Calendar size={18} />

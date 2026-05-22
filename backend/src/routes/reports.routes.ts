@@ -26,6 +26,8 @@ import {
 
   monthlyReportPdfHandler,
 
+  orSerialGapAuditHandler,
+
 } from "../controllers/reports.controller.js";
 
 import { authenticate } from "../middleware/authMiddleware.js";
@@ -92,6 +94,12 @@ reportsRouter.get(
 
   asyncHandler(monthlyReportPdfHandler),
 
+);
+
+reportsRouter.get(
+  "/or-gap-audit",
+  roleGuard([UserRole.ADMIN]),
+  asyncHandler(orSerialGapAuditHandler),
 );
 
 

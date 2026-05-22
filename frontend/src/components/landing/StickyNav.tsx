@@ -47,28 +47,24 @@ export function StickyNav(): JSX.Element {
 
   return (
     <header
-      className={`sticky top-0 z-40 transition-all duration-300 ${
-        scrolled
-          ? "bg-white/85 shadow-[0_4px_20px_rgba(15,23,42,0.08)] backdrop-blur-md dark:bg-slate-950/85 dark:shadow-[0_4px_20px_rgba(0,0,0,0.4)]"
-          : "bg-transparent"
-      }`}
+      className={`sticky top-0 z-40 transition-all duration-300 ${ scrolled ? "bg-white/85 shadow-[0_4px_20px_rgba(15,23,42,0.08)] backdrop-blur-md [0_4px_20px_rgba(0,0,0,0.4)]" : "bg-transparent" }`}
     >
       <nav className="mx-auto flex max-w-7xl items-center justify-between gap-2 px-2.5 py-2 sm:px-6 sm:py-4">
         <Link to="/" className="flex items-center">
-          <DentQLLogo size="sm" />
+          <DentQLLogo variant="app" size="sm" />
         </Link>
         <div className="hidden min-w-0 flex-1 items-center justify-end gap-0.5 md:flex">
           {links.map((l) => (
             <a
               key={l.id}
               href={l.href}
-              className="relative min-h-10 shrink-0 rounded-lg px-2.5 py-2 text-xs font-medium text-slate-700 transition hover:text-slate-900 xl:px-3 xl:text-sm dark:text-slate-300 dark:hover:text-white"
+              className="relative min-h-10 shrink-0 rounded-lg px-2.5 py-2 text-xs font-medium text-slate-700 transition hover:text-slate-900 xl:px-3 xl:text-sm"
             >
               {l.label}
               {active === l.id && (
                 <motion.span
                   layoutId="navActive"
-                  className="absolute inset-x-2 -bottom-0.5 h-0.5 rounded-full bg-gradient-to-r from-emerald-500 to-sky-500"
+                  className="absolute inset-x-2 -bottom-0.5 h-0.5 rounded-full bg-gradient-to-r from-teal-500 to-sky-500"
                   transition={{ type: "spring", stiffness: 380, damping: 30 }}
                 />
               )}
@@ -76,7 +72,7 @@ export function StickyNav(): JSX.Element {
           ))}
           <Link
             to="/contact"
-            className="ml-1 min-h-10 shrink-0 rounded-lg px-2.5 py-2 text-xs font-semibold text-emerald-700 transition hover:bg-emerald-50 xl:px-3 xl:text-sm dark:text-emerald-400 dark:hover:bg-emerald-950/40"
+            className="ml-1 min-h-10 shrink-0 rounded-lg px-2.5 py-2 text-xs font-semibold text-teal-700 transition hover:bg-teal-50 xl:px-3 xl:text-sm"
           >
             {t("landing.navContact")}
           </Link>
@@ -85,13 +81,13 @@ export function StickyNav(): JSX.Element {
           <LanguageSwitcher />
           <Link
             to={`/${PORTAL_DEMO_SLUG}/portal/login`}
-            className="hidden max-w-[9rem] truncate rounded-lg px-2 py-2 text-xs font-semibold text-emerald-700 transition hover:bg-emerald-50 hover:text-emerald-900 sm:inline-flex sm:max-w-none sm:px-3 sm:text-sm dark:text-emerald-400 dark:hover:bg-emerald-950/40 dark:hover:text-emerald-200"
+            className="hidden max-w-[9rem] truncate rounded-lg px-2 py-2 text-xs font-semibold text-teal-700 transition hover:bg-teal-50 hover:text-teal-900 sm:inline-flex sm:max-w-none sm:px-3 sm:text-sm"
           >
             {t("landing.navPatientPortal")}
           </Link>
           <Link
             to="/login"
-            className="inline-flex min-h-10 items-center gap-1.5 rounded-lg bg-slate-900 px-2.5 py-2 text-[11px] font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-slate-800 sm:px-4 sm:text-sm dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100"
+            className="inline-flex min-h-10 items-center gap-1.5 rounded-lg bg-teal-600 px-2.5 py-2 text-[11px] font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-teal-700 sm:px-4 sm:text-sm"
           >
             {t("landing.navSignIn")}
           </Link>

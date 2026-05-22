@@ -1,5 +1,6 @@
 import { Router } from "express";
-import rateLimit from "express-rate-limit";
+import rateLimitModule from "express-rate-limit";
+const rateLimit = (rateLimitModule as any).default || rateLimitModule;
 
 import {
   availabilityHandler,

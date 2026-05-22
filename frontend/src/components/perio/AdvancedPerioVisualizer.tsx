@@ -59,7 +59,7 @@ export function AdvancedPerioVisualizer({
   const lowerTeeth = processedTeeth.filter(t => !t.isUpper).sort((a, b) => b.toothNumber - a.toothNumber);
 
   return (
-    <div className={`flex flex-col gap-6 rounded-[2.5rem] bg-slate-50 dark:bg-slate-950/20 border border-slate-200 dark:border-slate-800 p-8 shadow-inner ${className}`}>
+    <div className={`flex flex-col gap-6 rounded-[2.5rem] bg-slate-50 border border-slate-200 p-8 shadow-inner ${className}`}>
       <header className="flex items-center justify-between">
          <div className="flex items-center gap-3">
             <div className="h-10 w-10 rounded-2xl bg-rose-500/10 flex items-center justify-center text-rose-600">
@@ -67,13 +67,13 @@ export function AdvancedPerioVisualizer({
             </div>
             <div>
                <h3 className="text-sm font-black uppercase tracking-widest text-slate-400">{t(`${CH}.advancedTitle`)}</h3>
-               <p className="text-xs font-bold text-slate-900 dark:text-white">{t(`${CH}.advancedSubtitle`)}</p>
+               <p className="text-xs font-bold text-slate-900">{t(`${CH}.advancedSubtitle`)}</p>
             </div>
          </div>
          
          <div className="flex items-center gap-4 text-[10px] font-black uppercase tracking-widest">
             <div className="flex items-center gap-1.5">
-               <div className="h-2 w-2 rounded-full bg-emerald-500" />
+               <div className="h-2 w-2 rounded-full bg-teal-500" />
                <span className="text-slate-500">{t(`${CH}.healthy`)}</span>
             </div>
             <div className="flex items-center gap-1.5">
@@ -101,11 +101,11 @@ export function AdvancedPerioVisualizer({
 
          {/* Gingival Midline */}
          <div className="relative flex items-center px-12">
-            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-slate-200 dark:via-slate-800 to-transparent" />
+            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-slate-200 to-transparent" />
             <div className="px-6 flex items-center gap-2">
-               <span className="text-[9px] font-black uppercase tracking-[0.4em] text-slate-300 dark:text-slate-600">{t(`${CH}.baseline`)}</span>
+               <span className="text-[9px] font-black uppercase tracking-[0.4em] text-slate-300">{t(`${CH}.baseline`)}</span>
             </div>
-            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-slate-200 dark:via-slate-800 to-transparent" />
+            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-slate-200 to-transparent" />
          </div>
 
          {/* Lower Arch */}
@@ -124,7 +124,7 @@ export function AdvancedPerioVisualizer({
       </div>
 
       {/* Clinical Insight Footer */}
-      <footer className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-6 border-t border-slate-200 dark:border-slate-800">
+      <footer className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-6 border-t border-slate-200">
          <InsightItem icon={<Droplets size={14} />} label={t(`${CH}.bleedingIndex`)} value={`${Math.round((processedTeeth.filter(t => t.bleeding).length / (processedTeeth.length || 1)) * 100)}%`} color="text-rose-500" />
          <InsightItem icon={<AlertCircle size={14} />} label={t(`${CH}.riskSites`)} value={processedTeeth.filter(t => t.maxPocket > 4).length} color="text-amber-500" />
          <InsightItem icon={<Info size={14} />} label={t(`${CH}.avgPocket`)} value={`${(processedTeeth.reduce((a, b) => a + b.avgPocket, 0) / (processedTeeth.length || 1)).toFixed(1)}mm`} color="text-sky-500" />
@@ -134,24 +134,20 @@ export function AdvancedPerioVisualizer({
 }
 
 function PerioToothNode({ tooth, isSelected, isHovered, onHover, onSelect }: any) {
-  const severityColor = tooth.maxPocket > 5 ? 'bg-rose-500' : tooth.maxPocket > 3 ? 'bg-amber-500' : 'bg-emerald-500';
+  const severityColor = tooth.maxPocket > 5 ? 'bg-rose-500' : tooth.maxPocket > 3 ? 'bg-amber-500' : 'bg-teal-500';
   
   return (
     <motion.div
       onMouseEnter={() => onHover(tooth.toothNumber)}
       onMouseLeave={() => onHover(null)}
       onClick={onSelect}
-      className={`relative flex flex-col items-center gap-2 p-2 rounded-2xl transition-all cursor-pointer ${
-        isSelected ? 'bg-white dark:bg-slate-900 shadow-xl ring-2 ring-sky-500/20 scale-110 z-10' : 'hover:bg-slate-100 dark:hover:bg-slate-800/50'
-      } ${tooth.isUpper ? 'flex-col' : 'flex-col-reverse'}`}
+      className={`relative flex flex-col items-center gap-2 p-2 rounded-2xl transition-all cursor-pointer ${ isSelected ? 'bg-white shadow-xl ring-2 ring-sky-500/20 scale-110 z-10' : 'hover:bg-slate-100 ' } ${tooth.isUpper ? 'flex-col' : 'flex-col-reverse'}`}
     >
-      <span className="text-[10px] font-black text-slate-400 dark:text-slate-600">{tooth.toothNumber}</span>
+      <span className="text-[10px] font-black text-slate-400">{tooth.toothNumber}</span>
       
       <div className="relative w-8 h-12 flex flex-col justify-center">
          {/* Simple Anatomical Representative Rect (can be upgraded to full SVG paths later) */}
-         <div className={`w-full h-full rounded-md border-2 transition-colors ${
-            isSelected ? 'border-sky-500 bg-sky-500/10' : 'border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-800/40'
-         }`} />
+         <div className={`w-full h-full rounded-md border-2 transition-colors ${ isSelected ? 'border-sky-500 bg-sky-500/10' : 'border-slate-200 bg-slate-100 ' }`} />
          
          {/* Pocket Depth Visual Overlay */}
          <div 
@@ -175,7 +171,7 @@ function PerioToothNode({ tooth, isSelected, isHovered, onHover, onSelect }: any
              initial={{ opacity: 0, y: 10 }}
              animate={{ opacity: 1, y: 0 }}
              exit={{ opacity: 0, y: 10 }}
-             className="absolute -bottom-12 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-lg bg-slate-900 text-white px-2 py-1 text-[9px] font-bold z-20 shadow-2xl"
+             className="absolute -bottom-12 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-lg bg-white text-white px-2 py-1 text-[9px] font-bold z-20 shadow-2xl"
            >
              {tooth.maxPocket}mm · {tooth.shape}
            </motion.div>
@@ -187,13 +183,13 @@ function PerioToothNode({ tooth, isSelected, isHovered, onHover, onSelect }: any
 
 function InsightItem({ icon, label, value, color }: any) {
   return (
-    <div className="flex items-center gap-3 p-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 shadow-sm">
-       <div className={`h-8 w-8 rounded-xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center ${color}`}>
+    <div className="flex items-center gap-3 p-3 rounded-2xl bg-white border border-slate-100 shadow-sm">
+       <div className={`h-8 w-8 rounded-xl bg-slate-50 flex items-center justify-center ${color}`}>
           {icon}
        </div>
        <div>
           <p className="text-[10px] font-black uppercase text-slate-400">{label}</p>
-          <p className="text-sm font-black text-slate-900 dark:text-white">{value}</p>
+          <p className="text-sm font-black text-slate-900">{value}</p>
        </div>
     </div>
   );

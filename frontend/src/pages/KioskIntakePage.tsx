@@ -70,7 +70,7 @@ export function KioskIntakePage() {
   );
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white flex flex-col">
+    <div className="min-h-screen bg-white text-white flex flex-col">
       {/* Kiosk Header */}
       <header className="p-8 md:p-12 flex items-center justify-between relative z-10">
         <button 
@@ -80,7 +80,7 @@ export function KioskIntakePage() {
           <ArrowLeft size={24} />
         </button>
         <div className="text-center">
-          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 mb-1">
+          <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-slate-500 mb-1">
             {t("pages.kioskIntake.headerKicker")}
           </p>
           <h2 className="text-xl font-black">
@@ -101,15 +101,15 @@ export function KioskIntakePage() {
               className="max-w-2xl w-full space-y-10"
             >
               <div className="text-center space-y-4">
-                <div className="h-24 w-24 rounded-[2.5rem] bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-500 mx-auto">
-                   <Search size={40} />
+                <div className="h-24 w-24 rounded-[2.5rem] bg-teal-500/10 border border-teal-500/20 flex items-center justify-center text-teal-500 mx-auto">
+                  <Search size={40} />
                 </div>
-                <h1 className="text-4xl md:text-6xl font-black tracking-tighter">{t("pages.kioskIntake.identifyTitle")}</h1>
+                <h1 className="text-4xl md:text-6xl font-black tracking-tight">{t("pages.kioskIntake.identifyTitle")}</h1>
                 <p className="text-lg text-slate-400 font-bold">{t("pages.kioskIntake.identifySub")}</p>
               </div>
 
               <div className="relative group">
-                <div className="absolute left-8 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-sky-500 transition-colors">
+                <div className="absolute left-8 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-teal-500 transition-colors">
                   <Phone size={28} />
                 </div>
                 <input 
@@ -117,14 +117,14 @@ export function KioskIntakePage() {
                   placeholder={t("pages.kioskIntake.phonePlaceholder")}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="h-24 w-full rounded-[2.5rem] bg-white/5 border-2 border-white/10 pl-24 pr-10 text-3xl font-black outline-none focus:border-sky-500 focus:bg-white/10 transition-all placeholder:text-slate-800"
+                  className="h-24 w-full rounded-[2.5rem] bg-white/5 border-2 border-white/10 pl-24 pr-10 text-3xl font-black outline-none focus:border-teal-500 focus:bg-white/10 transition-all placeholder:text-slate-700"
                 />
               </div>
 
               <button 
                 onClick={handleIdentify}
                 disabled={!searchQuery || isSearching}
-                className="w-full h-24 rounded-[2.5rem] bg-sky-500 text-white text-xl font-black uppercase tracking-widest shadow-2xl shadow-sky-500/20 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-4"
+                className="w-full h-24 rounded-[2.5rem] bg-teal-500 text-white text-xl font-black uppercase tracking-widest shadow-2xl shadow-teal-500/20 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-4"
               >
                 {isSearching ? <div className="h-8 w-8 border-4 border-white/30 border-t-white rounded-full animate-spin" /> : t("pages.kioskIntake.continue")}
                 {!isSearching && <ChevronRight size={24} />}
@@ -141,7 +141,7 @@ export function KioskIntakePage() {
               className="max-w-4xl w-full space-y-12"
             >
               <div className="text-center space-y-4">
-                <h1 className="text-4xl md:text-5xl font-black tracking-tighter">
+                <h1 className="text-4xl md:text-5xl font-black tracking-tight">
                   {t("pages.kioskIntake.profileWelcome", { name: patient?.firstName ?? "" })}
                 </h1>
                 <p className="text-lg text-slate-400 font-bold">{t("pages.kioskIntake.profileSub")}</p>
@@ -156,7 +156,7 @@ export function KioskIntakePage() {
                     <input 
                       type="text" 
                       defaultValue={field.value} 
-                      className="w-full bg-transparent text-xl font-black outline-none text-white focus:text-sky-400 transition-colors"
+                      className="w-full bg-transparent text-xl font-black outline-none text-white focus:text-teal-400 transition-colors"
                     />
                   </div>
                 ))}
@@ -181,16 +181,16 @@ export function KioskIntakePage() {
             >
               <div className="text-center space-y-4">
                 <div className="h-20 w-20 rounded-[2rem] bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-500 mx-auto">
-                   <HeartPulse size={32} />
+                  <HeartPulse size={32} />
                 </div>
-                <h1 className="text-4xl md:text-5xl font-black tracking-tighter">{t("pages.kioskIntake.medicalTitle")}</h1>
+                <h1 className="text-4xl md:text-5xl font-black tracking-tight">{t("pages.kioskIntake.medicalTitle")}</h1>
                 <p className="text-lg text-slate-400 font-bold">{t("pages.kioskIntake.medicalSub")}</p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {medicalConditions.map((cond, i) => (
                   <label key={i} className="flex items-center gap-4 p-6 rounded-3xl bg-white/5 border border-white/10 cursor-pointer hover:bg-white/10 transition-all group">
-                    <input type="checkbox" className="w-6 h-6 rounded-lg border-2 border-slate-700 bg-transparent checked:bg-rose-500 checked:border-rose-500 transition-all cursor-pointer" />
+                    <input type="checkbox" className="w-6 h-6 rounded-lg border-2 border-slate-700 bg-transparent checked:bg-teal-500 checked:border-teal-500 transition-all cursor-pointer" />
                     <span className="text-lg font-bold text-slate-300 group-hover:text-white transition-colors">{cond}</span>
                   </label>
                 ))}
@@ -209,7 +209,7 @@ export function KioskIntakePage() {
 
               <button 
                 onClick={() => setStep("CONSENT")}
-                className="w-full h-24 rounded-[2.5rem] bg-rose-500 text-white text-xl font-black uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-4 shadow-2xl shadow-rose-500/20"
+                className="w-full h-24 rounded-[2.5rem] bg-teal-500 text-white text-xl font-black uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-4 shadow-2xl shadow-teal-500/20"
               >
                 {t("pages.kioskIntake.saveContinue")} <ChevronRight size={24} />
               </button>
@@ -229,7 +229,7 @@ export function KioskIntakePage() {
                 patientName={`${patient?.firstName} ${patient?.lastName}`}
                 content={t("pages.kioskIntake.consentBody")}
                 onSign={() => setStep("SUCCESS")}
-                className="!bg-slate-900 !border-white/10"
+                className="!bg-slate-800 !border-white/10"
               />
             </motion.div>
           )}
@@ -246,15 +246,15 @@ export function KioskIntakePage() {
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ type: "spring", damping: 12 }}
-                  className="h-40 w-40 rounded-[3rem] bg-emerald-500 flex items-center justify-center text-white mx-auto shadow-2xl shadow-emerald-500/40"
+                  className="h-40 w-40 rounded-[3rem] bg-teal-500 flex items-center justify-center text-white mx-auto shadow-2xl shadow-teal-500/40"
                 >
-                   <CheckCircle2 size={80} />
+                  <CheckCircle2 size={80} />
                 </motion.div>
-                <div className="absolute inset-0 bg-emerald-500/20 blur-[100px] -z-10" />
+                <div className="absolute inset-0 bg-teal-500/20 blur-[100px] -z-10" />
               </div>
               
               <div className="space-y-4">
-                <h1 className="text-4xl md:text-6xl font-black tracking-tighter">{t("pages.kioskIntake.successTitle")}</h1>
+                <h1 className="text-4xl md:text-6xl font-black tracking-tight">{t("pages.kioskIntake.successTitle")}</h1>
                 <p className="text-xl text-slate-400 font-bold">{t("pages.kioskIntake.successSub")}</p>
               </div>
 
@@ -270,8 +270,8 @@ export function KioskIntakePage() {
       </main>
 
       {/* Decorative elements */}
-      <div className="fixed bottom-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-sky-500/5 blur-[120px] pointer-events-none" />
-      <div className="fixed top-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-indigo-500/5 blur-[120px] pointer-events-none" />
+      <div className="fixed bottom-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-teal-500/5 blur-[120px] pointer-events-none" />
+      <div className="fixed top-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-teal-600/5 blur-[120px] pointer-events-none" />
     </div>
   );
 }

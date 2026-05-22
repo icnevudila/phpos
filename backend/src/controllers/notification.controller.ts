@@ -120,3 +120,35 @@ export async function sendBulkSmsHandler(req: Request, res: Response): Promise<v
   });
   res.json({ success: true, data: result });
 }
+
+export async function retryNotificationHandler(req: Request, res: Response): Promise<void> {
+  const { id } = req.params;
+  const cId = clinicId(req);
+  const notification = await prisma.notification.findFirst({
+    where: { id, clinicId: cId },
+  });
+  if (!notification) {
+    throw new AppError("Notification not found", 404, "NOT_FOUND");
+  }
+  if (notification.channel !== "SMS") {
+    throw new AppError("Only SMS retries are supported", 400, "BAD_REQUEST");
+  }
+  const result = await sendSMS({
+    clinicId: notification.clinicId,
+    patientId: notification.patientId,
+    userId: notification.userId,
+    appointmentId: notification.appointmentId,
+    invoiceId: notification.invoiceId,
+    kind: notification.kind,
+    to: notification.recipient ?? "",
+    message: notification.message,
+  });
+  if (result.status === "SENT") {
+    try {
+      await prisma.notification.delete({ where: { id: notification.id } });
+    } catch (e) {
+      console.error("Failed to delete retried notification log:", e);
+    }
+  }
+  res.json({ success: true, data: result });
+}

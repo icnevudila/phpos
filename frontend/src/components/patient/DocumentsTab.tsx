@@ -38,17 +38,17 @@ export function DocumentsTab({ patientId, patientName = "Patient" }: DocumentsTa
     <>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         {PATIENT_FORM_CARDS.map((f) => (
-          <div key={f.slug} className="flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+          <div key={f.slug} className="flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
             <div>
-              <p className="text-sm font-semibold text-slate-900 dark:text-white">{t(`pages.patientDetail.documents.${f.titleKey}`)}</p>
+              <p className="text-sm font-semibold text-slate-900">{t(`pages.patientDetail.documents.${f.titleKey}`)}</p>
               <p className="mt-1 text-xs text-slate-500">{t(`pages.patientDetail.documents.${f.descKey}`)}</p>
             </div>
             <div className="flex flex-wrap gap-2">
-              <button type="button" onClick={() => void handleOpen(f.slug)} disabled={pending === f.slug} className="rounded-md bg-slate-900 px-3 py-1.5 text-xs font-medium text-white disabled:opacity-60">
+              <button type="button" onClick={() => void handleOpen(f.slug)} disabled={pending === f.slug} className="rounded-md bg-white px-3 py-1.5 text-xs font-medium text-white disabled:opacity-60">
                 {pending === f.slug ? t("pages.patientDetail.documents.opening") : t("pages.patientDetail.documents.openPdf")}
               </button>
               {f.signable ? (
-                <button type="button" onClick={() => setConsentOpen(true)} className="rounded-md border border-emerald-200 px-3 py-1.5 text-xs font-bold text-emerald-700">
+                <button type="button" onClick={() => setConsentOpen(true)} className="rounded-md border border-teal-200 px-3 py-1.5 text-xs font-bold text-teal-700">
                   {t("pages.patientDetail.documents.signElectronic")}
                 </button>
               ) : null}
@@ -59,7 +59,7 @@ export function DocumentsTab({ patientId, patientName = "Patient" }: DocumentsTa
 
       {consentOpen ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => setConsentOpen(false)}>
-          <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-4 dark:bg-slate-900" onClick={(e) => e.stopPropagation()}>
+          <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-4" onClick={(e) => e.stopPropagation()}>
             <ElectronicConsent
               title={t("pages.patientDetail.documents.informedConsentTitle")}
               content={t("pages.patientDetail.documents.informedConsentBody")}

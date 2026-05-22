@@ -333,7 +333,7 @@ export default function XRayCanvas({ imageUrl, width = 800, height = 600, classN
     <div className={`space-y-3 ${className}`.trim()}>
       <div className="flex flex-wrap items-center gap-2">
         {TOOLS.map((t) => (
-          <button key={t.id} onClick={() => setTool(t.id)} className={`px-2.5 py-1.5 rounded-lg text-xs font-medium border transition ${tool === t.id ? 'bg-slate-900 text-white border-slate-900' : 'bg-white text-slate-700 border-slate-200 hover:border-slate-300'}`}>
+          <button key={t.id} onClick={() => setTool(t.id)} className={`px-2.5 py-1.5 rounded-lg text-xs font-medium border transition ${tool === t.id ? 'bg-white text-white border-slate-900' : 'bg-white text-slate-700 border-slate-200 hover:border-slate-300'}`}>
             {t.icon} {t.label}
           </button>
         ))}
@@ -365,7 +365,7 @@ export default function XRayCanvas({ imageUrl, width = 800, height = 600, classN
           <button 
             onClick={handleSave} 
             disabled={isSaving}
-            className="px-2.5 py-1.5 rounded-lg text-xs font-medium bg-emerald-600 text-white border border-emerald-600 hover:bg-emerald-700 disabled:opacity-50"
+            className="px-2.5 py-1.5 rounded-lg text-xs font-medium bg-teal-600 text-white border border-teal-600 hover:bg-teal-700 disabled:opacity-50"
           >
             {isSaving ? 'Saving...' : 'Save DB'}
           </button>
@@ -443,12 +443,12 @@ export default function XRayCanvas({ imageUrl, width = 800, height = 600, classN
             <div className="space-y-2">
               <div className="flex items-center gap-2">
                 <span className="text-[10px] text-slate-500 w-16">Brightness</span>
-                <input type="range" min={50} max={150} value={brightness} onChange={(e) => setBrightness(Number(e.target.value))} className="flex-1 h-1 accent-emerald-600" />
+                <input type="range" min={50} max={150} value={brightness} onChange={(e) => setBrightness(Number(e.target.value))} className="flex-1 h-1 accent-teal-600" />
                 <span className="text-[10px] text-slate-500 w-8 text-right">{brightness}</span>
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-[10px] text-slate-500 w-16">Contrast</span>
-                <input type="range" min={50} max={150} value={contrast} onChange={(e) => setContrast(Number(e.target.value))} className="flex-1 h-1 accent-emerald-600" />
+                <input type="range" min={50} max={150} value={contrast} onChange={(e) => setContrast(Number(e.target.value))} className="flex-1 h-1 accent-teal-600" />
                 <span className="text-[10px] text-slate-500 w-8 text-right">{contrast}</span>
               </div>
               
@@ -457,7 +457,7 @@ export default function XRayCanvas({ imageUrl, width = 800, height = 600, classN
                   type="checkbox" 
                   checked={invert} 
                   onChange={(e) => setInvert(e.target.checked)} 
-                  className="rounded text-emerald-600 focus:ring-emerald-500" 
+                  className="rounded text-teal-600 focus:ring-teal-500" 
                 />
                 <span className="text-[10px] font-medium text-slate-700">Invert Image</span>
               </label>
@@ -477,7 +477,7 @@ export default function XRayCanvas({ imageUrl, width = 800, height = 600, classN
                       y: height / 2 - (height / 2) * newScale,
                     });
                   }} 
-                  className="flex-1 h-1 accent-emerald-600" 
+                  className="flex-1 h-1 accent-teal-600" 
                 />
                 <span className="text-[10px] text-slate-500 w-8 text-right">{Math.round(scale * 100)}%</span>
               </div>
@@ -490,7 +490,7 @@ export default function XRayCanvas({ imageUrl, width = 800, height = 600, classN
               {annotations.length === 0 && <p className="text-[10px] text-slate-400">No annotations</p>}
               {annotations.map((ann) => (
                 <div key={ann.id} className="flex items-center gap-1.5 p-1 hover:bg-slate-50 rounded">
-                  <button onClick={() => toggleLayer(ann.id)} className={`w-3.5 h-3.5 rounded border ${ann.visible ? 'bg-emerald-500 border-emerald-500' : 'bg-white border-slate-300'}`} />
+                  <button onClick={() => toggleLayer(ann.id)} className={`w-3.5 h-3.5 rounded border ${ann.visible ? 'bg-teal-500 border-teal-500' : 'bg-white border-slate-300'}`} />
                   <span className="text-[10px] text-slate-600 flex-1 truncate">{ann.type} {ann.text || ''}</span>
                   <button onClick={() => deleteAnnotation(ann.id)} className="text-[10px] text-red-400 hover:text-red-600 px-1">×</button>
                 </div>

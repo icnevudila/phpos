@@ -26,7 +26,7 @@ export function PersonasSection(): JSX.Element {
       title: t("landing.persona1Title"),
       desc: t("landing.persona1Desc"),
       bullets: [t("landing.persona1B1"), t("landing.persona1B2"), t("landing.persona1B3")],
-      gradient: "from-emerald-500 to-teal-500",
+      gradient: "from-teal-500 to-teal-500",
     },
     {
       key: "dentist",
@@ -34,7 +34,7 @@ export function PersonasSection(): JSX.Element {
       title: t("landing.persona2Title"),
       desc: t("landing.persona2Desc"),
       bullets: [t("landing.persona2B1"), t("landing.persona2B2"), t("landing.persona2B3")],
-      gradient: "from-sky-500 to-violet-500",
+      gradient: "from-sky-500 to-teal-500",
     },
     {
       key: "reception",
@@ -60,10 +60,10 @@ export function PersonasSection(): JSX.Element {
     <div>
       <div className="mx-auto max-w-2xl text-center">
         <SectionEyebrow label={t("landing.personasEyebrow")} icon={IconUsers} accent="sky" align="center" />
-        <h2 className="mt-3 text-4xl font-black tracking-tight text-slate-900 sm:text-5xl dark:text-white">
+        <h2 className="mt-3 text-4xl font-black tracking-tight text-slate-900 sm:text-5xl">
           {t("landing.personasTitle")}
         </h2>
-        <p className="mt-4 text-lg font-medium text-slate-600 dark:text-slate-400">{t("landing.personasSubtitle")}</p>
+        <p className="mt-4 text-lg font-medium text-slate-600">{t("landing.personasSubtitle")}</p>
       </div>
 
       <div className="mt-12 grid gap-10 lg:grid-cols-[1fr_1.5fr]">
@@ -72,11 +72,7 @@ export function PersonasSection(): JSX.Element {
             <button
               key={p.key}
               onClick={() => setActive(p.key)}
-              className={`group relative w-full overflow-hidden rounded-[2rem] border p-4 text-left transition-all duration-300 ${
-                active === p.key
-                  ? "border-emerald-200 bg-white shadow-xl dark:border-emerald-800 dark:bg-slate-900"
-                  : "border-transparent bg-slate-50/50 hover:bg-white dark:bg-slate-900/30 dark:hover:bg-slate-900/50"
-              }`}
+              className={`group relative w-full overflow-hidden rounded-[2rem] border p-4 text-left transition-all duration-300 ${ active === p.key ? "border-teal-200 bg-white shadow-xl " : "border-transparent bg-slate-50/50 hover:bg-white " }`}
             >
               <div className="flex items-center gap-4">
                 <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-2xl shadow-inner">
@@ -84,14 +80,14 @@ export function PersonasSection(): JSX.Element {
                   <div className={`absolute inset-0 bg-gradient-to-br ${p.gradient} opacity-20`} />
                 </div>
                 <div className="min-w-0">
-                  <p className={`text-lg font-black transition-colors ${active === p.key ? "text-emerald-600" : "text-slate-900 dark:text-white"}`}>
+                  <p className={`text-lg font-black transition-colors ${active === p.key ? "text-teal-600" : "text-slate-900 "}`}>
                     {p.title}
                   </p>
                   <p className="truncate text-xs font-medium text-slate-500">{p.desc}</p>
                 </div>
               </div>
               {active === p.key && (
-                <motion.div layoutId="personaPill" className="absolute -left-1 h-12 w-1.5 rounded-full bg-emerald-500" />
+                <motion.div layoutId="personaPill" className="absolute -left-1 h-12 w-1.5 rounded-full bg-teal-500" />
               )}
             </button>
           ))}
@@ -103,7 +99,7 @@ export function PersonasSection(): JSX.Element {
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 1.05 }}
           transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-          className="relative overflow-hidden rounded-[3rem] border border-slate-200 bg-white p-8 shadow-2xl dark:border-slate-800 dark:bg-slate-900"
+          className="relative overflow-hidden rounded-[3rem] border border-slate-200 bg-white p-8 shadow-2xl"
         >
           <div className="grid gap-8 md:grid-cols-[1fr_1.2fr]">
             <div className="relative aspect-[4/5] overflow-hidden rounded-[2rem] shadow-lg">
@@ -115,10 +111,10 @@ export function PersonasSection(): JSX.Element {
                 <IconUsers className="h-3 w-3" />
                 {current.key}
               </div>
-              <h3 className="text-3xl font-black tracking-tight text-slate-900 dark:text-white">
+              <h3 className="text-3xl font-black tracking-tight text-slate-900">
                 {current.title}
               </h3>
-              <p className="mt-4 text-lg font-medium text-slate-600 dark:text-slate-400">
+              <p className="mt-4 text-lg font-medium text-slate-600">
                 {current.desc}
               </p>
               <ul className="mt-8 space-y-4">
@@ -135,7 +131,7 @@ export function PersonasSection(): JSX.Element {
                         <path d="M20 6 9 17l-5-5" strokeLinecap="round" strokeLinejoin="round" />
                       </svg>
                     </span>
-                    <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">{b}</span>
+                    <span className="text-sm font-semibold text-slate-700">{b}</span>
                   </motion.li>
                 ))}
               </ul>

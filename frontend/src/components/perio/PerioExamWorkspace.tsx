@@ -133,7 +133,7 @@ export function PerioExamWorkspace({ patientId }: PerioExamWorkspaceProps): JSX.
         <div>
           <label className="text-xs font-bold uppercase text-slate-500">{t("pages.patientDetail.perio.selectExam")}</label>
           <select
-            className="mt-1 block rounded-lg border border-slate-200 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-900"
+            className="mt-1 block rounded-lg border border-slate-200 px-3 py-2 text-sm"
             value={examId ?? ""}
             onChange={(e) => {
               const v = e.target.value;
@@ -156,14 +156,14 @@ export function PerioExamWorkspace({ patientId }: PerioExamWorkspaceProps): JSX.
             type="button"
             disabled={saving || teeth.length === 0}
             onClick={() => void handleSave()}
-            className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2 text-xs font-black text-white disabled:opacity-50"
+            className="inline-flex items-center gap-2 rounded-xl bg-teal-600 px-4 py-2 text-xs font-black text-white disabled:opacity-50"
           >
             <Save size={14} /> {saving ? t("pages.patientDetail.perio.saving") : t("pages.patientDetail.perio.save")}
           </button>
         </div>
       </div>
       <textarea
-        className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-900"
+        className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm"
         rows={2}
         placeholder={t("pages.patientDetail.perio.notesPlaceholder")}
         value={notes}

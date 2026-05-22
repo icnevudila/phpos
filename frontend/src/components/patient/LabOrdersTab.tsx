@@ -60,7 +60,7 @@ export function LabOrdersTab({ patientId, canWrite }: { patientId: string; canWr
     <motion.div className="space-y-10" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
       <div className="flex items-center justify-between">
         <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} className="space-y-1">
-          <h3 className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">
+          <h3 className="text-xl font-black text-slate-900 uppercase tracking-tight">
             {t(`${LAB_NS}.title`)}
           </h3>
           <p className="text-xs font-bold text-slate-400">{t(`${LAB_NS}.subtitle`)}</p>
@@ -97,7 +97,7 @@ export function LabOrdersTab({ patientId, canWrite }: { patientId: string; canWr
       </AnimatePresence>
 
       {orders.length === 0 ? (
-        <div className="rounded-[3rem] border-2 border-dashed border-slate-200 bg-white/50 dark:border-slate-800 dark:bg-slate-900/50">
+        <div className="rounded-[3rem] border-2 border-dashed border-slate-200 bg-white/50">
           <ListEmptyState
             icon="box"
             title={t(`${LAB_NS}.empty`)}
@@ -147,7 +147,7 @@ function LabOrderCard({
     ORDERED: "bg-slate-100 text-slate-600 border-slate-200",
     SENT_TO_LAB: "bg-amber-100 text-amber-600 border-amber-200",
     RECEIVED: "bg-sky-100 text-sky-600 border-sky-200",
-    COMPLETED: "bg-emerald-100 text-emerald-600 border-emerald-200",
+    COMPLETED: "bg-teal-100 text-teal-600 border-teal-200",
     CANCELLED: "bg-rose-100 text-rose-600 border-rose-200",
   };
   const statusKey = STATUS_I18N[order.status];
@@ -156,7 +156,7 @@ function LabOrderCard({
   const orderDateStr = new Date(order.orderDate).toLocaleDateString(locale);
 
   return (
-    <div className="group relative flex flex-col md:flex-row gap-8 rounded-[2.5rem] bg-white p-8 shadow-xl shadow-slate-200/40 dark:bg-slate-900 dark:shadow-none ring-1 ring-slate-100 dark:ring-slate-800 transition-all hover:shadow-2xl">
+    <div className="group relative flex flex-col md:flex-row gap-8 rounded-[2.5rem] bg-white p-8 shadow-xl shadow-slate-200/40 ring-1 ring-slate-100 transition-all hover:shadow-2xl">
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex-1 space-y-6">
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="flex items-start justify-between">
           <div className="space-y-1">
@@ -165,7 +165,7 @@ function LabOrderCard({
             >
               {statusLabel}
             </span>
-            <h4 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight pt-2">
+            <h4 className="text-2xl font-black text-slate-900 tracking-tight pt-2">
               {order.itemDescription}
             </h4>
             <div className="flex items-center gap-4 text-[10px] font-black uppercase tracking-widest text-slate-400">
@@ -198,13 +198,13 @@ function LabOrderCard({
         </div>
 
         {order.notes && (
-          <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl text-xs font-medium text-slate-500 italic">
+          <div className="p-4 bg-slate-50 rounded-2xl text-xs font-medium text-slate-500 italic">
             &ldquo;{order.notes}&rdquo;
           </div>
         )}
       </motion.div>
 
-      <div className="md:w-48 flex md:flex-col justify-center gap-2 border-t md:border-t-0 md:border-l border-slate-50 dark:border-slate-800 pt-6 md:pt-0 md:pl-8">
+      <div className="md:w-48 flex md:flex-col justify-center gap-2 border-t md:border-t-0 md:border-l border-slate-50 pt-6 md:pt-0 md:pl-8">
         <StatusButton
           active={order.status === "SENT_TO_LAB"}
           onClick={() => onStatusUpdate("SENT_TO_LAB")}
@@ -241,11 +241,11 @@ function MetaTag({ label, value, icon }: { label: string; value: string; icon?: 
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
-      className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-50 dark:bg-slate-800/50 ring-1 ring-slate-100 dark:ring-slate-800"
+      className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-50 ring-1 ring-slate-100"
     >
       {icon && <span className="text-slate-400">{icon}</span>}
       <span className="text-[10px] font-black uppercase text-slate-400">{label}:</span>
-      <span className="text-[10px] font-black text-slate-900 dark:text-white uppercase tracking-widest">{value}</span>
+      <span className="text-[10px] font-black text-slate-900 uppercase tracking-widest">{value}</span>
     </motion.div>
   );
 }
@@ -265,12 +265,12 @@ function StatusButton({
 }) {
   const tones: Record<string, string> = {
     indigo: "bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white",
-    emerald: "bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white",
+    emerald: "bg-teal-50 text-teal-600 hover:bg-teal-600 hover:text-white",
     rose: "bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white",
   };
   const actives: Record<string, string> = {
     indigo: "bg-indigo-600 text-white shadow-lg shadow-indigo-600/20",
-    emerald: "bg-emerald-600 text-white shadow-lg shadow-emerald-600/20",
+    emerald: "bg-teal-600 text-white shadow-lg shadow-teal-600/20",
     rose: "bg-rose-600 text-white shadow-lg shadow-rose-600/20",
   };
 
@@ -328,7 +328,7 @@ function AddLabOrderForm({
   return (
     <form
       onSubmit={handleSubmit}
-      className="p-8 rounded-[2.5rem] bg-slate-50 dark:bg-slate-800/50 ring-1 ring-slate-200 dark:ring-slate-800 mb-10 space-y-6"
+      className="p-8 rounded-[2.5rem] bg-slate-50 ring-1 ring-slate-200 mb-10 space-y-6"
     >
       <div className="grid md:grid-cols-2 gap-6">
         <div className="space-y-2">
@@ -339,7 +339,7 @@ function AddLabOrderForm({
             value={formData.itemDescription}
             onChange={(e) => setFormData({ ...formData, itemDescription: e.target.value })}
             placeholder={t(`${LAB_NS}.formItemPlaceholder`)}
-            className="h-12 w-full rounded-xl bg-white dark:bg-slate-900 px-4 text-sm font-bold outline-none ring-1 ring-slate-100 dark:ring-slate-800 focus:ring-2 focus:ring-indigo-500 transition-all"
+            className="h-12 w-full rounded-xl bg-white px-4 text-sm font-bold outline-none ring-1 ring-slate-100 focus:ring-2 focus:ring-indigo-500 transition-all"
           />
         </div>
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-2">
@@ -350,7 +350,7 @@ function AddLabOrderForm({
             value={formData.labName}
             onChange={(e) => setFormData({ ...formData, labName: e.target.value })}
             placeholder={t(`${LAB_NS}.formLabPlaceholder`)}
-            className="h-12 w-full rounded-xl bg-white dark:bg-slate-900 px-4 text-sm font-bold outline-none ring-1 ring-slate-100 dark:ring-slate-800 focus:ring-2 focus:ring-indigo-500 transition-all"
+            className="h-12 w-full rounded-xl bg-white px-4 text-sm font-bold outline-none ring-1 ring-slate-100 focus:ring-2 focus:ring-indigo-500 transition-all"
           />
         </motion.div>
         <div className="grid grid-cols-2 gap-4">
@@ -362,7 +362,7 @@ function AddLabOrderForm({
               value={formData.shade}
               onChange={(e) => setFormData({ ...formData, shade: e.target.value })}
               placeholder={t(`${LAB_NS}.formShadePlaceholder`)}
-              className="h-12 w-full rounded-xl bg-white dark:bg-slate-900 px-4 text-sm font-bold outline-none ring-1 ring-slate-100 dark:ring-slate-800 focus:ring-2 focus:ring-indigo-500 transition-all"
+              className="h-12 w-full rounded-xl bg-white px-4 text-sm font-bold outline-none ring-1 ring-slate-100 focus:ring-2 focus:ring-indigo-500 transition-all"
             />
           </div>
           <div className="space-y-2">
@@ -373,7 +373,7 @@ function AddLabOrderForm({
               value={formData.mould}
               onChange={(e) => setFormData({ ...formData, mould: e.target.value })}
               placeholder={t(`${LAB_NS}.formMouldPlaceholder`)}
-              className="h-12 w-full rounded-xl bg-white dark:bg-slate-900 px-4 text-sm font-bold outline-none ring-1 ring-slate-100 dark:ring-slate-800 focus:ring-2 focus:ring-indigo-500 transition-all"
+              className="h-12 w-full rounded-xl bg-white px-4 text-sm font-bold outline-none ring-1 ring-slate-100 focus:ring-2 focus:ring-indigo-500 transition-all"
             />
           </div>
         </div>
@@ -385,7 +385,7 @@ function AddLabOrderForm({
             type="date"
             value={formData.dueDate}
             onChange={(e) => setFormData({ ...formData, dueDate: e.target.value })}
-            className="h-12 w-full rounded-xl bg-white dark:bg-slate-900 px-4 text-sm font-bold outline-none ring-1 ring-slate-100 dark:ring-slate-800 focus:ring-2 focus:ring-indigo-500 transition-all"
+            className="h-12 w-full rounded-xl bg-white px-4 text-sm font-bold outline-none ring-1 ring-slate-100 focus:ring-2 focus:ring-indigo-500 transition-all"
           />
         </div>
       </div>
@@ -396,7 +396,7 @@ function AddLabOrderForm({
         <textarea
           value={formData.notes}
           onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-          className="w-full h-24 rounded-xl bg-white dark:bg-slate-900 p-4 text-sm font-bold outline-none ring-1 ring-slate-100 dark:ring-slate-800 focus:ring-2 focus:ring-indigo-500 transition-all resize-none"
+          className="w-full h-24 rounded-xl bg-white p-4 text-sm font-bold outline-none ring-1 ring-slate-100 focus:ring-2 focus:ring-indigo-500 transition-all resize-none"
         />
       </motion.div>
       <div className="flex justify-end gap-3 pt-4">

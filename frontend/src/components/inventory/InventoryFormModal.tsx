@@ -96,7 +96,7 @@ export function InventoryFormModal({ open, item, onClose, onSubmit }: Props): JS
   }
 
   return (
-    <div className="fixed inset-0 z-40 flex items-center justify-center bg-slate-900/40 p-4">
+    <div className="fixed inset-0 z-40 flex items-center justify-center bg-white/40 p-4">
       <div className="w-full max-w-lg overflow-hidden rounded-2xl bg-white shadow-2xl">
         <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
           <h2 className="text-lg font-bold text-slate-900">
@@ -235,7 +235,7 @@ export function InventoryFormModal({ open, item, onClose, onSubmit }: Props): JS
             <button
               type="submit"
               disabled={busy}
-              className="rounded-lg bg-gradient-to-br from-emerald-500 to-sky-500 px-5 py-2 text-sm font-bold text-white shadow disabled:opacity-60"
+              className="rounded-lg bg-gradient-to-br from-teal-500 to-sky-500 px-5 py-2 text-sm font-bold text-white shadow disabled:opacity-60"
             >
               {busy
                 ? t("pages.inventory.form.saving")

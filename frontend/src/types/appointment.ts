@@ -125,10 +125,10 @@ export const APPOINTMENT_STATUS_STYLES: Record<
   },
   COMPLETED: {
     label: "Completed",
-    bg: "bg-emerald-100",
-    border: "border-emerald-300",
-    text: "text-emerald-900",
-    dot: "bg-emerald-500",
+    bg: "bg-teal-100",
+    border: "border-teal-300",
+    text: "text-teal-900",
+    dot: "bg-teal-500",
   },
   CANCELLED: {
     label: "Cancelled",

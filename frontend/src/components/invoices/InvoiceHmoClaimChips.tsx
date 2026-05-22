@@ -3,7 +3,7 @@ import type { HmoClaimStatus, InvoiceHmoClaimBrief } from "../../types/invoice";
 const STATUS_STYLE: Record<HmoClaimStatus, string> = {
   DRAFT: "bg-slate-100 text-slate-700",
   SUBMITTED: "bg-sky-100 text-sky-800",
-  APPROVED: "bg-emerald-100 text-emerald-800",
+  APPROVED: "bg-teal-100 text-teal-800",
   PARTIAL_APPROVED: "bg-amber-100 text-amber-900",
   REJECTED: "bg-rose-100 text-rose-800",
   PAID: "bg-indigo-100 text-indigo-900",

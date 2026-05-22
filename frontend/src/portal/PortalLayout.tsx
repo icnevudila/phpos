@@ -62,18 +62,18 @@ export function PortalLayout(): JSX.Element {
 
   if (loadError) {
     return (
-      <div className="relative flex min-h-screen items-center justify-center bg-slate-100 p-6 dark:bg-slate-950">
+      <div className="relative flex min-h-screen items-center justify-center bg-slate-100 p-6">
         <div className="absolute right-4 top-4">
           <LanguageSwitcher />
         </div>
-        <div className="rounded-2xl bg-white p-6 text-center shadow-md dark:bg-slate-900 dark:ring-1 dark:ring-slate-800">
-          <h1 className="text-lg font-bold text-rose-700 dark:text-rose-400">{t("portal.errorTitle")}</h1>
-          <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
+        <div className="rounded-2xl bg-white p-6 text-center shadow-md">
+          <h1 className="text-lg font-bold text-rose-700">{t("portal.errorTitle")}</h1>
+          <p className="mt-2 text-sm text-slate-600">
             <Trans i18nKey="portal.errorBody" values={{ slug }} />
           </p>
           <Link
             to="/"
-            className="mt-4 inline-flex min-h-11 items-center justify-center rounded-lg text-sm font-bold text-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 dark:text-emerald-400 dark:focus-visible:ring-offset-slate-950"
+            className="mt-4 inline-flex min-h-11 items-center justify-center rounded-lg text-sm font-bold text-teal-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2"
           >
             {t("portal.goHome")}
           </Link>
@@ -84,11 +84,11 @@ export function PortalLayout(): JSX.Element {
 
   if (!clinic) {
     return (
-      <div className="relative flex min-h-screen items-center justify-center bg-slate-100 dark:bg-slate-950">
+      <div className="relative flex min-h-screen items-center justify-center bg-slate-100">
         <div className="absolute right-4 top-4">
           <LanguageSwitcher />
         </div>
-        <p className="text-sm text-slate-500 dark:text-slate-400">{t("portal.loading")}</p>
+        <p className="text-sm text-slate-500">{t("portal.loading")}</p>
       </div>
     );
   }
@@ -106,25 +106,21 @@ export function PortalLayout(): JSX.Element {
 
   return (
     <div
-      className={`flex min-h-screen flex-col bg-gradient-to-b from-slate-50 to-white dark:from-slate-950 dark:to-slate-900 ${
-        isKiosk ? "text-[16px] sm:text-[17px]" : ""
-      }`}
+      className={`flex min-h-screen flex-col bg-gradient-to-b from-slate-50 to-white ${ isKiosk ? "text-[16px] sm:text-[17px]" : "" }`}
     >
       <div
-        className={`relative mx-auto flex w-full min-w-0 flex-1 flex-col bg-white shadow-xl dark:bg-slate-900 dark:shadow-black/40 ${
-          isKiosk ? "max-w-2xl" : "max-w-md sm:max-w-lg"
-        }`}
+        className={`relative mx-auto flex w-full min-w-0 flex-1 flex-col bg-white shadow-xl ${ isKiosk ? "max-w-2xl" : "max-w-md sm:max-w-lg" }`}
       >
-        <header className="flex items-center justify-between gap-2 border-b border-slate-200 px-4 py-3 dark:border-slate-800 dark:bg-slate-900/90">
+        <header className="flex items-center justify-between gap-2 border-b border-slate-200 px-4 py-3">
           <div className="flex min-w-0 flex-1 items-center gap-2">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-500 text-sm font-black text-white shadow-sm">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-teal-500 text-sm font-black text-white shadow-sm">
               {clinic.name[0]}
             </div>
             <div className="min-w-0">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-emerald-600 dark:text-emerald-400">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-teal-600">
                 {t("common.appName")}
               </p>
-              <p className="truncate text-sm font-bold text-slate-800 dark:text-slate-100">{clinic.name}</p>
+              <p className="truncate text-sm font-bold text-slate-800">{clinic.name}</p>
             </div>
           </div>
           <div className="flex shrink-0 items-center gap-2">
@@ -133,7 +129,7 @@ export function PortalLayout(): JSX.Element {
               <button
                 type="button"
                 onClick={onLogout}
-                className="min-h-9 rounded-full bg-slate-100 px-3 py-1.5 text-[11px] font-bold text-slate-600 hover:bg-slate-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 dark:focus-visible:ring-offset-slate-950"
+                className="min-h-9 rounded-full bg-slate-100 px-3 py-1.5 text-[11px] font-bold text-slate-600 hover:bg-slate-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2"
               >
                 {t("portal.logout")}
               </button>
@@ -144,7 +140,7 @@ export function PortalLayout(): JSX.Element {
         <main
           id="main"
           tabIndex={-1}
-          className="min-w-0 flex-1 overflow-y-auto overflow-x-hidden pb-24 outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/30 focus-visible:ring-inset"
+          className="min-w-0 flex-1 overflow-y-auto overflow-x-hidden pb-24 outline-none focus-visible:ring-2 focus-visible:ring-teal-500/30 focus-visible:ring-inset"
         >
           <Outlet context={context} />
         </main>
@@ -167,9 +163,7 @@ function BottomNav({ slug, kioskQuery }: { slug: string; kioskQuery: string }): 
   ];
   return (
     <nav
-      className={`pointer-events-auto fixed bottom-0 left-1/2 z-30 w-full -translate-x-1/2 border-t border-slate-200 bg-white/95 backdrop-blur dark:border-slate-800 dark:bg-slate-900/95 ${
-        q ? "max-w-2xl" : "max-w-md sm:max-w-lg"
-      }`}
+      className={`pointer-events-auto fixed bottom-0 left-1/2 z-30 w-full -translate-x-1/2 border-t border-slate-200 bg-white/95 backdrop-blur ${ q ? "max-w-2xl" : "max-w-md sm:max-w-lg" }`}
     >
       <ul className="grid grid-cols-4">
         {items.map((it) => (
@@ -177,17 +171,15 @@ function BottomNav({ slug, kioskQuery }: { slug: string; kioskQuery: string }): 
             <NavLink
               to={it.to}
               className={({ isActive }) =>
-                `flex min-h-[52px] flex-col items-center justify-center gap-0.5 py-2 text-[11px] font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-emerald-500 ${
-                  isActive ? "text-emerald-700 dark:text-emerald-400" : "text-slate-500 hover:text-emerald-700 dark:text-slate-400 dark:hover:text-emerald-400"
+                `flex min-h-[52px] flex-col items-center justify-center gap-0.5 py-2 text-[11px] font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-teal-500 ${
+                  isActive ? "text-teal-700 " : "text-slate-500 hover:text-teal-700  "
                 }`
               }
             >
               {({ isActive }) => (
                 <>
                   <span
-                    className={`flex h-8 w-8 items-center justify-center rounded-lg text-lg ${
-                      isActive ? "bg-emerald-100 dark:bg-emerald-900/50" : ""
-                    }`}
+                    className={`flex h-8 w-8 items-center justify-center rounded-lg text-lg ${ isActive ? "bg-teal-100 " : "" }`}
                   >
                     {it.icon}
                   </span>

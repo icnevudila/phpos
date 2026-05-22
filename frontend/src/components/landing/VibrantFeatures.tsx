@@ -21,11 +21,11 @@ export function VibrantFeatures(): JSX.Element {
         <div className="grid lg:grid-cols-2 gap-20 items-center">
           {/* Phone Mockup Left */}
           <div className="relative order-2 lg:order-1 flex justify-center">
-             <div className="relative w-[300px] h-[600px] bg-slate-900 rounded-[3rem] p-4 shadow-2xl ring-1 ring-slate-800">
+             <div className="relative w-[300px] h-[600px] bg-white rounded-[3rem] p-4 shadow-2xl ring-1 ring-slate-100">
                 <div className="h-full w-full bg-white rounded-[2.2rem] overflow-hidden">
                    <img src="https://img.freepik.com/premium-photo/modern-responsive-web-design-multiple-devices-isolated-white-background_1020495-23425.jpg" className="w-full h-full object-cover" alt="App Mockup" />
                 </div>
-                <div className="absolute left-1/2 top-4 w-20 h-4 -translate-x-1/2 bg-slate-900 rounded-full" />
+                <div className="absolute left-1/2 top-4 w-20 h-4 -translate-x-1/2 bg-white rounded-full" />
              </div>
           </div>
 

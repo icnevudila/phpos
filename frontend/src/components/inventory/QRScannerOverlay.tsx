@@ -50,10 +50,10 @@ export function QRScannerOverlay({ onScan, onClose }: QRScannerProps) {
   }, [scanned, error, onScan]);
 
   return (
-    <div className="fixed inset-0 z-[10000] bg-slate-950/90 backdrop-blur-md flex flex-col items-center justify-center p-6">
+    <div className="fixed inset-0 z-[10000] bg-[#f5f7f9]/90 backdrop-blur-md flex flex-col items-center justify-center p-6">
       <div className="relative w-full max-w-lg aspect-square rounded-[3rem] overflow-hidden border-2 border-white/20 shadow-2xl">
         {error ? (
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-900 text-rose-500 p-10 text-center gap-4">
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-white text-rose-500 p-10 text-center gap-4">
              <AlertCircle size={48} />
              <p className="font-black uppercase tracking-widest">{error}</p>
           </div>
@@ -89,9 +89,9 @@ export function QRScannerOverlay({ onScan, onClose }: QRScannerProps) {
                  <motion.div 
                    initial={{ opacity: 0, scale: 0.8 }}
                    animate={{ opacity: 1, scale: 1 }}
-                   className="absolute inset-0 bg-emerald-500/90 flex flex-col items-center justify-center gap-4"
+                   className="absolute inset-0 bg-teal-500/90 flex flex-col items-center justify-center gap-4"
                  >
-                    <div className="h-20 w-20 rounded-full bg-white flex items-center justify-center text-emerald-500">
+                    <div className="h-20 w-20 rounded-full bg-white flex items-center justify-center text-teal-500">
                        <Check size={40} />
                     </div>
                     <p className="font-black uppercase tracking-widest text-white">Item Recognized</p>

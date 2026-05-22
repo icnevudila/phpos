@@ -92,7 +92,7 @@ export function IntraoralPhotosTab({ patientId }: { patientId: string }): JSX.El
         <div className="flex items-start gap-3">
           <Camera className="mt-1 text-rose-500" size={22} />
           <div>
-            <h3 className="text-lg font-black text-slate-900 dark:text-white">{t(`${NS}.title`)}</h3>
+            <h3 className="text-lg font-black text-slate-900">{t(`${NS}.title`)}</h3>
             <p className="text-sm text-slate-500">{t(`${NS}.subtitle`)}</p>
           </div>
         </div>
@@ -101,7 +101,7 @@ export function IntraoralPhotosTab({ patientId }: { patientId: string }): JSX.El
             type="button"
             onClick={() => void load()}
             disabled={loading}
-            className="inline-flex items-center gap-1 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-bold text-slate-600 dark:border-slate-700"
+            className="inline-flex items-center gap-1 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-bold text-slate-600"
           >
             <RefreshCw size={14} className={loading ? "animate-spin" : ""} />
             {t(`${NS}.refresh`)}
@@ -128,7 +128,7 @@ export function IntraoralPhotosTab({ patientId }: { patientId: string }): JSX.El
       {loading ? (
         <p className="text-sm text-slate-500">{t(`${NS}.loading`)}</p>
       ) : files.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-900/50">
+        <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50">
           <ListEmptyState
             icon="box"
             title={t(`${NS}.empty`)}
@@ -150,7 +150,7 @@ export function IntraoralPhotosTab({ patientId }: { patientId: string }): JSX.El
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[60] flex items-center justify-center bg-slate-950/90 p-6"
+            className="fixed inset-0 z-[60] flex items-center justify-center bg-[#f5f7f9]/90 p-6"
             onClick={() => {
               setSelected(null);
               setPreviewUrl(null);
@@ -228,7 +228,7 @@ function PhotoGrid({
           key={f.id}
           type="button"
           onClick={() => onOpen(f)}
-          className="group relative aspect-square overflow-hidden rounded-2xl bg-slate-100 dark:bg-slate-800"
+          className="group relative aspect-square overflow-hidden rounded-2xl bg-slate-100"
         >
           {urls[f.id] ? (
             <img src={urls[f.id]} alt="" className="h-full w-full object-cover transition group-hover:scale-105" />

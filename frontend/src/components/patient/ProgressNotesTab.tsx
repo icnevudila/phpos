@@ -56,7 +56,7 @@ export function ProgressNotesTab({ patientId }: { patientId: string }): JSX.Elem
         <div className="flex items-start gap-3">
           <FileText className="mt-1 text-sky-500" size={22} />
           <div>
-            <h3 className="text-lg font-black text-slate-900 dark:text-white">{t(`${NS}.title`)}</h3>
+            <h3 className="text-lg font-black text-slate-900">{t(`${NS}.title`)}</h3>
             <p className="text-sm text-slate-500">{t(`${NS}.subtitle`)}</p>
           </div>
         </div>
@@ -71,7 +71,7 @@ export function ProgressNotesTab({ patientId }: { patientId: string }): JSX.Elem
         </button>
       </div>
 
-      <form onSubmit={(e) => void handleSave(e)} className="grid gap-4 rounded-2xl border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900">
+      <form onSubmit={(e) => void handleSave(e)} className="grid gap-4 rounded-2xl border border-slate-200 bg-white p-6">
         {(["subjective", "objective", "assessment", "plan"] as const).map((field) => (
           <label key={field} className="block text-xs font-bold text-slate-600">
             {t(`${NS}.${field}`)}
@@ -79,7 +79,7 @@ export function ProgressNotesTab({ patientId }: { patientId: string }): JSX.Elem
               value={form[field]}
               onChange={(e) => setForm({ ...form, [field]: e.target.value })}
               rows={field === "plan" ? 3 : 2}
-              className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-950"
+              className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm"
               placeholder={t(`${NS}.${field}Placeholder`)}
             />
           </label>
@@ -104,7 +104,7 @@ export function ProgressNotesTab({ patientId }: { patientId: string }): JSX.Elem
               key={n.id}
               initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
-              className="rounded-2xl border border-slate-100 bg-slate-50 p-5 dark:border-slate-800 dark:bg-slate-900/50"
+              className="rounded-2xl border border-slate-100 bg-slate-50 p-5"
             >
               <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
                 {new Date(n.createdAt).toLocaleString()} — Dr. {n.author.firstName} {n.author.lastName}
@@ -113,8 +113,8 @@ export function ProgressNotesTab({ patientId }: { patientId: string }): JSX.Elem
                 {(["subjective", "objective", "assessment", "plan"] as const).map((field) =>
                   n[field].trim() ? (
                     <div key={field}>
-                      <dt className="font-bold text-slate-700 dark:text-slate-300">{t(`${NS}.${field}`)}</dt>
-                      <dd className="whitespace-pre-wrap text-slate-600 dark:text-slate-400">{n[field]}</dd>
+                      <dt className="font-bold text-slate-700">{t(`${NS}.${field}`)}</dt>
+                      <dd className="whitespace-pre-wrap text-slate-600">{n[field]}</dd>
                     </div>
                   ) : null,
                 )}

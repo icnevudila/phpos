@@ -24,7 +24,7 @@ export interface TreatmentTimelineProps {
 const STATUS_STYLES: Record<TimelineStatus, { bg: string; border: string; text: string; bar: string }> = {
   planned:    { bg: 'bg-sky-50',  border: 'border-sky-200',  text: 'text-sky-700',  bar: 'bg-sky-500' },
   'in-progress': { bg: 'bg-amber-50', border: 'border-amber-200', text: 'text-amber-700', bar: 'bg-amber-500' },
-  completed:  { bg: 'bg-emerald-50', border: 'border-emerald-200', text: 'text-emerald-700', bar: 'bg-emerald-500' },
+  completed:  { bg: 'bg-teal-50', border: 'border-teal-200', text: 'text-teal-700', bar: 'bg-teal-500' },
   delayed:    { bg: 'bg-rose-50',  border: 'border-rose-200',  text: 'text-rose-700',  bar: 'bg-rose-500' },
 };
 
@@ -74,11 +74,11 @@ export default function TreatmentTimeline({ phases, editable = false, onUpdate, 
   return (
     <div className={`space-y-3 ${className}`.trim()}>
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <h3 className="text-sm font-semibold text-slate-900">Treatment Plan Timeline</h3>
+        <h3 className="text-sm font-semibold text-slate-800">Treatment Plan Timeline</h3>
         <div className="flex items-center gap-3 text-[11px]">
           <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-sm bg-sky-500" />Planned</span>
           <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-sm bg-amber-500" />In Progress</span>
-          <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-sm bg-emerald-500" />Completed</span>
+          <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-sm bg-teal-500" />Completed</span>
           <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-sm bg-rose-500" />Delayed</span>
         </div>
       </div>
@@ -133,7 +133,7 @@ export default function TreatmentTimeline({ phases, editable = false, onUpdate, 
                 {/* Bar */}
                 <rect
                   x={x} y={y} width={w} height={ROW_H - 20} rx={6}
-                  className={`${sty.bg} ${isSel ? 'stroke-slate-900' : sty.border}`}
+                  className={`${sty.bg} ${isSel ? 'stroke-teal-600' : sty.border}`}
                   strokeWidth={isSel ? 2 : 1}
                   style={{ cursor: editable ? 'grab' : 'pointer' }}
                   onMouseDown={(e) => handleMouseDown(e, phase.id)}
@@ -153,7 +153,7 @@ export default function TreatmentTimeline({ phases, editable = false, onUpdate, 
                 </text>
 
                 {/* Milestone diamond */}
-                <polygon points={`${x + w + 6},${y + 12} ${x + w + 12},${y + 18} ${x + w + 6},${y + 24} ${x + w},${y + 18}`} fill={phase.status === 'completed' ? '#10b981' : '#cbd5e1'} stroke="white" strokeWidth={1} />
+                <polygon points={`${x + w + 6},${y + 12} ${x + w + 12},${y + 18} ${x + w + 6},${y + 24} ${x + w},${y + 18}`} fill={phase.status === 'completed' ? '#14b8a6' : '#cbd5e1'} stroke="white" strokeWidth={1} />
               </g>
             );
           })}
@@ -174,14 +174,14 @@ export default function TreatmentTimeline({ phases, editable = false, onUpdate, 
             return (
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <h4 className="text-sm font-semibold text-slate-900">{phase.name}</h4>
+                  <h4 className="text-sm font-semibold text-slate-800">{phase.name}</h4>
                   <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium border ${STATUS_STYLES[phase.status].bg} ${STATUS_STYLES[phase.status].text} ${STATUS_STYLES[phase.status].border}`}>{phase.status}</span>
                 </div>
                 <p className="text-xs text-slate-500">{phase.notes || 'No notes'}</p>
                 {editable && (
                   <div className="flex items-center gap-3 pt-1">
                     <span className="text-[10px] text-slate-500">Progress</span>
-                    <input type="range" min={0} max={100} value={phase.progress} onChange={(e) => updatePhase(phase.id, { progress: Number(e.target.value) })} className="flex-1 h-1 accent-emerald-600" />
+                    <input type="range" min={0} max={100} value={phase.progress} onChange={(e) => updatePhase(phase.id, { progress: Number(e.target.value) })} className="flex-1 h-1 accent-teal-600" />
                     <span className="text-[10px] text-slate-600 w-8">{phase.progress}%</span>
                   </div>
                 )}
@@ -193,4 +193,3 @@ export default function TreatmentTimeline({ phases, editable = false, onUpdate, 
     </div>
   );
 }
-

@@ -45,3 +45,13 @@ export async function triggerNotificationCron(
   )) as unknown as ApiEnvelope<CronTriggerResult>;
   return res.data;
 }
+
+export async function retryNotification(
+  id: string,
+): Promise<TestNotificationResult> {
+  const res = (await api.post<ApiEnvelope<TestNotificationResult>>(
+    `/notifications/retry/${id}`,
+    {},
+  )) as unknown as ApiEnvelope<TestNotificationResult>;
+  return res.data;
+}

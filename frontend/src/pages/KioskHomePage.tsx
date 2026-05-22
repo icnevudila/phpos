@@ -42,11 +42,11 @@ export function KioskHomePage(): JSX.Element {
 
   if (loadError || !clinic) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-950 text-white p-6">
-         <div className="text-center space-y-4">
-            <div className="h-12 w-12 border-4 border-sky-500 border-t-transparent rounded-full animate-spin mx-auto" />
-            <p className="text-sm font-black uppercase tracking-widest text-slate-500">{t("pages.kiosk.uplink")}</p>
-         </div>
+      <div className="flex min-h-screen items-center justify-center bg-[#f5f7f9] p-6">
+        <div className="text-center space-y-4">
+          <div className="h-12 w-12 border-4 border-teal-500 border-t-transparent rounded-full animate-spin mx-auto" />
+          <p className="text-sm font-bold uppercase tracking-widest text-slate-400">{t("pages.kiosk.uplink")}</p>
+        </div>
       </div>
     );
   }
@@ -54,7 +54,7 @@ export function KioskHomePage(): JSX.Element {
   const portalLogin = `/${encodeURIComponent(slug)}/portal/login?kiosk=1`;
 
   return (
-    <div className="relative flex min-h-[100dvh] flex-col overflow-hidden bg-slate-950 text-white selection:bg-sky-500/30">
+    <div className="relative flex min-h-[100dvh] flex-col overflow-hidden bg-white text-white selection:bg-teal-500/30">
       {!online ? (
         <div
           role="alert"
@@ -64,113 +64,110 @@ export function KioskHomePage(): JSX.Element {
           {t("pages.kiosk.offlineBanner")}
         </div>
       ) : null}
-      {/* Immersive Background Elements */}
+
+      {/* Background */}
       <div className="absolute inset-0 z-0">
-         <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-sky-500/10 blur-[120px] animate-pulse" />
-         <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-indigo-500/10 blur-[150px]" />
-         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-[0.03]" />
-         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-slate-950/50 to-slate-950" />
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-teal-500/10 blur-[120px] animate-pulse" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-teal-600/10 blur-[150px]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-slate-900/50 to-slate-900" />
       </div>
 
       {/* Top Navigation */}
       <header className="relative z-10 flex items-center justify-between px-8 py-8 md:px-12">
-         <motion.div 
-           initial={{ opacity: 0, x: -20 }}
-           animate={{ opacity: 1, x: 0 }}
-           className="flex items-center gap-5"
-         >
-            <div className="h-16 w-16 rounded-[2rem] bg-gradient-to-br from-sky-500 to-indigo-600 flex items-center justify-center text-2xl font-black shadow-2xl shadow-sky-500/20 ring-1 ring-white/20">
-               {clinic.name[0]?.toUpperCase()}
+        <motion.div 
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="flex items-center gap-5"
+        >
+          <div className="h-16 w-16 rounded-[2rem] bg-gradient-to-br from-teal-500 to-teal-600 flex items-center justify-center text-2xl font-black shadow-2xl shadow-teal-500/20 ring-1 ring-white/20">
+            {clinic.name[0]?.toUpperCase()}
+          </div>
+          <div>
+            <h2 className="text-2xl font-black tracking-tight leading-none">{clinic.name}</h2>
+            <div className="mt-1 flex items-center gap-2">
+              <span className="h-2 w-2 rounded-full bg-teal-400 animate-pulse" />
+              <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">{t("pages.kiosk.nodeActive")}</span>
             </div>
-            <div>
-               <h2 className="text-2xl font-black tracking-tighter leading-none">{clinic.name}</h2>
-               <div className="mt-1 flex items-center gap-2">
-                  <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">{t("pages.kiosk.nodeActive")}</span>
-               </div>
-            </div>
-         </motion.div>
-         
-         <div className="flex items-center gap-4">
-            <LanguageSwitcher className="!bg-white/5 !border-white/10 !text-white hover:!bg-white/10" />
-         </div>
+          </div>
+        </motion.div>
+        
+        <div className="flex items-center gap-4">
+          <LanguageSwitcher className="!bg-white/5 !border-white/10 !text-white hover:!bg-white/10" />
+        </div>
       </header>
 
       {/* Main Kiosk Content */}
       <main className="relative z-10 flex flex-1 flex-col items-center justify-center px-6 py-12">
-         <motion.div 
-           initial={{ opacity: 0, y: 20 }}
-           animate={{ opacity: 1, y: 0 }}
-           className="max-w-4xl w-full text-center mb-16"
-         >
-            <h1 className="text-4xl md:text-7xl font-black tracking-tighter mb-6 leading-tight">
-               {t("pages.kiosk.welcomeTitle")}<span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-indigo-400">{t("pages.kiosk.welcomeAccent")}</span>
-            </h1>
-            <p className="text-lg md:text-2xl font-bold text-slate-400 max-w-2xl mx-auto">
-               {t("pages.kiosk.welcomeSub")}
-            </p>
-         </motion.div>
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="max-w-4xl w-full text-center mb-16"
+        >
+          <h1 className="text-4xl md:text-6xl font-black tracking-tight mb-6 leading-tight">
+            {t("pages.kiosk.welcomeTitle")}<span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-teal-300">{t("pages.kiosk.welcomeAccent")}</span>
+          </h1>
+          <p className="text-lg md:text-xl font-bold text-slate-400 max-w-2xl mx-auto">
+            {t("pages.kiosk.welcomeSub")}
+          </p>
+        </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-7xl">
-            {/* Patient Intake Card */}
-            <KioskCard 
-              onClick={() => navigate(`/${slug}/kiosk/intake`)}
-              icon={<ShieldCheck size={40} />}
-              kicker={t("pages.kiosk.intakeKicker")}
-              title={t("pages.kiosk.intakeTitle")}
-              desc={t("pages.kiosk.intakeDesc")}
-              color="from-indigo-500/20 to-indigo-600/5"
-              border="border-indigo-500/30"
-              glow="shadow-indigo-500/10"
-              accent="text-indigo-400"
-              t={t}
-            />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-7xl">
+          {/* Patient Intake Card */}
+          <KioskCard 
+            onClick={() => navigate(`/${slug}/kiosk/intake`)}
+            icon={<ShieldCheck size={40} />}
+            kicker={t("pages.kiosk.intakeKicker")}
+            title={t("pages.kiosk.intakeTitle")}
+            desc={t("pages.kiosk.intakeDesc")}
+            color="from-teal-500/20 to-teal-600/5"
+            border="border-teal-500/30"
+            accent="text-teal-400"
+            t={t}
+          />
 
-            {/* Patient Portal Card */}
-            <KioskCard 
-              to={portalLogin}
-              icon={<User size={40} />}
-              kicker={t("pages.kiosk.patientKicker")}
-              title={t("pages.kiosk.patientTitle")}
-              desc={t("pages.kiosk.patientDesc")}
-              color="from-sky-500/20 to-sky-600/5"
-              border="border-sky-500/30"
-              glow="shadow-sky-500/10"
-              accent="text-sky-400"
-              t={t}
-            />
+          {/* Patient Portal Card */}
+          <KioskCard 
+            to={portalLogin}
+            icon={<User size={40} />}
+            kicker={t("pages.kiosk.patientKicker")}
+            title={t("pages.kiosk.patientTitle")}
+            desc={t("pages.kiosk.patientDesc")}
+            color="from-teal-400/20 to-teal-500/5"
+            border="border-teal-400/30"
+            accent="text-teal-300"
+            t={t}
+          />
 
-            {/* Staff Portal Card */}
-            <KioskCard 
-              onClick={() => navigate("/login", { state: { from: { pathname: "/appointments" } } })}
-              icon={<Users size={40} />}
-              kicker={t("pages.kiosk.staffKicker")}
-              title={t("pages.kiosk.staffTitle")}
-              desc={t("pages.kiosk.staffDesc")}
-              color="from-emerald-500/20 to-emerald-600/5"
-              border="border-emerald-500/30"
-              glow="shadow-emerald-500/10"
-              accent="text-emerald-400"
-              t={t}
-            />
-         </div>
+          {/* Staff Portal Card */}
+          <KioskCard 
+            onClick={() => navigate("/login", { state: { from: { pathname: "/appointments" } } })}
+            icon={<Users size={40} />}
+            kicker={t("pages.kiosk.staffKicker")}
+            title={t("pages.kiosk.staffTitle")}
+            desc={t("pages.kiosk.staffDesc")}
+            color="from-slate-500/20 to-slate-600/5"
+            border="border-slate-500/30"
+            accent="text-slate-300"
+            t={t}
+          />
+        </div>
       </main>
 
       {/* Footer */}
-      <footer className="relative z-10 flex flex-col items-center gap-6 px-8 py-12 border-t border-white/5 bg-white/[0.02]">
-         <div className="flex items-center gap-8 opacity-40 grayscale hover:grayscale-0 transition-all duration-500">
-            <div className="flex items-center gap-2">
-               <ShieldCheck size={16} />
-               <span className="text-[10px] font-black uppercase tracking-widest">{t("pages.kiosk.securityBadge")}</span>
-            </div>
-            <div className="flex items-center gap-2">
-               <Globe size={16} />
-               <span className="text-[10px] font-black uppercase tracking-widest">{t("pages.kiosk.uplinkStatus")}</span>
-            </div>
-         </div>
-         <p className="text-[10px] font-bold text-slate-600 uppercase tracking-[0.3em]">
-            {t("pages.kiosk.engineV")}
-         </p>
+      <footer className="relative z-10 flex flex-col items-center gap-6 px-8 py-10 border-t border-white/5 bg-white/[0.02]">
+        <div className="flex items-center gap-8 opacity-40 grayscale hover:grayscale-0 transition-all duration-500">
+          <div className="flex items-center gap-2">
+            <ShieldCheck size={16} />
+            <span className="text-[10px] font-bold uppercase tracking-widest">{t("pages.kiosk.securityBadge")}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Globe size={16} />
+            <span className="text-[10px] font-bold uppercase tracking-widest">{t("pages.kiosk.uplinkStatus")}</span>
+          </div>
+        </div>
+        <p className="text-[10px] font-bold text-slate-600 uppercase tracking-[0.3em]">
+          {t("pages.kiosk.engineV")}
+        </p>
       </footer>
 
       {idle ? (
@@ -178,14 +175,14 @@ export function KioskHomePage(): JSX.Element {
           type="button"
           aria-label={t("pages.kiosk.touchToStart")}
           onClick={resetIdle}
-          className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-slate-950/95 backdrop-blur-md p-8 text-center"
+          className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white/95 backdrop-blur-md p-8 text-center"
         >
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             className="max-w-lg space-y-6"
           >
-            <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-[2rem] bg-gradient-to-br from-sky-500 to-indigo-600 text-3xl font-black shadow-2xl">
+            <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-[2rem] bg-gradient-to-br from-teal-500 to-teal-600 text-3xl font-black shadow-2xl">
               {clinic.name[0]?.toUpperCase()}
             </div>
             <h2 className="text-3xl font-black tracking-tight">{t("pages.kiosk.idleTitle")}</h2>
@@ -200,24 +197,24 @@ export function KioskHomePage(): JSX.Element {
   );
 }
 
-function KioskCard({ to, onClick, icon, kicker, title, desc, color, border, glow, accent, t }: any) {
+function KioskCard({ to, onClick, icon, kicker, title, desc, color, border, accent, t }: any) {
   const content = (
     <motion.div 
       whileHover={{ y: -15, scale: 1.03, rotateX: 2, rotateY: -2 }}
       whileTap={{ scale: 0.97 }}
-      className={`relative h-full flex flex-col items-start p-12 rounded-[3.5rem] bg-gradient-to-br ${color} border-2 ${border} ${glow} backdrop-blur-3xl transition-all duration-500 group cursor-pointer`}
+      className={`relative h-full flex flex-col items-start p-12 rounded-[3.5rem] bg-gradient-to-br ${color} border-2 ${border} backdrop-blur-3xl transition-all duration-500 group cursor-pointer`}
     >
-       <div className={`mb-10 h-24 w-24 rounded-[2.5rem] bg-white/5 border border-white/10 flex items-center justify-center ${accent} group-hover:scale-110 group-hover:bg-white/10 transition-all duration-500`}>
-          {icon}
-       </div>
-       <div className="flex-1">
-          <p className={`text-xs font-black uppercase tracking-[0.3em] mb-4 ${accent}`}>{kicker}</p>
-          <h3 className="text-4xl font-black tracking-tight mb-5 leading-tight">{title}</h3>
-          <p className="text-xl text-slate-400 font-bold leading-relaxed">{desc}</p>
-       </div>
-       <div className="mt-12 flex items-center gap-3 text-sm font-black uppercase tracking-widest text-white/40 group-hover:text-white transition-colors">
-          {t("pages.kiosk.beginCta")} <ChevronRight size={18} className="group-hover:translate-x-2 transition-transform" />
-       </div>
+      <div className={`mb-10 h-24 w-24 rounded-[2.5rem] bg-white/5 border border-white/10 flex items-center justify-center ${accent} group-hover:scale-110 group-hover:bg-white/10 transition-all duration-500`}>
+        {icon}
+      </div>
+      <div className="flex-1">
+        <p className={`text-xs font-black uppercase tracking-[0.3em] mb-4 ${accent}`}>{kicker}</p>
+        <h3 className="text-4xl font-black tracking-tight mb-5 leading-tight">{title}</h3>
+        <p className="text-xl text-slate-400 font-bold leading-relaxed">{desc}</p>
+      </div>
+      <div className="mt-12 flex items-center gap-3 text-sm font-black uppercase tracking-widest text-white/40 group-hover:text-white transition-colors">
+        {t("pages.kiosk.beginCta")} <ChevronRight size={18} className="group-hover:translate-x-2 transition-transform" />
+      </div>
     </motion.div>
   );
 

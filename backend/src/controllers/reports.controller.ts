@@ -14,6 +14,7 @@ import {
   buildDashboardQueue,
   buildDashboardSummary,
   buildMonthlyReport,
+  buildOrSerialGapAudit,
 } from "../services/reports.service.js";
 import { generateMonthlyReportPdf } from "../services/reportsPdf.js";
 import { AppError } from "../utils/errors.js";
@@ -142,4 +143,15 @@ export async function monthlyReportPdfHandler(req: Request, res: Response): Prom
     `inline; filename="monthly-${q.year}-${String(q.month).padStart(2, "0")}.pdf"`,
   );
   res.end(buffer);
+}
+
+export async function orSerialGapAuditHandler(req: Request, res: Response): Promise<void> {
+  const year = z.coerce
+    .number()
+    .int()
+    .min(2000)
+    .max(2100)
+    .parse(req.query.year ?? new Date().getFullYear());
+  const data = await buildOrSerialGapAudit(clinicId(req), year);
+  res.json({ success: true, data });
 }

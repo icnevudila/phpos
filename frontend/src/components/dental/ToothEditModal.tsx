@@ -77,7 +77,7 @@ export function ToothEditModal({
       >
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h2 className="text-lg font-semibold text-slate-900">Tooth #{toothNumber}</h2>
+            <h2 className="text-lg font-semibold text-slate-800">Tooth #{toothNumber}</h2>
             <p className="text-xs text-slate-500">Update condition, surfaces and notes.</p>
           </div>
           <button
@@ -99,7 +99,7 @@ export function ToothEditModal({
             <select
               value={condition}
               onChange={(e) => setCondition(e.target.value as ToothCondition)}
-              className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
+              className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
             >
               {CONDITION_ORDER.map((c) => (
                 <option key={c} value={c}>
@@ -121,13 +121,11 @@ export function ToothEditModal({
               return (
                 <label
                   key={s}
-                  className={`flex cursor-pointer items-center gap-2 rounded-lg border px-3 py-2 text-sm ${
-                    active ? "border-sky-500 bg-sky-50 text-sky-900" : "border-slate-300 bg-white text-slate-700"
-                  }`}
+                  className={`flex cursor-pointer items-center gap-2 rounded-lg border px-3 py-2 text-sm ${ active ? "border-teal-500 bg-teal-50 text-teal-900" : "border-slate-300 bg-white text-slate-700" }`}
                 >
                   <input
                     type="checkbox"
-                    className="h-4 w-4 accent-sky-600"
+                    className="h-4 w-4 accent-teal-600"
                     checked={active}
                     onChange={() => toggleSurface(s)}
                   />
@@ -145,7 +143,7 @@ export function ToothEditModal({
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             rows={3}
-            className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
+            className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
             placeholder="Clinical notes (optional)"
           />
         </div>
@@ -166,7 +164,7 @@ export function ToothEditModal({
             type="button"
             onClick={() => void handleSave()}
             disabled={saving}
-            className="rounded-lg bg-sky-600 px-4 py-2 text-sm font-semibold text-white hover:bg-sky-700 disabled:opacity-60"
+            className="rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white hover:bg-teal-700 disabled:opacity-60"
           >
             {saving ? "Saving…" : "Save"}
           </button>

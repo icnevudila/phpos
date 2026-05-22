@@ -51,10 +51,10 @@ export const INVENTORY_STATUS_STYLES: Record<
   { pillBg: string; pillText: string; ring: string; dot: string; label: string }
 > = {
   OK: {
-    pillBg: "bg-emerald-100",
-    pillText: "text-emerald-800",
-    ring: "ring-emerald-200",
-    dot: "bg-emerald-500",
+    pillBg: "bg-teal-100",
+    pillText: "text-teal-800",
+    ring: "ring-teal-200",
+    dot: "bg-teal-500",
     label: "OK",
   },
   LOW: {

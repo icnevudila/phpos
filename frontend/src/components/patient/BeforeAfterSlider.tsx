@@ -24,8 +24,8 @@ export interface BeforeAfterSliderProps {
 const TYPE_COLORS: Record<ComparisonType, string> = {
   orthodontic: 'bg-sky-100 text-sky-700 border-sky-200',
   whitening: 'bg-amber-100 text-amber-700 border-amber-200',
-  implant: 'bg-emerald-100 text-emerald-700 border-emerald-200',
-  filling: 'bg-violet-100 text-violet-700 border-violet-200',
+  implant: 'bg-teal-100 text-teal-700 border-teal-200',
+  filling: 'bg-teal-100 text-teal-700 border-teal-200',
   veneer: 'bg-rose-100 text-rose-700 border-rose-200',
   other: 'bg-slate-100 text-slate-700 border-slate-200',
 };
@@ -57,14 +57,14 @@ export default function BeforeAfterSlider({ pairs, className = '' }: BeforeAfter
           <button
             type="button"
             onClick={() => setVertical(false)}
-            className={`px-2.5 py-1 rounded-lg text-[10px] font-medium border ${!vertical ? 'bg-slate-900 text-white border-slate-900' : 'bg-white text-slate-600 border-slate-200'}`}
+            className={`px-2.5 py-1 rounded-lg text-[10px] font-medium border ${!vertical ? 'bg-white text-white border-slate-900' : 'bg-white text-slate-600 border-slate-200'}`}
           >
             {t(`${BA}.horizontal`)}
           </button>
           <button
             type="button"
             onClick={() => setVertical(true)}
-            className={`px-2.5 py-1 rounded-lg text-[10px] font-medium border ${vertical ? 'bg-slate-900 text-white border-slate-900' : 'bg-white text-slate-600 border-slate-200'}`}
+            className={`px-2.5 py-1 rounded-lg text-[10px] font-medium border ${vertical ? 'bg-white text-white border-slate-900' : 'bg-white text-slate-600 border-slate-200'}`}
           >
             {t(`${BA}.vertical`)}
           </button>
@@ -95,7 +95,7 @@ export default function BeforeAfterSlider({ pairs, className = '' }: BeforeAfter
             <div className="absolute top-3 left-3 px-2 py-1 rounded-md bg-black/60 text-white text-[10px] font-bold">
               {t(`${BA}.before`)}
             </div>
-            <div className="absolute top-3 right-3 px-2 py-1 rounded-md bg-emerald-600/90 text-white text-[10px] font-bold">
+            <div className="absolute top-3 right-3 px-2 py-1 rounded-md bg-teal-600/90 text-white text-[10px] font-bold">
               {t(`${BA}.after`)}
             </div>
           </div>
@@ -124,7 +124,7 @@ export default function BeforeAfterSlider({ pairs, className = '' }: BeforeAfter
               key={p.id}
               type="button"
               onClick={() => setSelected(p.id)}
-              className={`flex-shrink-0 w-24 rounded-xl border overflow-hidden transition ${selected === p.id ? 'border-emerald-500 ring-2 ring-emerald-500/20' : 'border-slate-200 hover:border-slate-300'}`}
+              className={`flex-shrink-0 w-24 rounded-xl border overflow-hidden transition ${selected === p.id ? 'border-teal-500 ring-2 ring-teal-500/20' : 'border-slate-200 hover:border-slate-300'}`}
             >
               <div className="h-16 bg-slate-100 relative">
                 <img src={p.afterUrl} alt={p.title} className="w-full h-full object-cover" />

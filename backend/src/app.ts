@@ -1,7 +1,10 @@
 import cors from "cors";
 import express, { type Express, type NextFunction, type Request, type Response } from "express";
-import rateLimit from "express-rate-limit";
-import helmet from "helmet";
+import rateLimitModule from "express-rate-limit";
+import helmetModule from "helmet";
+const rateLimit = (rateLimitModule as any).default || rateLimitModule;
+const helmet = (helmetModule as any).default || helmetModule;
+
 import morgan from "morgan";
 import { ZodError } from "zod";
 

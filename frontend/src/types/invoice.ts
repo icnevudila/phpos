@@ -57,6 +57,7 @@ export interface InvoicePatient {
   oscaIdNo: string | null;
   /** RA 10754 — PWD ID present triggers same statutory discount floor */
   pwdIdNo: string | null;
+  loyaltyPoints?: number;
 }
 
 export interface InvoiceAppointment {
@@ -112,10 +113,10 @@ export const INVOICE_STATUS_STYLES: Record<
   },
   PAID: {
     label: "Paid",
-    pillBg: "bg-emerald-100",
-    pillText: "text-emerald-800",
-    ring: "ring-emerald-200",
-    dot: "bg-emerald-500",
+    pillBg: "bg-teal-100",
+    pillText: "text-teal-800",
+    ring: "ring-teal-200",
+    dot: "bg-teal-500",
   },
 };
 

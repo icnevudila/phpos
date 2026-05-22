@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
+import { ChevronDown } from "lucide-react";
 import type { DashboardResponse } from "../../../services/reports";
 
 interface HmoClaimRadarProps {
@@ -34,6 +36,7 @@ export function HmoClaimRadar({
   resetAssignNowCounters,
 }: HmoClaimRadarProps): JSX.Element {
   const { t } = useTranslation();
+  const [opsExpanded, setOpsExpanded] = useState(false);
 
   const claimRadarRoleLabel = (() => {
     if (role === "ADMIN") return t("pages.dashboard.claimRadarRoleAdmin");
@@ -65,8 +68,8 @@ export function HmoClaimRadar({
           to: "/hmo-claims?status=APPROVED&ctx=CASHFLOW_COLLECT",
           title: t("pages.dashboard.claimRadarCashflow"),
           hint: t("pages.dashboard.claimRadarCashflowHint"),
-          className: "border-emerald-200 hover:bg-emerald-50",
-          titleClass: "text-emerald-700",
+          className: "border-teal-200 hover:bg-teal-50",
+          titleClass: "text-teal-700",
         },
       ];
     }
@@ -93,8 +96,8 @@ export function HmoClaimRadar({
           to: "/hmo-claims?status=REJECTED&ctx=RESUBMIT_QUEUE",
           title: t("pages.dashboard.claimRadarResubmit"),
           hint: t("pages.dashboard.claimRadarResubmitHint"),
-          className: "border-violet-200 hover:bg-violet-50",
-          titleClass: "text-violet-700",
+          className: "border-teal-200 hover:bg-teal-50",
+          titleClass: "text-teal-700",
         },
       ];
     }
@@ -120,8 +123,8 @@ export function HmoClaimRadar({
         to: "/hmo-claims?status=APPROVED&ctx=CASHFLOW_COLLECT",
         title: t("pages.dashboard.claimRadarCashflow"),
         hint: t("pages.dashboard.claimRadarCashflowHint"),
-        className: "border-emerald-200 hover:bg-emerald-50",
-        titleClass: "text-emerald-700",
+        className: "border-teal-200 hover:bg-teal-50",
+        titleClass: "text-teal-700",
       },
     ];
   })();
@@ -166,7 +169,25 @@ export function HmoClaimRadar({
           </Link>
         ))}
       </div>
-      <div className="mt-2 flex flex-wrap items-center gap-1.5">
+      <button
+        type="button"
+        onClick={() => setOpsExpanded((v) => !v)}
+        className="mt-3 flex w-full items-center justify-between gap-2 rounded-lg border border-amber-200 bg-white/90 px-3 py-2 text-left text-xs font-semibold text-amber-900 hover:bg-white"
+        aria-expanded={opsExpanded}
+      >
+        <span>
+          {opsExpanded
+            ? t("pages.dashboard.claimRadarHideOps")
+            : t("pages.dashboard.claimRadarShowOps")}
+        </span>
+        <ChevronDown
+          size={16}
+          className={`shrink-0 transition-transform ${opsExpanded ? "rotate-180" : ""}`}
+        />
+      </button>
+      {opsExpanded ? (
+      <div className="mt-2 space-y-2">
+      <div className="flex flex-wrap items-center gap-1.5">
         <span className="text-[10px] font-semibold uppercase tracking-wide text-amber-800">
           {t("pages.dashboard.claimRadarOpsTarget")}
         </span>
@@ -313,6 +334,8 @@ export function HmoClaimRadar({
           ))
         )}
       </div>
+      </div>
+      ) : null}
     </section>
   );
 }

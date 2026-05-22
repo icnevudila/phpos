@@ -59,23 +59,23 @@ export function ReportBuilder() {
   };
 
   return (
-    <div className="flex flex-col gap-6 rounded-[3.5rem] bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 p-10 shadow-2xl shadow-slate-200/50 dark:shadow-none overflow-hidden ring-1 ring-slate-100 dark:ring-slate-800">
+    <div className="flex flex-col gap-6 rounded-[3.5rem] bg-white border border-slate-100 p-10 shadow-2xl shadow-slate-200/50 overflow-hidden ring-1 ring-slate-100">
       <header className="flex flex-col md:flex-row md:items-center justify-between gap-6">
          <div className="flex items-center gap-4">
             <div className="h-12 w-12 rounded-2xl bg-indigo-500 flex items-center justify-center text-white shadow-lg shadow-indigo-500/20">
                <Settings2 size={24} />
             </div>
             <div>
-               <h3 className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">{t("pages.reportBuilder.title") || "Report Architect"}</h3>
+               <h3 className="text-xl font-black text-slate-900 uppercase tracking-tight">{t("pages.reportBuilder.title") || "Report Architect"}</h3>
                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">{t("pages.reportBuilder.subtitle") || "Configure your clinical data streams"}</p>
             </div>
          </div>
          
-         <div className="flex items-center gap-3 bg-slate-50 dark:bg-slate-800 p-1.5 rounded-[1.5rem]">
+         <div className="flex items-center gap-3 bg-slate-50 p-1.5 rounded-[1.5rem]">
             <button className="h-10 px-6 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-indigo-500 transition-colors">
                <Share2 size={14} className="inline mr-2" /> {t("common.share")}
             </button>
-            <button className="h-10 px-8 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-[10px] font-black uppercase tracking-widest shadow-lg transition-all hover:scale-105 active:scale-95">
+            <button className="h-10 px-8 rounded-xl bg-white text-white text-[10px] font-black uppercase tracking-widest shadow-lg transition-all hover:scale-105 active:scale-95">
                <Download size={14} className="inline mr-2" /> {t("common.export")}
             </button>
          </div>
@@ -94,11 +94,7 @@ export function ReportBuilder() {
                     <button 
                       key={d}
                       onClick={() => setDimension(d)}
-                      className={`h-12 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${
-                        dimension === d 
-                          ? 'bg-indigo-600 text-white shadow-xl shadow-indigo-500/20' 
-                          : 'bg-slate-50 dark:bg-slate-800 text-slate-500 hover:bg-slate-100'
-                      }`}
+                      className={`h-12 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${ dimension === d ? 'bg-indigo-600 text-white shadow-xl shadow-indigo-500/20' : 'bg-slate-50 text-slate-500 hover:bg-slate-100' }`}
                     >
                       {t(`pages.reportBuilder.dimensions.${d}`)}
                     </button>
@@ -116,11 +112,7 @@ export function ReportBuilder() {
                     <button 
                       key={m}
                       onClick={() => setMetric(m)}
-                      className={`w-full group flex items-center justify-between px-6 py-4 rounded-2xl border transition-all ${
-                        metric === m 
-                          ? 'bg-white dark:bg-slate-900 border-indigo-500 shadow-xl' 
-                          : 'bg-transparent border-slate-100 dark:border-slate-800 text-slate-400'
-                      }`}
+                      className={`w-full group flex items-center justify-between px-6 py-4 rounded-2xl border transition-all ${ metric === m ? 'bg-white border-indigo-500 shadow-xl' : 'bg-transparent border-slate-100 text-slate-400' }`}
                     >
                        <span className="text-[10px] font-black uppercase tracking-widest">{t(`pages.reportBuilder.metrics.${m}`)}</span>
                        <Zap size={16} className={metric === m ? 'text-indigo-500 animate-pulse' : 'text-slate-200'} />
@@ -139,11 +131,7 @@ export function ReportBuilder() {
                     <button 
                       key={type}
                       onClick={() => setChartType(type)}
-                      className={`h-14 flex-1 rounded-2xl flex items-center justify-center transition-all ${
-                        chartType === type 
-                          ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-xl' 
-                          : 'bg-slate-50 dark:bg-slate-800 text-slate-400 hover:bg-slate-100'
-                      }`}
+                      className={`h-14 flex-1 rounded-2xl flex items-center justify-center transition-all ${ chartType === type ? 'bg-white text-white shadow-xl' : 'bg-slate-50 text-slate-400 hover:bg-slate-100' }`}
                     >
                        {type === 'area' ? <LayoutGrid size={20} /> : type === 'bar' ? <BarChart3 size={20} /> : <LineChartIcon size={20} />}
                     </button>
@@ -154,13 +142,13 @@ export function ReportBuilder() {
 
          {/* Visualization Viewport */}
          <div className="lg:col-span-8">
-            <div className="relative h-full min-h-[500px] rounded-[3rem] bg-slate-50 dark:bg-slate-950/40 border border-slate-100 dark:border-slate-800 p-10 overflow-hidden">
+            <div className="relative h-full min-h-[500px] rounded-[3rem] bg-slate-50 border border-slate-100 p-10 overflow-hidden">
                
                <div className="relative z-10 mb-10 flex items-center justify-between">
                   <div>
-                     <h4 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tighter">{t("pages.reportBuilder.livePreview")}</h4>
+                     <h4 className="text-2xl font-black text-slate-900 uppercase tracking-tighter">{t("pages.reportBuilder.livePreview")}</h4>
                      <div className="flex items-center gap-2 mt-1">
-                        <div className={`h-2 w-2 rounded-full ${isFetching ? 'bg-indigo-500 animate-ping' : 'bg-emerald-500'}`} />
+                        <div className={`h-2 w-2 rounded-full ${isFetching ? 'bg-indigo-500 animate-ping' : 'bg-teal-500'}`} />
                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
                            {isFetching ? "Re-Architecting Data..." : `Streaming ${t(`pages.reportBuilder.dimensions.${dimension}`)} Analysis`}
                         </p>
@@ -239,18 +227,18 @@ export function ReportBuilder() {
                   </AnimatePresence>
                </div>
 
-               <div className="relative z-10 mt-12 flex items-center justify-between pt-8 border-t border-slate-200 dark:border-slate-800">
+               <div className="relative z-10 mt-12 flex items-center justify-between pt-8 border-t border-slate-200">
                   <div className="flex items-center gap-8">
                      <div className="flex flex-col">
                         <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest mb-1">Projected Peak</span>
-                        <span className="text-2xl font-black text-slate-900 dark:text-white tabular-nums">
+                        <span className="text-2xl font-black text-slate-900 tabular-nums">
                            {metric === 'revenue' ? '₱' : ''}{chartData.reduce((max, d) => Math.max(max, d.value), 0).toLocaleString()}
                         </span>
                      </div>
-                     <div className="h-10 w-px bg-slate-200 dark:bg-slate-800" />
+                     <div className="h-10 w-px bg-slate-200" />
                      <div className="flex flex-col">
                         <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest mb-1">Growth Index</span>
-                        <span className="text-2xl font-black text-emerald-500 tabular-nums">+14.2%</span>
+                        <span className="text-2xl font-black text-teal-500 tabular-nums">+14.2%</span>
                      </div>
                   </div>
                   

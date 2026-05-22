@@ -92,11 +92,11 @@ export default function TmjAnatomy({
   return (
     <div className={`space-y-3 ${className}`.trim()}>
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <h3 className="text-sm font-semibold text-slate-900">TMJ & Facial Anatomy</h3>
+        <h3 className="text-sm font-semibold text-slate-800">TMJ &amp; Facial Anatomy</h3>
         {editable && (
           <div className="flex items-center gap-1">
             {(['view', 'pain', 'bruxism', 'botox'] as const).map((m) => (
-              <button key={m} onClick={() => setMode(m)} className={`px-2.5 py-1 rounded-lg text-[10px] font-medium border capitalize ${mode === m ? 'bg-slate-900 text-white border-slate-900' : 'bg-white text-slate-600 border-slate-200'}`}>
+              <button key={m} onClick={() => setMode(m)} className={`px-2.5 py-1 rounded-lg text-[10px] font-medium border capitalize ${mode === m ? 'bg-teal-600 text-white border-teal-600' : 'bg-white text-slate-600 border-slate-200'}`}>
                 {m}
               </button>
             ))}
@@ -107,7 +107,7 @@ export default function TmjAnatomy({
       {editable && mode === 'pain' && (
         <div className="flex flex-wrap items-center gap-2 rounded-lg border border-slate-200 bg-white p-2">
           {(['clicking', 'locking', 'pain', 'tenderness'] as PainPointType[]).map((t) => (
-            <button key={t} onClick={() => setSelectedType(t)} className={`px-2 py-0.5 rounded text-[10px] font-medium border ${selectedType === t ? 'bg-slate-800 text-white' : 'bg-white text-slate-600'}`} style={{ borderColor: selectedType === t ? '#1f2937' : PAIN_COLORS[t] }}>
+            <button key={t} onClick={() => setSelectedType(t)} className={`px-2 py-0.5 rounded text-[10px] font-medium border ${selectedType === t ? 'bg-slate-700 text-white' : 'bg-white text-slate-600'}`} style={{ borderColor: selectedType === t ? '#374151' : PAIN_COLORS[t] }}>
               {PAIN_LABELS[t]}
             </button>
           ))}
@@ -120,13 +120,13 @@ export default function TmjAnatomy({
       {editable && mode === 'botox' && (
         <div className="flex flex-wrap items-center gap-2 rounded-lg border border-slate-200 bg-white p-2">
           {(['masseter', 'temporalis', 'frontalis'] as BotoxZone[]).map((z) => (
-            <button key={z} onClick={() => setSelectedZone(z)} className={`px-2 py-0.5 rounded text-[10px] font-medium border capitalize ${selectedZone === z ? 'bg-slate-800 text-white' : 'bg-white text-slate-600'}`}>
+            <button key={z} onClick={() => setSelectedZone(z)} className={`px-2 py-0.5 rounded text-[10px] font-medium border capitalize ${selectedZone === z ? 'bg-teal-600 text-white border-teal-600' : 'bg-white text-slate-600 border-slate-200'}`}>
               {z}
             </button>
           ))}
           <div className="h-4 w-px bg-slate-200" />
           <span className="text-[10px] text-slate-500">Units: {units}</span>
-          <input type="range" min={5} max={50} step={5} value={units} onChange={(e) => setUnits(Number(e.target.value))} className="w-24 h-1 accent-violet-500" />
+          <input type="range" min={5} max={50} step={5} value={units} onChange={(e) => setUnits(Number(e.target.value))} className="w-24 h-1 accent-teal-500" />
         </div>
       )}
 
@@ -226,7 +226,7 @@ export default function TmjAnatomy({
       {/* Summary */}
       <div className="grid grid-cols-3 gap-2">
         <div className="rounded-xl border border-slate-200 bg-white p-2.5 shadow-sm">
-          <h4 className="text-[10px] font-semibold text-slate-900 mb-1">Pain Points ({painPoints.length})</h4>
+          <h4 className="text-[10px] font-semibold text-slate-800 mb-1">Pain Points ({painPoints.length})</h4>
           {painPoints.length === 0 ? <p className="text-[9px] text-slate-400">None</p> : (
             <div className="space-y-0.5">
               {painPoints.map((p) => (
@@ -239,7 +239,7 @@ export default function TmjAnatomy({
           )}
         </div>
         <div className="rounded-xl border border-slate-200 bg-white p-2.5 shadow-sm">
-          <h4 className="text-[10px] font-semibold text-slate-900 mb-1">Bruxism ({bruxismMarkers.length})</h4>
+          <h4 className="text-[10px] font-semibold text-slate-800 mb-1">Bruxism ({bruxismMarkers.length})</h4>
           {bruxismMarkers.length === 0 ? <p className="text-[9px] text-slate-400">None</p> : (
             <div className="space-y-0.5">
               {bruxismMarkers.map((b) => (
@@ -252,7 +252,7 @@ export default function TmjAnatomy({
           )}
         </div>
         <div className="rounded-xl border border-slate-200 bg-white p-2.5 shadow-sm">
-          <h4 className="text-[10px] font-semibold text-slate-900 mb-1">Botox ({botoxPoints.length})</h4>
+          <h4 className="text-[10px] font-semibold text-slate-800 mb-1">Botox ({botoxPoints.length})</h4>
           {botoxPoints.length === 0 ? <p className="text-[9px] text-slate-400">None</p> : (
             <div className="space-y-0.5">
               {botoxPoints.map((b) => (
@@ -268,4 +268,3 @@ export default function TmjAnatomy({
     </div>
   );
 }
-

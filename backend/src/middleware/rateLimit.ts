@@ -1,4 +1,6 @@
-import rateLimit from 'express-rate-limit';
+
+import rateLimitModule from 'express-rate-limit';
+const rateLimit = (rateLimitModule as any).default || rateLimitModule;
 
 // Genel API istekleri için limit (15 dakikada 1000 istek)
 export const globalLimiter = rateLimit({

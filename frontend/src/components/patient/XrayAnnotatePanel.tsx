@@ -50,7 +50,7 @@ export function XrayAnnotatePanel({
   }
 
   return (
-    <div className="fixed inset-0 z-[70] flex flex-col bg-slate-950/98 p-4 md:p-8 overflow-y-auto">
+    <div className="fixed inset-0 z-[70] flex flex-col bg-[#f5f7f9]/98 p-4 md:p-8 overflow-y-auto">
       <div className="mb-4 flex items-center justify-between gap-4">
         <h3 className="text-sm font-black uppercase tracking-widest text-white">{t(`${NS}.annotateTitle`)}</h3>
         <button

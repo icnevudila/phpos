@@ -137,6 +137,8 @@ export function XrayWorkspace({ patientId }: { patientId: string }): JSX.Element
 
   async function openItem(item: MediaItem): Promise<void> {
     setSelected(item);
+    const f = files.find((x) => x.id === item.id);
+    setSelectedFile(f || null);
     setZoom(1);
     setRotation(0);
     setAiResult(null);
@@ -146,7 +148,7 @@ export function XrayWorkspace({ patientId }: { patientId: string }): JSX.Element
     <motion.div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h3 className="text-lg font-bold text-slate-900 dark:text-white">{t(`${NS}.title`)}</h3>
+          <h3 className="text-lg font-bold text-slate-900">{t(`${NS}.title`)}</h3>
           <p className="text-sm text-slate-500">{t(`${NS}.subtitle`)}</p>
         </div>
         <button
@@ -170,7 +172,7 @@ export function XrayWorkspace({ patientId }: { patientId: string }): JSX.Element
       {loading ? (
         <p className="text-sm text-slate-500">{t(`${NS}.loading`)}</p>
       ) : items.length === 0 && files.length === 0 ? (
-        <p className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-10 text-center text-sm text-slate-500 dark:border-slate-700 dark:bg-slate-900/50">
+        <p className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-10 text-center text-sm text-slate-500">
           {t(`${NS}.empty`)}
         </p>
       ) : (
@@ -180,7 +182,7 @@ export function XrayWorkspace({ patientId }: { patientId: string }): JSX.Element
               key={item.id}
               layoutId={`media-${item.id}`}
               onClick={() => void openItem(item)}
-              className="group relative aspect-square cursor-pointer overflow-hidden rounded-2xl bg-slate-100 dark:bg-slate-800"
+              className="group relative aspect-square cursor-pointer overflow-hidden rounded-2xl bg-slate-100"
             >
               <img
                 src={item.thumbnail}
@@ -207,7 +209,7 @@ export function XrayWorkspace({ patientId }: { patientId: string }): JSX.Element
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[60] flex items-center justify-center bg-slate-950/95 backdrop-blur-xl p-4 md:p-10"
+            className="fixed inset-0 z-[60] flex items-center justify-center bg-[#f5f7f9]/95 backdrop-blur-xl p-4 md:p-10"
           >
             <button
               type="button"
@@ -263,15 +265,26 @@ export function XrayWorkspace({ patientId }: { patientId: string }): JSX.Element
                   type="button"
                   onClick={() => void handleAiAnalyze()}
                   disabled={isAnalyzing || selected.type !== "XRAY"}
-                  className={`flex items-center gap-2 px-6 py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all ${
-                    isAnalyzing
-                      ? "bg-indigo-600/50 text-white cursor-wait"
-                      : "bg-indigo-600 text-white hover:bg-indigo-500 shadow-xl shadow-indigo-500/20"
-                  }`}
+                  className={`flex items-center gap-2 px-6 py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all ${ isAnalyzing ? "bg-indigo-600/50 text-white cursor-wait" : "bg-indigo-600 text-white hover:bg-indigo-500 shadow-xl shadow-indigo-500/20" }`}
                 >
                   <Sparkles size={18} className={isAnalyzing ? "animate-pulse" : ""} />
                   {isAnalyzing ? t(`${NS}.aiAnalyzing`) : t(`${NS}.aiAnalyze`)}
                 </button>
+
+                {selectedFile && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setAnnotateTarget({ file: selectedFile, url: selected.url });
+                      setSelected(null);
+                      setSelectedFile(null);
+                    }}
+                    className="flex items-center gap-2 bg-teal-600 hover:bg-teal-500 text-white px-6 py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-xl shadow-teal-500/20"
+                  >
+                    <Pencil size={18} />
+                    {t(`${NS}.annotate`)}
+                  </button>
+                )}
               </div>
 
               <AnimatePresence>

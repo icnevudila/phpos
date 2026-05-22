@@ -3,6 +3,7 @@ export {
   notificationQueryKeys,
   sendTestNotification,
   triggerNotificationCron,
+  retryNotification,
 } from "./notifications/api";
 
 export type {

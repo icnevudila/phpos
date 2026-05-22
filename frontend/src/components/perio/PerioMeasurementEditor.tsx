@@ -79,7 +79,7 @@ export function PerioMeasurementEditor({
 
   return (
     <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(280px,360px)]">
-      <div className="rounded-2xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900">
+      <div className="rounded-2xl border border-slate-200 bg-white p-4">
         <p className="mb-3 text-xs font-bold uppercase tracking-widest text-slate-500">
           {t("pages.patientDetail.perio.selectToothHint")}
         </p>
@@ -98,13 +98,7 @@ export function PerioMeasurementEditor({
                 data-testid={`perio-tooth-btn-${n}`}
                 aria-pressed={active}
                 onClick={() => onSelectTooth(active ? null : n)}
-                className={`h-9 w-9 rounded-lg text-xs font-black transition ring-offset-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 ${
-                  active
-                    ? "bg-emerald-600 text-white ring-2 ring-sky-400 ring-offset-2"
-                    : recorded
-                      ? "bg-emerald-100 text-emerald-800"
-                      : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                }`}
+                className={`h-9 w-9 rounded-lg text-xs font-black transition ring-offset-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 ${ active ? "bg-teal-600 text-white ring-2 ring-sky-400 ring-offset-2" : recorded ? "bg-teal-100 text-teal-800" : "bg-slate-100 text-slate-600 hover:bg-slate-200" }`}
               >
                 {n}
               </button>
@@ -113,7 +107,7 @@ export function PerioMeasurementEditor({
         </div>
       </div>
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900">
+      <div className="rounded-2xl border border-slate-200 bg-white p-4">
         {!tooth ? (
           <p className="text-sm text-slate-500">{t("pages.patientDetail.perio.pickTooth")}</p>
         ) : (

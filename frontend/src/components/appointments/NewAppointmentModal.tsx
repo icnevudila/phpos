@@ -133,7 +133,7 @@ export function NewAppointmentModal({
   }
 
   return (
-    <div className="fixed inset-0 z-40 flex items-center justify-center bg-slate-900/40 p-4">
+    <div className="fixed inset-0 z-40 flex items-center justify-center bg-white/40 p-4">
       <div className="w-full max-w-lg overflow-hidden rounded-2xl bg-white shadow-2xl">
         <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
           <div>
@@ -184,7 +184,7 @@ export function NewAppointmentModal({
               <select
                 value={type}
                 onChange={(e) => setType(e.target.value as AppointmentType)}
-                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-100"
+                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:border-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-100"
               >
                 {APPOINTMENT_TYPES.map((t) => (
                   <option key={t} value={t}>
@@ -204,7 +204,7 @@ export function NewAppointmentModal({
                 type="datetime-local"
                 value={scheduledAt}
                 onChange={(e) => setScheduledAt(e.target.value)}
-                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-100"
+                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:border-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-100"
               />
             </div>
             <div>
@@ -214,7 +214,7 @@ export function NewAppointmentModal({
               <select
                 value={duration}
                 onChange={(e) => setDuration(Number(e.target.value))}
-                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-100"
+                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:border-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-100"
               >
                 {DURATION_OPTIONS.map((d) => (
                   <option key={d} value={d}>
@@ -233,13 +233,13 @@ export function NewAppointmentModal({
               value={chairNo}
               onChange={(e) => setChairNo(e.target.value)}
               placeholder={t("pages.appointments.modal.chairPlaceholder")}
-              className="mb-2 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-100"
+              className="mb-2 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:border-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-100"
             />
             <textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               rows={3}
-              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-100"
+              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:border-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-100"
             />
           </div>
 
@@ -260,7 +260,7 @@ export function NewAppointmentModal({
             <button
               type="submit"
               disabled={submitting}
-              className="rounded-lg bg-gradient-to-br from-emerald-500 to-sky-500 px-5 py-2 text-sm font-semibold text-white shadow hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-70"
+              className="rounded-lg bg-gradient-to-br from-teal-500 to-sky-500 px-5 py-2 text-sm font-semibold text-white shadow hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-70"
             >
               {submitting
                 ? t("pages.appointments.modal.saving")

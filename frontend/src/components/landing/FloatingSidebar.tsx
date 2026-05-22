@@ -40,13 +40,13 @@ export function FloatingSidebar(): JSX.Element {
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 20 }}
-                className="text-[9px] font-black uppercase tracking-[0.2em] text-emerald-500 bg-emerald-50 px-2 py-1 rounded border border-emerald-100"
+                className="text-[9px] font-black uppercase tracking-[0.2em] text-teal-500 bg-teal-50 px-2 py-1 rounded border border-teal-100"
               >
                 {section.label}
               </motion.span>
             )}
           </AnimatePresence>
-          <div className={`h-2 transition-all duration-300 rounded-full ${activeSection === section.id ? 'w-8 bg-emerald-500' : 'w-2 bg-slate-200 group-hover:bg-slate-300'}`} />
+          <div className={`h-2 transition-all duration-300 rounded-full ${activeSection === section.id ? 'w-8 bg-teal-500' : 'w-2 bg-slate-200 group-hover:bg-slate-300'}`} />
         </a>
       ))}
     </div>

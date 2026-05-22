@@ -1306,3 +1306,68 @@ export async function buildBirJournalCsv(clinicId: string, year: number, month: 
   });
   return [header, ...lines].join("\n");
 }
+
+export interface OrGapAuditResult {
+  year: number;
+  totalIssued: number;
+  expectedCount: number;
+  missingCount: number;
+  missingSequences: string[];
+}
+
+export async function buildOrSerialGapAudit(clinicId: string, year: number): Promise<OrGapAuditResult> {
+  const prefix = `OR-${year}-`;
+  const invoices = await prisma.invoice.findMany({
+    where: {
+      clinicId,
+      orNumber: {
+        startsWith: prefix,
+      },
+    },
+    select: {
+      orNumber: true,
+    },
+  });
+
+  const numbers = invoices
+    .map((inv) => {
+      const parts = inv.orNumber?.split("-");
+      if (parts && parts.length === 3) {
+        const num = parseInt(parts[2], 10);
+        return isNaN(num) ? null : num;
+      }
+      return null;
+    })
+    .filter((n): n is number => n !== null)
+    .sort((a, b) => a - b);
+
+  if (numbers.length === 0) {
+    return {
+      year,
+      totalIssued: 0,
+      expectedCount: 0,
+      missingCount: 0,
+      missingSequences: [],
+    };
+  }
+
+  const min = 1;
+  const max = numbers[numbers.length - 1];
+  const numberSet = new Set(numbers);
+  const missing: string[] = [];
+
+  for (let i = min; i < max; i++) {
+    if (!numberSet.has(i)) {
+      const paddedStr = String(i).padStart(4, "0");
+      missing.push(`OR-${year}-${paddedStr}`);
+    }
+  }
+
+  return {
+    year,
+    totalIssued: numbers.length,
+    expectedCount: max,
+    missingCount: missing.length,
+    missingSequences: missing,
+  };
+}

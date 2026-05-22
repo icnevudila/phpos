@@ -56,8 +56,8 @@ const ZONE_IDS: ClinicFloorPlanZoneId[] = ['waiting-room', 'unit-1', 'unit-2', '
 const ZONE_ACCENT: Record<ClinicFloorPlanZoneId, string> = {
   'waiting-room': 'from-amber-400/20 to-amber-100/20 border-amber-200/70 text-amber-900',
   'unit-1': 'from-sky-400/20 to-sky-100/20 border-sky-200/70 text-sky-900',
-  'unit-2': 'from-emerald-400/20 to-emerald-100/20 border-emerald-200/70 text-emerald-900',
-  'xray-room': 'from-violet-400/20 to-violet-100/20 border-violet-200/70 text-violet-900',
+  'unit-2': 'from-teal-400/20 to-teal-100/20 border-teal-200/70 text-teal-900',
+  'xray-room': 'from-teal-400/20 to-teal-100/20 border-teal-200/70 text-teal-900',
 };
 
 const STATUS_TO_ZONE: Array<[RegExp, ClinicFloorPlanZoneId]> = [
@@ -353,7 +353,7 @@ export default function ClinicFloorPlanBoard({
                       zonePatients.map((patient) => (
                         <span
                           key={patient.id}
-                          className="inline-flex max-w-full items-center gap-2 rounded-full bg-slate-900/5 px-3 py-1.5 text-xs font-medium text-slate-700 ring-1 ring-slate-200"
+                          className="inline-flex max-w-full items-center gap-2 rounded-full bg-white/5 px-3 py-1.5 text-xs font-medium text-slate-700 ring-1 ring-slate-200"
                         >
                           <span className="h-2 w-2 rounded-full bg-sky-500" />
                           <span className="truncate">{patient.name}</span>

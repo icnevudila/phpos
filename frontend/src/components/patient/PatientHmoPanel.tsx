@@ -173,7 +173,7 @@ export function PatientHmoPanel({ patientId }: { patientId: string }): JSX.Eleme
                 {claims.map((c) => (
                   <tr key={c.id} className="border-b border-slate-100">
                     <td className="px-2 py-2 font-mono text-xs">
-                      <Link to={`/hmo-claims/${c.id}`} className="text-emerald-700 hover:underline">
+                      <Link to={`/hmo-claims/${c.id}`} className="text-teal-700 hover:underline">
                         {c.claimNumber}
                       </Link>
                     </td>

@@ -37,61 +37,61 @@ export function TeleConsultationPage() {
   };
 
   return (
-    <div className="fixed inset-0 bg-slate-950 text-white z-[10000] flex flex-col overflow-hidden">
+    <div className="fixed inset-0 bg-white text-white z-[10000] flex flex-col overflow-hidden">
       {/* Background Ambience */}
-      <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-slate-950 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-br from-teal-500/5 to-slate-900 pointer-events-none" />
 
       {/* Header */}
-      <header className="relative z-10 p-6 flex items-center justify-between bg-slate-900/50 backdrop-blur-xl border-b border-white/5">
-         <div className="flex items-center gap-4">
-            <div className="h-12 w-12 rounded-2xl bg-indigo-500 flex items-center justify-center shadow-lg shadow-indigo-500/20">
-               <Video size={20} />
+      <header className="relative z-10 p-5 flex items-center justify-between bg-slate-800/50 backdrop-blur-xl border-b border-white/5">
+         <div className="flex items-center gap-3">
+            <div className="h-10 w-10 rounded-xl bg-teal-500 flex items-center justify-center shadow-lg shadow-teal-500/20">
+               <Video size={18} />
             </div>
             <div>
-               <h1 className="text-lg font-black tracking-tight">Tele-Dental Consultation</h1>
-               <p className="text-xs text-slate-400 font-bold uppercase tracking-widest">
+               <h1 className="text-base font-bold tracking-tight">Tele-Dental Consultation</h1>
+               <p className="text-xs text-slate-400 font-medium uppercase tracking-wider">
                   {isJoined ? `Live · ${formatTime(callDuration)}` : "Waiting for patient..."}
                </p>
             </div>
          </div>
          
-         <div className="flex items-center gap-3">
-            <div className="px-4 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
-               <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+         <div className="flex items-center gap-2.5">
+            <div className="px-3 py-1.5 rounded-xl bg-teal-500/10 border border-teal-500/20 text-teal-400 text-[10px] font-semibold uppercase tracking-wider flex items-center gap-1.5">
+               <div className="h-1.5 w-1.5 rounded-full bg-teal-500 animate-pulse" />
                {t("pages.teleConsultation.secureConnection")}
             </div>
          </div>
       </header>
 
       {/* Video Grid */}
-      <main className="relative z-0 flex-1 p-6 grid grid-cols-1 lg:grid-cols-2 gap-6 items-center justify-center overflow-hidden">
+      <main className="relative z-0 flex-1 p-5 grid grid-cols-1 lg:grid-cols-2 gap-4 items-center justify-center overflow-hidden">
          {/* Patient Video (Large) */}
-         <div className="relative h-full w-full rounded-[3rem] bg-slate-900 border border-white/5 overflow-hidden group">
-            <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-12 space-y-6">
-               <div className="h-32 w-32 rounded-full bg-slate-800 flex items-center justify-center text-slate-600 border-4 border-slate-700/50">
-                  <User size={64} />
+         <div className="relative h-full w-full rounded-2xl bg-slate-800 border border-white/5 overflow-hidden group">
+            <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-10 space-y-5">
+               <div className="h-28 w-28 rounded-full bg-slate-700 flex items-center justify-center text-slate-500 border-4 border-slate-600/50">
+                  <User size={56} />
                </div>
                <div>
-                  <h3 className="text-2xl font-black">{t("pages.teleConsultation.patientNameFallback")}</h3>
-                  <p className="text-slate-500 font-medium mt-1">{t("pages.teleConsultation.connectingCamera")}</p>
+                  <h3 className="text-xl font-bold">{t("pages.teleConsultation.patientNameFallback")}</h3>
+                  <p className="text-slate-500 font-medium mt-1 text-sm">{t("pages.teleConsultation.connectingCamera")}</p>
                </div>
             </div>
             {/* Visual Effect */}
-            <div className="absolute inset-0 bg-indigo-500/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+            <div className="absolute inset-0 bg-teal-500/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
          </div>
 
          {/* Doctor Video (Small/Self View) */}
-         <div className="relative h-full w-full rounded-[3rem] bg-slate-900 border border-white/5 overflow-hidden shadow-2xl">
+         <div className="relative h-full w-full rounded-2xl bg-slate-800 border border-white/5 overflow-hidden shadow-2xl">
             {!isVideoOff ? (
               <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&q=80&w=800')] bg-cover bg-center">
-                 <div className="absolute inset-0 bg-slate-950/20" />
+                 <div className="absolute inset-0 bg-white/20" />
               </div>
             ) : (
-              <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-800 text-slate-500">
-                 <VideoOff size={48} />
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-700 text-slate-400">
+                 <VideoOff size={44} />
               </div>
             )}
-            <div className="absolute bottom-6 left-6 px-4 py-2 rounded-xl bg-slate-900/80 backdrop-blur-md text-[10px] font-black uppercase tracking-widest border border-white/10">
+            <div className="absolute bottom-5 left-5 px-3 py-1.5 rounded-lg bg-white/80 backdrop-blur-md text-[10px] font-semibold uppercase tracking-wider border border-white/10">
                {t("pages.teleConsultation.selfView", {
                  name: t("pages.teleConsultation.selfViewFallback"),
                })}
@@ -100,19 +100,19 @@ export function TeleConsultationPage() {
       </main>
 
       {/* Controls */}
-      <footer className="relative z-10 p-10 flex items-center justify-center gap-6 bg-gradient-to-t from-slate-950 to-transparent">
+      <footer className="relative z-10 p-8 flex items-center justify-center gap-4 bg-gradient-to-t from-slate-900 to-transparent">
          <button 
            onClick={() => setIsMuted(!isMuted)}
-           className={`h-20 w-20 rounded-full flex items-center justify-center transition-all ${isMuted ? "bg-rose-500 text-white" : "bg-white/10 hover:bg-white/20 border border-white/10"}`}
+           className={`h-16 w-16 rounded-full flex items-center justify-center transition-all ${isMuted ? "bg-rose-500 text-white" : "bg-white/10 hover:bg-white/20 border border-white/10"}`}
          >
-            {isMuted ? <MicOff size={28} /> : <Mic size={28} />}
+            {isMuted ? <MicOff size={24} /> : <Mic size={24} />}
          </button>
 
          <button 
            onClick={() => setIsVideoOff(!isVideoOff)}
-           className={`h-20 w-20 rounded-full flex items-center justify-center transition-all ${isVideoOff ? "bg-rose-500 text-white" : "bg-white/10 hover:bg-white/20 border border-white/10"}`}
+           className={`h-16 w-16 rounded-full flex items-center justify-center transition-all ${isVideoOff ? "bg-rose-500 text-white" : "bg-white/10 hover:bg-white/20 border border-white/10"}`}
          >
-            {isVideoOff ? <VideoOff size={28} /> : <Video size={28} />}
+            {isVideoOff ? <VideoOff size={24} /> : <Video size={24} />}
          </button>
 
          <button 
@@ -122,26 +122,26 @@ export function TeleConsultationPage() {
                if (confirm(t("pages.teleConsultation.endConfirm"))) navigate(-1);
              }
            }}
-           className={`h-20 px-12 rounded-full flex items-center gap-4 transition-all shadow-xl ${isJoined ? "bg-rose-600 hover:bg-rose-700 shadow-rose-600/20" : "bg-indigo-600 hover:bg-indigo-700 shadow-indigo-600/20"}`}
+           className={`h-16 px-10 rounded-full flex items-center gap-3 transition-all shadow-xl ${isJoined ? "bg-rose-600 hover:bg-rose-700 shadow-rose-600/20" : "bg-teal-600 hover:bg-teal-700 shadow-teal-600/20"}`}
          >
-            {isJoined ? <PhoneOff size={28} /> : <Video size={28} />}
-            <span className="text-xs font-black uppercase tracking-[0.2em]">
+            {isJoined ? <PhoneOff size={24} /> : <Video size={24} />}
+            <span className="text-xs font-bold uppercase tracking-wider">
                {isJoined ? t("pages.teleConsultation.endCall") : t("pages.teleConsultation.startCall")}
             </span>
          </button>
 
-         <div className="w-px h-12 bg-white/10 mx-4" />
+         <div className="w-px h-10 bg-white/10 mx-2" />
 
-         <button className="h-20 w-20 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 flex items-center justify-center">
-            <MessageSquare size={28} />
+         <button className="h-16 w-16 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 flex items-center justify-center">
+            <MessageSquare size={24} />
          </button>
 
-         <button className="h-20 w-20 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 flex items-center justify-center">
-            <Monitor size={28} />
+         <button className="h-16 w-16 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 flex items-center justify-center">
+            <Monitor size={24} />
          </button>
 
-         <button className="h-20 w-20 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 flex items-center justify-center">
-            <Settings size={28} />
+         <button className="h-16 w-16 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 flex items-center justify-center">
+            <Settings size={24} />
          </button>
       </footer>
     </div>

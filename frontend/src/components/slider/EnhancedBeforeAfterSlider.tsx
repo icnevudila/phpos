@@ -48,7 +48,7 @@ export function EnhancedBeforeAfterSlider({
   }, []);
 
   return (
-    <div className={`flex flex-col gap-6 rounded-[2.5rem] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-8 shadow-xl shadow-slate-200/40 dark:shadow-none ${className}`}>
+    <div className={`flex flex-col gap-6 rounded-[2.5rem] bg-white border border-slate-200 p-8 shadow-xl shadow-slate-200/40 ${className}`}>
       {/* Header with Luxury Typography */}
       <header className="flex items-center justify-between">
          <div className="flex items-center gap-4">
@@ -57,15 +57,15 @@ export function EnhancedBeforeAfterSlider({
             </div>
             <div>
                <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-400">Clinical Transformation</h3>
-               <p className="text-xl font-black text-slate-900 dark:text-white">{title}</p>
+               <p className="text-xl font-black text-slate-900">{title}</p>
             </div>
          </div>
          
          <div className="flex items-center gap-2">
-            <button className="h-10 w-10 rounded-xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-500 hover:text-sky-500 transition-colors">
+            <button className="h-10 w-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-500 hover:text-sky-500 transition-colors">
                <Share2 size={18} />
             </button>
-            <button className="h-10 w-10 rounded-xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-500 hover:text-sky-500 transition-colors">
+            <button className="h-10 w-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-500 hover:text-sky-500 transition-colors">
                <Download size={18} />
             </button>
          </div>
@@ -78,7 +78,7 @@ export function EnhancedBeforeAfterSlider({
         onMouseMove={onMouseMove}
         onTouchStart={() => setIsDragging(true)}
         onTouchMove={onTouchMove}
-        className="relative aspect-[16/9] w-full overflow-hidden rounded-[2rem] bg-slate-100 dark:bg-slate-950 cursor-ew-resize group select-none shadow-2xl"
+        className="relative aspect-[16/9] w-full overflow-hidden rounded-[2rem] bg-slate-100 cursor-ew-resize group select-none shadow-2xl"
       >
          {/* Before Image Layer */}
          <div className="absolute inset-0">
@@ -145,21 +145,21 @@ export function EnhancedBeforeAfterSlider({
             <p className="text-[10px] font-black uppercase text-slate-400 flex items-center gap-2">
                <Info size={12} /> Case Documentation
             </p>
-            <p className="text-sm font-bold text-slate-600 dark:text-slate-400 leading-relaxed">
+            <p className="text-sm font-bold text-slate-600 leading-relaxed">
                {notes || "Comparison visualization generated for clinical documentation and aesthetic evaluation."}
             </p>
          </div>
          <div className="flex flex-col items-end gap-2">
             <div className="text-right">
                <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Analysis Date</p>
-               <p className="text-sm font-black text-slate-900 dark:text-white">{date || new Date().toLocaleDateString()}</p>
+               <p className="text-sm font-black text-slate-900">{date || new Date().toLocaleDateString()}</p>
             </div>
             <div className="flex gap-2 mt-2">
                {[25, 50, 75].map(p => (
                  <button 
                    key={p}
                    onClick={() => setSliderPosition(p)}
-                   className="px-3 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 text-[9px] font-black text-slate-400 hover:text-sky-500 transition-colors"
+                   className="px-3 py-1.5 rounded-lg bg-slate-50 border border-slate-100 text-[9px] font-black text-slate-400 hover:text-sky-500 transition-colors"
                  >
                    {p}%
                  </button>

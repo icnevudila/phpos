@@ -12,12 +12,12 @@ import {
 } from "../services/portalApi";
 
 const fieldRing =
-  "rounded-xl border border-slate-200 bg-white px-3 py-3 text-base text-slate-900 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 dark:border-slate-600 dark:bg-slate-950 dark:text-slate-100 dark:focus:border-emerald-500 dark:focus:ring-emerald-900/40 sm:text-sm";
+  "rounded-xl border border-slate-200 bg-white px-3 py-3 text-base text-slate-900 outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100      sm:text-sm";
 
 function ToothLogo({ className = "h-10 w-10" }: { className?: string }): JSX.Element {
   return (
     <div
-      className={`flex shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-md ${className}`}
+      className={`flex shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-teal-500 to-teal-600 text-white shadow-md ${className}`}
     >
       <svg viewBox="0 0 24 24" fill="currentColor" className="h-[55%] w-[55%]" aria-hidden>
         <path d="M12 2a5 5 0 0 0-5 5c0 2 1 3 1 5s-1 4-1 6a3 3 0 0 0 6 0c0-1 .5-1 1-1s1 0 1 1a3 3 0 0 0 6 0c0-2-1-4-1-6s1-3 1-5a5 5 0 0 0-5-5c-1 0-2 .5-2 1s-1 1-2 1-1-.5-2-1-1-1-2-1Z" />
@@ -118,15 +118,15 @@ export function PortalLoginPage(): JSX.Element {
 
   return (
     <div className="relative flex min-h-0 flex-1 flex-col">
-      <div className="pointer-events-none absolute inset-0 overflow-hidden opacity-40 dark:opacity-25">
-        <div className="absolute -right-16 top-8 h-48 w-48 rounded-full bg-emerald-400/30 blur-3xl dark:bg-emerald-500/20" />
-        <div className="absolute -left-12 bottom-24 h-40 w-40 rounded-full bg-teal-400/25 blur-3xl dark:bg-teal-500/15" />
+      <div className="pointer-events-none absolute inset-0 overflow-hidden opacity-40">
+        <div className="absolute -right-16 top-8 h-48 w-48 rounded-full bg-teal-400/30 blur-3xl" />
+        <div className="absolute -left-12 bottom-24 h-40 w-40 rounded-full bg-teal-400/25 blur-3xl" />
       </div>
 
       <div className="relative flex min-h-[min(100%,42rem)] flex-1 flex-col lg:min-h-[min(100%,36rem)] lg:flex-row">
         {/* Sol: masaüstü / geniş kiosk */}
         <section
-          className="relative hidden min-h-0 flex-1 flex-col justify-between overflow-hidden bg-gradient-to-br from-emerald-600 via-emerald-700 to-teal-800 px-8 py-10 text-white lg:flex"
+          className="relative hidden min-h-0 flex-1 flex-col justify-between overflow-hidden bg-gradient-to-br from-teal-600 via-teal-700 to-teal-800 px-8 py-10 text-white lg:flex"
           aria-hidden
         >
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(255,255,255,0.12),transparent_55%)]" />
@@ -134,16 +134,16 @@ export function PortalLoginPage(): JSX.Element {
             <div className="flex items-center gap-3">
               <ToothLogo className="h-11 w-11" />
               <div>
-                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-100/90">{t("common.appName")}</p>
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-teal-100/90">{t("common.appName")}</p>
                 <p className="text-sm font-bold text-white">{t("pages.portal.login.heroKicker")}</p>
               </div>
             </div>
             <h1 className="mt-8 max-w-sm text-2xl font-black leading-tight tracking-tight xl:text-3xl">
               {t("pages.portal.login.heroTitle")}
             </h1>
-            <p className="mt-3 max-w-xs text-xs leading-relaxed text-emerald-50/95">{t("pages.portal.login.heroSub")}</p>
+            <p className="mt-3 max-w-xs text-xs leading-relaxed text-teal-50/95">{t("pages.portal.login.heroSub")}</p>
           </div>
-          <ul className="relative mt-8 space-y-2.5 text-xs font-medium text-emerald-50">
+          <ul className="relative mt-8 space-y-2.5 text-xs font-medium text-teal-50">
             <li className="flex gap-2">
               <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-white/15 text-[10px]">✓</span>
               {t("pages.portal.login.heroPoint1")}
@@ -157,7 +157,7 @@ export function PortalLoginPage(): JSX.Element {
               {t("pages.portal.login.heroPoint3")}
             </li>
           </ul>
-          <p className="relative mt-6 text-[10px] text-emerald-200/85">{t("pages.portal.login.heroFoot")}</p>
+          <p className="relative mt-6 text-[10px] text-teal-200/85">{t("pages.portal.login.heroFoot")}</p>
         </section>
 
         {/* Sağ: OTP formları */}
@@ -166,18 +166,18 @@ export function PortalLoginPage(): JSX.Element {
             <div className="mb-6 flex items-center gap-3 lg:hidden">
               <ToothLogo />
               <div className="min-w-0">
-                <p className="text-[10px] font-black uppercase tracking-widest text-emerald-600 dark:text-emerald-400">
+                <p className="text-[10px] font-black uppercase tracking-widest text-teal-600">
                   {t("common.appName")}
                 </p>
-                <p className="truncate text-xs font-bold text-slate-800 dark:text-slate-100">{t("pages.portal.login.heroKicker")}</p>
+                <p className="truncate text-xs font-bold text-slate-800">{t("pages.portal.login.heroKicker")}</p>
               </div>
             </div>
 
-            <div className="rounded-3xl border border-slate-200/90 bg-white/95 p-6 shadow-lg shadow-slate-900/5 backdrop-blur-sm dark:border-slate-700/80 dark:bg-slate-900/95 sm:p-7">
-              <h2 className="text-center text-xl font-black tracking-tight text-slate-900 dark:text-white sm:text-2xl">
+            <div className="rounded-3xl border border-slate-200/90 bg-white/95 p-6 shadow-lg shadow-slate-900/5 backdrop-blur-sm sm:p-7">
+              <h2 className="text-center text-xl font-black tracking-tight text-slate-900 sm:text-2xl">
                 {step === "phone" ? t("pages.portal.login.titlePhone") : t("pages.portal.login.titleCode")}
               </h2>
-              <p className="mt-2 text-center text-sm text-slate-600 dark:text-slate-400">
+              <p className="mt-2 text-center text-sm text-slate-600">
                 {step === "phone"
                   ? t("pages.portal.login.subtitlePhone")
                   : t("pages.portal.login.subtitleCode", { phone })}
@@ -188,12 +188,12 @@ export function PortalLoginPage(): JSX.Element {
                   <div>
                     <label
                       htmlFor="portal-phone"
-                      className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400"
+                      className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-slate-500"
                     >
                       {t("pages.portal.login.mobileLabel")}
                     </label>
-                    <div className="flex overflow-hidden rounded-xl border border-slate-200 bg-slate-50/80 focus-within:border-emerald-500 focus-within:ring-2 focus-within:ring-emerald-100 dark:border-slate-600 dark:bg-slate-950/80 dark:focus-within:ring-emerald-900/40">
-                      <span className="flex items-center border-r border-slate-200 bg-slate-100/80 px-3 text-sm font-bold text-slate-600 dark:border-slate-600 dark:bg-slate-800/80 dark:text-slate-300">
+                    <div className="flex overflow-hidden rounded-xl border border-slate-200 bg-slate-50/80 focus-within:border-teal-500 focus-within:ring-2 focus-within:ring-teal-100">
+                      <span className="flex items-center border-r border-slate-200 bg-slate-100/80 px-3 text-sm font-bold text-slate-600">
                         +63
                       </span>
                       <input
@@ -204,14 +204,14 @@ export function PortalLoginPage(): JSX.Element {
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
                         required
-                        className="min-h-12 w-full bg-transparent px-3 py-3 text-base outline-none dark:text-slate-100 sm:text-sm"
+                        className="min-h-12 w-full bg-transparent px-3 py-3 text-base outline-none sm:text-sm"
                       />
                     </div>
-                    <p className="mt-1.5 text-[11px] text-slate-500 dark:text-slate-400">{t("pages.portal.login.formatHint")}</p>
+                    <p className="mt-1.5 text-[11px] text-slate-500">{t("pages.portal.login.formatHint")}</p>
                   </div>
                   {error ? (
                     <div
-                      className="rounded-xl border border-rose-200 bg-rose-50 px-3 py-2.5 text-xs font-semibold text-rose-800 dark:border-rose-900/40 dark:bg-rose-950/50 dark:text-rose-100"
+                      className="rounded-xl border border-rose-200 bg-rose-50 px-3 py-2.5 text-xs font-semibold text-rose-800"
                       role="alert"
                     >
                       {error}
@@ -220,7 +220,7 @@ export function PortalLoginPage(): JSX.Element {
                   <button
                     type="submit"
                     disabled={loading || !phone.trim()}
-                    className="flex w-full min-h-12 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 py-3.5 text-sm font-bold text-white shadow-lg shadow-emerald-900/20 transition hover:brightness-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:focus-visible:ring-offset-slate-900"
+                    className="flex w-full min-h-12 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-teal-600 to-teal-600 py-3.5 text-sm font-bold text-white shadow-lg shadow-teal-900/20 transition hover:brightness-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     {loading ? (
                       <>
@@ -231,11 +231,11 @@ export function PortalLoginPage(): JSX.Element {
                       t("pages.portal.login.sendOtp")
                     )}
                   </button>
-                  <p className="text-center text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">
+                  <p className="text-center text-[11px] leading-relaxed text-slate-500">
                     {t("pages.portal.login.notPatient")}{" "}
                     <Link
                       to={`/${slug}/portal/register${kioskSuffix}`}
-                      className="font-bold text-emerald-600 hover:underline"
+                      className="font-bold text-teal-600 hover:underline"
                     >
                       {t("pages.portal.login.registerLink")}
                     </Link>
@@ -246,7 +246,7 @@ export function PortalLoginPage(): JSX.Element {
                   <div>
                     <label
                       htmlFor="portal-code"
-                      className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400"
+                      className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-slate-500"
                     >
                       {t("pages.portal.login.codeLabel")}
                     </label>
@@ -257,19 +257,19 @@ export function PortalLoginPage(): JSX.Element {
                       maxLength={6}
                       value={code}
                       onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
-                      className={`w-full text-center text-2xl font-black tracking-[0.45em] dark:text-white ${fieldRing}`}
+                      className={`w-full text-center text-2xl font-black tracking-[0.45em] ${fieldRing}`}
                       placeholder={t("pages.portal.login.codePlaceholder")}
                       required
                     />
                     {otpMeta?.devCode ? (
-                      <p className="mt-2 text-[11px] font-medium text-amber-800 dark:text-amber-200">
+                      <p className="mt-2 text-[11px] font-medium text-amber-800">
                         {t("pages.portal.login.devAutofill", { code: otpMeta.devCode })}
                       </p>
                     ) : null}
                   </div>
                   {error ? (
                     <div
-                      className="rounded-xl border border-rose-200 bg-rose-50 px-3 py-2.5 text-xs font-semibold text-rose-800 dark:border-rose-900/40 dark:bg-rose-950/50 dark:text-rose-100"
+                      className="rounded-xl border border-rose-200 bg-rose-50 px-3 py-2.5 text-xs font-semibold text-rose-800"
                       role="alert"
                     >
                       {error}
@@ -278,7 +278,7 @@ export function PortalLoginPage(): JSX.Element {
                   <button
                     type="submit"
                     disabled={loading || code.length !== 6}
-                    className="flex w-full min-h-12 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 py-3.5 text-sm font-bold text-white shadow-lg shadow-emerald-900/20 transition hover:brightness-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:focus-visible:ring-offset-slate-900"
+                    className="flex w-full min-h-12 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-teal-600 to-teal-600 py-3.5 text-sm font-bold text-white shadow-lg shadow-teal-900/20 transition hover:brightness-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     {loading ? (
                       <>
@@ -297,7 +297,7 @@ export function PortalLoginPage(): JSX.Element {
                         setCode("");
                         setError(null);
                       }}
-                      className="min-h-11 text-left text-xs font-semibold text-slate-600 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 dark:text-slate-400 dark:hover:text-white dark:focus-visible:ring-offset-slate-900"
+                      className="min-h-11 text-left text-xs font-semibold text-slate-600 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2"
                     >
                       {t("pages.portal.login.changeNumber")}
                     </button>
@@ -305,7 +305,7 @@ export function PortalLoginPage(): JSX.Element {
                       type="button"
                       disabled={cooldown > 0 || loading}
                       onClick={() => void onResend()}
-                      className="min-h-11 rounded-lg px-2 text-xs font-bold text-emerald-700 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 disabled:text-slate-400 disabled:no-underline dark:text-emerald-400 dark:focus-visible:ring-offset-slate-900"
+                      className="min-h-11 rounded-lg px-2 text-xs font-bold text-teal-700 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2 disabled:text-slate-400 disabled:no-underline"
                     >
                       {cooldown > 0 ? t("pages.portal.login.resendIn", { seconds: cooldown }) : t("pages.portal.login.resend")}
                     </button>
@@ -313,10 +313,10 @@ export function PortalLoginPage(): JSX.Element {
                 </form>
               )}
 
-              <p className="mt-6 border-t border-slate-100 pt-5 text-center text-xs dark:border-slate-800">
+              <p className="mt-6 border-t border-slate-100 pt-5 text-center text-xs">
                 <Link
                   to="/login"
-                  className="font-semibold text-emerald-700 underline-offset-2 hover:underline dark:text-emerald-400"
+                  className="font-semibold text-teal-700 underline-offset-2 hover:underline"
                 >
                   {t("pages.portal.login.staffLoginCta")}
                 </Link>

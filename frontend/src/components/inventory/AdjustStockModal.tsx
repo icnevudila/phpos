@@ -56,7 +56,7 @@ export function AdjustStockModal({ open, item, mode, onClose, onSubmit }: Props)
   }
 
   const palette = isIn
-    ? "from-emerald-500 to-sky-500"
+    ? "from-teal-500 to-sky-500"
     : "from-rose-500 to-amber-500";
 
   const reasonOptions = t(
@@ -65,7 +65,7 @@ export function AdjustStockModal({ open, item, mode, onClose, onSubmit }: Props)
   ) as string[];
 
   return (
-    <div className="fixed inset-0 z-40 flex items-center justify-center bg-slate-900/40 p-4">
+    <div className="fixed inset-0 z-40 flex items-center justify-center bg-white/40 p-4">
       <div className="w-full max-w-sm overflow-hidden rounded-2xl bg-white shadow-2xl">
         <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
           <div>

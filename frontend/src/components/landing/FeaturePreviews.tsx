@@ -30,12 +30,12 @@ function Field({
 const HOURS = ["09:00", "10:00", "11:00", "12:00", "13:00", "14:00"];
 
 const APPOINTMENT_LAYOUT = [
-  { day: 0, start: 0, span: 1, color: "bg-emerald-100 text-emerald-800 border-emerald-200" },
-  { day: 0, start: 2, span: 2, color: "bg-violet-100 text-violet-800 border-violet-200" },
+  { day: 0, start: 0, span: 1, color: "bg-teal-100 text-teal-800 border-teal-200" },
+  { day: 0, start: 2, span: 2, color: "bg-teal-100 text-teal-800 border-teal-200" },
   { day: 1, start: 1, span: 1, color: "bg-sky-100 text-sky-800 border-sky-200" },
   { day: 1, start: 3, span: 1, color: "bg-amber-100 text-amber-800 border-amber-200" },
   { day: 2, start: 0, span: 2, color: "bg-rose-100 text-rose-800 border-rose-200" },
-  { day: 3, start: 2, span: 1, color: "bg-emerald-100 text-emerald-800 border-emerald-200" },
+  { day: 3, start: 2, span: 1, color: "bg-teal-100 text-teal-800 border-teal-200" },
   { day: 3, start: 4, span: 1, color: "bg-sky-100 text-sky-800 border-sky-200" },
   { day: 4, start: 1, span: 2, color: "bg-indigo-100 text-indigo-800 border-indigo-200" },
 ];
@@ -60,8 +60,8 @@ export function AppointmentsPreview(): JSX.Element {
           <p className="text-sm font-bold text-slate-900">{t("landingPreview.appointments.headerSub")}</p>
         </div>
         <div className="flex items-center gap-2">
-          <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-700 ring-1 ring-emerald-200">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" /> {t("landingPreview.appointments.badge")}
+          <span className="inline-flex items-center gap-1 rounded-full bg-teal-50 px-2 py-0.5 text-[10px] font-bold text-teal-700 ring-1 ring-teal-200">
+            <span className="h-1.5 w-1.5 rounded-full bg-teal-500" /> {t("landingPreview.appointments.badge")}
           </span>
           <div className="flex gap-1">
             <div className="h-7 w-7 rounded-lg bg-slate-100" />
@@ -135,7 +135,7 @@ const STATUS_VISUAL: Record<ToothStatus, { fill: string; dot: string }> = {
   healthy: { fill: "fill-white stroke-slate-300", dot: "bg-slate-200" },
   decay: { fill: "fill-rose-200 stroke-rose-500", dot: "bg-rose-400" },
   filled: { fill: "fill-sky-200 stroke-sky-500", dot: "bg-sky-400" },
-  rct: { fill: "fill-violet-200 stroke-violet-500", dot: "bg-violet-400" },
+  rct: { fill: "fill-teal-200 stroke-teal-500", dot: "bg-teal-400" },
   crown: { fill: "fill-amber-200 stroke-amber-500", dot: "bg-amber-400" },
 };
 
@@ -233,11 +233,7 @@ export function PatientRecordPreview(): JSX.Element {
         {tabs.map((tab, i) => (
           <div
             key={tab}
-            className={`rounded-t-lg px-3 py-2 text-xs font-semibold ${
-              i === 0
-                ? "border-b-2 border-indigo-500 text-indigo-700"
-                : "text-slate-500"
-            }`}
+            className={`rounded-t-lg px-3 py-2 text-xs font-semibold ${ i === 0 ? "border-b-2 border-indigo-500 text-indigo-700" : "text-slate-500" }`}
           >
             {tab}
           </div>
@@ -311,7 +307,7 @@ export function BillingPreview(): JSX.Element {
           <span>{t("landingPreview.billing.subtotal")}</span>
           <span className="font-mono">₱ {subtotal.toLocaleString()}</span>
         </div>
-        <div className="flex items-center justify-between text-emerald-700">
+        <div className="flex items-center justify-between text-teal-700">
           <span>{t("landingPreview.billing.hmoLine")}</span>
           <span className="font-mono">− ₱ {hmo.toLocaleString()}</span>
         </div>
@@ -324,8 +320,8 @@ export function BillingPreview(): JSX.Element {
       <div className="flex flex-wrap gap-2 border-t border-slate-100 px-5 py-3">
         {[
           { label: payMethods[0] ?? "GCash", color: "bg-sky-50 text-sky-700 ring-sky-200" },
-          { label: payMethods[1] ?? "Maya", color: "bg-emerald-50 text-emerald-700 ring-emerald-200" },
-          { label: payMethods[2] ?? "PayMongo", color: "bg-violet-50 text-violet-700 ring-violet-200" },
+          { label: payMethods[1] ?? "Maya", color: "bg-teal-50 text-teal-700 ring-teal-200" },
+          { label: payMethods[2] ?? "PayMongo", color: "bg-teal-50 text-teal-700 ring-teal-200" },
           { label: payMethods[3] ?? "Cash", color: "bg-slate-50 text-slate-700 ring-slate-200" },
         ].map((m) => (
           <span
@@ -355,8 +351,8 @@ export function InventoryPreview(): JSX.Element {
   const rows = t("landingPreview.inventory.rows", { returnObjects: true }) as { name: string; unit: string }[];
   const statusStyle = {
     ok: {
-      pill: "bg-emerald-50 text-emerald-700 ring-emerald-200",
-      bar: "bg-emerald-500",
+      pill: "bg-teal-50 text-teal-700 ring-teal-200",
+      bar: "bg-teal-500",
       label: t("landingPreview.inventory.status.ok"),
     },
     low: {
@@ -432,7 +428,7 @@ export function RevenuePreview(): JSX.Element {
       <div className="flex items-center justify-between border-b border-slate-100 px-5 py-3">
         <div>
           <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">{t("landingPreview.devices.deskRevenue")}</p>
-          <p className="text-sm font-bold text-slate-900">↑ ₱ 42,500 <span className="text-[10px] font-medium text-emerald-600 ml-1">avg +12%</span></p>
+          <p className="text-sm font-bold text-slate-900">↑ ₱ 42,500 <span className="text-[10px] font-medium text-teal-600 ml-1">avg +12%</span></p>
         </div>
         <div className="flex gap-1">
           <div className="h-6 w-12 rounded bg-slate-100" />
@@ -462,7 +458,7 @@ export function RevenuePreview(): JSX.Element {
           <div className="rounded-xl border border-slate-100 bg-slate-50/50 p-3">
              <p className="text-[10px] font-bold uppercase text-slate-500">Top Procedure</p>
              <p className="mt-1 text-sm font-bold text-slate-900">Root Canal</p>
-             <p className="text-xs text-emerald-600 font-semibold">₱ 12.4k this week</p>
+             <p className="text-xs text-teal-600 font-semibold">₱ 12.4k this week</p>
           </div>
           <div className="rounded-xl border border-slate-100 bg-slate-50/50 p-3">
              <p className="text-[10px] font-bold uppercase text-slate-500">New Patients</p>

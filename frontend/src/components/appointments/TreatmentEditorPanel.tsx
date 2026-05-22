@@ -191,7 +191,7 @@ export function TreatmentEditorPanel({ appointmentId, disabled = false }: Props)
       ) : null}
 
       {invoiceMeta ? (
-        <div className="rounded-lg border border-emerald-200 bg-emerald-50 px-2 py-1 text-xs text-emerald-800">
+        <div className="rounded-lg border border-teal-200 bg-teal-50 px-2 py-1 text-xs text-teal-800">
           {t("pages.appointments.treatmentEditor.invoiceReady", {
             ref: invoiceMeta.orNumber ?? invoiceMeta.id,
             status: invoiceMeta.status,
@@ -311,7 +311,7 @@ export function TreatmentEditorPanel({ appointmentId, disabled = false }: Props)
               type="button"
               disabled={busy}
               onClick={() => void submit()}
-              className="rounded bg-emerald-600 px-2.5 py-1 text-xs font-semibold text-white hover:bg-emerald-700 disabled:opacity-60"
+              className="rounded bg-teal-600 px-2.5 py-1 text-xs font-semibold text-white hover:bg-teal-700 disabled:opacity-60"
             >
               {editingId
                 ? t("pages.appointments.treatmentEditor.updateRow")

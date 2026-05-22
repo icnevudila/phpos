@@ -8,13 +8,13 @@ export function PrivacyPage(): JSX.Element {
   const { t } = useTranslation();
   return (
     <MarketingShell documentTitleKey="pages.privacy.title">
-      <article className="prose prose-slate max-w-none dark:prose-invert">
+      <article className="prose prose-slate max-w-none">
         <p className="not-prose text-sm">
-          <Link to="/" className="font-semibold text-sky-600 hover:underline dark:text-sky-400">
+          <Link to="/" className="font-semibold text-teal-600 hover:underline">
             {t("pages.privacy.backHome")}
           </Link>
         </p>
-        <h1 className="not-prose text-3xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-4xl">{t("pages.privacy.title")}</h1>
+        <h1 className="not-prose text-2xl font-bold tracking-tight text-slate-800 sm:text-3xl">{t("pages.privacy.title")}</h1>
         <p>{t("pages.privacy.intro")}</p>
         <ul>
           <li>{t("pages.privacy.bullet1")}</li>
