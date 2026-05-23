@@ -45,7 +45,7 @@ export function KioskHomePage(): JSX.Element {
       <div className="flex min-h-screen items-center justify-center bg-[#f5f7f9] p-6">
         <div className="text-center space-y-4">
           <div className="h-12 w-12 border-4 border-teal-500 border-t-transparent rounded-full animate-spin mx-auto" />
-          <p className="text-sm font-bold uppercase tracking-widest text-slate-400">{t("pages.kiosk.uplink")}</p>
+          <p className="text-sm font-bold uppercase tracking-widest text-slate-400">{t("pages.kiosk.uplink", { defaultValue: "Uplink" })}</p>
         </div>
       </div>
     );
@@ -61,7 +61,7 @@ export function KioskHomePage(): JSX.Element {
           className="relative z-20 flex shrink-0 items-center justify-center gap-3 bg-amber-500 px-6 py-3 text-sm font-bold text-amber-950"
         >
           <WifiOff size={18} aria-hidden />
-          {t("pages.kiosk.offlineBanner")}
+          {t("pages.kiosk.offlineBanner", { defaultValue: "Offline Banner" })}
         </div>
       ) : null}
 
@@ -86,7 +86,7 @@ export function KioskHomePage(): JSX.Element {
             <h2 className="text-2xl font-black tracking-tight leading-none">{clinic.name}</h2>
             <div className="mt-1 flex items-center gap-2">
               <span className="h-2 w-2 rounded-full bg-teal-400 animate-pulse" />
-              <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">{t("pages.kiosk.nodeActive")}</span>
+              <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">{t("pages.kiosk.nodeActive", { defaultValue: "Node Active" })}</span>
             </div>
           </div>
         </motion.div>
@@ -104,10 +104,10 @@ export function KioskHomePage(): JSX.Element {
           className="max-w-4xl w-full text-center mb-16"
         >
           <h1 className="text-4xl md:text-6xl font-black tracking-tight mb-6 leading-tight">
-            {t("pages.kiosk.welcomeTitle")}<span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-teal-300">{t("pages.kiosk.welcomeAccent")}</span>
+            {t("pages.kiosk.welcomeTitle", { defaultValue: "Welcome Title" })}<span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-teal-300">{t("pages.kiosk.welcomeAccent", { defaultValue: "Welcome Accent" })}</span>
           </h1>
           <p className="text-lg md:text-xl font-bold text-slate-400 max-w-2xl mx-auto">
-            {t("pages.kiosk.welcomeSub")}
+            {t("pages.kiosk.welcomeSub", { defaultValue: "Welcome Sub" })}
           </p>
         </motion.div>
 
@@ -116,9 +116,9 @@ export function KioskHomePage(): JSX.Element {
           <KioskCard 
             onClick={() => navigate(`/${slug}/kiosk/intake`)}
             icon={<ShieldCheck size={40} />}
-            kicker={t("pages.kiosk.intakeKicker")}
-            title={t("pages.kiosk.intakeTitle")}
-            desc={t("pages.kiosk.intakeDesc")}
+            kicker={t("pages.kiosk.intakeKicker", { defaultValue: "Intake Kicker" })}
+            title={t("pages.kiosk.intakeTitle", { defaultValue: "Intake Title" })}
+            desc={t("pages.kiosk.intakeDesc", { defaultValue: "Intake Desc" })}
             color="from-teal-500/20 to-teal-600/5"
             border="border-teal-500/30"
             accent="text-teal-400"
@@ -129,9 +129,9 @@ export function KioskHomePage(): JSX.Element {
           <KioskCard 
             to={portalLogin}
             icon={<User size={40} />}
-            kicker={t("pages.kiosk.patientKicker")}
-            title={t("pages.kiosk.patientTitle")}
-            desc={t("pages.kiosk.patientDesc")}
+            kicker={t("pages.kiosk.patientKicker", { defaultValue: "Patient Kicker" })}
+            title={t("pages.kiosk.patientTitle", { defaultValue: "Patient Title" })}
+            desc={t("pages.kiosk.patientDesc", { defaultValue: "Patient Desc" })}
             color="from-teal-400/20 to-teal-500/5"
             border="border-teal-400/30"
             accent="text-teal-300"
@@ -142,9 +142,9 @@ export function KioskHomePage(): JSX.Element {
           <KioskCard 
             onClick={() => navigate("/login", { state: { from: { pathname: "/appointments" } } })}
             icon={<Users size={40} />}
-            kicker={t("pages.kiosk.staffKicker")}
-            title={t("pages.kiosk.staffTitle")}
-            desc={t("pages.kiosk.staffDesc")}
+            kicker={t("pages.kiosk.staffKicker", { defaultValue: "Staff Kicker" })}
+            title={t("pages.kiosk.staffTitle", { defaultValue: "Staff Title" })}
+            desc={t("pages.kiosk.staffDesc", { defaultValue: "Staff Desc" })}
             color="from-slate-500/20 to-slate-600/5"
             border="border-slate-500/30"
             accent="text-slate-300"
@@ -158,22 +158,22 @@ export function KioskHomePage(): JSX.Element {
         <div className="flex items-center gap-8 opacity-40 grayscale hover:grayscale-0 transition-all duration-500">
           <div className="flex items-center gap-2">
             <ShieldCheck size={16} />
-            <span className="text-[10px] font-bold uppercase tracking-widest">{t("pages.kiosk.securityBadge")}</span>
+            <span className="text-[10px] font-bold uppercase tracking-widest">{t("pages.kiosk.securityBadge", { defaultValue: "Security Badge" })}</span>
           </div>
           <div className="flex items-center gap-2">
             <Globe size={16} />
-            <span className="text-[10px] font-bold uppercase tracking-widest">{t("pages.kiosk.uplinkStatus")}</span>
+            <span className="text-[10px] font-bold uppercase tracking-widest">{t("pages.kiosk.uplinkStatus", { defaultValue: "Uplink Status" })}</span>
           </div>
         </div>
         <p className="text-[10px] font-bold text-slate-600 uppercase tracking-[0.3em]">
-          {t("pages.kiosk.engineV")}
+          {t("pages.kiosk.engineV", { defaultValue: "Engine V" })}
         </p>
       </footer>
 
       {idle ? (
         <button
           type="button"
-          aria-label={t("pages.kiosk.touchToStart")}
+          aria-label={t("pages.kiosk.touchToStart", { defaultValue: "Touch To Start" })}
           onClick={resetIdle}
           className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white/95 backdrop-blur-md p-8 text-center"
         >
@@ -185,10 +185,10 @@ export function KioskHomePage(): JSX.Element {
             <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-[2rem] bg-gradient-to-br from-teal-500 to-teal-600 text-3xl font-black shadow-2xl">
               {clinic.name[0]?.toUpperCase()}
             </div>
-            <h2 className="text-3xl font-black tracking-tight">{t("pages.kiosk.idleTitle")}</h2>
-            <p className="text-lg font-bold text-slate-400">{t("pages.kiosk.idleHint")}</p>
+            <h2 className="text-3xl font-black tracking-tight">{t("pages.kiosk.idleTitle", { defaultValue: "Idle Title" })}</h2>
+            <p className="text-lg font-bold text-slate-400">{t("pages.kiosk.idleHint", { defaultValue: "Idle Hint" })}</p>
             <span className="inline-block rounded-2xl bg-white/10 px-8 py-4 text-xs font-black uppercase tracking-widest text-white">
-              {t("pages.kiosk.touchToStart")}
+              {t("pages.kiosk.touchToStart", { defaultValue: "Touch To Start" })}
             </span>
           </motion.div>
         </button>
@@ -213,7 +213,7 @@ function KioskCard({ to, onClick, icon, kicker, title, desc, color, border, acce
         <p className="text-xl text-slate-400 font-bold leading-relaxed">{desc}</p>
       </div>
       <div className="mt-12 flex items-center gap-3 text-sm font-black uppercase tracking-widest text-white/40 group-hover:text-white transition-colors">
-        {t("pages.kiosk.beginCta")} <ChevronRight size={18} className="group-hover:translate-x-2 transition-transform" />
+        {t("pages.kiosk.beginCta", { defaultValue: "Begin Cta" })} <ChevronRight size={18} className="group-hover:translate-x-2 transition-transform" />
       </div>
     </motion.div>
   );

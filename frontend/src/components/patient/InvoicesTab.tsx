@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 
@@ -43,12 +44,13 @@ const formatDate = (iso: string | null | undefined, empty: string, locale: strin
 };
 
 export function InvoicesTab({ items, dateLocale }: InvoicesTabProps): JSX.Element {
+  const { t } = useTranslation();
   const dash = "--";
 
   if (items.length === 0) {
     return (
       <div className="card p-8 flex flex-col items-center justify-center text-center bg-brand-surface-soft border border-brand-border">
-        <p className="text-sm font-bold text-brand-muted uppercase tracking-widest">No Invoices Found</p>
+        <p className="text-sm font-bold text-brand-muted uppercase tracking-widest">{t("pages.patientDetail.invoices.empty", { defaultValue: "No Invoices Found" })}</p>
       </div>
     );
   }
@@ -59,12 +61,12 @@ export function InvoicesTab({ items, dateLocale }: InvoicesTabProps): JSX.Elemen
         <table className="w-full text-left border-collapse">
           <thead className="bg-brand-surface-muted border-b border-brand-border">
             <tr>
-              <th className="py-3 px-4 text-[10px] font-black uppercase tracking-widest text-brand-muted">OR Number</th>
-              <th className="py-3 px-4 text-[10px] font-black uppercase tracking-widest text-brand-muted">Date</th>
-              <th className="py-3 px-4 text-[10px] font-black uppercase tracking-widest text-brand-muted text-right">Subtotal</th>
-              <th className="py-3 px-4 text-[10px] font-black uppercase tracking-widest text-brand-muted text-right">Discount</th>
-              <th className="py-3 px-4 text-[10px] font-black uppercase tracking-widest text-brand-muted text-right">Total</th>
-              <th className="py-3 px-4 text-[10px] font-black uppercase tracking-widest text-brand-muted">Status</th>
+              <th className="py-3 px-4 text-[10px] font-black uppercase tracking-widest text-brand-muted">{t("pages.patientDetail.invoices.colOrNumber", { defaultValue: "OR Number" })}</th>
+              <th className="py-3 px-4 text-[10px] font-black uppercase tracking-widest text-brand-muted">{t("pages.patientDetail.invoices.colDate", { defaultValue: "Date" })}</th>
+              <th className="py-3 px-4 text-[10px] font-black uppercase tracking-widest text-brand-muted text-right">{t("pages.patientDetail.invoices.colSubtotal", { defaultValue: "Subtotal" })}</th>
+              <th className="py-3 px-4 text-[10px] font-black uppercase tracking-widest text-brand-muted text-right">{t("pages.patientDetail.invoices.colDiscount", { defaultValue: "Discount" })}</th>
+              <th className="py-3 px-4 text-[10px] font-black uppercase tracking-widest text-brand-muted text-right">{t("pages.patientDetail.invoices.colTotal", { defaultValue: "Total" })}</th>
+              <th className="py-3 px-4 text-[10px] font-black uppercase tracking-widest text-brand-muted">{t("pages.patientDetail.invoices.colStatus", { defaultValue: "Status" })}</th>
               <th className="py-3 px-4" aria-hidden />
             </tr>
           </thead>
@@ -80,14 +82,14 @@ export function InvoicesTab({ items, dateLocale }: InvoicesTabProps): JSX.Elemen
                   <span
                     className={`inline-flex items-center px-2 py-0.5 rounded-[var(--radius-sm)] border text-[10px] font-black uppercase tracking-widest ${ STATUS_STYLES[inv.status] ?? "bg-brand-surface text-brand-text border-brand-border" }`}
                   >
-                    {inv.status}
+                    {t(`pages.patientDetail.invoices.status.${inv.status}`, { defaultValue: inv.status })}
                   </span>
                 </td>
                 <td className="py-3 px-4 text-right">
                   <Link 
                     to={`/invoices/${inv.id}`} 
                     className="inline-flex h-8 w-8 items-center justify-center rounded-[var(--radius-sm)] text-brand-muted hover:bg-white hover:text-brand-primary hover:shadow-sm border border-transparent hover:border-brand-border transition-all opacity-0 group-hover:opacity-100 focus:opacity-100"
-                    title="Open Invoice"
+                    title={t("pages.patientDetail.invoices.openInvoice", { defaultValue: "Open Invoice" })}
                   >
                     <ArrowRight size={14} />
                   </Link>

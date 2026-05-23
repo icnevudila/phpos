@@ -26,10 +26,10 @@ const ROLE_I18N: Record<UserRole, string> = {
 };
 
 const fieldClass =
-  "h-14 w-full rounded-2xl border border-slate-200 bg-white px-6 text-sm font-bold text-slate-900 shadow-sm transition-all focus:border-indigo-500 focus:outline-none focus:ring-4 focus:ring-indigo-500/10   ";
+  "h-10 w-full rounded-[var(--radius-md)] border border-brand-border bg-brand-surface px-3 py-2 text-xs font-semibold focus:border-brand-primary focus:outline-none focus:ring-1 focus:ring-brand-primary transition-shadow";
 
 const selectSm =
-  "h-10 rounded-xl border border-slate-200 bg-slate-50 px-4 text-[10px] font-black uppercase tracking-widest text-slate-600 focus:border-indigo-500 focus:outline-none transition-all   ";
+  "h-10 rounded-[var(--radius-md)] border border-brand-border bg-brand-surface px-3 py-2 text-xs font-semibold focus:border-brand-primary focus:outline-none focus:ring-1 focus:ring-brand-primary transition-shadow";
 
 export function StaffTeamPanel(): JSX.Element {
   const { t } = useTranslation();
@@ -68,7 +68,7 @@ export function StaffTeamPanel(): JSX.Element {
         phone: createForm.phone.trim() || null,
         role: createForm.role,
       });
-      toast.success(t("pages.settings.toastMemberCreated"));
+      toast.success(t("pages.settings.toastMemberCreated", { defaultValue: "Toast Member Created" }));
       setCreateOpen(false);
       setCreateForm({
         email: "",
@@ -80,7 +80,7 @@ export function StaffTeamPanel(): JSX.Element {
       });
       await queryClient.invalidateQueries({ queryKey: ["staffUsers"] });
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : t("pages.settings.toastCreateFailed"));
+      toast.error(e instanceof Error ? e.message : t("pages.settings.toastCreateFailed", { defaultValue: "Toast Create Failed" }));
     } finally {
       setCreateBusy(false);
     }
@@ -88,25 +88,25 @@ export function StaffTeamPanel(): JSX.Element {
 
   async function toggleActive(u: StaffUserDto): Promise<void> {
     if (u.id === profile?.id && u.isActive) {
-      toast.error(t("pages.settings.toastSelfDeactivate"));
+      toast.error(t("pages.settings.toastSelfDeactivate", { defaultValue: "Toast Self Deactivate" }));
       return;
     }
     try {
       await patchStaffUser(u.id, { isActive: !u.isActive });
-      toast.success(u.isActive ? t("pages.settings.toastUserDeactivated") : t("pages.settings.toastUserReactivated"));
+      toast.success(u.isActive ? t("pages.settings.toastUserDeactivated", { defaultValue: "Toast User Deactivated" }) : t("pages.settings.toastUserReactivated", { defaultValue: "Toast User Reactivated" }));
       await queryClient.invalidateQueries({ queryKey: ["staffUsers"] });
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : t("pages.settings.toastUpdateFailed"));
+      toast.error(e instanceof Error ? e.message : t("pages.settings.toastUpdateFailed", { defaultValue: "Toast Update Failed" }));
     }
   }
 
   async function changeRole(u: StaffUserDto, role: UserRole): Promise<void> {
     try {
       await patchStaffUser(u.id, { role });
-      toast.success(t("pages.settings.toastRoleUpdated"));
+      toast.success(t("pages.settings.toastRoleUpdated", { defaultValue: "Toast Role Updated" }));
       await queryClient.invalidateQueries({ queryKey: ["staffUsers"] });
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : t("pages.settings.toastUpdateFailed"));
+      toast.error(e instanceof Error ? e.message : t("pages.settings.toastUpdateFailed", { defaultValue: "Toast Update Failed" }));
     }
   }
 
@@ -115,28 +115,28 @@ export function StaffTeamPanel(): JSX.Element {
       {/* Search & Action Bar */}
       <div className="flex flex-col gap-6 lg:flex-row lg:items-center justify-between">
          <div className="relative flex-1 group max-w-2xl">
-            <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors" size={20} />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-brand-muted group-focus-within:text-brand-primary transition-colors" size={16} />
             <input 
               type="text"
               value={qInput}
               onChange={(e) => setQInput(e.target.value)}
-              placeholder={t("pages.settings.searchStaffPlaceholder")}
-              className="h-16 w-full rounded-[2rem] bg-white pl-16 pr-8 text-sm font-bold outline-none ring-1 ring-slate-100 shadow-xl shadow-slate-200/40 focus:ring-4 focus:ring-indigo-500/10 transition-all"
+              placeholder={t("pages.settings.searchStaffPlaceholder", { defaultValue: "Search Staff Placeholder" })}
+              className="h-10 w-full rounded-[var(--radius-md)] border border-brand-border bg-brand-surface pl-10 pr-4 text-sm font-medium outline-none focus:ring-1 focus:ring-brand-primary transition-shadow"
             />
          </div>
 
          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-3 px-6 h-16 rounded-[2rem] bg-white ring-1 ring-slate-100">
-               <div className={`h-2 w-2 rounded-full ${isFetching ? 'bg-indigo-500 animate-pulse' : 'bg-slate-200'}`} />
-               <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
-                 {isFetching ? t("pages.settings.staffSyncing") : t("pages.settings.staffEncrypted")}
+            <div className="flex items-center gap-2 px-3 h-10 rounded-[var(--radius-md)] border border-brand-border bg-brand-surface">
+               <div className={`h-2 w-2 rounded-full ${isFetching ? 'bg-brand-primary animate-pulse' : 'bg-slate-200'}`} />
+               <span className="text-[10px] font-semibold uppercase tracking-widest text-brand-muted">
+                 {isFetching ? t("pages.settings.staffSyncing", { defaultValue: "Staff Syncing" }) : t("pages.settings.staffEncrypted", { defaultValue: "Staff Encrypted" })}
                </span>
             </div>
             <button
               onClick={() => setCreateOpen(!createOpen)}
-              className={`flex h-16 items-center gap-3 px-10 rounded-[2rem] text-xs font-black uppercase tracking-widest transition-all ${ createOpen ? "bg-rose-500 text-white shadow-rose-500/20" : "bg-white text-white shadow-2xl" } hover:scale-105 active:scale-95`}
+              className={`btn-primary flex items-center gap-2 ${createOpen ? "bg-brand-danger border-brand-danger" : ""}`}
             >
-              {createOpen ? <UserMinus size={18} /> : <UserPlus size={18} />}
+              {createOpen ? <UserMinus size={16} /> : <UserPlus size={16} />}
               {createOpen ? "Close Form" : "Recruit Member"}
             </button>
          </div>
@@ -150,66 +150,66 @@ export function StaffTeamPanel(): JSX.Element {
             exit={{ opacity: 0, height: 0 }}
             className="overflow-hidden"
           >
-            <div className="rounded-[3rem] bg-indigo-50/30 p-10 border border-indigo-100">
-               <div className="flex items-center gap-4 mb-8">
-                  <div className="h-10 w-10 rounded-xl bg-indigo-500 flex items-center justify-center text-white shadow-lg shadow-indigo-500/20">
+            <div className="card">
+               <div className="flex items-center gap-4 mb-6">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-[var(--radius-md)] bg-brand-primary-soft text-brand-primary">
                      <UserPlus size={20} />
                   </div>
                   <div>
-                    <h3 className="text-xl font-black text-slate-900 uppercase tracking-tight">{t("pages.settings.onboardingPortal")}</h3>
-                    <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">{t("pages.settings.onboardingSubtitle")}</p>
+                    <h3 className="text-base font-bold text-brand-text">{t("pages.settings.onboardingPortal", { defaultValue: "Onboarding Portal" })}</h3>
+                    <p className="text-xs font-semibold text-brand-muted uppercase tracking-widest">{t("pages.settings.onboardingSubtitle", { defaultValue: "Onboarding Subtitle" })}</p>
                   </div>
                </div>
 
                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                   <div className="space-y-2">
-                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-2">{t("pages.settings.labelFirstName")}</label>
+                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-2">{t("pages.settings.labelFirstName", { defaultValue: "Label First Name" })}</label>
                      <input
                        className={fieldClass}
-                       placeholder={t("pages.settings.placeholderEnterFirst")}
+                       placeholder={t("pages.settings.placeholderEnterFirst", { defaultValue: "Placeholder Enter First" })}
                        value={createForm.firstName}
                        onChange={(e) => setCreateForm((f) => ({ ...f, firstName: e.target.value }))}
                      />
                   </div>
                   <div className="space-y-2">
-                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-2">{t("pages.settings.labelLastName")}</label>
+                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-2">{t("pages.settings.labelLastName", { defaultValue: "Label Last Name" })}</label>
                      <input
                        className={fieldClass}
-                       placeholder={t("pages.settings.placeholderEnterLast")}
+                       placeholder={t("pages.settings.placeholderEnterLast", { defaultValue: "Placeholder Enter Last" })}
                        value={createForm.lastName}
                        onChange={(e) => setCreateForm((f) => ({ ...f, lastName: e.target.value }))}
                      />
                   </div>
                   <div className="space-y-2">
-                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-2">{t("pages.settings.labelEmailIdentity")}</label>
+                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-2">{t("pages.settings.labelEmailIdentity", { defaultValue: "Label Email Identity" })}</label>
                      <input
                        className={fieldClass}
-                       placeholder={t("pages.settings.placeholderEmailClinic")}
+                       placeholder={t("pages.settings.placeholderEmailClinic", { defaultValue: "Placeholder Email Clinic" })}
                        value={createForm.email}
                        onChange={(e) => setCreateForm((f) => ({ ...f, email: e.target.value }))}
                      />
                   </div>
                   <div className="space-y-2">
-                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-2">{t("pages.settings.labelSecurityKey")}</label>
+                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-2">{t("pages.settings.labelSecurityKey", { defaultValue: "Label Security Key" })}</label>
                      <input
                        className={fieldClass}
-                       placeholder={t("pages.settings.placeholderMinPassword")}
+                       placeholder={t("pages.settings.placeholderMinPassword", { defaultValue: "Placeholder Min Password" })}
                        type="password"
                        value={createForm.password}
                        onChange={(e) => setCreateForm((f) => ({ ...f, password: e.target.value }))}
                      />
                   </div>
                   <div className="space-y-2">
-                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-2">{t("pages.settings.phone")}</label>
+                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-2">{t("pages.settings.phone", { defaultValue: "Phone" })}</label>
                      <input
                        className={fieldClass}
-                       placeholder={t("pages.settings.placeholderPhonePh")}
+                       placeholder={t("pages.settings.placeholderPhonePh", { defaultValue: "Placeholder Phone Ph" })}
                        value={createForm.phone}
                        onChange={(e) => setCreateForm((f) => ({ ...f, phone: e.target.value }))}
                      />
                   </div>
                   <div className="space-y-2">
-                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-2">{t("pages.settings.labelAccessRole")}</label>
+                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-2">{t("pages.settings.labelAccessRole", { defaultValue: "Label Access Role" })}</label>
                      <select
                        className={fieldClass}
                        value={createForm.role}
@@ -233,9 +233,9 @@ export function StaffTeamPanel(): JSX.Element {
                       !createForm.lastName
                     }
                     onClick={() => void submitCreate()}
-                    className="h-16 px-12 rounded-[1.5rem] bg-indigo-600 text-white text-xs font-black uppercase tracking-widest shadow-xl shadow-indigo-500/20 hover:bg-indigo-700 transition-all disabled:opacity-40"
+                    className="btn-primary disabled:opacity-40"
                   >
-                    {createBusy ? t("pages.settings.initializing") : t("pages.settings.activateAccount")}
+                    {createBusy ? t("pages.settings.initializing", { defaultValue: "Initializing" }) : t("pages.settings.activateAccount", { defaultValue: "Activate Account" })}
                   </button>
                </div>
             </div>
@@ -244,19 +244,19 @@ export function StaffTeamPanel(): JSX.Element {
       </AnimatePresence>
 
       {/* Staff Workspace */}
-      <div className="rounded-[3.5rem] bg-white shadow-2xl shadow-slate-200/50 overflow-hidden ring-1 ring-slate-100">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse min-w-[1000px]">
+      <div className="card p-0 overflow-hidden">
+        <div className="data-table-wrapper">
+          <table className="data-table min-w-[1000px]">
             <thead>
-              <tr className="bg-slate-50/50">
-                <th className="px-10 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">{t("pages.settings.colName")}</th>
-                <th className="px-8 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">{t("pages.settings.colEmail")}</th>
-                <th className="px-8 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">{t("pages.settings.colRole")}</th>
-                <th className="px-8 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">{t("pages.settings.colStatus")}</th>
-                <th className="px-10 py-8"></th>
+              <tr>
+                <th>{t("pages.settings.colName", { defaultValue: "Col Name" })}</th>
+                <th>{t("pages.settings.colEmail", { defaultValue: "Col Email" })}</th>
+                <th>{t("pages.settings.colRole", { defaultValue: "Col Role" })}</th>
+                <th>{t("pages.settings.colStatus", { defaultValue: "Col Status" })}</th>
+                <th></th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-50">
+            <tbody>
               <AnimatePresence mode="popLayout">
                 {staffLoading ? (
                   <tr><td colSpan={5} className="py-40 text-center"><RefreshCw className="animate-spin mx-auto text-slate-200" size={40} /></td></tr>
@@ -268,27 +268,27 @@ export function StaffTeamPanel(): JSX.Element {
                     transition={{ delay: idx * 0.02 }}
                     className="group hover:bg-indigo-50/30 transition-colors"
                   >
-                    <td className="px-10 py-8">
-                      <div className="flex items-center gap-5">
-                         <div className={`h-14 w-14 rounded-2xl flex items-center justify-center font-black text-xs transition-all ${ u.isActive ? "bg-indigo-100 text-indigo-600 " : "bg-slate-100 text-slate-400" }`}>
+                    <td>
+                      <div className="flex items-center gap-3">
+                         <div className={`flex h-10 w-10 items-center justify-center rounded-[var(--radius-md)] text-xs font-semibold transition-all ${ u.isActive ? "bg-brand-primary-soft text-brand-primary" : "bg-brand-surface-muted text-brand-muted" }`}>
                            {u.firstName.slice(0, 1)}{u.lastName.slice(0, 1)}
                          </div>
                          <div>
-                            <p className="text-lg font-black text-slate-900 uppercase leading-none">{u.firstName} {u.lastName}</p>
-                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1.5 flex items-center gap-2">
-                               <Shield size={10} className="text-indigo-400" />
+                            <p className="text-sm font-semibold text-brand-text leading-none">{u.firstName} {u.lastName}</p>
+                            <p className="text-[10px] font-medium text-brand-muted mt-1 flex items-center gap-1.5">
+                               <Shield size={10} className="text-brand-primary" />
                                {t("pages.settings.roleAccess", { role: t(ROLE_I18N[u.role as UserRole] ?? u.role) })}
                             </p>
                          </div>
                       </div>
                     </td>
-                    <td className="px-8 py-8">
-                       <div className="flex items-center gap-3 text-sm font-bold text-slate-600">
-                          <Mail size={14} className="opacity-40" />
+                    <td>
+                       <div className="flex items-center gap-2 text-sm font-medium text-brand-text-soft">
+                          <Mail size={13} className="opacity-40" />
                           {u.email}
                        </div>
                     </td>
-                    <td className="px-8 py-8">
+                    <td>
                       <select
                         className={selectSm}
                         value={u.role}
@@ -299,24 +299,24 @@ export function StaffTeamPanel(): JSX.Element {
                         ))}
                       </select>
                     </td>
-                    <td className="px-8 py-8">
-                       <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-2xl border text-[10px] font-black uppercase tracking-widest ${ u.isActive ? "bg-teal-50 text-teal-600 border-teal-100 " : "bg-slate-50 text-slate-400 border-slate-100 " }`}>
-                          <div className={`h-1.5 w-1.5 rounded-full ${u.isActive ? "bg-teal-500 animate-pulse" : "bg-slate-300"}`} />
-                          {u.isActive ? t("pages.settings.active") : t("pages.settings.inactive")}
+                    <td>
+                       <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-[var(--radius-sm)] border text-[10px] font-semibold uppercase tracking-wider ${ u.isActive ? "bg-brand-success-soft text-brand-success border-brand-success-soft" : "bg-brand-surface-muted text-brand-muted border-brand-border" }`}>
+                          <div className={`h-1.5 w-1.5 rounded-full ${u.isActive ? "bg-brand-success animate-pulse" : "bg-slate-300"}`} />
+                          {u.isActive ? t("pages.settings.active", { defaultValue: "Active" }) : t("pages.settings.inactive", { defaultValue: "Inactive" })}
                        </div>
                     </td>
-                    <td className="px-10 py-8">
-                       <div className="flex items-center justify-end gap-3">
-                          <div className="opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0">
+                    <td>
+                       <div className="flex items-center justify-end gap-2">
+                          <div className="opacity-0 group-hover:opacity-100 transition-all translate-x-3 group-hover:translate-x-0">
                              <button
                                onClick={() => void toggleActive(u)}
-                               className={`h-10 px-6 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${ u.isActive ? "bg-rose-50 text-rose-600 hover:bg-rose-500 hover:text-white" : "bg-teal-50 text-teal-600 hover:bg-teal-500 hover:text-white" }`}
+                               className={`h-8 px-3 rounded-[var(--radius-sm)] text-[10px] font-semibold uppercase tracking-widest transition-colors ${ u.isActive ? "bg-brand-danger-soft text-brand-danger hover:bg-brand-danger hover:text-white" : "bg-brand-success-soft text-brand-success hover:bg-brand-success hover:text-white" }`}
                              >
-                               {u.isActive ? t("pages.settings.deactivate") : t("pages.settings.activate")}
+                               {u.isActive ? t("pages.settings.deactivate", { defaultValue: "Deactivate" }) : t("pages.settings.activate", { defaultValue: "Activate" })}
                              </button>
                           </div>
-                          <button className="h-12 w-12 flex items-center justify-center rounded-2xl bg-slate-50 text-slate-400 hover:bg-indigo-500 hover:text-white transition-all shadow-sm">
-                             <MoreVertical size={18} />
+                          <button className="flex h-9 w-9 items-center justify-center rounded-[var(--radius-sm)] bg-brand-surface-muted text-brand-muted hover:bg-brand-primary hover:text-white transition-colors">
+                             <MoreVertical size={16} />
                           </button>
                        </div>
                     </td>

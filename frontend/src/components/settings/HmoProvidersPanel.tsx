@@ -50,7 +50,7 @@ export function HmoProvidersPanel(): JSX.Element {
       const list = await fetchHmoProviders();
       setRows(list);
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : t("pages.settings.hmo.loadFailed"));
+      toast.error(e instanceof Error ? e.message : t("pages.settings.hmo.loadFailed", { defaultValue: "Load Failed" }));
     } finally {
       setLoading(false);
     }
@@ -87,11 +87,11 @@ export function HmoProvidersPanel(): JSX.Element {
         contactEmail: editEmail.trim() || null,
         notes: editNotes.trim() || null,
       });
-      toast.success(t("pages.settings.hmo.saved"));
+      toast.success(t("pages.settings.hmo.saved", { defaultValue: "Saved" }));
       cancelEdit();
       await load();
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : t("pages.settings.hmo.saveFailed"));
+      toast.error(e instanceof Error ? e.message : t("pages.settings.hmo.saveFailed", { defaultValue: "Save Failed" }));
     } finally {
       setBusy(false);
     }
@@ -103,7 +103,7 @@ export function HmoProvidersPanel(): JSX.Element {
       await updateHmoProvider(p.id, { isActive: !p.isActive });
       await load();
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : t("pages.settings.hmo.saveFailed"));
+      toast.error(e instanceof Error ? e.message : t("pages.settings.hmo.saveFailed", { defaultValue: "Save Failed" }));
     } finally {
       setBusy(false);
     }
@@ -112,7 +112,7 @@ export function HmoProvidersPanel(): JSX.Element {
   async function onCreate(e: React.FormEvent): Promise<void> {
     e.preventDefault();
     if (!newName.trim() || !newCode.trim()) {
-      toast.error(t("pages.settings.hmo.nameCodeRequired"));
+      toast.error(t("pages.settings.hmo.nameCodeRequired", { defaultValue: "Name Code Required" }));
       return;
     }
     setBusy(true);
@@ -124,7 +124,7 @@ export function HmoProvidersPanel(): JSX.Element {
         contactEmail: newEmail.trim() || undefined,
         notes: newNotes.trim() || undefined,
       });
-      toast.success(t("pages.settings.hmo.created"));
+      toast.success(t("pages.settings.hmo.created", { defaultValue: "Created" }));
       setNewName("");
       setNewCode("");
       setNewPhone("");
@@ -132,7 +132,7 @@ export function HmoProvidersPanel(): JSX.Element {
       setNewNotes("");
       await load();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : t("pages.settings.hmo.createFailed"));
+      toast.error(err instanceof Error ? err.message : t("pages.settings.hmo.createFailed", { defaultValue: "Create Failed" }));
     } finally {
       setBusy(false);
     }
@@ -148,7 +148,7 @@ export function HmoProvidersPanel(): JSX.Element {
               type="text"
               value={qInput}
               onChange={(e) => setQInput(e.target.value)}
-              placeholder={t("pages.settings.hmo.searchPlaceholder")}
+              placeholder={t("pages.settings.hmo.searchPlaceholder", { defaultValue: "Search Placeholder" })}
               className="h-16 w-full rounded-[2rem] bg-white pl-16 pr-8 text-sm font-bold outline-none ring-1 ring-slate-100 shadow-xl shadow-slate-200/40 focus:ring-4 focus:ring-indigo-500/10 transition-all"
             />
          </div>
@@ -171,9 +171,9 @@ export function HmoProvidersPanel(): JSX.Element {
                   <table className="w-full text-left border-collapse min-w-[800px]">
                      <thead>
                         <tr className="bg-slate-50/50">
-                           <th className="px-10 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">{t("pages.settings.hmo.colName")}</th>
-                           <th className="px-8 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">{t("pages.settings.hmo.colCode")}</th>
-                           <th className="px-8 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">{t("pages.settings.hmo.colStatus")}</th>
+                           <th className="px-10 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">{t("pages.settings.hmo.colName", { defaultValue: "Col Name" })}</th>
+                           <th className="px-8 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">{t("pages.settings.hmo.colCode", { defaultValue: "Col Code" })}</th>
+                           <th className="px-8 py-8 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">{t("pages.settings.hmo.colStatus", { defaultValue: "Col Status" })}</th>
                            <th className="px-10 py-8"></th>
                         </tr>
                      </thead>
@@ -211,7 +211,7 @@ export function HmoProvidersPanel(): JSX.Element {
                                  <td className="px-8 py-8">
                                     <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-2xl border text-[10px] font-black uppercase tracking-widest ${ p.isActive ? "bg-teal-50 text-teal-600 border-teal-100 " : "bg-slate-50 text-slate-400 border-slate-100 " }`}>
                                        <div className={`h-1.5 w-1.5 rounded-full ${p.isActive ? "bg-teal-500 animate-pulse" : "bg-slate-300"}`} />
-                                       {p.isActive ? t("pages.settings.active") : t("pages.settings.inactive")}
+                                       {p.isActive ? t("pages.settings.active", { defaultValue: "Active" }) : t("pages.settings.inactive", { defaultValue: "Inactive" })}
                                     </div>
                                  </td>
                                  <td className="px-10 py-8">
@@ -226,7 +226,7 @@ export function HmoProvidersPanel(): JSX.Element {
                                           onClick={() => void toggleActive(p)}
                                           className={`h-10 px-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${ p.isActive ? "bg-rose-50 text-rose-600 hover:bg-rose-500 hover:text-white" : "bg-teal-50 text-teal-600 hover:bg-teal-500 hover:text-white" }`}
                                        >
-                                          {p.isActive ? t("pages.settings.hmo.suspend") : t("pages.settings.hmo.activate")}
+                                          {p.isActive ? t("pages.settings.hmo.suspend", { defaultValue: "Suspend" }) : t("pages.settings.hmo.activate", { defaultValue: "Activate" })}
                                        </button>
                                     </div>
                                  </td>
@@ -247,25 +247,25 @@ export function HmoProvidersPanel(): JSX.Element {
                      <Plus size={20} />
                   </div>
                   <div>
-                    <h3 className="text-xl font-black text-slate-900 uppercase tracking-tight">{t("pages.settings.hmo.addNew")}</h3>
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t("pages.settings.hmo.networkExpansion")}</p>
+                    <h3 className="text-xl font-black text-slate-900 uppercase tracking-tight">{t("pages.settings.hmo.addNew", { defaultValue: "Add New" })}</h3>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t("pages.settings.hmo.networkExpansion", { defaultValue: "Network Expansion" })}</p>
                   </div>
                </div>
 
                <form onSubmit={(ev) => void onCreate(ev)} className="space-y-6">
                   <div className="space-y-2">
-                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-2">{t("pages.settings.hmo.colName")}</label>
+                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-2">{t("pages.settings.hmo.colName", { defaultValue: "Col Name" })}</label>
                      <input
                         required
                         className={fieldClass}
-                        placeholder={t("pages.settings.hmo.placeholderProviderName")}
+                        placeholder={t("pages.settings.hmo.placeholderProviderName", { defaultValue: "Placeholder Provider Name" })}
                         value={newName}
                         onChange={(e) => setNewName(e.target.value)}
                      />
                   </div>
 
                   <div className="space-y-2">
-                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-2">{t("pages.settings.hmo.colCode")}</label>
+                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-2">{t("pages.settings.hmo.colCode", { defaultValue: "Col Code" })}</label>
                      <input
                         required
                         className={`${fieldClass} font-mono uppercase`}
@@ -276,7 +276,7 @@ export function HmoProvidersPanel(): JSX.Element {
                   </div>
 
                   <div className="space-y-2">
-                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-2">{t("pages.settings.phone")}</label>
+                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-2">{t("pages.settings.phone", { defaultValue: "Phone" })}</label>
                      <input
                         className={fieldClass}
                         placeholder="+63 ..."
@@ -286,7 +286,7 @@ export function HmoProvidersPanel(): JSX.Element {
                   </div>
 
                   <div className="space-y-2">
-                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-2">{t("pages.settings.hmo.emailPlaceholder")}</label>
+                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-2">{t("pages.settings.hmo.emailPlaceholder", { defaultValue: "Email Placeholder" })}</label>
                      <input
                         className={fieldClass}
                         placeholder="support@hmo.com"
@@ -301,7 +301,7 @@ export function HmoProvidersPanel(): JSX.Element {
                      className="w-full h-16 rounded-[1.5rem] bg-white text-white text-xs font-black uppercase tracking-widest shadow-2xl hover:scale-[1.02] transition-all disabled:opacity-40"
                   >
                      {busy ? <RefreshCw className="animate-spin inline mr-2" size={16} /> : <Plus size={18} className="inline mr-2" />}
-                     {t("pages.settings.hmo.create")}
+                     {t("pages.settings.hmo.create", { defaultValue: "Create" })}
                   </button>
                </form>
             </div>
@@ -323,7 +323,7 @@ export function HmoProvidersPanel(): JSX.Element {
                         <div className="h-12 w-12 rounded-2xl bg-indigo-500 flex items-center justify-center text-white shadow-lg">
                            <Edit3 size={24} />
                         </div>
-                        <h2 className="text-2xl font-black text-slate-900 uppercase tracking-tight">{t("pages.settings.hmo.editProvider")}</h2>
+                        <h2 className="text-2xl font-black text-slate-900 uppercase tracking-tight">{t("pages.settings.hmo.editProvider", { defaultValue: "Edit Provider" })}</h2>
                      </div>
                      <button onClick={cancelEdit} className="h-12 w-12 flex items-center justify-center rounded-2xl bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors">
                         <X size={24} />
@@ -332,11 +332,11 @@ export function HmoProvidersPanel(): JSX.Element {
 
                   <div className="grid gap-6 sm:grid-cols-2">
                      <div className="space-y-2">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-2">{t("pages.settings.hmo.labelProviderName")}</label>
+                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-2">{t("pages.settings.hmo.labelProviderName", { defaultValue: "Label Provider Name" })}</label>
                         <input className={fieldClass} value={editName} onChange={e => setEditName(e.target.value)} />
                      </div>
                      <div className="space-y-2">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-2">{t("pages.settings.hmo.labelNetworkCode")}</label>
+                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-2">{t("pages.settings.hmo.labelNetworkCode", { defaultValue: "Label Network Code" })}</label>
                         <input className={`${fieldClass} font-mono uppercase`} value={editCode} onChange={e => setEditCode(e.target.value)} />
                      </div>
                      <div className="space-y-2">
@@ -344,11 +344,11 @@ export function HmoProvidersPanel(): JSX.Element {
                         <input className={fieldClass} value={editPhone} onChange={e => setEditPhone(e.target.value)} />
                      </div>
                      <div className="space-y-2">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-2">{t("pages.settings.labelEmailIdentity")}</label>
+                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-2">{t("pages.settings.labelEmailIdentity", { defaultValue: "Label Email Identity" })}</label>
                         <input className={fieldClass} value={editEmail} onChange={e => setEditEmail(e.target.value)} />
                      </div>
                      <div className="sm:col-span-2 space-y-2">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-2">{t("pages.settings.hmo.labelOperationalNotes")}</label>
+                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-2">{t("pages.settings.hmo.labelOperationalNotes", { defaultValue: "Label Operational Notes" })}</label>
                         <textarea 
                            className="w-full rounded-2xl border border-slate-200 bg-white p-6 text-sm font-bold text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-4 focus:ring-indigo-500/10 min-h-[120px]" 
                            value={editNotes} 
@@ -359,14 +359,14 @@ export function HmoProvidersPanel(): JSX.Element {
 
                   <div className="mt-10 flex justify-end gap-4">
                      <button onClick={cancelEdit} className="h-16 px-10 rounded-[1.5rem] bg-slate-100 text-slate-600 text-xs font-black uppercase tracking-widest hover:bg-slate-200 transition-all">
-                        {t("common.cancel")}
+                        {t("common.cancel", { defaultValue: "Cancel" })}
                      </button>
                      <button 
                         onClick={() => void saveEdit(editingId)}
                         disabled={busy}
                         className="h-16 px-12 rounded-[1.5rem] bg-indigo-600 text-white text-xs font-black uppercase tracking-widest shadow-xl shadow-indigo-500/20 hover:bg-indigo-700 transition-all"
                      >
-                        {busy ? <RefreshCw className="animate-spin" size={18} /> : t("common.save")}
+                        {busy ? <RefreshCw className="animate-spin" size={18} /> : t("common.save", { defaultValue: "Save" })}
                      </button>
                   </div>
                </motion.div>

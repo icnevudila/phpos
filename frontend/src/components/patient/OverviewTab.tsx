@@ -62,23 +62,23 @@ export function OverviewTab({ data, dateLocale }: OverviewTabProps): JSX.Element
       {/* LEFT COLUMN */}
       <div className="space-y-6">
         <div className="card">
-          <h2 className="text-sm font-black text-brand-text uppercase tracking-widest mb-4">Patient Identity</h2>
+          <h2 className="text-sm font-black text-brand-text uppercase tracking-widest mb-4">{t("pages.patientDetail.overview.patientIdentity", { defaultValue: "Patient Identity" })}</h2>
           <div className="flex flex-col">
-            <ReadOnlyField label="Nickname" value={data.nickname} />
-            <ReadOnlyField label="Nationality" value={data.nationality} />
-            <ReadOnlyField label="Civil Status" value={data.civilStatus} />
-            <ReadOnlyField label="Occupation" value={data.occupation} />
-            <ReadOnlyField label="Religion" value={data.religion} />
-            <ReadOnlyField label="Address" value={addressString} />
+            <ReadOnlyField label={t("pages.patientDetail.overview.nickname", { defaultValue: "Nickname" })} value={data.nickname} />
+            <ReadOnlyField label={t("pages.patientDetail.overview.nationality", { defaultValue: "Nationality" })} value={data.nationality} />
+            <ReadOnlyField label={t("pages.patientDetail.overview.civilStatus", { defaultValue: "Civil Status" })} value={data.civilStatus} />
+            <ReadOnlyField label={t("pages.patientDetail.overview.occupation", { defaultValue: "Occupation" })} value={data.occupation} />
+            <ReadOnlyField label={t("pages.patientDetail.overview.religion", { defaultValue: "Religion" })} value={data.religion} />
+            <ReadOnlyField label={t("pages.patientDetail.overview.address", { defaultValue: "Address" })} value={addressString} />
           </div>
         </div>
 
         <div className="card">
-          <h2 className="text-sm font-black text-brand-text uppercase tracking-widest mb-4">Contact & Emergency</h2>
+          <h2 className="text-sm font-black text-brand-text uppercase tracking-widest mb-4">{t("pages.patientDetail.overview.contactEmergency", { defaultValue: "Contact & Emergency" })}</h2>
           <div className="flex flex-col">
-            <ReadOnlyField label="Emergency Contact" value={emergencyString} />
-            <ReadOnlyField label="Previous Dentist" value={data.previousDentist} />
-            <ReadOnlyField label="Referred By" value={data.referralSource} />
+            <ReadOnlyField label={t("pages.patientDetail.overview.emergencyContact", { defaultValue: "Emergency Contact" })} value={emergencyString} />
+            <ReadOnlyField label={t("pages.patientDetail.overview.previousDentist", { defaultValue: "Previous Dentist" })} value={data.previousDentist} />
+            <ReadOnlyField label={t("pages.patientDetail.overview.referredBy", { defaultValue: "Referred By" })} value={data.referralSource} />
           </div>
         </div>
       </div>
@@ -86,57 +86,42 @@ export function OverviewTab({ data, dateLocale }: OverviewTabProps): JSX.Element
       {/* RIGHT COLUMN */}
       <div className="space-y-6">
         <div className="card">
-          <h2 className="text-sm font-black text-brand-text uppercase tracking-widest mb-4">Visit Summary</h2>
+          <h2 className="text-sm font-black text-brand-text uppercase tracking-widest mb-4">{t("pages.patientDetail.overview.visitSummary", { defaultValue: "Visit Summary" })}</h2>
           <div className="flex flex-col">
-            <ReadOnlyField label="Reason for Visit" value={data.reasonForVisit} />
-            <ReadOnlyField label="Last Visit" value={formatDate(data.lastDentalVisit)} />
-            <ReadOnlyField label="PhilHealth" value={data.philhealthNo} />
+            <ReadOnlyField label={t("pages.patientDetail.overview.reasonForVisit", { defaultValue: "Reason for Visit" })} value={data.reasonForVisit} />
+            <ReadOnlyField label={t("pages.patientDetail.overview.lastVisit", { defaultValue: "Last Visit" })} value={formatDate(data.lastDentalVisit)} />
+            <ReadOnlyField label={t("pages.patientDetail.overview.philHealth", { defaultValue: "PhilHealth" })} value={data.philhealthNo} />
           </div>
         </div>
 
         <div className="card">
-          <h2 className="text-sm font-black text-brand-text uppercase tracking-widest mb-4">Clinical Snapshot</h2>
+          <h2 className="text-sm font-black text-brand-text uppercase tracking-widest mb-4">{t("pages.patientDetail.overview.clinicalSnapshot", { defaultValue: "Clinical Snapshot" })}</h2>
           <div className="flex flex-col">
-            <ReadOnlyField label="Blood Type" value={data.bloodType} />
-            <ReadOnlyField label="Blood Pressure" value={bpString} />
-            <ReadOnlyField label="Pulse Rate" value={pulseString} />
+            <ReadOnlyField label={t("pages.patientDetail.overview.bloodType", { defaultValue: "Blood Type" })} value={data.bloodType} />
+            <ReadOnlyField label={t("pages.patientDetail.overview.bloodPressure", { defaultValue: "Blood Pressure" })} value={bpString} />
+            <ReadOnlyField label={t("pages.patientDetail.overview.pulseRate", { defaultValue: "Pulse Rate" })} value={pulseString} />
           </div>
         </div>
 
-        <div className="card bg-brand-surface-soft border-brand-border">
-          <h2 className="text-sm font-black text-brand-text uppercase tracking-widest mb-4">Next Best Actions</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <button className="flex items-center gap-2 p-3 rounded-lg bg-white border border-brand-border text-sm font-bold text-brand-text hover:bg-brand-surface transition-colors shadow-sm">
-              <Plus size={16} className="text-brand-primary" /> Book Follow-up
-            </button>
-            <button className="flex items-center gap-2 p-3 rounded-lg bg-white border border-brand-border text-sm font-bold text-brand-text hover:bg-brand-surface transition-colors shadow-sm">
-              <ClipboardList size={16} className="text-brand-primary" /> Add SOAP Note
-            </button>
-            <button className="flex items-center gap-2 p-3 rounded-lg bg-white border border-brand-border text-sm font-bold text-brand-text hover:bg-brand-surface transition-colors shadow-sm">
-              <Stethoscope size={16} className="text-brand-primary" /> Open Dental Chart
-            </button>
-            <button className="flex items-center gap-2 p-3 rounded-lg bg-white border border-brand-border text-sm font-bold text-brand-text hover:bg-brand-surface transition-colors shadow-sm">
-              <FileText size={16} className="text-brand-primary" /> Create Invoice
-            </button>
-            <button className="flex items-center gap-2 p-3 rounded-lg bg-white border border-brand-border text-sm font-bold text-brand-text hover:bg-brand-surface transition-colors shadow-sm">
-              <Activity size={16} className="text-brand-primary" /> Update Medical History
-            </button>
+        <div className="card">
+          <div className="flex items-center gap-2 mb-4 text-brand-text">
+            <Activity size={18} className="text-brand-primary" />
+            <h2 className="text-sm font-black uppercase tracking-widest">{t("pages.patientDetail.overview.medicalHistoryNote", { defaultValue: "Medical History Note" })}</h2>
+          </div>
+          <div className="bg-brand-surface-soft border border-brand-border rounded-[var(--radius-lg)] p-4 text-sm font-medium text-brand-text leading-relaxed whitespace-pre-wrap">
+            {data.medicalHistoryText || (
+              <span className="text-brand-muted italic">{t("pages.patientDetail.overview.noMedicalNotes", { defaultValue: "No specific medical history notes recorded." })}</span>
+            )}
           </div>
         </div>
+
       </div>
 
-      {data.medicalHistoryText ? (
-        <div className="lg:col-span-2 card bg-amber-50/50 border-amber-200">
-          <h2 className="text-sm font-black text-amber-900 uppercase tracking-widest mb-2">Legacy Notes</h2>
-          <p className="whitespace-pre-wrap text-sm font-medium text-amber-800">{data.medicalHistoryText}</p>
-        </div>
-      ) : null}
-      
       <div className="lg:col-span-2 pt-6 border-t border-brand-border mt-4">
         <VoiceNoteWidget 
           onTranscriptionComplete={(text) => {
             console.log("Transcript to save:", text);
-            alert(t("pages.patientDetail.overview.voiceNoteCaptured"));
+            alert(t("pages.patientDetail.overview.voiceNoteCaptured", { defaultValue: "Voice Note Captured" }));
           }} 
         />
       </div>

@@ -36,13 +36,13 @@
     --info: #0EA5E9;
     --info-soft: #F0F9FF;
 
-    --radius-sm: 8px;
-    --radius-md: 12px;
-    --radius-lg: 16px;
-    --radius-xl: 18px;
+    --radius-sm: 6px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
 
-    --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-    --shadow-popover: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --shadow-card: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-popover: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
   }
 
   html {
@@ -180,11 +180,11 @@
 
   /* ── Button primary ── */
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 h-10 px-4 rounded-[var(--radius-md)] bg-brand-primary text-white text-sm font-semibold transition-all hover:bg-brand-primary-hover active:scale-95 shadow-sm;
+    @apply inline-flex items-center justify-center gap-2 h-[38px] px-4 rounded-[var(--radius-md)] bg-brand-primary text-white text-sm font-semibold transition-all hover:bg-brand-primary-hover active:scale-95 shadow-[0_1px_2px_rgba(0,0,0,0.05)];
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 h-10 px-4 rounded-[var(--radius-md)] bg-brand-surface text-brand-text text-sm font-semibold transition-all hover:bg-brand-surface-soft active:scale-95 shadow-sm border border-brand-border;
+    @apply inline-flex items-center justify-center gap-2 h-[38px] px-4 rounded-[var(--radius-md)] bg-brand-surface text-brand-text text-sm font-semibold transition-all hover:bg-brand-surface-muted active:scale-95 shadow-[0_1px_2px_rgba(0,0,0,0.05)] border border-brand-border;
   }
 }
 

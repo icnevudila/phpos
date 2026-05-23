@@ -169,7 +169,7 @@ export function DashboardPage(): JSX.Element {
       if (!opts?.silent) await invalidateDashboardQueue();
       return true;
     } catch (e) {
-      if (!opts?.silent) toast.error(e instanceof Error ? e.message : t("pages.dashboard.queueStatusFailed"));
+      if (!opts?.silent) toast.error(e instanceof Error ? e.message : t("pages.dashboard.queueStatusFailed", { defaultValue: "Queue Status Failed" }));
       return false;
     } finally {
       if (!opts?.silent) setQueueBusyId(null);
@@ -195,8 +195,8 @@ export function DashboardPage(): JSX.Element {
     const text = `DentQL Claim Radar\nPending: ${dashboardView?.operational.pendingHmoClaims}\nCritical: ${claimRadarCounts.critical}`;
     try {
       await navigator.clipboard.writeText(text);
-      toast.success(t("pages.dashboard.claimRadarSnapshotCopied"));
-    } catch { toast.error(t("pages.dashboard.claimRadarSnapshotCopyFailed")); }
+      toast.success(t("pages.dashboard.claimRadarSnapshotCopied", { defaultValue: "Claim Radar Snapshot Copied" }));
+    } catch { toast.error(t("pages.dashboard.claimRadarSnapshotCopyFailed", { defaultValue: "Claim Radar Snapshot Copy Failed" })); }
   }
 
   function onAssignNowClick(ownerKey: any): void {
@@ -259,17 +259,17 @@ export function DashboardPage(): JSX.Element {
 
   const claimRadarRecommendedOwner = useMemo(() => {
     const ownerLoads = [
-      { key: "ADMIN",       load: claimRadarTeamLoad.admin,    label: t("pages.dashboard.claimRadarRoleAdmin") },
-      { key: "DENTIST",     load: claimRadarTeamLoad.dentist,  label: t("pages.dashboard.claimRadarRoleDentist") },
-      { key: "RECEPTIONIST",load: claimRadarTeamLoad.reception,label: t("pages.dashboard.claimRadarRoleReception") },
+      { key: "ADMIN",       load: claimRadarTeamLoad.admin,    label: t("pages.dashboard.claimRadarRoleAdmin", { defaultValue: "Claim Radar Role Admin" }) },
+      { key: "DENTIST",     load: claimRadarTeamLoad.dentist,  label: t("pages.dashboard.claimRadarRoleDentist", { defaultValue: "Claim Radar Role Dentist" }) },
+      { key: "RECEPTIONIST",load: claimRadarTeamLoad.reception,label: t("pages.dashboard.claimRadarRoleReception", { defaultValue: "Claim Radar Role Reception" }) },
     ];
     const sorted = [...ownerLoads].sort((a, b) => a.load - b.load);
     const recommended = sorted[0] ?? ownerLoads[0];
     return {
       key: recommended.key, label: recommended.label, load: recommended.load,
-      reason: recommended.key === "ADMIN" ? t("pages.dashboard.claimRadarOwnerReasonAdmin")
-        : recommended.key === "DENTIST" ? t("pages.dashboard.claimRadarOwnerReasonDentist")
-        : t("pages.dashboard.claimRadarOwnerReasonReception"),
+      reason: recommended.key === "ADMIN" ? t("pages.dashboard.claimRadarOwnerReasonAdmin", { defaultValue: "Claim Radar Owner Reason Admin" })
+        : recommended.key === "DENTIST" ? t("pages.dashboard.claimRadarOwnerReasonDentist", { defaultValue: "Claim Radar Owner Reason Dentist" })
+        : t("pages.dashboard.claimRadarOwnerReasonReception", { defaultValue: "Claim Radar Owner Reason Reception" }),
     };
   }, [claimRadarTeamLoad, t]);
 
@@ -291,10 +291,10 @@ export function DashboardPage(): JSX.Element {
         trendLabel: t(delta > 0 ? "pages.dashboard.claimRadarHotspotTrendUp" : delta < 0 ? "pages.dashboard.claimRadarHotspotTrendDown" : "pages.dashboard.claimRadarHotspotTrendFlat"),
         deltaLabel: t("pages.dashboard.claimRadarHotspotDelta", { delta }),
         action: provider.critical >= 4
-          ? { key: "ESCALATE", label: t("pages.dashboard.claimRadarHotspotActionEscalate"), tone: "bg-rose-200 text-rose-950" }
+          ? { key: "ESCALATE", label: t("pages.dashboard.claimRadarHotspotActionEscalate", { defaultValue: "Claim Radar Hotspot Action Escalate" }), tone: "bg-rose-200 text-rose-950" }
           : (forecast?.todayRisk ?? 0) > 0
-            ? { key: "CALL", label: t("pages.dashboard.claimRadarHotspotActionCall"), tone: "bg-amber-200 text-amber-950" }
-            : { key: "ASSIGN", label: t("pages.dashboard.claimRadarHotspotActionAssign"), tone: "bg-teal-100 text-teal-900" },
+            ? { key: "CALL", label: t("pages.dashboard.claimRadarHotspotActionCall", { defaultValue: "Claim Radar Hotspot Action Call" }), tone: "bg-amber-200 text-amber-950" }
+            : { key: "ASSIGN", label: t("pages.dashboard.claimRadarHotspotActionAssign", { defaultValue: "Claim Radar Hotspot Action Assign" }), tone: "bg-teal-100 text-teal-900" },
         forecast: forecast?.todayRisk
           ? { label: t("pages.dashboard.claimRadarHotspotForecastToday", { count: forecast.todayRisk }), tone: "bg-amber-100 text-amber-900" }
           : forecast?.tomorrowRisk
@@ -367,8 +367,8 @@ export function DashboardPage(): JSX.Element {
     <div className="space-y-6">
       
       <PageHeader 
-        title={t("pages.dashboard.heroTitle", { defaultValue: "Operations Center" })}
-        subtitle={t("pages.dashboard.subtitleMain", { defaultValue: "Overview of your clinic's performance and queue." })}
+        title={t("pages.dashboard.heroTitle", { defaultValue: "Today Board" })}
+        subtitle={t("pages.dashboard.subtitleMain", { defaultValue: "Chair flow, waiting room, and clinical risk overview." })}
         actions={
           <>
             <input type="date" className="h-10 px-3 rounded-[var(--radius-md)] border border-brand-border bg-brand-surface text-brand-text text-sm font-medium focus:outline-none focus:ring-1 focus:ring-brand-primary" defaultValue={new Date().toISOString().split('T')[0]} />
@@ -383,7 +383,7 @@ export function DashboardPage(): JSX.Element {
       {/* KPI Row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         <StatCard 
-          label="Appointments Today" 
+          label="Scheduled Chairs" 
           value={dashboardView.today.appointments} 
           icon={CalendarDays}
           badge={{ text: `${dashboardView.queue.checkedIn} checked in`, variant: "primary" }}
@@ -416,7 +416,7 @@ export function DashboardPage(): JSX.Element {
         <div className="lg:col-span-2 space-y-6">
           <div className="card">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-bold text-brand-text">Today's Schedule</h2>
+              <h2 className="text-lg font-bold text-brand-text">Chair Schedule</h2>
               <button className="text-sm font-medium text-brand-primary hover:text-brand-primary-hover flex items-center gap-1">
                 View Calendar <Clock size={14} />
               </button>

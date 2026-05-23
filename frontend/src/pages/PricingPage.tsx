@@ -9,28 +9,28 @@ export function PricingPage(): JSX.Element {
   return (
     <MarketingShell documentTitleKey="pages.pricingFull.title">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-slate-800 sm:text-3xl">{t("pages.pricingFull.title")}</h1>
-        <p className="mt-3 max-w-2xl text-slate-600">{t("pages.pricingFull.subtitle")}</p>
+        <h1 className="text-2xl font-bold tracking-tight text-slate-800 sm:text-3xl">{t("pages.pricingFull.title", { defaultValue: "Title" })}</h1>
+        <p className="mt-3 max-w-2xl text-slate-600">{t("pages.pricingFull.subtitle", { defaultValue: "Subtitle" })}</p>
 
         <div className="mt-12">
           <PricingTeaser ctaHref="/contact" />
         </div>
 
         <div className="not-prose mt-14 rounded-2xl border border-slate-200 bg-slate-50/80 p-6 sm:p-8">
-          <h2 className="text-xl font-bold text-slate-800">{t("pages.pricingFull.afterCardsTitle")}</h2>
-          <p className="mt-2 text-sm leading-relaxed text-slate-600">{t("pages.pricingFull.afterCardsBody")}</p>
+          <h2 className="text-xl font-bold text-slate-800">{t("pages.pricingFull.afterCardsTitle", { defaultValue: "After Cards Title" })}</h2>
+          <p className="mt-2 text-sm leading-relaxed text-slate-600">{t("pages.pricingFull.afterCardsBody", { defaultValue: "After Cards Body" })}</p>
           <div className="mt-5 flex flex-wrap gap-3">
             <Link
               to="/contact"
               className="inline-flex min-h-11 items-center justify-center rounded-xl bg-teal-600 px-5 text-sm font-bold text-white hover:bg-teal-700"
             >
-              {t("pages.pricingFull.ctaContact")}
+              {t("pages.pricingFull.ctaContact", { defaultValue: "Cta Contact" })}
             </Link>
             <Link
               to="/"
               className="inline-flex min-h-11 items-center justify-center rounded-xl border border-slate-300 px-5 text-sm font-bold text-slate-800 hover:bg-white"
             >
-              {t("pages.pricingFull.ctaHome")}
+              {t("pages.pricingFull.ctaHome", { defaultValue: "Cta Home" })}
             </Link>
           </div>
         </div>

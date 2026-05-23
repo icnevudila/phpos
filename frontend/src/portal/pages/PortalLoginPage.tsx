@@ -94,7 +94,7 @@ export function PortalLoginPage(): JSX.Element {
       await verifyOtp(slug, phone, code);
       navigate(`/${slug}/portal/home${kioskSuffix}`, { replace: true });
     } catch (err) {
-      setError(err instanceof Error ? err.message : t("pages.portal.login.incorrectCode"));
+      setError(err instanceof Error ? err.message : t("pages.portal.login.incorrectCode", { defaultValue: "Incorrect Code" }));
     } finally {
       setLoading(false);
     }
@@ -134,30 +134,30 @@ export function PortalLoginPage(): JSX.Element {
             <div className="flex items-center gap-3">
               <ToothLogo className="h-11 w-11" />
               <div>
-                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-teal-100/90">{t("common.appName")}</p>
-                <p className="text-sm font-bold text-white">{t("pages.portal.login.heroKicker")}</p>
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-teal-100/90">{t("common.appName", { defaultValue: "App Name" })}</p>
+                <p className="text-sm font-bold text-white">{t("pages.portal.login.heroKicker", { defaultValue: "Hero Kicker" })}</p>
               </div>
             </div>
             <h1 className="mt-8 max-w-sm text-2xl font-black leading-tight tracking-tight xl:text-3xl">
-              {t("pages.portal.login.heroTitle")}
+              {t("pages.portal.login.heroTitle", { defaultValue: "Hero Title" })}
             </h1>
-            <p className="mt-3 max-w-xs text-xs leading-relaxed text-teal-50/95">{t("pages.portal.login.heroSub")}</p>
+            <p className="mt-3 max-w-xs text-xs leading-relaxed text-teal-50/95">{t("pages.portal.login.heroSub", { defaultValue: "Hero Sub" })}</p>
           </div>
           <ul className="relative mt-8 space-y-2.5 text-xs font-medium text-teal-50">
             <li className="flex gap-2">
               <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-white/15 text-[10px]">✓</span>
-              {t("pages.portal.login.heroPoint1")}
+              {t("pages.portal.login.heroPoint1", { defaultValue: "Hero Point1" })}
             </li>
             <li className="flex gap-2">
               <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-white/15 text-[10px]">✓</span>
-              {t("pages.portal.login.heroPoint2")}
+              {t("pages.portal.login.heroPoint2", { defaultValue: "Hero Point2" })}
             </li>
             <li className="flex gap-2">
               <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-white/15 text-[10px]">✓</span>
-              {t("pages.portal.login.heroPoint3")}
+              {t("pages.portal.login.heroPoint3", { defaultValue: "Hero Point3" })}
             </li>
           </ul>
-          <p className="relative mt-6 text-[10px] text-teal-200/85">{t("pages.portal.login.heroFoot")}</p>
+          <p className="relative mt-6 text-[10px] text-teal-200/85">{t("pages.portal.login.heroFoot", { defaultValue: "Hero Foot" })}</p>
         </section>
 
         {/* Sağ: OTP formları */}
@@ -167,19 +167,19 @@ export function PortalLoginPage(): JSX.Element {
               <ToothLogo />
               <div className="min-w-0">
                 <p className="text-[10px] font-black uppercase tracking-widest text-teal-600">
-                  {t("common.appName")}
+                  {t("common.appName", { defaultValue: "App Name" })}
                 </p>
-                <p className="truncate text-xs font-bold text-slate-800">{t("pages.portal.login.heroKicker")}</p>
+                <p className="truncate text-xs font-bold text-slate-800">{t("pages.portal.login.heroKicker", { defaultValue: "Hero Kicker" })}</p>
               </div>
             </div>
 
             <div className="rounded-3xl border border-slate-200/90 bg-white/95 p-6 shadow-lg shadow-slate-900/5 backdrop-blur-sm sm:p-7">
               <h2 className="text-center text-xl font-black tracking-tight text-slate-900 sm:text-2xl">
-                {step === "phone" ? t("pages.portal.login.titlePhone") : t("pages.portal.login.titleCode")}
+                {step === "phone" ? t("pages.portal.login.titlePhone", { defaultValue: "Title Phone" }) : t("pages.portal.login.titleCode", { defaultValue: "Title Code" })}
               </h2>
               <p className="mt-2 text-center text-sm text-slate-600">
                 {step === "phone"
-                  ? t("pages.portal.login.subtitlePhone")
+                  ? t("pages.portal.login.subtitlePhone", { defaultValue: "Subtitle Phone" })
                   : t("pages.portal.login.subtitleCode", { phone })}
               </p>
 
@@ -190,7 +190,7 @@ export function PortalLoginPage(): JSX.Element {
                       htmlFor="portal-phone"
                       className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-slate-500"
                     >
-                      {t("pages.portal.login.mobileLabel")}
+                      {t("pages.portal.login.mobileLabel", { defaultValue: "Mobile Label" })}
                     </label>
                     <div className="flex overflow-hidden rounded-xl border border-slate-200 bg-slate-50/80 focus-within:border-teal-500 focus-within:ring-2 focus-within:ring-teal-100">
                       <span className="flex items-center border-r border-slate-200 bg-slate-100/80 px-3 text-sm font-bold text-slate-600">
@@ -200,14 +200,14 @@ export function PortalLoginPage(): JSX.Element {
                         id="portal-phone"
                         type="tel"
                         autoComplete="tel-national"
-                        placeholder={t("pages.portal.login.phonePlaceholder")}
+                        placeholder={t("pages.portal.login.phonePlaceholder", { defaultValue: "Phone Placeholder" })}
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
                         required
                         className="min-h-12 w-full bg-transparent px-3 py-3 text-base outline-none sm:text-sm"
                       />
                     </div>
-                    <p className="mt-1.5 text-[11px] text-slate-500">{t("pages.portal.login.formatHint")}</p>
+                    <p className="mt-1.5 text-[11px] text-slate-500">{t("pages.portal.login.formatHint", { defaultValue: "Format Hint" })}</p>
                   </div>
                   {error ? (
                     <div
@@ -225,19 +225,19 @@ export function PortalLoginPage(): JSX.Element {
                     {loading ? (
                       <>
                         <Spinner />
-                        {t("pages.portal.login.sending")}
+                        {t("pages.portal.login.sending", { defaultValue: "Sending" })}
                       </>
                     ) : (
-                      t("pages.portal.login.sendOtp")
+                      t("pages.portal.login.sendOtp", { defaultValue: "Send Otp" })
                     )}
                   </button>
                   <p className="text-center text-[11px] leading-relaxed text-slate-500">
-                    {t("pages.portal.login.notPatient")}{" "}
+                    {t("pages.portal.login.notPatient", { defaultValue: "Not Patient" })}{" "}
                     <Link
                       to={`/${slug}/portal/register${kioskSuffix}`}
                       className="font-bold text-teal-600 hover:underline"
                     >
-                      {t("pages.portal.login.registerLink")}
+                      {t("pages.portal.login.registerLink", { defaultValue: "Register Link" })}
                     </Link>
                   </p>
                 </form>
@@ -248,7 +248,7 @@ export function PortalLoginPage(): JSX.Element {
                       htmlFor="portal-code"
                       className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-slate-500"
                     >
-                      {t("pages.portal.login.codeLabel")}
+                      {t("pages.portal.login.codeLabel", { defaultValue: "Code Label" })}
                     </label>
                     <input
                       id="portal-code"
@@ -258,7 +258,7 @@ export function PortalLoginPage(): JSX.Element {
                       value={code}
                       onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
                       className={`w-full text-center text-2xl font-black tracking-[0.45em] ${fieldRing}`}
-                      placeholder={t("pages.portal.login.codePlaceholder")}
+                      placeholder={t("pages.portal.login.codePlaceholder", { defaultValue: "Code Placeholder" })}
                       required
                     />
                     {otpMeta?.devCode ? (
@@ -283,10 +283,10 @@ export function PortalLoginPage(): JSX.Element {
                     {loading ? (
                       <>
                         <Spinner />
-                        {t("pages.portal.login.verifying")}
+                        {t("pages.portal.login.verifying", { defaultValue: "Verifying" })}
                       </>
                     ) : (
-                      t("pages.portal.login.verifyEnter")
+                      t("pages.portal.login.verifyEnter", { defaultValue: "Verify Enter" })
                     )}
                   </button>
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -299,7 +299,7 @@ export function PortalLoginPage(): JSX.Element {
                       }}
                       className="min-h-11 text-left text-xs font-semibold text-slate-600 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2"
                     >
-                      {t("pages.portal.login.changeNumber")}
+                      {t("pages.portal.login.changeNumber", { defaultValue: "Change Number" })}
                     </button>
                     <button
                       type="button"
@@ -307,7 +307,7 @@ export function PortalLoginPage(): JSX.Element {
                       onClick={() => void onResend()}
                       className="min-h-11 rounded-lg px-2 text-xs font-bold text-teal-700 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2 disabled:text-slate-400 disabled:no-underline"
                     >
-                      {cooldown > 0 ? t("pages.portal.login.resendIn", { seconds: cooldown }) : t("pages.portal.login.resend")}
+                      {cooldown > 0 ? t("pages.portal.login.resendIn", { seconds: cooldown }) : t("pages.portal.login.resend", { defaultValue: "Resend" })}
                     </button>
                   </div>
                 </form>
@@ -318,7 +318,7 @@ export function PortalLoginPage(): JSX.Element {
                   to="/login"
                   className="font-semibold text-teal-700 underline-offset-2 hover:underline"
                 >
-                  {t("pages.portal.login.staffLoginCta")}
+                  {t("pages.portal.login.staffLoginCta", { defaultValue: "Staff Login Cta" })}
                 </Link>
               </p>
             </div>

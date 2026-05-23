@@ -96,7 +96,7 @@ export function FeatureModal({ feature, onClose }: FeatureModalProps): JSX.Eleme
               <button
                 ref={closeRef}
                 onClick={onClose}
-                aria-label={t("common.close")}
+                aria-label={t("common.close", { defaultValue: "Close" })}
                 className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-surface-muted text-brand-muted transition hover:bg-brand-border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2"
               >
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="h-5 w-5">
@@ -121,10 +121,10 @@ export function FeatureModal({ feature, onClose }: FeatureModalProps): JSX.Eleme
                   onClick={onClose}
                   className="inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-teal-600 px-4 py-2.5 text-center text-sm font-semibold text-white shadow-sm transition hover:bg-teal-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 sm:w-auto"
                 >
-                  {t("landing.featureOpenInApp")}
+                  {t("landing.featureOpenInApp", { defaultValue: "Feature Open In App" })}
                 </Link>
                 <p className="mt-2 text-center text-[11px] text-brand-muted sm:text-left">
-                  {t("landing.featureOpenInAppHint")}
+                  {t("landing.featureOpenInAppHint", { defaultValue: "Feature Open In App Hint" })}
                 </p>
               </div>
             ) : null}

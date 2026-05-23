@@ -17,5 +17,5 @@ export function translatePortalError(err: unknown, t: TFunction): string {
     return t(`pages.portal.errors.codes.${err.code}`, { defaultValue: err.message });
   }
   if (err instanceof Error) return err.message;
-  return t("pages.portal.errors.generic");
+  return t("pages.portal.errors.generic", { defaultValue: "Generic" });
 }

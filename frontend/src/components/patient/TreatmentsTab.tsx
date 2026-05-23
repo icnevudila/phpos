@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Receipt, FileText, Plus } from "lucide-react";
@@ -59,6 +60,7 @@ export function TreatmentsTab({
   dateLocale,
   onAdded,
 }: TreatmentsTabProps): JSX.Element {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [invoiceBusy, setInvoiceBusy] = useState(false);
   const billingAppointment = useMemo(() => {
@@ -77,20 +79,20 @@ export function TreatmentsTab({
 
   async function onCreateInvoiceFromTreatments(): Promise<void> {
     if (!billingAppointment) {
-      toast.error("No active appointment found to link the invoice.");
+      toast.error(t("pages.patientDetail.treatments.toastNoActiveAppointment", { defaultValue: "No active appointment found to link the invoice." }));
       return;
     }
     if (!items?.length) {
-      toast.error("No treatments available to invoice.");
+      toast.error(t("pages.patientDetail.treatments.toastNoTreatments", { defaultValue: "No treatments available to invoice." }));
       return;
     }
     setInvoiceBusy(true);
     try {
       const invoice = await createInvoiceFromAppointment(billingAppointment.id);
-      toast.success("Invoice generated successfully.");
+      toast.success(t("pages.patientDetail.treatments.toastInvoiceGenerated", { defaultValue: "Invoice generated successfully." }));
       navigate(`/invoices/${invoice.id}`);
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Failed to generate invoice.");
+      toast.error(e instanceof Error ? e.message : t("pages.patientDetail.treatments.toastInvoiceFailed", { defaultValue: "Failed to generate invoice." }));
     } finally {
       setInvoiceBusy(false);
     }
@@ -116,14 +118,14 @@ export function TreatmentsTab({
       <div className="card bg-brand-surface-soft border border-brand-border p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <p className="text-[10px] font-black uppercase tracking-widest text-brand-muted mb-0.5">
-            Total Treatment Value
+            {t("pages.patientDetail.treatments.totalValue", { defaultValue: "Total Treatment Value" })}
           </p>
           <div className="flex items-end gap-3">
              <p className="text-2xl font-black text-brand-text tabular-nums leading-none">
                {money(totalPhp)}
              </p>
              <p className="text-xs font-bold text-brand-muted mb-0.5">
-               across {items.length} procedures
+               {t("pages.patientDetail.treatments.acrossProcedures", { count: items.length, defaultValue: `across ${items.length} procedures` })}
              </p>
           </div>
         </div>
@@ -132,12 +134,12 @@ export function TreatmentsTab({
             type="button"
             onClick={() =>
               void openAuthedPdf(`/patients/${patientId}/forms/treatment-record.pdf`).catch(() =>
-                toast.error("Failed to generate PDF."),
+                toast.error(t("pages.patientDetail.treatments.toastPdfFailed", { defaultValue: "Failed to generate PDF." })),
               )
             }
             className="btn-secondary h-9 px-4 text-xs gap-2"
           >
-            <FileText size={14} /> PDF Record
+            <FileText size={14} /> {t("pages.patientDetail.treatments.pdfRecord", { defaultValue: "PDF Record" })}
           </button>
           {canWrite && items.length > 0 ? (
             <button
@@ -147,7 +149,7 @@ export function TreatmentsTab({
               className="btn-primary h-9 px-4 text-xs gap-2 disabled:opacity-50"
             >
               <Receipt size={14} />
-              {invoiceBusy ? "Generating Invoice..." : "Create Invoice"}
+              {invoiceBusy ? t("pages.patientDetail.treatments.generatingInvoice", { defaultValue: "Generating Invoice..." }) : t("pages.patientDetail.treatments.createInvoice", { defaultValue: "Create Invoice" })}
             </button>
           ) : null}
         </div>
@@ -159,7 +161,7 @@ export function TreatmentsTab({
 
       {items.length === 0 ? (
         <div className="card p-8 flex flex-col items-center justify-center text-center bg-brand-surface-soft border border-brand-border mt-4">
-          <p className="text-sm font-bold text-brand-muted uppercase tracking-widest">No Treatments Logged</p>
+          <p className="text-sm font-bold text-brand-muted uppercase tracking-widest">{t("pages.patientDetail.treatments.empty", { defaultValue: "No Treatments Logged" })}</p>
         </div>
       ) : (
         <div className="card border border-brand-border overflow-hidden mt-4">
@@ -167,14 +169,14 @@ export function TreatmentsTab({
             <table className="w-full text-left border-collapse">
               <thead className="bg-brand-surface-muted border-b border-brand-border">
                 <tr>
-                  <th className="py-3 px-4 text-[10px] font-black uppercase tracking-widest text-brand-muted">Date</th>
-                  <th className="py-3 px-4 text-[10px] font-black uppercase tracking-widest text-brand-muted">Procedure</th>
-                  <th className="py-3 px-4 text-[10px] font-black uppercase tracking-widest text-brand-muted">Phase</th>
-                  <th className="py-3 px-4 text-[10px] font-black uppercase tracking-widest text-brand-muted">Tooth</th>
-                  <th className="py-3 px-4 text-[10px] font-black uppercase tracking-widest text-brand-muted text-right">Qty</th>
-                  <th className="py-3 px-4 text-[10px] font-black uppercase tracking-widest text-brand-muted text-right">Unit Price</th>
-                  <th className="py-3 px-4 text-[10px] font-black uppercase tracking-widest text-brand-muted text-right">Total</th>
-                  <th className="py-3 px-4 text-[10px] font-black uppercase tracking-widest text-brand-muted">Provider</th>
+                  <th className="py-3 px-4 text-[10px] font-black uppercase tracking-widest text-brand-muted">{t("pages.patientDetail.treatments.colDate", { defaultValue: "Date" })}</th>
+                  <th className="py-3 px-4 text-[10px] font-black uppercase tracking-widest text-brand-muted">{t("pages.patientDetail.treatments.colProcedure", { defaultValue: "Procedure" })}</th>
+                  <th className="py-3 px-4 text-[10px] font-black uppercase tracking-widest text-brand-muted">{t("pages.patientDetail.treatments.colPhase", { defaultValue: "Phase" })}</th>
+                  <th className="py-3 px-4 text-[10px] font-black uppercase tracking-widest text-brand-muted">{t("pages.patientDetail.treatments.colTooth", { defaultValue: "Tooth" })}</th>
+                  <th className="py-3 px-4 text-[10px] font-black uppercase tracking-widest text-brand-muted text-right">{t("pages.patientDetail.treatments.colQty", { defaultValue: "Qty" })}</th>
+                  <th className="py-3 px-4 text-[10px] font-black uppercase tracking-widest text-brand-muted text-right">{t("pages.patientDetail.treatments.colUnitPrice", { defaultValue: "Unit Price" })}</th>
+                  <th className="py-3 px-4 text-[10px] font-black uppercase tracking-widest text-brand-muted text-right">{t("pages.patientDetail.treatments.colTotal", { defaultValue: "Total" })}</th>
+                  <th className="py-3 px-4 text-[10px] font-black uppercase tracking-widest text-brand-muted">{t("pages.patientDetail.treatments.colProvider", { defaultValue: "Provider" })}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-brand-border/50 bg-white">
@@ -184,7 +186,7 @@ export function TreatmentsTab({
                     <td className="py-3 px-4 text-xs font-bold text-brand-text">{row.procedure.replace(/_/g, " ")}</td>
                     <td className="py-3 px-4">
                       <span className="inline-flex items-center px-1.5 py-0.5 rounded-[var(--radius-sm)] border border-brand-border bg-white text-[9px] font-black uppercase tracking-widest text-brand-muted">
-                        {row.phase || "Unphased"}
+                        {row.phase || t("pages.patientDetail.treatments.unphased", { defaultValue: "Unphased" })}
                       </span>
                     </td>
                     <td className="py-3 px-4 text-xs font-medium text-brand-muted">{row.toothIds.join(", ") || "--"}</td>
@@ -194,7 +196,7 @@ export function TreatmentsTab({
                       {money(Number(row.unitPrice) * row.quantity)}
                     </td>
                     <td className="py-3 px-4 text-xs font-bold text-brand-muted whitespace-nowrap">
-                      Dr. {row.dentist.firstName} {row.dentist.lastName}
+                      {t("pages.common.drPrefix", { defaultValue: "Dr." })} {row.dentist.firstName} {row.dentist.lastName}
                     </td>
                   </tr>
                 ))}

@@ -58,7 +58,7 @@ export function PatientHmoPanel({ patientId }: { patientId: string }): JSX.Eleme
 
   async function addMembership(): Promise<void> {
     if (!providerId || !memberNumber.trim()) {
-      toast.error(t("pages.patientDetail.hmo.toastProviderMemberRequired"));
+      toast.error(t("pages.patientDetail.hmo.toastProviderMemberRequired", { defaultValue: "Toast Provider Member Required" }));
       return;
     }
     try {
@@ -69,27 +69,27 @@ export function PatientHmoPanel({ patientId }: { patientId: string }): JSX.Eleme
       });
       setMemberNumber("");
       await queryClient.invalidateQueries({ queryKey: ["patientHmoMemberships", patientId] });
-      toast.success(t("pages.patientDetail.hmo.toastMembershipAdded"));
+      toast.success(t("pages.patientDetail.hmo.toastMembershipAdded", { defaultValue: "Toast Membership Added" }));
     } catch (e) {
       toast.error((e as Error).message);
     }
   }
 
   if (loading) {
-    return <p className="text-sm text-slate-500">{t("pages.patientDetail.hmo.loading")}</p>;
+    return <p className="text-sm text-slate-500">{t("pages.patientDetail.hmo.loading", { defaultValue: "Loading" })}</p>;
   }
 
-  const dash = t("pages.patientDetail.hmo.dash");
+  const dash = t("pages.patientDetail.hmo.dash", { defaultValue: "Dash" });
 
   return (
     <div className="space-y-5">
       <div className="grid gap-3 md:grid-cols-2">
         <section className="rounded-xl border border-slate-200 bg-white p-4">
           <h3 className="text-sm font-semibold text-slate-900">
-            {t("pages.patientDetail.hmo.membershipsTitle")}
+            {t("pages.patientDetail.hmo.membershipsTitle", { defaultValue: "Memberships Title" })}
           </h3>
           {memberships.length === 0 ? (
-            <p className="mt-3 text-sm text-slate-500">{t("pages.patientDetail.hmo.membershipsEmpty")}</p>
+            <p className="mt-3 text-sm text-slate-500">{t("pages.patientDetail.hmo.membershipsEmpty", { defaultValue: "Memberships Empty" })}</p>
           ) : (
             <div className="mt-3 space-y-2">
               {memberships.map((m) => (
@@ -100,7 +100,7 @@ export function PatientHmoPanel({ patientId }: { patientId: string }): JSX.Eleme
                     </p>
                     {m.isPrimary ? (
                       <span className="rounded-full bg-indigo-100 px-2 py-0.5 text-xs font-bold text-indigo-700">
-                        {t("pages.patientDetail.hmo.primaryBadge")}
+                        {t("pages.patientDetail.hmo.primaryBadge", { defaultValue: "Primary Badge" })}
                       </span>
                     ) : null}
                   </div>
@@ -117,14 +117,14 @@ export function PatientHmoPanel({ patientId }: { patientId: string }): JSX.Eleme
         </section>
 
         <section className="rounded-xl border border-slate-200 bg-white p-4">
-          <h3 className="text-sm font-semibold text-slate-900">{t("pages.patientDetail.hmo.addTitle")}</h3>
+          <h3 className="text-sm font-semibold text-slate-900">{t("pages.patientDetail.hmo.addTitle", { defaultValue: "Add Title" })}</h3>
           <div className="mt-3 space-y-2">
             <select
               value={providerId}
               onChange={(e) => setProviderId(e.target.value)}
               className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
             >
-              <option value="">{t("pages.patientDetail.hmo.selectProvider")}</option>
+              <option value="">{t("pages.patientDetail.hmo.selectProvider", { defaultValue: "Select Provider" })}</option>
               {providers.map((p) => (
                 <option key={p.id} value={p.id}>
                   {p.name}
@@ -134,39 +134,39 @@ export function PatientHmoPanel({ patientId }: { patientId: string }): JSX.Eleme
             <input
               value={memberNumber}
               onChange={(e) => setMemberNumber(e.target.value)}
-              placeholder={t("pages.patientDetail.hmo.memberNumberPlaceholder")}
+              placeholder={t("pages.patientDetail.hmo.memberNumberPlaceholder", { defaultValue: "Member Number Placeholder" })}
               className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
             />
             <label className="inline-flex items-center gap-2 text-sm text-slate-700">
               <input type="checkbox" checked={isPrimary} onChange={(e) => setIsPrimary(e.target.checked)} />
-              {t("pages.patientDetail.hmo.primaryCheckbox")}
+              {t("pages.patientDetail.hmo.primaryCheckbox", { defaultValue: "Primary Checkbox" })}
             </label>
             <button
               type="button"
               onClick={() => void addMembership()}
               className="rounded-lg bg-indigo-600 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-700"
             >
-              {t("pages.patientDetail.hmo.saveMembership")}
+              {t("pages.patientDetail.hmo.saveMembership", { defaultValue: "Save Membership" })}
             </button>
           </div>
         </section>
       </div>
 
       <section className="rounded-xl border border-slate-200 bg-white p-4">
-        <h3 className="text-sm font-semibold text-slate-900">{t("pages.patientDetail.hmo.claimsTitle")}</h3>
+        <h3 className="text-sm font-semibold text-slate-900">{t("pages.patientDetail.hmo.claimsTitle", { defaultValue: "Claims Title" })}</h3>
         {claims.length === 0 ? (
-          <p className="mt-2 text-sm text-slate-500">{t("pages.patientDetail.hmo.claimsEmpty")}</p>
+          <p className="mt-2 text-sm text-slate-500">{t("pages.patientDetail.hmo.claimsEmpty", { defaultValue: "Claims Empty" })}</p>
         ) : (
           <div className="mt-2 overflow-x-auto">
             <table className="min-w-full text-sm">
               <thead>
                 <tr className="border-b border-slate-200 text-left text-[11px] uppercase tracking-wide text-slate-500">
-                  <th className="px-2 py-2">{t("pages.patientDetail.hmo.colClaim")}</th>
-                  <th className="px-2 py-2 text-center">{t("pages.patientDetail.hmo.colLines")}</th>
-                  <th className="px-2 py-2">{t("pages.patientDetail.hmo.colProvider")}</th>
-                  <th className="px-2 py-2 text-right">{t("pages.patientDetail.hmo.colRequested")}</th>
-                  <th className="px-2 py-2 text-right">{t("pages.patientDetail.hmo.colApproved")}</th>
-                  <th className="px-2 py-2">{t("pages.patientDetail.hmo.colStatus")}</th>
+                  <th className="px-2 py-2">{t("pages.patientDetail.hmo.colClaim", { defaultValue: "Col Claim" })}</th>
+                  <th className="px-2 py-2 text-center">{t("pages.patientDetail.hmo.colLines", { defaultValue: "Col Lines" })}</th>
+                  <th className="px-2 py-2">{t("pages.patientDetail.hmo.colProvider", { defaultValue: "Col Provider" })}</th>
+                  <th className="px-2 py-2 text-right">{t("pages.patientDetail.hmo.colRequested", { defaultValue: "Col Requested" })}</th>
+                  <th className="px-2 py-2 text-right">{t("pages.patientDetail.hmo.colApproved", { defaultValue: "Col Approved" })}</th>
+                  <th className="px-2 py-2">{t("pages.patientDetail.hmo.colStatus", { defaultValue: "Col Status" })}</th>
                 </tr>
               </thead>
               <tbody>

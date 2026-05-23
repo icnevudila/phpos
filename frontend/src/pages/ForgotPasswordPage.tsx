@@ -21,7 +21,7 @@ export function ForgotPasswordPage(): JSX.Element {
       await requestPasswordReset(email.trim());
       setSent(true);
     } catch (err) {
-      setError((err as Error).message || t("auth.forgotFailed"));
+      setError((err as Error).message || t("auth.forgotFailed", { defaultValue: "Forgot Failed" }));
     } finally {
       setLoading(false);
     }
@@ -35,27 +35,27 @@ export function ForgotPasswordPage(): JSX.Element {
         </div>
         <div className="text-center">
           <h1 className="text-2xl font-bold tracking-tight text-slate-800">
-            {t("auth.forgotTitle")}
+            {t("auth.forgotTitle", { defaultValue: "Forgot Title" })}
           </h1>
-          <p className="mt-2 text-sm text-slate-500">{t("auth.forgotSubtitle")}</p>
+          <p className="mt-2 text-sm text-slate-500">{t("auth.forgotSubtitle", { defaultValue: "Forgot Subtitle" })}</p>
         </div>
         {sent ? (
           <div className="mt-8 rounded-2xl bg-teal-50 px-4 py-6 text-center" role="status">
             <Mail className="mx-auto mb-3 h-10 w-10 text-teal-600" />
-            <p className="text-sm font-medium text-slate-700">{t("auth.forgotSent")}</p>
+            <p className="text-sm font-medium text-slate-700">{t("auth.forgotSent", { defaultValue: "Forgot Sent" })}</p>
             <Link
               to="/login"
               className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-teal-600 hover:underline"
             >
               <ArrowLeft size={16} />
-              {t("auth.backToLogin")}
+              {t("auth.backToLogin", { defaultValue: "Back To Login" })}
             </Link>
           </div>
         ) : (
           <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
             <div>
               <label className="block text-xs font-semibold uppercase tracking-widest text-slate-400">
-                {t("auth.emailLabel")}
+                {t("auth.emailLabel", { defaultValue: "Email Label" })}
               </label>
               <input
                 type="email"
@@ -75,14 +75,14 @@ export function ForgotPasswordPage(): JSX.Element {
               disabled={loading}
               className="btn-primary w-full justify-center"
             >
-              {loading ? t("auth.sending") : t("auth.sendResetLink")}
+              {loading ? t("auth.sending", { defaultValue: "Sending" }) : t("auth.sendResetLink", { defaultValue: "Send Reset Link" })}
             </button>
             <Link
               to="/login"
               className="flex items-center justify-center gap-2 text-xs font-bold text-slate-500 hover:text-slate-700"
             >
               <ArrowLeft size={14} />
-              {t("auth.backToLogin")}
+              {t("auth.backToLogin", { defaultValue: "Back To Login" })}
             </Link>
           </form>
         )}

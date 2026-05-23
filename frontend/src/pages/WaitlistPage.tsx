@@ -77,7 +77,7 @@ export function WaitlistPage(): JSX.Element {
       const data = await fetchWaitlist(scope);
       setRows(data);
     } catch (e) {
-      setError(e instanceof Error ? e.message : t("pages.waitlist.loadFailed"));
+      setError(e instanceof Error ? e.message : t("pages.waitlist.loadFailed", { defaultValue: "Load Failed" }));
     } finally {
       setLoading(false);
     }
@@ -89,7 +89,7 @@ export function WaitlistPage(): JSX.Element {
 
   async function onAdd(): Promise<void> {
     if (!patient) {
-      toast.error(t("pages.waitlist.toastSelectPatient"));
+      toast.error(t("pages.waitlist.toastSelectPatient", { defaultValue: "Toast Select Patient" }));
       return;
     }
     setAdding(true);
@@ -98,16 +98,16 @@ export function WaitlistPage(): JSX.Element {
         patientId: patient.id,
         notes: notes.trim() || null,
       });
-      toast.success(t("pages.waitlist.toastAdded"));
+      toast.success(t("pages.waitlist.toastAdded", { defaultValue: "Demo mode: SMS dispatch simulated. No message was sent." }));
       setNotes("");
       setPatient(null);
       await load();
     } catch (e) {
       const msg = e instanceof Error ? e.message : "";
       if (msg.toLowerCase().includes("already") || msg.includes("WAITLIST")) {
-        toast.error(t("pages.waitlist.toastDuplicate"));
+        toast.error(t("pages.waitlist.toastDuplicate", { defaultValue: "Toast Duplicate" }));
       } else {
-        toast.error(msg || t("pages.waitlist.loadFailed"));
+        toast.error(msg || t("pages.waitlist.loadFailed", { defaultValue: "Load Failed" }));
       }
     } finally {
       setAdding(false);
@@ -116,15 +116,15 @@ export function WaitlistPage(): JSX.Element {
 
   async function onPatch(id: string, status: "FULFILLED" | "CANCELLED"): Promise<void> {
     if (status === "CANCELLED") {
-      const ok = window.confirm(t("pages.waitlist.confirmCancel"));
+      const ok = window.confirm(t("pages.waitlist.confirmCancel", { defaultValue: "Confirm Cancel" }));
       if (!ok) return;
     }
     try {
       await patchWaitlistEntry(id, status);
-      toast.success(t("pages.waitlist.toastUpdated"));
+      toast.success(t("pages.waitlist.toastUpdated", { defaultValue: "Toast Updated" }));
       await load();
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : t("pages.waitlist.toastUpdateFailed"));
+      toast.error(e instanceof Error ? e.message : t("pages.waitlist.toastUpdateFailed", { defaultValue: "Toast Update Failed" }));
     }
   }
 
@@ -142,11 +142,11 @@ export function WaitlistPage(): JSX.Element {
   function onExportCsv(): void {
     if (!filteredRows.length) return;
     const headers = [
-      t("pages.waitlist.colPatient"),
-      t("pages.waitlist.colPhone"),
-      t("pages.waitlist.colNotes"),
-      t("pages.waitlist.colSince"),
-      t("pages.waitlist.colStatus"),
+      t("pages.waitlist.colPatient", { defaultValue: "Col Patient" }),
+      t("pages.waitlist.colPhone", { defaultValue: "Col Phone" }),
+      t("pages.waitlist.colNotes", { defaultValue: "Col Notes" }),
+      t("pages.waitlist.colSince", { defaultValue: "Col Since" }),
+      t("pages.waitlist.colStatus", { defaultValue: "Col Status" }),
     ];
     const body = filteredRows.map((r) => [
       r.patient.fullName,
@@ -154,10 +154,10 @@ export function WaitlistPage(): JSX.Element {
       r.notes ?? "",
       fmtWhen(r.createdAt),
       r.status === "WAITING"
-        ? t("pages.waitlist.statusWAITING")
+        ? t("pages.waitlist.statusWAITING", { defaultValue: "Status W A I T I N G" })
         : r.status === "FULFILLED"
-          ? t("pages.waitlist.statusFULFILLED")
-          : t("pages.waitlist.statusCANCELLED"),
+          ? t("pages.waitlist.statusFULFILLED", { defaultValue: "Status F U L F I L L E D" })
+          : t("pages.waitlist.statusCANCELLED", { defaultValue: "Status C A N C E L L E D" }),
     ]);
     const stamp = new Date().toISOString().slice(0, 10);
     downloadCsv(`waitlist-${scope}-${stamp}.csv`, rowsToCsv(headers, body));
@@ -165,12 +165,12 @@ export function WaitlistPage(): JSX.Element {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="page-wrapper">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="page-header-title">{t("pages.waitlist.title")}</h1>
-          <p className="page-header-sub">{t("pages.waitlist.subtitle")}</p>
+          <h1 className="page-header-title">{t("pages.waitlist.title", { defaultValue: "Waiting Room Tickets" })}</h1>
+          <p className="page-header-sub">{t("pages.waitlist.subtitle", { defaultValue: "Manage patient queues, wait times, and dispatch." })}</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <button
@@ -180,13 +180,13 @@ export function WaitlistPage(): JSX.Element {
             className="btn-secondary flex items-center gap-2 disabled:opacity-40"
           >
             <Download size={15} aria-hidden />
-            {t("pages.waitlist.exportCsv")}
+            {t("pages.waitlist.exportCsv", { defaultValue: "Export Csv" })}
           </button>
           <Link
             to="/appointments"
             className="btn-secondary flex items-center gap-2"
           >
-            <Calendar size={15} /> {t("pages.waitlist.linkCalendar")}
+            <Calendar size={15} /> {t("pages.waitlist.linkCalendar", { defaultValue: "Link Calendar" })}
           </Link>
           <button
             onClick={() => {
@@ -195,7 +195,7 @@ export function WaitlistPage(): JSX.Element {
             }}
             className="btn-primary flex items-center gap-2"
           >
-            <Plus size={16} /> {t("pages.waitlist.addToWaitlist")}
+            <Plus size={16} /> {t("pages.waitlist.addToWaitlist", { defaultValue: "New Ticket" })}
           </button>
         </div>
       </div>
@@ -207,30 +207,30 @@ export function WaitlistPage(): JSX.Element {
             <UserPlus size={20} />
           </div>
           <h2 className="text-base font-bold text-brand-text">
-            {t("pages.waitlist.addToWaitlist")}
+            {t("pages.waitlist.addToWaitlist", { defaultValue: "Add to Queue" })}
           </h2>
         </div>
 
         <div className="grid gap-4 lg:grid-cols-12 items-end">
           <div className="lg:col-span-4 space-y-1.5">
             <label className="text-xs font-semibold uppercase tracking-widest text-brand-muted">
-              {t("pages.waitlist.patientLabel")}
+              {t("pages.waitlist.patientLabel", { defaultValue: "Patient Label" })}
             </label>
             <PatientAutocomplete
               value={patient}
               onChange={setPatient}
-              placeholder={t("pages.waitlist.patientPlaceholder")}
+              placeholder={t("pages.waitlist.patientPlaceholder", { defaultValue: "Patient Placeholder" })}
             />
           </div>
           <div className="lg:col-span-6 space-y-1.5">
             <label className="text-xs font-semibold uppercase tracking-widest text-brand-muted">
-              {t("pages.waitlist.notesLabel")}
+              {t("pages.waitlist.notesLabel", { defaultValue: "Notes Label" })}
             </label>
             <div className="relative">
               <StickyNote className="absolute left-4 top-3.5 text-brand-muted opacity-60" size={16} />
               <textarea
                 className="h-14 w-full rounded-[var(--radius-md)] bg-brand-surface-soft pl-11 pr-4 py-3 text-sm font-medium outline-none border border-brand-border focus:ring-2 focus:ring-brand-primary transition-all resize-none"
-                placeholder={t("pages.waitlist.notesPlaceholder")}
+                placeholder={t("pages.waitlist.notesPlaceholder", { defaultValue: "Notes Placeholder" })}
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 maxLength={2000}
@@ -245,7 +245,7 @@ export function WaitlistPage(): JSX.Element {
               className="btn-primary flex h-14 w-full items-center justify-center gap-2 disabled:opacity-50"
             >
               {adding ? <RefreshCw className="animate-spin h-4 w-4" /> : <Zap size={16} />}
-              <span className="text-xs font-semibold uppercase tracking-widest">{adding ? t("pages.waitlist.adding") : t("pages.waitlist.addToWaitlist")}</span>
+              <span className="text-xs font-semibold uppercase tracking-widest">{adding ? t("pages.waitlist.adding", { defaultValue: "Adding" }) : t("pages.waitlist.addToWaitlist", { defaultValue: "Add To Waitlist" })}</span>
             </button>
           </div>
         </div>
@@ -258,13 +258,13 @@ export function WaitlistPage(): JSX.Element {
             onClick={() => setScope("active")}
             className={`flex h-9 px-4 items-center gap-2 rounded-[var(--radius-sm)] text-xs font-semibold uppercase tracking-wider transition-colors ${ scope === "active" ? "bg-brand-surface text-brand-primary shadow-sm border border-brand-border" : "text-brand-muted hover:text-brand-text-soft" }`}
           >
-            <Activity size={13} /> {t("pages.waitlist.scopeActive")}
+            <Activity size={13} /> {t("pages.waitlist.scopeActive", { defaultValue: "Scope Active" })}
           </button>
           <button
             onClick={() => setScope("all")}
             className={`flex h-9 px-4 items-center gap-2 rounded-[var(--radius-sm)] text-xs font-semibold uppercase tracking-wider transition-colors ${ scope === "all" ? "bg-brand-surface text-brand-primary shadow-sm border border-brand-border" : "text-brand-muted hover:text-brand-text-soft" }`}
           >
-            <Filter size={13} /> {t("pages.waitlist.scopeAll")}
+            <Filter size={13} /> {t("pages.waitlist.scopeAll", { defaultValue: "Scope All" })}
           </button>
         </div>
 
@@ -275,14 +275,14 @@ export function WaitlistPage(): JSX.Element {
               type="text"
               value={tableQInput}
               onChange={(e) => setTableQInput(e.target.value)}
-              placeholder={t("pages.waitlist.tableSearchPlaceholder")}
+              placeholder={t("pages.waitlist.tableSearchPlaceholder", { defaultValue: "Table Search Placeholder" })}
               className="h-10 w-[260px] rounded-[var(--radius-md)] bg-brand-surface border border-brand-border pl-10 pr-4 text-sm font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-brand-primary transition-all"
             />
           </div>
           <div className="h-8 w-px bg-brand-border mx-1 hidden lg:block" />
           <div className="flex items-center gap-2">
             <div className="h-2.5 w-2.5 rounded-full bg-brand-primary animate-pulse" />
-            <span className="text-xs font-medium text-brand-muted">Live Syncing</span>
+            <span className="text-xs font-medium text-brand-muted">{t("pages.waitlist.liveSyncing", { defaultValue: "Live Syncing" })}</span>
           </div>
         </div>
       </div>
@@ -293,11 +293,11 @@ export function WaitlistPage(): JSX.Element {
           <table className="data-table min-w-[900px]">
             <thead>
               <tr>
-                <th>{t("pages.waitlist.colPatient")}</th>
-                <th>{t("pages.waitlist.colPhone")}</th>
-                <th>{t("pages.waitlist.colNotes")}</th>
-                <th>{t("pages.waitlist.colSince")}</th>
-                <th>{t("pages.waitlist.colStatus")}</th>
+                <th>{t("pages.waitlist.colPatient", { defaultValue: "Col Patient" })}</th>
+                <th>{t("pages.waitlist.colPhone", { defaultValue: "Col Phone" })}</th>
+                <th>{t("pages.waitlist.colNotes", { defaultValue: "Col Notes" })}</th>
+                <th>{t("pages.waitlist.colSince", { defaultValue: "Col Since" })}</th>
+                <th>{t("pages.waitlist.colStatus", { defaultValue: "Col Status" })}</th>
                 <th></th>
               </tr>
             </thead>
@@ -318,9 +318,9 @@ export function WaitlistPage(): JSX.Element {
                     <td colSpan={6} className="p-0">
                       <ListEmptyState
                         icon="users"
-                        title={t("pages.waitlist.emptyTitle")}
-                        description={t("pages.waitlist.emptyHint")}
-                        primary={{ kind: "link", to: "/appointments", label: t("pages.waitlist.emptyCtaCalendar") }}
+                        title={t("pages.waitlist.emptyTitle", { defaultValue: "Empty Title" })}
+                        description={t("pages.waitlist.emptyHint", { defaultValue: "Empty Hint" })}
+                        primary={{ kind: "link", to: "/appointments", label: t("pages.waitlist.emptyCtaCalendar", { defaultValue: "Empty Cta Calendar" }) }}
                       />
                     </td>
                   </motion.tr>
@@ -378,13 +378,13 @@ export function WaitlistPage(): JSX.Element {
                                   onClick={() => void onPatch(r.id, "FULFILLED")}
                                   className="h-8 px-3 rounded-[var(--radius-sm)] bg-brand-primary-soft text-brand-primary text-xs font-semibold uppercase tracking-widest hover:bg-brand-primary hover:text-white transition-colors"
                                 >
-                                  {t("pages.waitlist.actionFulfilled")}
+                                  {t("pages.waitlist.actionFulfilled", { defaultValue: "Action Fulfilled" })}
                                 </button>
                                 <button
                                   onClick={() => void onPatch(r.id, "CANCELLED")}
                                   className="h-8 px-3 rounded-[var(--radius-sm)] bg-brand-surface-muted text-brand-muted text-xs font-semibold uppercase tracking-widest hover:bg-brand-danger hover:text-white transition-colors"
                                 >
-                                  {t("pages.waitlist.actionCancel")}
+                                  {t("pages.waitlist.actionCancel", { defaultValue: "Action Cancel" })}
                                 </button>
                               </div>
                             )}
@@ -413,7 +413,7 @@ export function WaitlistPage(): JSX.Element {
             <div className="h-9 w-9 rounded-[var(--radius-md)] bg-brand-info-soft flex items-center justify-center text-brand-info">
               <Users size={18} />
             </div>
-            <span className="stat-card-label">Queue Depth</span>
+            <span className="stat-card-label">{t("pages.waitlist.queueDepth", { defaultValue: "Queue Depth" })}</span>
           </div>
           <div className="flex items-baseline gap-2">
             <p className="stat-card-value">{rows.filter(r => r.status === 'WAITING').length}</p>
@@ -426,7 +426,7 @@ export function WaitlistPage(): JSX.Element {
             <div className="h-9 w-9 rounded-[var(--radius-md)] bg-brand-success-soft flex items-center justify-center text-brand-success">
               <CheckCircle2 size={18} />
             </div>
-            <span className="stat-card-label">Conversion Rate</span>
+            <span className="stat-card-label">{t("pages.waitlist.conversionRate", { defaultValue: "Conversion Rate" })}</span>
           </div>
           <div className="flex items-baseline gap-2">
             <p className="stat-card-value">84%</p>
@@ -440,13 +440,13 @@ export function WaitlistPage(): JSX.Element {
               <Clock size={18} />
             </div>
             <span className="text-[10px] font-semibold uppercase tracking-widest text-brand-muted">
-              {t("pages.waitlist.avgDwellTime")}
+              {t("pages.waitlist.avgDwellTime", { defaultValue: "Avg Dwell Time" })}
             </span>
           </div>
           <div className="flex items-baseline gap-2">
             <p className="text-3xl font-bold tabular-nums">22</p>
             <span className="text-xs font-semibold text-brand-info uppercase tracking-widest">
-              {t("pages.common.minutesUnit")}
+              {t("pages.common.minutesUnit", { defaultValue: "Minutes Unit" })}
             </span>
           </div>
         </div>

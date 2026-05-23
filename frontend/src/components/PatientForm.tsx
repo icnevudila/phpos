@@ -165,7 +165,7 @@ export function PatientForm({ open, onClose, onSaved, patientId }: PatientFormPr
           emergencyContactPhone: (p.emergencyContactPhone as string | undefined) ?? undefined,
         });
       } catch (e) {
-        toast.error(t("patientForm.toastLoadFailed"));
+        toast.error(t("patientForm.toastLoadFailed", { defaultValue: "Toast Load Failed" }));
         onClose();
       } finally {
         if (!cancelled) setLoadingPatient(false);
@@ -245,15 +245,15 @@ export function PatientForm({ open, onClose, onSaved, patientId }: PatientFormPr
     try {
       if (patientId) {
         await api.put(`/patients/${patientId}`, body);
-        toast.success(t("patientForm.toastUpdated"));
+        toast.success(t("patientForm.toastUpdated", { defaultValue: "Toast Updated" }));
       } else {
         await api.post(`/patients`, body);
-        toast.success(t("patientForm.toastCreated"));
+        toast.success(t("patientForm.toastCreated", { defaultValue: "Toast Created" }));
       }
       onSaved();
       onClose();
     } catch (e) {
-      toast.error(t("patientForm.toastSaveFailed"));
+      toast.error(t("patientForm.toastSaveFailed", { defaultValue: "Toast Save Failed" }));
     }
   }
 
@@ -284,10 +284,10 @@ export function PatientForm({ open, onClose, onSaved, patientId }: PatientFormPr
               <div className="flex items-center justify-between border-b border-slate-100 px-8 py-6">
                 <div>
                   <h2 className="text-2xl font-black tracking-tight text-slate-900">
-                    {patientId ? t("patientForm.titleEdit") : t("patientForm.titleNew")}
+                    {patientId ? t("patientForm.titleEdit", { defaultValue: "Title Edit" }) : t("patientForm.titleNew", { defaultValue: "Title New" })}
                   </h2>
                   <p className="text-xs font-bold uppercase tracking-widest text-slate-400">
-                    {patientId ? `#${patientId.slice(-8)}` : t("patientForm.clinicIntake")}
+                    {patientId ? `#${patientId.slice(-8)}` : t("patientForm.clinicIntake", { defaultValue: "Clinic Intake" })}
                   </p>
                 </div>
                 <button
@@ -305,98 +305,98 @@ export function PatientForm({ open, onClose, onSaved, patientId }: PatientFormPr
                 {loadingPatient ? (
                   <div className="flex h-64 flex-col items-center justify-center gap-4">
                     <div className="h-10 w-10 animate-spin rounded-full border-4 border-sky-500 border-t-transparent" />
-                    <p className="text-sm font-bold text-slate-500">{t("patientForm.loading")}</p>
+                    <p className="text-sm font-bold text-slate-500">{t("patientForm.loading", { defaultValue: "Loading" })}</p>
                   </div>
                 ) : (
                   <form id="patient-form" className="space-y-10" onSubmit={(e) => void handleSubmit(onSubmit)(e)}>
                     {/* Identity */}
-                    <FormSection title={t("patientForm.identitySection")} icon={<User size={16} />}>
+                    <FormSection title={t("patientForm.identitySection", { defaultValue: "Identity Section" })} icon={<User size={16} />}>
                       <Grid cols={3}>
-                        <Field label={t("patientForm.labelFirstName")} error={errors.firstName?.message}>
+                        <Field label={t("patientForm.labelFirstName", { defaultValue: "Label First Name" })} error={errors.firstName?.message}>
                           <input {...register("firstName")} className={inputClass} />
                         </Field>
-                        <Field label={t("patientForm.labelMiddleName")}>
+                        <Field label={t("patientForm.labelMiddleName", { defaultValue: "Label Middle Name" })}>
                           <input {...register("middleName")} className={inputClass} />
                         </Field>
-                        <Field label={t("patientForm.labelLastName")} error={errors.lastName?.message}>
+                        <Field label={t("patientForm.labelLastName", { defaultValue: "Label Last Name" })} error={errors.lastName?.message}>
                           <input {...register("lastName")} className={inputClass} />
                         </Field>
-                        <Field label={t("patientForm.labelNickname")}>
+                        <Field label={t("patientForm.labelNickname", { defaultValue: "Label Nickname" })}>
                           <input {...register("nickname")} className={inputClass} />
                         </Field>
-                        <Field label={t("patientForm.labelBirthDate")} error={errors.birthDate?.message}>
+                        <Field label={t("patientForm.labelBirthDate", { defaultValue: "Label Birth Date" })} error={errors.birthDate?.message}>
                           <input type="date" {...register("birthDate")} className={inputClass} />
                         </Field>
-                        <Field label={t("patientForm.labelGender")}>
+                        <Field label={t("patientForm.labelGender", { defaultValue: "Label Gender" })}>
                           <select {...register("gender")} className={inputClass}>
                             <option value="">—</option>
-                            <option value="MALE">{t("patientForm.genderMale")}</option>
-                            <option value="FEMALE">{t("patientForm.genderFemale")}</option>
-                            <option value="OTHER">{t("patientForm.genderOther")}</option>
+                            <option value="MALE">{t("patientForm.genderMale", { defaultValue: "Gender Male" })}</option>
+                            <option value="FEMALE">{t("patientForm.genderFemale", { defaultValue: "Gender Female" })}</option>
+                            <option value="OTHER">{t("patientForm.genderOther", { defaultValue: "Gender Other" })}</option>
                           </select>
                         </Field>
-                        <Field label={t("patientForm.labelCivilStatus")}>
+                        <Field label={t("patientForm.labelCivilStatus", { defaultValue: "Label Civil Status" })}>
                           <select {...register("civilStatus")} className={inputClass}>
                             <option value="">—</option>
-                            <option value="SINGLE">{t("patientForm.civilSingle")}</option>
-                            <option value="MARRIED">{t("patientForm.civilMarried")}</option>
-                            <option value="WIDOWED">{t("patientForm.civilWidowed")}</option>
-                            <option value="DIVORCED">{t("patientForm.civilDivorced")}</option>
-                            <option value="SEPARATED">{t("patientForm.civilSeparated")}</option>
-                            <option value="OTHER">{t("patientForm.civilOther")}</option>
+                            <option value="SINGLE">{t("patientForm.civilSingle", { defaultValue: "Civil Single" })}</option>
+                            <option value="MARRIED">{t("patientForm.civilMarried", { defaultValue: "Civil Married" })}</option>
+                            <option value="WIDOWED">{t("patientForm.civilWidowed", { defaultValue: "Civil Widowed" })}</option>
+                            <option value="DIVORCED">{t("patientForm.civilDivorced", { defaultValue: "Civil Divorced" })}</option>
+                            <option value="SEPARATED">{t("patientForm.civilSeparated", { defaultValue: "Civil Separated" })}</option>
+                            <option value="OTHER">{t("patientForm.civilOther", { defaultValue: "Civil Other" })}</option>
                           </select>
                         </Field>
-                        <Field label={t("patientForm.labelNationality")}>
-                          <input {...register("nationality")} className={inputClass} placeholder={t("patientForm.placeholderNationality")} />
+                        <Field label={t("patientForm.labelNationality", { defaultValue: "Label Nationality" })}>
+                          <input {...register("nationality")} className={inputClass} placeholder={t("patientForm.placeholderNationality", { defaultValue: "Placeholder Nationality" })} />
                         </Field>
-                        <Field label={t("patientForm.labelReligion")}>
+                        <Field label={t("patientForm.labelReligion", { defaultValue: "Label Religion" })}>
                           <input {...register("religion")} className={inputClass} />
                         </Field>
                       </Grid>
                     </FormSection>
 
                     {/* Contact */}
-                    <FormSection title={t("patientForm.contactSection")} icon={<Phone size={16} />}>
+                    <FormSection title={t("patientForm.contactSection", { defaultValue: "Contact Section" })} icon={<Phone size={16} />}>
                       <Grid cols={2}>
-                        <Field label={t("patientForm.labelPhone")} error={errors.phone?.message}>
+                        <Field label={t("patientForm.labelPhone", { defaultValue: "Label Phone" })} error={errors.phone?.message}>
                           <input
-                            placeholder={t("patientForm.placeholderPhone")}
+                            placeholder={t("patientForm.placeholderPhone", { defaultValue: "Placeholder Phone" })}
                             {...register("phone")}
                             className={inputClass}
                             autoComplete="tel"
                           />
                         </Field>
-                        <Field label={t("patientForm.labelEmail")} error={errors.email?.message}>
+                        <Field label={t("patientForm.labelEmail", { defaultValue: "Label Email" })} error={errors.email?.message}>
                           <input type="email" {...register("email")} className={inputClass} />
                         </Field>
-                        <Field label={t("patientForm.labelAddress")}>
+                        <Field label={t("patientForm.labelAddress", { defaultValue: "Label Address" })}>
                           <input {...register("address")} className={inputClass} />
                         </Field>
-                        <Field label={t("patientForm.labelCity")}>
+                        <Field label={t("patientForm.labelCity", { defaultValue: "Label City" })}>
                           <input {...register("city")} className={inputClass} />
                         </Field>
-                        <Field label={t("patientForm.labelProvince")}>
+                        <Field label={t("patientForm.labelProvince", { defaultValue: "Label Province" })}>
                           <input {...register("province")} className={inputClass} />
                         </Field>
-                        <Field label={t("patientForm.labelPhilhealthNo")}>
+                        <Field label={t("patientForm.labelPhilhealthNo", { defaultValue: "Label Philhealth No" })}>
                           <input {...register("philhealthNo")} className={inputClass} />
                         </Field>
-                        <Field label={t("patientForm.labelPhilhealthType")}>
+                        <Field label={t("patientForm.labelPhilhealthType", { defaultValue: "Label Philhealth Type" })}>
                           <select {...register("philhealthType")} className={inputClass}>
                             <option value="">—</option>
-                            <option value="FORMAL">{t("patientForm.philhealthFormal")}</option>
-                            <option value="INFORMAL">{t("patientForm.philhealthInformal")}</option>
-                            <option value="INDIGENT">{t("patientForm.philhealthIndigent")}</option>
-                            <option value="SPONSORED">{t("patientForm.philhealthSponsored")}</option>
-                            <option value="LIFETIME">{t("patientForm.philhealthLifetime")}</option>
-                            <option value="SENIOR_CITIZEN">{t("patientForm.philhealthSeniorCitizen")}</option>
+                            <option value="FORMAL">{t("patientForm.philhealthFormal", { defaultValue: "Philhealth Formal" })}</option>
+                            <option value="INFORMAL">{t("patientForm.philhealthInformal", { defaultValue: "Philhealth Informal" })}</option>
+                            <option value="INDIGENT">{t("patientForm.philhealthIndigent", { defaultValue: "Philhealth Indigent" })}</option>
+                            <option value="SPONSORED">{t("patientForm.philhealthSponsored", { defaultValue: "Philhealth Sponsored" })}</option>
+                            <option value="LIFETIME">{t("patientForm.philhealthLifetime", { defaultValue: "Philhealth Lifetime" })}</option>
+                            <option value="SENIOR_CITIZEN">{t("patientForm.philhealthSeniorCitizen", { defaultValue: "Philhealth Senior Citizen" })}</option>
                           </select>
                         </Field>
                       </Grid>
                     </FormSection>
 
                     {/* Discount */}
-                    <FormSection title={t("patientForm.discountSection")} icon={<CreditCard size={16} />}>
+                    <FormSection title={t("patientForm.discountSection", { defaultValue: "Discount Section" })} icon={<CreditCard size={16} />}>
                       <div className="grid gap-6 sm:grid-cols-2">
                         <div className="flex items-center gap-3 pt-6">
                           <input
@@ -406,58 +406,58 @@ export function PatientForm({ open, onClose, onSaved, patientId }: PatientFormPr
                             className="h-5 w-5 rounded-lg border-slate-300 text-sky-600 transition-all focus:ring-sky-500/20"
                           />
                           <label htmlFor="patient-isSenior" className="text-sm font-semibold text-slate-700">
-                            {t("patientForm.labelSeniorCitizen")}
+                            {t("patientForm.labelSeniorCitizen", { defaultValue: "Label Senior Citizen" })}
                           </label>
                         </div>
-                        <Field label={t("patientForm.labelOscaId")}>
-                          <input {...register("oscaIdNo")} className={inputClass} placeholder={t("patientForm.placeholderOptional")} />
+                        <Field label={t("patientForm.labelOscaId", { defaultValue: "Label Osca Id" })}>
+                          <input {...register("oscaIdNo")} className={inputClass} placeholder={t("patientForm.placeholderOptional", { defaultValue: "Placeholder Optional" })} />
                         </Field>
-                        <Field label={t("patientForm.labelPwdId")}>
+                        <Field label={t("patientForm.labelPwdId", { defaultValue: "Label Pwd Id" })}>
                           <input
                             {...register("pwdIdNo")}
                             className={inputClass}
-                            placeholder={t("patientForm.pwdIdPlaceholder")}
+                            placeholder={t("patientForm.pwdIdPlaceholder", { defaultValue: "Pwd Id Placeholder" })}
                           />
                         </Field>
                       </div>
                       <p className="mt-4 flex items-center gap-2 text-xs font-medium text-slate-500">
                         <AlertCircle size={14} className="text-sky-500" />
-                        {t("patientForm.hintSenior")}
+                        {t("patientForm.hintSenior", { defaultValue: "Hint Senior" })}
                       </p>
                     </FormSection>
 
                     {/* Guardian */}
-                    <FormSection title={t("patientForm.guardianSection")} icon={<User size={16} />}>
+                    <FormSection title={t("patientForm.guardianSection", { defaultValue: "Guardian Section" })} icon={<User size={16} />}>
                       <Grid cols={3}>
-                        <Field label={t("patientForm.labelGuardianName")}>
+                        <Field label={t("patientForm.labelGuardianName", { defaultValue: "Label Guardian Name" })}>
                           <input {...register("guardianName")} className={inputClass} />
                         </Field>
-                        <Field label={t("patientForm.labelGuardianRelation")}>
+                        <Field label={t("patientForm.labelGuardianRelation", { defaultValue: "Label Guardian Relation" })}>
                           <input {...register("guardianRelation")} className={inputClass} />
                         </Field>
-                        <Field label={t("patientForm.labelGuardianPhone")} error={errors.guardianPhone?.message}>
+                        <Field label={t("patientForm.labelGuardianPhone", { defaultValue: "Label Guardian Phone" })} error={errors.guardianPhone?.message}>
                           <input {...register("guardianPhone")} className={inputClass} placeholder="+639…" />
                         </Field>
                       </Grid>
                     </FormSection>
 
                     {/* Vitals */}
-                    <FormSection title={t("patientForm.dentalVitalsSection")} icon={<Calendar size={16} />}>
+                    <FormSection title={t("patientForm.dentalVitalsSection", { defaultValue: "Dental Vitals Section" })} icon={<Calendar size={16} />}>
                       <Grid cols={2}>
-                        <Field label={t("patientForm.labelReferredBy")}>
+                        <Field label={t("patientForm.labelReferredBy", { defaultValue: "Label Referred By" })}>
                           <input {...register("referralSource")} className={inputClass} />
                         </Field>
-                        <Field label={t("patientForm.labelPrevDentist")}>
+                        <Field label={t("patientForm.labelPrevDentist", { defaultValue: "Label Prev Dentist" })}>
                           <input {...register("previousDentist")} className={inputClass} />
                         </Field>
-                        <Field label={t("patientForm.labelLastVisit")} error={errors.lastDentalVisit?.message}>
+                        <Field label={t("patientForm.labelLastVisit", { defaultValue: "Label Last Visit" })} error={errors.lastDentalVisit?.message}>
                           <input type="date" {...register("lastDentalVisit")} className={inputClass} />
                         </Field>
-                        <Field label={t("patientForm.labelReason")}>
+                        <Field label={t("patientForm.labelReason", { defaultValue: "Label Reason" })}>
                           <input {...register("reasonForVisit")} className={inputClass} />
                         </Field>
                         <div className="grid grid-cols-2 gap-3">
-                          <Field label={t("patientForm.labelBpSystolic")}>
+                          <Field label={t("patientForm.labelBpSystolic", { defaultValue: "Label Bp Systolic" })}>
                             <input
                               type="number"
                               {...register("bloodPressureSystolic", { valueAsNumber: true })}
@@ -465,7 +465,7 @@ export function PatientForm({ open, onClose, onSaved, patientId }: PatientFormPr
                               placeholder="120"
                             />
                           </Field>
-                          <Field label={t("patientForm.labelBpDiastolic")}>
+                          <Field label={t("patientForm.labelBpDiastolic", { defaultValue: "Label Bp Diastolic" })}>
                             <input
                               type="number"
                               {...register("bloodPressureDiastolic", { valueAsNumber: true })}
@@ -475,7 +475,7 @@ export function PatientForm({ open, onClose, onSaved, patientId }: PatientFormPr
                           </Field>
                         </div>
                         <div className="grid grid-cols-2 gap-3">
-                          <Field label={t("patientForm.labelPulse")}>
+                          <Field label={t("patientForm.labelPulse", { defaultValue: "Label Pulse" })}>
                             <input
                               type="number"
                               {...register("pulseRate", { valueAsNumber: true })}
@@ -483,7 +483,7 @@ export function PatientForm({ open, onClose, onSaved, patientId }: PatientFormPr
                               placeholder="72"
                             />
                           </Field>
-                          <Field label={t("patientForm.labelBloodType")}>
+                          <Field label={t("patientForm.labelBloodType", { defaultValue: "Label Blood Type" })}>
                             <select {...register("bloodType")} className={inputClass}>
                               <option value="">—</option>
                               <option value="A_POS">A+</option>
@@ -494,7 +494,7 @@ export function PatientForm({ open, onClose, onSaved, patientId }: PatientFormPr
                               <option value="AB_NEG">AB−</option>
                               <option value="O_POS">O+</option>
                               <option value="O_NEG">O−</option>
-                              <option value="UNKNOWN">{t("patientForm.bloodUnknown")}</option>
+                              <option value="UNKNOWN">{t("patientForm.bloodUnknown", { defaultValue: "Blood Unknown" })}</option>
                             </select>
                           </Field>
                         </div>
@@ -502,8 +502,8 @@ export function PatientForm({ open, onClose, onSaved, patientId }: PatientFormPr
                     </FormSection>
 
                     {/* Allergies */}
-                    <FormSection title={t("patientForm.allergiesSection")} icon={<ShieldAlert size={16} />}>
-                      <Field label={t("patientForm.labelAllergies")} error={errors.allergies ? String(errors.allergies.message) : undefined}>
+                    <FormSection title={t("patientForm.allergiesSection", { defaultValue: "Allergies Section" })} icon={<ShieldAlert size={16} />}>
+                      <Field label={t("patientForm.labelAllergies", { defaultValue: "Label Allergies" })} error={errors.allergies ? String(errors.allergies.message) : undefined}>
                         <div className="mt-2 flex flex-wrap gap-2">
                           {allergies.map((a) => (
                             <span
@@ -532,7 +532,7 @@ export function PatientForm({ open, onClose, onSaved, patientId }: PatientFormPr
                               }
                             }}
                             className={inputClass}
-                            placeholder={t("patientForm.placeholderAllergy")}
+                            placeholder={t("patientForm.placeholderAllergy", { defaultValue: "Placeholder Allergy" })}
                           />
                           <button
                             type="button"
@@ -540,28 +540,28 @@ export function PatientForm({ open, onClose, onSaved, patientId }: PatientFormPr
                             className="inline-flex h-11 items-center gap-2 rounded-xl bg-slate-100 px-6 text-sm font-bold text-slate-700 transition-colors hover:bg-slate-200"
                           >
                             <Plus size={16} />
-                            {t("patientForm.btnAdd")}
+                            {t("patientForm.btnAdd", { defaultValue: "Btn Add" })}
                           </button>
                         </div>
                       </Field>
-                      <Field label={t("patientForm.labelMedNotes")}>
-                        <textarea {...register("medicalHistory")} rows={3} className={inputClass} placeholder={t("patientForm.placeholderMedNotes")} />
+                      <Field label={t("patientForm.labelMedNotes", { defaultValue: "Label Med Notes" })}>
+                        <textarea {...register("medicalHistory")} rows={3} className={inputClass} placeholder={t("patientForm.placeholderMedNotes", { defaultValue: "Placeholder Med Notes" })} />
                         <p className="mt-2 flex items-center gap-2 text-xs font-medium text-slate-500">
                           <AlertCircle size={14} />
-                          {t("patientForm.hintMedNotes")}
+                          {t("patientForm.hintMedNotes", { defaultValue: "Hint Med Notes" })}
                         </p>
                       </Field>
                     </FormSection>
 
                     {/* Emergency */}
-                    <FormSection title={t("patientForm.emergencySection")} icon={<ShieldAlert size={16} />}>
+                    <FormSection title={t("patientForm.emergencySection", { defaultValue: "Emergency Section" })} icon={<ShieldAlert size={16} />}>
                       <Grid cols={2}>
-                        <Field label={t("patientForm.labelEmergencyName")}>
+                        <Field label={t("patientForm.labelEmergencyName", { defaultValue: "Label Emergency Name" })}>
                           <input {...register("emergencyContactName")} className={inputClass} />
                         </Field>
-                        <Field label={t("patientForm.labelEmergencyPhone")} error={errors.emergencyContactPhone?.message}>
+                        <Field label={t("patientForm.labelEmergencyPhone", { defaultValue: "Label Emergency Phone" })} error={errors.emergencyContactPhone?.message}>
                           <input
-                            placeholder={t("patientForm.placeholderPhone")}
+                            placeholder={t("patientForm.placeholderPhone", { defaultValue: "Placeholder Phone" })}
                             {...register("emergencyContactPhone")}
                             className={inputClass}
                           />
@@ -579,7 +579,7 @@ export function PatientForm({ open, onClose, onSaved, patientId }: PatientFormPr
                   onClick={onClose}
                   className="inline-flex h-12 items-center justify-center rounded-2xl border border-slate-200 px-8 text-sm font-black uppercase tracking-widest text-slate-600 transition-all hover:bg-slate-50"
                 >
-                  {t("patientForm.btnCancel")}
+                  {t("patientForm.btnCancel", { defaultValue: "Btn Cancel" })}
                 </button>
                 <button
                   type="submit"
@@ -590,12 +590,12 @@ export function PatientForm({ open, onClose, onSaved, patientId }: PatientFormPr
                   {isSubmitting ? (
                     <>
                       <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
-                      {t("patientForm.btnSaving")}
+                      {t("patientForm.btnSaving", { defaultValue: "Btn Saving" })}
                     </>
                   ) : (
                     <>
                       <Save size={18} />
-                      {t("patientForm.btnSave")}
+                      {t("patientForm.btnSave", { defaultValue: "Btn Save" })}
                     </>
                   )}
                 </button>

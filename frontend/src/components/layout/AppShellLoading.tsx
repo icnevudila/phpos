@@ -16,8 +16,8 @@ export function AppShellLoading(): JSX.Element {
         <span className="absolute inset-0 rounded-2xl border-2 border-white/30 animate-ping opacity-40" />
       </div>
       <div className="text-center">
-        <p className="text-sm font-bold uppercase tracking-widest text-teal-700">{t("common.appName")}</p>
-        <p className="mt-2 text-base font-semibold text-slate-700">{t("common.preparingWorkspace")}</p>
+        <p className="text-sm font-bold uppercase tracking-widest text-teal-700">{t("common.appName", { defaultValue: "App Name" })}</p>
+        <p className="mt-2 text-base font-semibold text-slate-700">{t("common.preparingWorkspace", { defaultValue: "Preparing workspace..." })}</p>
       </div>
       <div className="flex gap-1.5" aria-hidden>
         {[0, 1, 2].map((i) => (

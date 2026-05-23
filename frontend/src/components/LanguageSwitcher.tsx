@@ -14,7 +14,7 @@ export function LanguageSwitcher({ className = "" }: { className?: string }): JS
 
   return (
     <label className={`inline-flex items-center gap-2 text-sm ${className}`}>
-      <span className="sr-only">{t("language.label")}</span>
+      <span className="sr-only">{t("language.label", { defaultValue: "Label" })}</span>
       <select
         value={current}
         onChange={(e) => void i18n.changeLanguage(e.target.value)}

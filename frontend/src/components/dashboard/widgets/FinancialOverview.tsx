@@ -65,7 +65,7 @@ export function FinancialOverview({
       <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
         <div>
           <p className="text-xs font-bold uppercase tracking-wider text-slate-500">
-            {t("pages.dashboard.monthlyReportPeriod")}
+            {t("pages.dashboard.monthlyReportPeriod", { defaultValue: "Monthly Report Period" })}
           </p>
           <p className="text-sm font-semibold text-slate-800">
             {new Intl.DateTimeFormat("en-PH", {
@@ -99,7 +99,7 @@ export function FinancialOverview({
             onClick={() => openMonthlyReportPdf(year, month)}
             className={`w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 sm:w-auto ${fieldFocus}`}
           >
-            {t("pages.dashboard.monthlyPdf")}
+            {t("pages.dashboard.monthlyPdf", { defaultValue: "Monthly Pdf" })}
           </button>
         </div>
       </div>
@@ -108,13 +108,13 @@ export function FinancialOverview({
       <ViewportLazy minHeight={360}>
         <div className="mt-6 grid gap-5 lg:grid-cols-[2fr_1fr]">
           <ChartCard
-            title={t("pages.dashboard.chartRevenueTitle")}
+            title={t("pages.dashboard.chartRevenueTitle", { defaultValue: "Chart Revenue Title" })}
             subtitle={t("pages.dashboard.chartRevenueSubtitle", {
               amount: phpFullFormatter.format(revenueSeries.reduce((s, r) => s + r.amount, 0)),
             })}
           >
             {!revenueHasData ? (
-              <DashboardChartEmpty message={t("pages.dashboard.chartRevenueEmpty")} />
+              <DashboardChartEmpty message={t("pages.dashboard.chartRevenueEmpty", { defaultValue: "Chart Revenue Empty" })} />
             ) : (
               <RevenueTrendChart
                 data={revenueSeries}
@@ -128,13 +128,13 @@ export function FinancialOverview({
           </ChartCard>
 
           <ChartCard
-            title={t("pages.dashboard.chartPaymentTitle")}
+            title={t("pages.dashboard.chartPaymentTitle", { defaultValue: "Chart Payment Title" })}
             subtitle={t("pages.dashboard.chartPaymentSubtitle", {
               amount: phpFullFormatter.format(Number(monthly.totalRevenue)),
             })}
           >
             {paymentPie.length === 0 ? (
-              <DashboardChartEmpty message={t("pages.dashboard.noPaymentsYet")} />
+              <DashboardChartEmpty message={t("pages.dashboard.noPaymentsYet", { defaultValue: "No Payments Yet" })} />
             ) : (
               <div className="h-64">
                 <ResponsiveContainer width="100%" height="100%">
@@ -177,11 +177,11 @@ export function FinancialOverview({
       <ViewportLazy minHeight={360}>
         <div className="mt-6 grid gap-5 lg:grid-cols-[2fr_1fr]">
           <ChartCard
-            title={t("pages.dashboard.chartTopProcTitle")}
-            subtitle={t("pages.dashboard.chartTopProcSubtitle")}
+            title={t("pages.dashboard.chartTopProcTitle", { defaultValue: "Chart Top Proc Title" })}
+            subtitle={t("pages.dashboard.chartTopProcSubtitle", { defaultValue: "Chart Top Proc Subtitle" })}
           >
             {topProc.length === 0 ? (
-              <DashboardChartEmpty message={t("pages.dashboard.noTreatmentsYet")} />
+              <DashboardChartEmpty message={t("pages.dashboard.noTreatmentsYet", { defaultValue: "No Treatments Yet" })} />
             ) : (
               <div className="h-64">
                 <ResponsiveContainer width="100%" height="100%">
@@ -217,12 +217,12 @@ export function FinancialOverview({
           </ChartCard>
 
           <ChartCard
-            title={t("pages.dashboard.chartApptStatusTitle")}
+            title={t("pages.dashboard.chartApptStatusTitle", { defaultValue: "Chart Appt Status Title" })}
             subtitle={t("pages.dashboard.chartApptStatusSubtitle", { count: statusTotal })}
           >
             {statusTotal === 0 ? (
               <p className="py-8 text-center text-sm text-slate-500">
-                {t("pages.dashboard.chartApptStatusEmpty")}
+                {t("pages.dashboard.chartApptStatusEmpty", { defaultValue: "Chart Appt Status Empty" })}
               </p>
             ) : (
               <div className="space-y-2">

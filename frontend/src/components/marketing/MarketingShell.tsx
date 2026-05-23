@@ -76,9 +76,9 @@ export function MarketingShell({
 
   useEffect(() => {
     if (documentTitleKey) {
-      document.title = `${t(documentTitleKey)} · ${t("common.appName")}`;
+      document.title = `${t(documentTitleKey)} · ${t("common.appName", { defaultValue: "App Name" })}`;
     } else if (documentTitleDefault) {
-      document.title = `${documentTitleDefault} · ${t("common.appName")}`;
+      document.title = `${documentTitleDefault} · ${t("common.appName", { defaultValue: "App Name" })}`;
     }
   }, [documentTitleKey, documentTitleDefault, t]);
 
@@ -99,12 +99,12 @@ export function MarketingShell({
                 Dent<span className="bg-gradient-to-br from-teal-500 to-sky-500 bg-clip-text text-transparent">Ease</span>
               </span>
               <span className="hidden text-[10px] font-semibold uppercase tracking-wider text-teal-600 sm:block">
-                {t("landing.brandSubLabel")}
+                {t("landing.brandSubLabel", { defaultValue: "Brand Sub Label" })}
               </span>
             </div>
           </Link>
 
-          <nav className="hidden items-center gap-0.5 lg:flex" aria-label={t("pages.marketingShell.navAria")}>
+          <nav className="hidden items-center gap-0.5 lg:flex" aria-label={t("pages.marketingShell.navAria", { defaultValue: "Nav Aria" })}>
             {NAV.map((item) => (
               <NavLink
                 key={item.to}
@@ -125,13 +125,13 @@ export function MarketingShell({
               to={`/${PORTAL_DEMO_SLUG}/portal/login`}
               className="hidden min-h-11 max-w-[7.5rem] items-center truncate rounded-lg px-2 text-xs font-semibold text-teal-700 hover:bg-teal-50 sm:inline-flex sm:max-w-none sm:px-3 sm:text-sm"
             >
-              {t("landing.navPatientPortal")}
+              {t("landing.navPatientPortal", { defaultValue: "Nav Patient Portal" })}
             </Link>
             <Link
               to="/login"
               className="hidden min-h-11 items-center rounded-lg bg-white px-3 text-xs font-bold text-white shadow-sm hover:bg-slate-800 sm:inline-flex sm:px-4 sm:text-sm"
             >
-              {t("landing.navSignIn")}
+              {t("landing.navSignIn", { defaultValue: "Nav Sign In" })}
             </Link>
             <button
               type="button"
@@ -140,7 +140,7 @@ export function MarketingShell({
               aria-controls="marketing-menu"
               onClick={() => setMenuOpen((v) => !v)}
             >
-              <span className="sr-only">{menuOpen ? t("pages.marketingShell.menuClose") : t("pages.marketingShell.menuOpen")}</span>
+              <span className="sr-only">{menuOpen ? t("pages.marketingShell.menuClose", { defaultValue: "Menu Close" }) : t("pages.marketingShell.menuOpen", { defaultValue: "Menu Open" })}</span>
               {menuOpen ? (
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="h-5 w-5" aria-hidden>
                   <path d="M6 6l12 12M18 6L6 18" strokeLinecap="round" />
@@ -175,14 +175,14 @@ export function MarketingShell({
                 className="min-h-11 rounded-xl px-3 py-2.5 text-sm font-semibold text-teal-700"
                 onClick={() => setMenuOpen(false)}
               >
-                {t("landing.navPatientPortal")}
+                {t("landing.navPatientPortal", { defaultValue: "Nav Patient Portal" })}
               </Link>
               <Link
                 to="/login"
                 className="min-h-11 rounded-xl bg-white px-3 py-2.5 text-center text-sm font-bold text-white"
                 onClick={() => setMenuOpen(false)}
               >
-                {t("landing.navSignIn")}
+                {t("landing.navSignIn", { defaultValue: "Nav Sign In" })}
               </Link>
               <div className="flex justify-end border-t border-slate-100 pt-2">
                 <LanguageSwitcher />
@@ -200,20 +200,20 @@ export function MarketingShell({
         <div className="mx-auto max-w-6xl space-y-8 px-4 sm:px-6">
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
             <div className="sm:col-span-2 lg:col-span-2">
-              <p className="text-sm font-semibold text-slate-900">{t("common.appName")}</p>
+              <p className="text-sm font-semibold text-slate-900">{t("common.appName", { defaultValue: "App Name" })}</p>
               <p className="mt-2 max-w-md text-xs leading-relaxed text-slate-500">
-                {t("pages.marketingShell.footerTagline")}
+                {t("pages.marketingShell.footerTagline", { defaultValue: "Footer Tagline" })}
               </p>
               <p className="mt-3 max-w-md text-xs leading-relaxed text-slate-500">
-                {t("landing.footerLegalIntro")}
+                {t("landing.footerLegalIntro", { defaultValue: "Footer Legal Intro" })}
               </p>
             </div>
             <div>
               <p className="text-xs font-bold uppercase tracking-wider text-slate-500">
-                {t("landing.footerCompany")}
+                {t("landing.footerCompany", { defaultValue: "Footer Company" })}
               </p>
               <p className="mt-2 max-w-xs text-xs leading-relaxed text-slate-500">
-                {t("landing.footerCompanyIntro")}
+                {t("landing.footerCompanyIntro", { defaultValue: "Footer Company Intro" })}
               </p>
               <ul className="mt-3 space-y-1">
                 <li>
@@ -221,7 +221,7 @@ export function MarketingShell({
                     to="/about"
                     className="flex min-h-10 items-center rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900"
                   >
-                    {t("landing.footerAbout")}
+                    {t("landing.footerAbout", { defaultValue: "Footer About" })}
                   </Link>
                 </li>
                 <li>
@@ -229,7 +229,7 @@ export function MarketingShell({
                     to="/contact"
                     className="flex min-h-10 items-center rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900"
                   >
-                    {t("landing.footerContactQuotes")}
+                    {t("landing.footerContactQuotes", { defaultValue: "Footer Contact Quotes" })}
                   </Link>
                 </li>
                 <li>
@@ -237,7 +237,7 @@ export function MarketingShell({
                     to="/#security"
                     className="flex min-h-10 items-center rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900"
                   >
-                    {t("landing.footerSecurityOverview")}
+                    {t("landing.footerSecurityOverview", { defaultValue: "Footer Security Overview" })}
                   </Link>
                 </li>
                 <li>
@@ -245,14 +245,14 @@ export function MarketingShell({
                     to="/login"
                     className="flex min-h-10 items-center rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900"
                   >
-                    {t("landing.footerStaffSignIn")}
+                    {t("landing.footerStaffSignIn", { defaultValue: "Footer Staff Sign In" })}
                   </Link>
                 </li>
               </ul>
             </div>
             <div>
               <p className="text-xs font-bold uppercase tracking-wider text-slate-500">
-                {t("landing.footerLegal")}
+                {t("landing.footerLegal", { defaultValue: "Footer Legal" })}
               </p>
               <ul className="mt-3 space-y-1">
                 <li>
@@ -260,7 +260,7 @@ export function MarketingShell({
                     to="/privacy"
                     className="flex min-h-10 items-center rounded-lg text-sm font-medium text-sky-700 hover:bg-sky-50 hover:underline"
                   >
-                    {t("landing.footerPrivacy")}
+                    {t("landing.footerPrivacy", { defaultValue: "Footer Privacy" })}
                   </Link>
                 </li>
                 <li>
@@ -268,7 +268,7 @@ export function MarketingShell({
                     to="/terms"
                     className="flex min-h-10 items-center rounded-lg text-sm font-medium text-sky-700 hover:bg-sky-50 hover:underline"
                   >
-                    {t("landing.footerTerms")}
+                    {t("landing.footerTerms", { defaultValue: "Footer Terms" })}
                   </Link>
                 </li>
                 <li>
@@ -276,7 +276,7 @@ export function MarketingShell({
                     to="/cookies"
                     className="flex min-h-10 items-center rounded-lg text-sm font-medium text-sky-700 hover:bg-sky-50 hover:underline"
                   >
-                    {t("landing.footerCookies")}
+                    {t("landing.footerCookies", { defaultValue: "Footer Cookies" })}
                   </Link>
                 </li>
               </ul>
@@ -284,7 +284,7 @@ export function MarketingShell({
           </div>
           <div className="flex flex-col gap-3 border-t border-slate-200 pt-6 text-xs text-slate-500 sm:flex-row sm:items-center sm:justify-between">
             <Link to="/" className="min-h-10 font-medium text-slate-600 hover:underline">
-              {t("pages.marketingShell.navHome")}
+              {t("pages.marketingShell.navHome", { defaultValue: "Nav Home" })}
             </Link>
             <p className="text-xs">{t("landing.footerCopyright", { year: new Date().getFullYear() })}</p>
           </div>

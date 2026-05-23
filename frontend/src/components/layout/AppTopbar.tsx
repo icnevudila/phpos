@@ -37,14 +37,14 @@ export function AppTopbar({ profile, onOpenDrawer }: AppTopbarProps): JSX.Elemen
           type="button"
           onClick={onOpenDrawer}
           className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-brand-muted transition hover:bg-brand-surface-muted hover:text-brand-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary lg:hidden"
-          aria-label={t("nav.openMenu")}
+          aria-label={t("nav.openMenu", { defaultValue: "Open Menu" })}
         >
           <Menu size={22} />
         </button>
 
         <div className="hidden lg:block">
           <h1 className="text-xl font-bold tracking-tight text-brand-text">
-            {active ? t(`nav.${active.key}`) : t("nav.fallbackTitle")}
+            {active ? t(`nav.${active.key}`) : t("nav.fallbackTitle", { defaultValue: "Fallback Title" })}
             {subtitle ? (
               <span className="ml-2 font-medium text-brand-muted">· {subtitle}</span>
             ) : null}

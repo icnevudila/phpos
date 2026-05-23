@@ -104,7 +104,7 @@ export function FeatureCard({
         {desc}
       </motion.p>
       <div className="relative mt-4 flex items-center gap-1.5 text-xs font-medium text-brand-muted transition group-hover:translate-x-1 group-hover:text-brand-text">
-        {t("landing.featurePreview")}
+        {t("landing.featurePreview", { defaultValue: "Feature Preview" })}
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="h-3.5 w-3.5">
           <path d="m9 18 6-6-6-6" strokeLinecap="round" strokeLinejoin="round" />
         </svg>

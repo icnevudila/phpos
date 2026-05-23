@@ -111,30 +111,30 @@ export function PatientHeader({
       patientName: fullName,
       patientId: data.id,
       date: new Date().toLocaleDateString("en-PH"),
-      clinicName: t("pages.patientDetail.printClinicFallback"),
+      clinicName: t("pages.patientDetail.printClinicFallback", { defaultValue: "Print Clinic Fallback" }),
       type: "PATIENT_ID",
     });
 
     if (!success) {
-      toast.info(t("pages.patientDetail.printZebraNotFound"));
+      toast.info(t("pages.patientDetail.printZebraNotFound", { defaultValue: "Print Zebra Not Found" }));
       printFallback({
         patientName: fullName,
         patientId: data.id,
         date: new Date().toLocaleDateString("en-PH"),
-        clinicName: t("pages.patientDetail.printClinicFallback"),
+        clinicName: t("pages.patientDetail.printClinicFallback", { defaultValue: "Print Clinic Fallback" }),
         type: "PATIENT_ID",
       });
     } else {
-      toast.success(t("pages.patientDetail.printSuccess"));
+      toast.success(t("pages.patientDetail.printSuccess", { defaultValue: "Demo mode: print job simulated. No hardware was contacted." }));
     }
   };
 
   async function onDpaExport(): Promise<void> {
     try {
       await downloadPatientDpaExport(data.id);
-      toast.success(t("pages.patientDetail.dpaExportSuccess"));
+      toast.success(t("pages.patientDetail.dpaExportSuccess", { defaultValue: "Dpa Export Success" }));
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : t("pages.patientDetail.dpaExportFailed"));
+      toast.error(e instanceof Error ? e.message : t("pages.patientDetail.dpaExportFailed", { defaultValue: "Dpa Export Failed" }));
     }
   }
 
@@ -143,22 +143,22 @@ export function PatientHeader({
     e.target.value = "";
     if (!file) return;
     if (!file.type.startsWith("image/")) {
-      toast.error(t("pages.patientDetail.avatarImagesOnly"));
+      toast.error(t("pages.patientDetail.avatarImagesOnly", { defaultValue: "Avatar Images Only" }));
       return;
     }
     setAvatarBusy(true);
     try {
       await uploadPatientAvatar(data.id, file);
       await loadAvatar();
-      toast.success(t("pages.patientDetail.avatarUploaded"));
+      toast.success(t("pages.patientDetail.avatarUploaded", { defaultValue: "Avatar Uploaded" }));
     } catch {
-      toast.error(t("pages.patientDetail.avatarFailed"));
+      toast.error(t("pages.patientDetail.avatarFailed", { defaultValue: "Avatar Failed" }));
     } finally {
       setAvatarBusy(false);
     }
   }
 
-  const dash = t("pages.common.empty");
+  const dash = t("pages.common.empty", { defaultValue: "Empty" });
   const formatDate = (iso: string | null, empty: string, locale: string) => {
     if (!iso) return empty;
     return new Date(iso).toLocaleDateString(locale, {
@@ -189,7 +189,7 @@ export function PatientHeader({
                   disabled={avatarBusy}
                   onClick={() => avatarInputRef.current?.click()}
                   className="absolute inset-0 flex items-center justify-center rounded-xl bg-black/40 text-[10px] font-bold uppercase tracking-widest text-white opacity-0 transition-opacity group-hover:opacity-100 disabled:cursor-wait"
-                  aria-label={t("pages.patientDetail.avatarUpload")}
+                  aria-label={t("pages.patientDetail.avatarUpload", { defaultValue: "Avatar Upload" })}
                 >
                   <Camera size={16} />
                 </button>
@@ -334,7 +334,7 @@ export function PatientHeader({
       patientName={fullName}
       onClose={() => setErasureOpen(false)}
       onDone={() => {
-        toast.success(t("pages.patientDetail.dpaErasureSuccess"));
+        toast.success(t("pages.patientDetail.dpaErasureSuccess", { defaultValue: "Dpa Erasure Success" }));
         onErased?.();
       }}
     />

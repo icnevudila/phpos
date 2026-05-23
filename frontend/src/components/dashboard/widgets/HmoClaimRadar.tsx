@@ -39,9 +39,9 @@ export function HmoClaimRadar({
   const [opsExpanded, setOpsExpanded] = useState(false);
 
   const claimRadarRoleLabel = (() => {
-    if (role === "ADMIN") return t("pages.dashboard.claimRadarRoleAdmin");
-    if (role === "DENTIST") return t("pages.dashboard.claimRadarRoleDentist");
-    return t("pages.dashboard.claimRadarRoleReception");
+    if (role === "ADMIN") return t("pages.dashboard.claimRadarRoleAdmin", { defaultValue: "Claim Radar Role Admin" });
+    if (role === "DENTIST") return t("pages.dashboard.claimRadarRoleDentist", { defaultValue: "Claim Radar Role Dentist" });
+    return t("pages.dashboard.claimRadarRoleReception", { defaultValue: "Claim Radar Role Reception" });
   })();
 
   const claimRadarCards = (() => {
@@ -50,24 +50,24 @@ export function HmoClaimRadar({
         {
           key: "critical",
           to: "/hmo-claims?status=SUBMITTED&aging=CRITICAL&ctx=CRITICAL_FOLLOWUP",
-          title: t("pages.dashboard.claimRadarCritical"),
-          hint: t("pages.dashboard.claimRadarCriticalHint"),
+          title: t("pages.dashboard.claimRadarCritical", { defaultValue: "Claim Radar Critical" }),
+          hint: t("pages.dashboard.claimRadarCriticalHint", { defaultValue: "Claim Radar Critical Hint" }),
           className: "border-rose-200 hover:bg-rose-50",
           titleClass: "text-rose-700",
         },
         {
           key: "submission",
           to: "/hmo-claims?status=DRAFT&ctx=SUBMISSION_QUEUE",
-          title: t("pages.dashboard.claimRadarSubmission"),
-          hint: t("pages.dashboard.claimRadarSubmissionHint"),
+          title: t("pages.dashboard.claimRadarSubmission", { defaultValue: "Claim Radar Submission" }),
+          hint: t("pages.dashboard.claimRadarSubmissionHint", { defaultValue: "Claim Radar Submission Hint" }),
           className: "border-amber-200 hover:bg-amber-50",
           titleClass: "text-amber-800",
         },
         {
           key: "cashflow",
           to: "/hmo-claims?status=APPROVED&ctx=CASHFLOW_COLLECT",
-          title: t("pages.dashboard.claimRadarCashflow"),
-          hint: t("pages.dashboard.claimRadarCashflowHint"),
+          title: t("pages.dashboard.claimRadarCashflow", { defaultValue: "Claim Radar Cashflow" }),
+          hint: t("pages.dashboard.claimRadarCashflowHint", { defaultValue: "Claim Radar Cashflow Hint" }),
           className: "border-teal-200 hover:bg-teal-50",
           titleClass: "text-teal-700",
         },
@@ -78,24 +78,24 @@ export function HmoClaimRadar({
         {
           key: "critical",
           to: "/hmo-claims?status=SUBMITTED&aging=CRITICAL&ctx=CRITICAL_FOLLOWUP",
-          title: t("pages.dashboard.claimRadarCritical"),
-          hint: t("pages.dashboard.claimRadarCriticalHint"),
+          title: t("pages.dashboard.claimRadarCritical", { defaultValue: "Claim Radar Critical" }),
+          hint: t("pages.dashboard.claimRadarCriticalHint", { defaultValue: "Claim Radar Critical Hint" }),
           className: "border-rose-200 hover:bg-rose-50",
           titleClass: "text-rose-700",
         },
         {
           key: "warning",
           to: "/hmo-claims?status=SUBMITTED&aging=WARNING&ctx=FOLLOWUP_DUE",
-          title: t("pages.dashboard.claimRadarWarning"),
-          hint: t("pages.dashboard.claimRadarWarningHint"),
+          title: t("pages.dashboard.claimRadarWarning", { defaultValue: "Claim Radar Warning" }),
+          hint: t("pages.dashboard.claimRadarWarningHint", { defaultValue: "Claim Radar Warning Hint" }),
           className: "border-sky-200 hover:bg-sky-50",
           titleClass: "text-sky-700",
         },
         {
           key: "resubmit",
           to: "/hmo-claims?status=REJECTED&ctx=RESUBMIT_QUEUE",
-          title: t("pages.dashboard.claimRadarResubmit"),
-          hint: t("pages.dashboard.claimRadarResubmitHint"),
+          title: t("pages.dashboard.claimRadarResubmit", { defaultValue: "Claim Radar Resubmit" }),
+          hint: t("pages.dashboard.claimRadarResubmitHint", { defaultValue: "Claim Radar Resubmit Hint" }),
           className: "border-teal-200 hover:bg-teal-50",
           titleClass: "text-teal-700",
         },
@@ -105,24 +105,24 @@ export function HmoClaimRadar({
       {
         key: "submission",
         to: "/hmo-claims?status=DRAFT&ctx=SUBMISSION_QUEUE",
-        title: t("pages.dashboard.claimRadarSubmission"),
-        hint: t("pages.dashboard.claimRadarSubmissionHint"),
+        title: t("pages.dashboard.claimRadarSubmission", { defaultValue: "Claim Radar Submission" }),
+        hint: t("pages.dashboard.claimRadarSubmissionHint", { defaultValue: "Claim Radar Submission Hint" }),
         className: "border-amber-200 hover:bg-amber-50",
         titleClass: "text-amber-800",
       },
       {
         key: "critical",
         to: "/hmo-claims?status=SUBMITTED&aging=CRITICAL&ctx=CRITICAL_FOLLOWUP",
-        title: t("pages.dashboard.claimRadarCritical"),
-        hint: t("pages.dashboard.claimRadarCriticalHint"),
+        title: t("pages.dashboard.claimRadarCritical", { defaultValue: "Claim Radar Critical" }),
+        hint: t("pages.dashboard.claimRadarCriticalHint", { defaultValue: "Claim Radar Critical Hint" }),
         className: "border-rose-200 hover:bg-rose-50",
         titleClass: "text-rose-700",
       },
       {
         key: "cashflow",
         to: "/hmo-claims?status=APPROVED&ctx=CASHFLOW_COLLECT",
-        title: t("pages.dashboard.claimRadarCashflow"),
-        hint: t("pages.dashboard.claimRadarCashflowHint"),
+        title: t("pages.dashboard.claimRadarCashflow", { defaultValue: "Claim Radar Cashflow" }),
+        hint: t("pages.dashboard.claimRadarCashflowHint", { defaultValue: "Claim Radar Cashflow Hint" }),
         className: "border-teal-200 hover:bg-teal-50",
         titleClass: "text-teal-700",
       },
@@ -134,9 +134,9 @@ export function HmoClaimRadar({
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <div>
           <p className="text-[11px] font-semibold uppercase tracking-wider text-amber-700">
-            {t("pages.dashboard.claimRadarEyebrow")}
+            {t("pages.dashboard.claimRadarEyebrow", { defaultValue: "Claim Radar Eyebrow" })}
           </p>
-          <h3 className="text-sm font-bold text-amber-900">{t("pages.dashboard.claimRadarTitle")}</h3>
+          <h3 className="text-sm font-bold text-amber-900">{t("pages.dashboard.claimRadarTitle", { defaultValue: "Claim Radar Title" })}</h3>
         </div>
         <div className="flex items-center gap-1.5">
           <button
@@ -144,7 +144,7 @@ export function HmoClaimRadar({
             onClick={copyClaimRadarSnapshot}
             className="inline-flex min-h-8 items-center rounded-full border border-amber-300 bg-white px-2 py-0.5 text-[10px] font-semibold text-amber-900 hover:bg-amber-100"
           >
-            {t("pages.dashboard.claimRadarCopySnapshot")}
+            {t("pages.dashboard.claimRadarCopySnapshot", { defaultValue: "Claim Radar Copy Snapshot" })}
           </button>
           <span className="rounded-full bg-white px-2 py-0.5 text-[10px] font-semibold text-amber-900 ring-1 ring-amber-200">
             {claimRadarRoleLabel}
@@ -177,8 +177,8 @@ export function HmoClaimRadar({
       >
         <span>
           {opsExpanded
-            ? t("pages.dashboard.claimRadarHideOps")
-            : t("pages.dashboard.claimRadarShowOps")}
+            ? t("pages.dashboard.claimRadarHideOps", { defaultValue: "Claim Radar Hide Ops" })
+            : t("pages.dashboard.claimRadarShowOps", { defaultValue: "Claim Radar Show Ops" })}
         </span>
         <ChevronDown
           size={16}
@@ -189,7 +189,7 @@ export function HmoClaimRadar({
       <div className="mt-2 space-y-2">
       <div className="flex flex-wrap items-center gap-1.5">
         <span className="text-[10px] font-semibold uppercase tracking-wide text-amber-800">
-          {t("pages.dashboard.claimRadarOpsTarget")}
+          {t("pages.dashboard.claimRadarOpsTarget", { defaultValue: "Claim Radar Ops Target" })}
         </span>
         <span className="rounded-full bg-rose-100 px-2 py-0.5 text-[10px] font-semibold text-rose-900">
           {t("pages.dashboard.claimRadarOpsCritical", { count: claimRadarForecastTotals.critical })}
@@ -203,7 +203,7 @@ export function HmoClaimRadar({
       </div>
       <div className="mt-2 flex flex-wrap items-center gap-1.5">
         <span className="text-[10px] font-semibold uppercase tracking-wide text-amber-800">
-          {t("pages.dashboard.claimRadarTeamLoadLabel")}
+          {t("pages.dashboard.claimRadarTeamLoadLabel", { defaultValue: "Claim Radar Team Load Label" })}
         </span>
         <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold text-slate-800">
           {t("pages.dashboard.claimRadarTeamLoadAdmin", { count: claimRadarTeamLoad.admin })}
@@ -217,7 +217,7 @@ export function HmoClaimRadar({
       </div>
       <div className="mt-2 flex flex-wrap items-center gap-1.5">
         <span className="text-[10px] font-semibold uppercase tracking-wide text-amber-800">
-          {t("pages.dashboard.claimRadarOwnerLabel")}
+          {t("pages.dashboard.claimRadarOwnerLabel", { defaultValue: "Claim Radar Owner Label" })}
         </span>
         <span className="rounded-full bg-indigo-100 px-2 py-0.5 text-[10px] font-semibold text-indigo-900">
           {t("pages.dashboard.claimRadarOwnerValue", {
@@ -243,7 +243,7 @@ export function HmoClaimRadar({
           }
           className="inline-flex min-h-7 items-center rounded-full border border-indigo-300 bg-white px-2 py-0.5 text-[10px] font-semibold text-indigo-900 hover:bg-indigo-50"
         >
-          {t("pages.dashboard.claimRadarOwnerAssignNow")}
+          {t("pages.dashboard.claimRadarOwnerAssignNow", { defaultValue: "Claim Radar Owner Assign Now" })}
         </Link>
         <span className="rounded-full bg-indigo-50 px-2 py-0.5 text-[10px] font-semibold text-indigo-800 ring-1 ring-indigo-200">
           {t("pages.dashboard.claimRadarOwnerAssignedToday", { count: assignNowCount })}
@@ -262,13 +262,13 @@ export function HmoClaimRadar({
           onClick={resetAssignNowCounters}
           className="inline-flex min-h-7 items-center rounded-full border border-slate-300 bg-white px-2 py-0.5 text-[10px] font-semibold text-slate-800 hover:bg-slate-50"
         >
-          {t("pages.dashboard.claimRadarOwnerResetToday")}
+          {t("pages.dashboard.claimRadarOwnerResetToday", { defaultValue: "Claim Radar Owner Reset Today" })}
         </button>
       </div>
       <div className="mt-2 rounded-lg border border-amber-200 bg-white/80 p-2">
         <div className="flex items-center justify-between gap-2">
           <span className="text-[10px] font-semibold uppercase tracking-wide text-amber-900">
-            {t("pages.dashboard.claimRadarClosureLabel")}
+            {t("pages.dashboard.claimRadarClosureLabel", { defaultValue: "Claim Radar Closure Label" })}
           </span>
           <span className="text-[10px] font-bold text-amber-900">
             {t("pages.dashboard.claimRadarClosureValue", {
@@ -287,11 +287,11 @@ export function HmoClaimRadar({
       </div>
       <div className="mt-2 flex flex-wrap items-center gap-1.5">
         <span className="text-[10px] font-semibold uppercase tracking-wide text-amber-800">
-          {t("pages.dashboard.claimRadarHotspotLabel")}
+          {t("pages.dashboard.claimRadarHotspotLabel", { defaultValue: "Claim Radar Hotspot Label" })}
         </span>
         {criticalProviderHotspots.length === 0 ? (
           <span className="rounded-full bg-white px-2 py-0.5 text-[10px] font-semibold text-slate-600 ring-1 ring-amber-200">
-            {t("pages.dashboard.claimRadarHotspotEmpty")}
+            {t("pages.dashboard.claimRadarHotspotEmpty", { defaultValue: "Claim Radar Hotspot Empty" })}
           </span>
         ) : (
           criticalProviderHotspots.map((provider: any) => (

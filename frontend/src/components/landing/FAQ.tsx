@@ -19,17 +19,17 @@ export function FAQ({ contactHref = "#cta" }: { contactHref?: string }): JSX.Ele
   return (
     <div className="grid gap-8 lg:grid-cols-[1fr_1.4fr]">
       <div>
-        <SectionEyebrow label={t("landing.faqEyebrow")} icon={IconHelp} accent="violet" />
+        <SectionEyebrow label={t("landing.faqEyebrow", { defaultValue: "Faq Eyebrow" })} icon={IconHelp} accent="violet" />
         <h2 className="mt-3 text-3xl font-bold tracking-tight text-brand-text sm:text-4xl">
-          {t("landing.faqTitle")}
+          {t("landing.faqTitle", { defaultValue: "Faq Title" })}
         </h2>
-        <p className="mt-4 text-brand-muted">{t("landing.faqSubtitle")}</p>
+        <p className="mt-4 text-brand-muted">{t("landing.faqSubtitle", { defaultValue: "Faq Subtitle" })}</p>
         {contactHref.startsWith("/") ? (
           <Link
             to={contactHref}
             className="mt-6 inline-flex min-h-11 items-center gap-1.5 text-sm font-bold text-teal-600 transition hover:gap-2"
           >
-            {t("landing.faqContact")}
+            {t("landing.faqContact", { defaultValue: "Faq Contact" })}
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="h-4 w-4">
               <path d="M5 12h14m-7-7 7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
@@ -39,7 +39,7 @@ export function FAQ({ contactHref = "#cta" }: { contactHref?: string }): JSX.Ele
             href={contactHref}
             className="mt-6 inline-flex min-h-11 items-center gap-1.5 text-sm font-bold text-teal-600 transition hover:gap-2"
           >
-            {t("landing.faqContact")}
+            {t("landing.faqContact", { defaultValue: "Faq Contact" })}
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="h-4 w-4">
               <path d="M5 12h14m-7-7 7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
             </svg>

@@ -51,21 +51,21 @@ export function HQDashboardPage() {
 
   const metrics = [
     {
-      label: t("pages.hq.metricBranches"),
+      label: t("pages.hq.metricBranches", { defaultValue: "Metric Branches" }),
       value: data?.totalClinics,
       icon: <Building2 />,
       color: "text-sky-500",
       bg: "bg-sky-50",
     },
     {
-      label: t("pages.hq.metricRevenue"),
+      label: t("pages.hq.metricRevenue", { defaultValue: "Metric Revenue" }),
       value: `₱${data?.totalRevenue.toLocaleString() ?? "0"}`,
       icon: <TrendingUp />,
       color: "text-teal-500",
       bg: "bg-teal-50",
     },
     {
-      label: t("pages.hq.metricPatients"),
+      label: t("pages.hq.metricPatients", { defaultValue: "Metric Patients" }),
       value: "2.4k",
       icon: <Users />,
       color: "text-indigo-500",
@@ -79,15 +79,15 @@ export function HQDashboardPage() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <p className="text-xs font-semibold uppercase tracking-widest text-teal-600 mb-1">
-              {t("pages.hq.kicker")}
+              {t("pages.hq.kicker", { defaultValue: "Kicker" })}
             </p>
-            <h1 className="page-header-title">{t("pages.hq.title")}</h1>
+            <h1 className="page-header-title">{t("pages.hq.title", { defaultValue: "Title" })}</h1>
           </div>
           <button
             type="button"
             className="btn-primary flex items-center gap-2"
           >
-            <Plus size={16} /> {t("pages.hq.addBranch")}
+            <Plus size={16} /> {t("pages.hq.addBranch", { defaultValue: "Add Branch" })}
           </button>
         </div>
 
@@ -116,7 +116,7 @@ export function HQDashboardPage() {
           <div className="flex items-center gap-2.5">
             <Globe size={18} className="text-slate-400" />
             <h2 className="text-lg font-bold tracking-tight text-slate-800">
-              {t("pages.hq.branchPerformance")}
+              {t("pages.hq.branchPerformance", { defaultValue: "Branch Performance" })}
             </h2>
           </div>
 
@@ -145,7 +145,7 @@ export function HQDashboardPage() {
                   <div className="grid grid-cols-2 gap-4 pt-4 border-t border-slate-100">
                     <div>
                       <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 mb-1">
-                        {t("pages.hq.mtdRevenue")}
+                        {t("pages.hq.mtdRevenue", { defaultValue: "Mtd Revenue" })}
                       </p>
                       <p className="text-lg font-bold text-teal-500 tracking-tight">
                         ₱{clinic.revenue.toLocaleString()}
@@ -153,7 +153,7 @@ export function HQDashboardPage() {
                     </div>
                     <div>
                       <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 mb-1">
-                        {t("pages.hq.invoices")}
+                        {t("pages.hq.invoices", { defaultValue: "Invoices" })}
                       </p>
                       <p className="text-lg font-bold text-slate-800 tracking-tight">
                         {clinic.invoicesCount}
@@ -165,7 +165,7 @@ export function HQDashboardPage() {
                     type="button"
                     className="btn-secondary w-full justify-center"
                   >
-                    {t("pages.hq.switchBranch")}
+                    {t("pages.hq.switchBranch", { defaultValue: "Switch Branch" })}
                   </button>
                 </div>
               </motion.div>

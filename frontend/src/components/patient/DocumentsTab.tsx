@@ -27,7 +27,7 @@ export function DocumentsTab({ patientId, patientName = "Patient" }: DocumentsTa
     try {
       await openAuthedPdf(`/patients/${patientId}/forms/${slug}.pdf`);
     } catch (err) {
-      const msg = err instanceof Error ? err.message : t("pages.patientDetail.documents.downloadFailed");
+      const msg = err instanceof Error ? err.message : t("pages.patientDetail.documents.downloadFailed", { defaultValue: "Download Failed" });
       toast.error(msg);
     } finally {
       setPending(null);
@@ -45,11 +45,11 @@ export function DocumentsTab({ patientId, patientName = "Patient" }: DocumentsTa
             </div>
             <div className="flex flex-wrap gap-2">
               <button type="button" onClick={() => void handleOpen(f.slug)} disabled={pending === f.slug} className="rounded-md bg-white px-3 py-1.5 text-xs font-medium text-white disabled:opacity-60">
-                {pending === f.slug ? t("pages.patientDetail.documents.opening") : t("pages.patientDetail.documents.openPdf")}
+                {pending === f.slug ? t("pages.patientDetail.documents.opening", { defaultValue: "Opening" }) : t("pages.patientDetail.documents.openPdf", { defaultValue: "Open Pdf" })}
               </button>
               {f.signable ? (
                 <button type="button" onClick={() => setConsentOpen(true)} className="rounded-md border border-teal-200 px-3 py-1.5 text-xs font-bold text-teal-700">
-                  {t("pages.patientDetail.documents.signElectronic")}
+                  {t("pages.patientDetail.documents.signElectronic", { defaultValue: "Sign Electronic" })}
                 </button>
               ) : null}
             </div>
@@ -61,11 +61,11 @@ export function DocumentsTab({ patientId, patientName = "Patient" }: DocumentsTa
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => setConsentOpen(false)}>
           <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-4" onClick={(e) => e.stopPropagation()}>
             <ElectronicConsent
-              title={t("pages.patientDetail.documents.informedConsentTitle")}
-              content={t("pages.patientDetail.documents.informedConsentBody")}
+              title={t("pages.patientDetail.documents.informedConsentTitle", { defaultValue: "Informed Consent Title" })}
+              content={t("pages.patientDetail.documents.informedConsentBody", { defaultValue: "Informed Consent Body" })}
               patientName={patientName}
               onSign={() => {
-                toast.success(t("pages.patientDetail.documents.consentSigned"));
+                toast.success(t("pages.patientDetail.documents.consentSigned", { defaultValue: "Consent Signed" }));
                 setConsentOpen(false);
               }}
             />

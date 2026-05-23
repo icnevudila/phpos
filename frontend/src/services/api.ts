@@ -96,7 +96,7 @@ api.interceptors.response.use(
 
     // Network errors or offline
     if (!error.response) {
-      throw new Error(i18n.t("errors.networkOffline"));
+      throw new Error(i18n.t("errors.networkOffline", { defaultValue: "Network Offline" }));
     }
 
     const data = error.response.data as {

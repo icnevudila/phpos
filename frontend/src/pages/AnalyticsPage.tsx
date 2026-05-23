@@ -44,7 +44,7 @@ export function AnalyticsPage() {
       .then(setData)
       .catch((err) => {
         console.error(err);
-        toast.error(t("pages.analytics.loadError"));
+        toast.error(t("pages.analytics.loadError", { defaultValue: "Load Error" }));
       })
       .finally(() => setLoading(false));
   }, [t]);
@@ -71,19 +71,19 @@ export function AnalyticsPage() {
           <div className="space-y-4">
             <div className="inline-flex items-center gap-2 rounded-full bg-teal-50 px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-teal-700 ring-1 ring-teal-200/50">
               <span className="flex h-1.5 w-1.5 animate-pulse rounded-full bg-teal-500" />
-              {t("pages.analytics.liveInsights")}
+              {t("pages.analytics.liveInsights", { defaultValue: "Live Insights" })}
             </div>
             <h1 className="text-4xl font-black tracking-tighter text-slate-900 sm:text-6xl">
-              {t("pages.analytics.title")} <span className="text-gradient">{t("pages.analytics.hub")}</span>
+              {t("pages.analytics.title", { defaultValue: "Title" })} <span className="text-gradient">{t("pages.analytics.hub", { defaultValue: "Hub" })}</span>
             </h1>
             <p className="max-w-xl text-lg font-medium text-slate-500 leading-relaxed">
-              {t("pages.analytics.subtitle")}
+              {t("pages.analytics.subtitle", { defaultValue: "Subtitle" })}
             </p>
           </div>
           <div className="flex gap-4">
             <button className="inline-flex h-14 items-center gap-3 rounded-2xl bg-white px-8 text-sm font-black uppercase tracking-widest text-slate-900 shadow-sm ring-1 ring-slate-200 transition-all hover:bg-slate-50 hover:shadow-md active:scale-95">
               <IconChartDots size={18} />
-              {t("pages.analytics.export")}
+              {t("pages.analytics.export", { defaultValue: "Export" })}
             </button>
           </div>
         </div>
@@ -96,9 +96,9 @@ export function AnalyticsPage() {
           <div className="mb-8 flex items-center justify-between">
             <div>
               <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
-                {t("pages.analytics.growthTrend")}
+                {t("pages.analytics.growthTrend", { defaultValue: "Growth Trend" })}
               </p>
-              <h3 className="text-xl font-black text-slate-900 mt-1">{t("pages.analytics.retentionVelocity")}</h3>
+              <h3 className="text-xl font-black text-slate-900 mt-1">{t("pages.analytics.retentionVelocity", { defaultValue: "Retention Velocity" })}</h3>
             </div>
             <div className="h-10 w-10 rounded-xl bg-teal-50 flex items-center justify-center text-teal-600">
               <IconTrendingUp size={20} />
@@ -141,7 +141,7 @@ export function AnalyticsPage() {
                   stroke="#10b981" 
                   fillOpacity={1} 
                   fill="url(#colorNew)" 
-                  name={t("pages.analytics.newPatients")} 
+                  name={t("pages.analytics.newPatients", { defaultValue: "New Patients" })} 
                   strokeWidth={4} 
                   dot={{ r: 4, strokeWidth: 2, fill: "white" }}
                   activeDot={{ r: 6, strokeWidth: 0 }}
@@ -152,7 +152,7 @@ export function AnalyticsPage() {
                   stroke="#0ea5e9" 
                   fillOpacity={1} 
                   fill="url(#colorRet)" 
-                  name={t("pages.analytics.returning")} 
+                  name={t("pages.analytics.returning", { defaultValue: "Returning" })} 
                   strokeWidth={4} 
                   dot={{ r: 4, strokeWidth: 2, fill: "white" }}
                   activeDot={{ r: 6, strokeWidth: 0 }}
@@ -167,9 +167,9 @@ export function AnalyticsPage() {
           <div className="mb-8 flex items-center justify-between">
             <div>
               <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
-                {t("pages.analytics.distribution")}
+                {t("pages.analytics.distribution", { defaultValue: "Distribution" })}
               </p>
-              <h3 className="text-xl font-black text-slate-900 mt-1">{t("pages.analytics.treatmentShare")}</h3>
+              <h3 className="text-xl font-black text-slate-900 mt-1">{t("pages.analytics.treatmentShare", { defaultValue: "Treatment Share" })}</h3>
             </div>
             <div className="h-10 w-10 rounded-xl bg-sky-50 flex items-center justify-center text-sky-600">
               <IconStethoscope size={20} />
@@ -216,9 +216,9 @@ export function AnalyticsPage() {
           <div className="mb-8 flex items-center justify-between">
             <div>
               <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
-                {t("pages.analytics.leaderboard")}
+                {t("pages.analytics.leaderboard", { defaultValue: "Leaderboard" })}
               </p>
-              <h3 className="text-xl font-black text-slate-900 mt-1">{t("pages.analytics.providerPerformance")}</h3>
+              <h3 className="text-xl font-black text-slate-900 mt-1">{t("pages.analytics.providerPerformance", { defaultValue: "Provider Performance" })}</h3>
             </div>
             <div className="h-10 w-10 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600">
               <IconUsers size={20} />
@@ -267,12 +267,12 @@ export function AnalyticsPage() {
                 <IconArrowUpRight size={24} />
               </div>
               <div>
-                <p className="text-[10px] font-black uppercase text-teal-700 tracking-[0.2em]">{t("pages.analytics.topPerformer")}</p>
+                <p className="text-[10px] font-black uppercase text-teal-700 tracking-[0.2em]">{t("pages.analytics.topPerformer", { defaultValue: "Top Performer" })}</p>
                 <p className="text-lg font-black text-teal-950">{data.dentistProductivity[0]?.name || "N/A"}</p>
               </div>
             </div>
             <div className="text-right">
-               <p className="text-[10px] font-black uppercase text-teal-700 tracking-[0.2em]">{t("pages.analytics.growth")}</p>
+               <p className="text-[10px] font-black uppercase text-teal-700 tracking-[0.2em]">{t("pages.analytics.growth", { defaultValue: "Growth" })}</p>
                <p className="text-lg font-black text-teal-950">+12.4%</p>
             </div>
           </div>
@@ -283,9 +283,9 @@ export function AnalyticsPage() {
           <div className="mb-8 flex items-center justify-between">
             <div>
               <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
-                {t("pages.analytics.cashflow")}
+                {t("pages.analytics.cashflow", { defaultValue: "Cashflow" })}
               </p>
-              <h3 className="text-xl font-black text-slate-900 mt-1">{t("pages.analytics.fundingMix")}</h3>
+              <h3 className="text-xl font-black text-slate-900 mt-1">{t("pages.analytics.fundingMix", { defaultValue: "Funding Mix" })}</h3>
             </div>
             <div className="h-10 w-10 rounded-xl bg-teal-50 flex items-center justify-center text-teal-600">
               <IconWallet size={20} />
@@ -312,8 +312,8 @@ export function AnalyticsPage() {
               </PieChart>
             </ResponsiveContainer>
             <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-              <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest">{t("pages.analytics.ratio")}</span>
-              <span className="text-xl font-black text-teal-600">{t("pages.analytics.hmoLead")}</span>
+              <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest">{t("pages.analytics.ratio", { defaultValue: "Ratio" })}</span>
+              <span className="text-xl font-black text-teal-600">{t("pages.analytics.hmoLead", { defaultValue: "Hmo Lead" })}</span>
             </div>
           </div>
           <div className="mt-4 space-y-3">

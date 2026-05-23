@@ -45,7 +45,7 @@ export function PatientAutocomplete({
 }: Props): JSX.Element {
 
   const { t } = useTranslation();
-  const placeholderText = placeholder ?? t("pages.appointments.patientAutocomplete.placeholderDefault");
+  const placeholderText = placeholder ?? t("pages.appointments.patientAutocomplete.placeholderDefault", { defaultValue: "Placeholder Default" });
 
   const [query, setQuery] = useState(value?.firstName ? `${value.firstName} ${value.lastName}` : "");
 
@@ -251,7 +251,7 @@ export function PatientAutocomplete({
 
     return (
 
-      <div className="flex items-center justify-between rounded-lg border border-slate-300 bg-white px-3 py-2">
+      <div className="flex items-center justify-between h-10 rounded-[var(--radius-md)] border border-brand-border bg-brand-surface px-3 py-2">
 
         <div>
 
@@ -349,7 +349,7 @@ export function PatientAutocomplete({
 
         autoComplete="off"
 
-        className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:border-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-100"
+        className="w-full h-10 rounded-[var(--radius-md)] border border-brand-border bg-brand-surface px-3 py-2 text-xs font-semibold focus:border-brand-primary focus:outline-none focus:ring-1 focus:ring-brand-primary transition-shadow"
 
       />
 
@@ -361,7 +361,7 @@ export function PatientAutocomplete({
 
           role="listbox"
 
-          aria-label={t("pages.appointments.patientAutocomplete.listAria")}
+          aria-label={t("pages.appointments.patientAutocomplete.listAria", { defaultValue: "List Aria" })}
 
           className="absolute z-20 mt-1 max-h-64 w-full overflow-auto rounded-lg border border-slate-200 bg-white shadow-lg"
 
@@ -371,7 +371,7 @@ export function PatientAutocomplete({
 
             <div className="px-3 py-2 text-xs text-slate-500" role="status">
 
-              {t("pages.appointments.patientAutocomplete.searching")}
+              {t("pages.appointments.patientAutocomplete.searching", { defaultValue: "Searching" })}
 
             </div>
 
@@ -379,7 +379,7 @@ export function PatientAutocomplete({
 
             <div className="px-3 py-3 text-xs text-slate-500" role="status">
 
-              <p>{t("pages.appointments.patientAutocomplete.noResults")}</p>
+              <p>{t("pages.appointments.patientAutocomplete.noResults", { defaultValue: "No Results" })}</p>
 
               <Link
 
@@ -389,7 +389,7 @@ export function PatientAutocomplete({
 
               >
 
-                {t("pages.appointments.patientAutocomplete.openPatientsCta")}
+                {t("pages.appointments.patientAutocomplete.openPatientsCta", { defaultValue: "Open Patients Cta" })}
 
               </Link>
 

@@ -49,7 +49,7 @@ export function WallOfLove(): JSX.Element {
       <div className="mx-auto max-w-7xl px-6">
         <div className="mb-20 text-center lg:text-left">
            <div className="inline-flex items-center gap-2 rounded-full bg-teal-50 px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-teal-600 ring-1 ring-teal-100">
-              {t("landing.featurePreviewBadge")}
+              {t("landing.featurePreviewBadge", { defaultValue: "Feature Preview Badge" })}
            </div>
            <h2 className="mt-6 text-5xl font-black tracking-tighter text-brand-text sm:text-6xl uppercase leading-[1.05]">
               {t("landing.capTitle", { defaultValue: "One platform, every workflow." })}
@@ -58,40 +58,40 @@ export function WallOfLove(): JSX.Element {
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           <BentoCard 
-            title={t("landing.f1Title")}
-            desc={t("landing.f1Desc")}
+            title={t("landing.f1Title", { defaultValue: "F1 Title" })}
+            desc={t("landing.f1Desc", { defaultValue: "F1 Desc" })}
             icon="📅"
             className="lg:col-span-2"
             delay={0.1}
           />
           <BentoCard 
-            title={t("landing.f2Title")}
-            desc={t("landing.f2Desc")}
+            title={t("landing.f2Title", { defaultValue: "F2 Title" })}
+            desc={t("landing.f2Desc", { defaultValue: "F2 Desc" })}
             icon="🦷"
             delay={0.2}
           />
           <BentoCard 
-            title={t("landing.f4Title")}
-            desc={t("landing.f4Desc")}
+            title={t("landing.f4Title", { defaultValue: "F4 Title" })}
+            desc={t("landing.f4Desc", { defaultValue: "F4 Desc" })}
             icon="💳"
             delay={0.3}
           />
           <BentoCard 
-            title={t("landing.cap5Title")}
-            desc={t("landing.cap5Desc")}
+            title={t("landing.cap5Title", { defaultValue: "Cap5 Title" })}
+            desc={t("landing.cap5Desc", { defaultValue: "Cap5 Desc" })}
             icon="⏱️"
             className="lg:col-span-2"
             delay={0.4}
           />
           <BentoCard 
-            title={t("landing.f5Title")}
-            desc={t("landing.f5Desc")}
+            title={t("landing.f5Title", { defaultValue: "F5 Title" })}
+            desc={t("landing.f5Desc", { defaultValue: "F5 Desc" })}
             icon="📦"
             delay={0.5}
           />
           <BentoCard 
-            title={t("landing.f3Title")}
-            desc={t("landing.f3Desc")}
+            title={t("landing.f3Title", { defaultValue: "F3 Title" })}
+            desc={t("landing.f3Desc", { defaultValue: "F3 Desc" })}
             icon="📋"
             className="lg:col-span-2"
             delay={0.6}

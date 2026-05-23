@@ -8,8 +8,8 @@ export function FaqPage(): JSX.Element {
   return (
     <MarketingShell documentTitleKey="pages.faqPublic.title">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">{t("pages.faqPublic.title")}</h1>
-        <p className="mt-3 max-w-2xl text-slate-600">{t("pages.faqPublic.subtitle")}</p>
+        <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">{t("pages.faqPublic.title", { defaultValue: "Title" })}</h1>
+        <p className="mt-3 max-w-2xl text-slate-600">{t("pages.faqPublic.subtitle", { defaultValue: "Subtitle" })}</p>
         <div className="mt-10">
           <FAQ contactHref="/contact" />
         </div>

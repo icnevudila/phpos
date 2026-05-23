@@ -51,7 +51,7 @@ export function PortalLayout(): JSX.Element {
 
   useEffect(() => {
     if (!clinic) return;
-    document.title = `${clinic.name} · ${t("portal.patientPortal")}`;
+    document.title = `${clinic.name} · ${t("portal.patientPortal", { defaultValue: "Patient Portal" })}`;
   }, [clinic, t]);
 
   function onLogout(): void {
@@ -67,7 +67,7 @@ export function PortalLayout(): JSX.Element {
           <LanguageSwitcher />
         </div>
         <div className="rounded-2xl bg-white p-6 text-center shadow-md">
-          <h1 className="text-lg font-bold text-rose-700">{t("portal.errorTitle")}</h1>
+          <h1 className="text-lg font-bold text-rose-700">{t("portal.errorTitle", { defaultValue: "Error Title" })}</h1>
           <p className="mt-2 text-sm text-slate-600">
             <Trans i18nKey="portal.errorBody" values={{ slug }} />
           </p>
@@ -75,7 +75,7 @@ export function PortalLayout(): JSX.Element {
             to="/"
             className="mt-4 inline-flex min-h-11 items-center justify-center rounded-lg text-sm font-bold text-teal-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2"
           >
-            {t("portal.goHome")}
+            {t("portal.goHome", { defaultValue: "Go Home" })}
           </Link>
         </div>
       </div>
@@ -88,7 +88,7 @@ export function PortalLayout(): JSX.Element {
         <div className="absolute right-4 top-4">
           <LanguageSwitcher />
         </div>
-        <p className="text-sm text-slate-500">{t("portal.loading")}</p>
+        <p className="text-sm text-slate-500">{t("portal.loading", { defaultValue: "Loading" })}</p>
       </div>
     );
   }
@@ -118,7 +118,7 @@ export function PortalLayout(): JSX.Element {
             </div>
             <div className="min-w-0">
               <p className="text-[10px] font-bold uppercase tracking-widest text-teal-600">
-                {t("common.appName")}
+                {t("common.appName", { defaultValue: "App Name" })}
               </p>
               <p className="truncate text-sm font-bold text-slate-800">{clinic.name}</p>
             </div>
@@ -131,7 +131,7 @@ export function PortalLayout(): JSX.Element {
                 onClick={onLogout}
                 className="min-h-9 rounded-full bg-slate-100 px-3 py-1.5 text-[11px] font-bold text-slate-600 hover:bg-slate-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2"
               >
-                {t("portal.logout")}
+                {t("portal.logout", { defaultValue: "Logout" })}
               </button>
             ) : null}
           </div>

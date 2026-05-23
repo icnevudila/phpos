@@ -85,7 +85,7 @@ export function AppointmentDetailSidebar({
   }
 
   async function removeAppointment(): Promise<void> {
-    if (!confirm(t("pages.appointments.deleteConfirm"))) return;
+    if (!confirm(t("pages.appointments.deleteConfirm", { defaultValue: "Delete Confirm" }))) return;
     setBusy("DELETE");
     setError(null);
     try {
@@ -170,7 +170,7 @@ export function AppointmentDetailSidebar({
 
         {appointment.chairNo ? (
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Chair / station</p>
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">{t(`${SB}.chair`, { defaultValue: "Chair / station" })}</p>
             <p className="mt-1 text-sm text-slate-800">{appointment.chairNo}</p>
           </div>
         ) : null}
@@ -222,7 +222,7 @@ export function AppointmentDetailSidebar({
                 onClick={() => changeStatus("CANCELLED", reason || undefined)}
                 className="mt-2 w-full rounded-lg border border-rose-300 bg-white px-3 py-2 text-sm font-semibold text-rose-700 hover:bg-rose-50 disabled:opacity-60"
               >
-                Cancel appointment
+                {t(`${SB}.actionCancel`, { defaultValue: "Cancel appointment" })}
               </button>
             </div>
           </div>
@@ -261,7 +261,7 @@ export function AppointmentDetailSidebar({
             onClick={() => void refreshCurrentAppointment()}
             className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50"
           >
-            Refresh
+            {t(`${SB}.refresh`, { defaultValue: "Refresh" })}
           </button>
           <button
             type="button"

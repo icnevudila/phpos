@@ -41,7 +41,7 @@ export function AgedReceivablesPage(): JSX.Element {
       const d = await fetchAgedReceivables();
       setData(d);
     } catch (e) {
-      setError(e instanceof Error ? e.message : t("pages.agedReceivables.loadFailed"));
+      setError(e instanceof Error ? e.message : t("pages.agedReceivables.loadFailed", { defaultValue: "Load Failed" }));
     } finally {
       setLoading(false);
     }
@@ -74,25 +74,25 @@ export function AgedReceivablesPage(): JSX.Element {
         <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-rose-50 text-rose-500">
           <AlertCircle size={32} />
         </div>
-        <p className="text-base font-semibold text-slate-800">{error ?? t("pages.agedReceivables.noData")}</p>
+        <p className="text-base font-semibold text-slate-800">{error ?? t("pages.agedReceivables.noData", { defaultValue: "No Data" })}</p>
         <button
           onClick={() => void load()}
           className="btn-primary"
         >
-          {t("pages.agedReceivables.refresh")}
+          {t("pages.agedReceivables.refresh", { defaultValue: "Refresh" })}
         </button>
       </div>
     );
   }
 
-  const empty = t("pages.common.empty");
+  const empty = t("pages.common.empty", { defaultValue: "Empty" });
 
   return (
     <div className="page-wrapper">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="page-header-title">{t("pages.agedReceivables.title")}</h1>
+          <h1 className="page-header-title">{t("pages.agedReceivables.title", { defaultValue: "Title" })}</h1>
           <p className="page-header-sub">{t("pages.agedReceivables.subtitle", { asOf: data.asOf })}</p>
         </div>
         <div className="flex items-center gap-2">
@@ -100,7 +100,7 @@ export function AgedReceivablesPage(): JSX.Element {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
             <input
               type="text"
-              placeholder={t("pages.invoicesList.searchPlaceholder")}
+              placeholder={t("pages.invoicesList.searchPlaceholder", { defaultValue: "Search Placeholder" })}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="h-10 w-[260px] rounded-xl bg-white pl-10 pr-4 text-sm font-medium shadow-sm ring-1 ring-slate-100 focus:ring-2 focus:ring-teal-500 outline-none transition-all"
@@ -123,7 +123,7 @@ export function AgedReceivablesPage(): JSX.Element {
           className="stat-card bg-teal-600 text-white ring-0"
         >
           <p className="text-[10px] font-semibold uppercase tracking-widest text-teal-100 mb-2">
-            {t("pages.agedReceivables.totalOutstanding")}
+            {t("pages.agedReceivables.totalOutstanding", { defaultValue: "Total Outstanding" })}
           </p>
           <p className="text-2xl font-bold tabular-nums">
             {formatPHP(data.totalOutstanding)}
@@ -157,11 +157,11 @@ export function AgedReceivablesPage(): JSX.Element {
           <table className="data-table min-w-[800px]">
             <thead>
               <tr>
-                <th>{t("pages.agedReceivables.colPatient")}</th>
-                <th>{t("pages.agedReceivables.colOr")}</th>
-                <th>{t("pages.agedReceivables.colDays")}</th>
-                <th>{t("pages.agedReceivables.colBucket")}</th>
-                <th className="text-right">{t("pages.agedReceivables.colBalance")}</th>
+                <th>{t("pages.agedReceivables.colPatient", { defaultValue: "Col Patient" })}</th>
+                <th>{t("pages.agedReceivables.colOr", { defaultValue: "Col Or" })}</th>
+                <th>{t("pages.agedReceivables.colDays", { defaultValue: "Col Days" })}</th>
+                <th>{t("pages.agedReceivables.colBucket", { defaultValue: "Col Bucket" })}</th>
+                <th className="text-right">{t("pages.agedReceivables.colBalance", { defaultValue: "Col Balance" })}</th>
                 <th></th>
               </tr>
             </thead>
@@ -178,20 +178,20 @@ export function AgedReceivablesPage(): JSX.Element {
                         icon="chart"
                         title={
                           searchQuery
-                            ? t("pages.invoicesList.noTableMatches")
-                            : t("pages.agedReceivables.emptyTitle")
+                            ? t("pages.invoicesList.noTableMatches", { defaultValue: "No Table Matches" })
+                            : t("pages.agedReceivables.emptyTitle", { defaultValue: "Empty Title" })
                         }
                         description={
                           searchQuery
-                            ? t("pages.invoicesList.searchHint")
-                            : t("pages.agedReceivables.emptyHint")
+                            ? t("pages.invoicesList.searchHint", { defaultValue: "Search Hint" })
+                            : t("pages.agedReceivables.emptyHint", { defaultValue: "Empty Hint" })
                         }
                         primary={
                           !searchQuery
                             ? {
                                 kind: "link",
                                 to: "/invoices",
-                                label: t("pages.agedReceivables.emptyCtaInvoices"),
+                                label: t("pages.agedReceivables.emptyCtaInvoices", { defaultValue: "Empty Cta Invoices" }),
                               }
                             : undefined
                         }

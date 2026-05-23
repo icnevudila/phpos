@@ -25,12 +25,12 @@ export function DentistSelect({
       value={value}
       onChange={(e) => onChange(e.target.value)}
       disabled={disabled}
-      className={`min-h-11 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:border-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-100 ${className}`}
+      className={`h-10 rounded-[var(--radius-md)] border border-brand-border bg-brand-surface px-3 py-2 text-xs font-semibold focus:border-brand-primary focus:outline-none focus:ring-1 focus:ring-brand-primary transition-shadow ${className}`}
     >
       {includeAll ? (
-        <option value="">{t("pages.appointments.allDentists")}</option>
+        <option value="">{t("pages.appointments.allDentists", { defaultValue: "All Dentists" })}</option>
       ) : (
-        <option value="">{t("pages.appointments.selectDentist")}</option>
+        <option value="">{t("pages.appointments.selectDentist", { defaultValue: "Select Dentist" })}</option>
       )}
       {dentists.map((d) => (
         <option key={d.id} value={d.id}>

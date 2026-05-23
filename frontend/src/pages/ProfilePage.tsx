@@ -64,7 +64,7 @@ export function ProfilePage(): JSX.Element {
           specialization: u.specialization || "",
         });
       } catch (err) {
-        toast.error(t("pages.profile.loadFailed"));
+        toast.error(t("pages.profile.loadFailed", { defaultValue: "Load Failed" }));
       } finally {
         setLoading(false);
       }
@@ -76,9 +76,9 @@ export function ProfilePage(): JSX.Element {
     setBusy(true);
     try {
       await api.put(`/users/${profile?.id}`, draft);
-      toast.success(t("pages.profile.updated"));
+      toast.success(t("pages.profile.updated", { defaultValue: "Updated" }));
     } catch (err) {
-      toast.error(t("pages.profile.updateFailed"));
+      toast.error(t("pages.profile.updateFailed", { defaultValue: "Update Failed" }));
     } finally {
       setBusy(false);
     }
@@ -120,7 +120,7 @@ export function ProfilePage(): JSX.Element {
                     </span>
                  </div>
                  <p className="text-sm font-semibold text-teal-500 uppercase tracking-widest">
-                   {draft.degree || t("pages.profile.degreeFallback")}
+                   {draft.degree || t("pages.profile.degreeFallback", { defaultValue: "Degree Fallback" })}
                  </p>
                  <div className="flex flex-wrap justify-center sm:justify-start items-center gap-4 text-xs font-medium text-slate-400 uppercase tracking-widest">
                     <span className="flex items-center gap-2">
@@ -130,7 +130,7 @@ export function ProfilePage(): JSX.Element {
                     <span className="h-1 w-1 rounded-full bg-slate-200" />
                     <span className="flex items-center gap-2">
                        <Phone size={12} className="opacity-40" />
-                       {draft.phone || t("pages.profile.noPhone")}
+                       {draft.phone || t("pages.profile.noPhone", { defaultValue: "No Phone" })}
                     </span>
                  </div>
               </div>
@@ -143,7 +143,7 @@ export function ProfilePage(): JSX.Element {
                 className="btn-primary flex items-center gap-2 disabled:opacity-60"
               >
                 {busy ? <RefreshCw className="animate-spin" size={16} /> : <Save size={16} />}
-                {busy ? t("pages.profile.saving") : t("pages.profile.saveProfile")}
+                {busy ? t("pages.profile.saving", { defaultValue: "Saving" }) : t("pages.profile.saveProfile", { defaultValue: "Save Profile" })}
               </button>
            </div>
         </header>
@@ -156,7 +156,7 @@ export function ProfilePage(): JSX.Element {
                     <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-teal-50 text-teal-600">
                        <Briefcase size={20} />
                     </div>
-                    <h2 className="text-base font-semibold text-slate-800">{t("pages.profile.professionalIdentity")}</h2>
+                    <h2 className="text-base font-semibold text-slate-800">{t("pages.profile.professionalIdentity", { defaultValue: "Professional Identity" })}</h2>
                  </div>
 
                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -169,7 +169,7 @@ export function ProfilePage(): JSX.Element {
                        />
                     </div>
                     <div className="space-y-2">
-                       <label className="text-xs font-semibold uppercase tracking-widest text-slate-400 ml-2 mb-1 block">{t("pages.profile.lastName")}</label>
+                       <label className="text-xs font-semibold uppercase tracking-widest text-slate-400 ml-2 mb-1 block">{t("pages.profile.lastName", { defaultValue: "Last Name" })}</label>
                        <input 
                          value={draft.lastName}
                          onChange={e => setDraft({...draft, lastName: e.target.value})}
@@ -177,26 +177,26 @@ export function ProfilePage(): JSX.Element {
                        />
                     </div>
                     <div className="md:col-span-2 space-y-2">
-                       <label className="text-xs font-semibold uppercase tracking-widest text-slate-400 ml-2 mb-1 block">{t("pages.profile.professionalDegree")}</label>
+                       <label className="text-xs font-semibold uppercase tracking-widest text-slate-400 ml-2 mb-1 block">{t("pages.profile.professionalDegree", { defaultValue: "Professional Degree" })}</label>
                        <div className="relative">
                           <GraduationCap className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={18} />
                           <input 
                             value={draft.degree}
                             onChange={e => setDraft({...draft, degree: e.target.value})}
-                            placeholder={t("pages.profile.degreePlaceholder")}
+                            placeholder={t("pages.profile.degreePlaceholder", { defaultValue: "Degree Placeholder" })}
                             className="h-12 w-full rounded-xl bg-slate-50 pl-12 pr-4 text-sm font-medium outline-none ring-1 ring-slate-100 focus:ring-2 focus:ring-teal-500 transition-all" 
                           />
                        </div>
                     </div>
                     <div className="md:col-span-2 space-y-2">
-                       <label className="text-xs font-semibold uppercase tracking-widest text-slate-400 ml-2 mb-1 block">{t("pages.profile.clinicalAffiliations")}</label>
+                       <label className="text-xs font-semibold uppercase tracking-widest text-slate-400 ml-2 mb-1 block">{t("pages.profile.clinicalAffiliations", { defaultValue: "Clinical Affiliations" })}</label>
                        <div className="relative">
                           <Building className="absolute left-4 top-4 text-slate-300" size={18} />
                           <textarea 
                             value={draft.affiliations}
                             onChange={e => setDraft({...draft, affiliations: e.target.value})}
                             className="h-28 w-full rounded-2xl bg-slate-50 pl-12 pr-4 py-4 text-sm font-medium outline-none ring-1 ring-slate-100 focus:ring-2 focus:ring-teal-500 transition-all resize-none"
-                            placeholder={t("pages.profile.affiliationsPlaceholder")}
+                            placeholder={t("pages.profile.affiliationsPlaceholder", { defaultValue: "Affiliations Placeholder" })}
                           />
                        </div>
                     </div>
@@ -210,12 +210,12 @@ export function ProfilePage(): JSX.Element {
                     <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-teal-500 text-white shadow-sm">
                        <Globe size={20} />
                     </div>
-                    <h2 className="text-base font-semibold text-white">{t("pages.profile.patientDiscovery")}</h2>
+                    <h2 className="text-base font-semibold text-white">{t("pages.profile.patientDiscovery", { defaultValue: "Patient Discovery" })}</h2>
                  </div>
 
                  <div className="bg-slate-700/50 rounded-2xl p-6 border border-slate-700 relative z-10">
                     <p className="text-xs font-medium text-slate-400 leading-relaxed italic mb-4">
-                       {t("pages.profile.patientDiscoveryHint")}
+                       {t("pages.profile.patientDiscoveryHint", { defaultValue: "Patient Discovery Hint" })}
                     </p>
                     <div className="flex flex-col md:flex-row items-center gap-3">
                        <div className="flex h-12 flex-1 items-center gap-2 rounded-xl bg-white px-4 text-xs font-medium text-slate-500 border border-slate-700">
@@ -224,7 +224,7 @@ export function ProfilePage(): JSX.Element {
                           <span className="text-white">{profile?.id?.slice(0, 8)}</span>
                        </div>
                        <button className="h-12 px-6 rounded-xl bg-teal-500 text-white text-xs font-semibold uppercase tracking-widest shadow-sm hover:scale-105 transition-all">
-                          {t("pages.profile.copyLink")}
+                          {t("pages.profile.copyLink", { defaultValue: "Copy Link" })}
                        </button>
                     </div>
                  </div>
@@ -237,10 +237,10 @@ export function ProfilePage(): JSX.Element {
                  <div className="flex items-center justify-between mb-6">
                     <div className="flex items-center gap-2">
                        <Calendar size={16} className="text-slate-400" />
-                       <h3 className="text-xs font-semibold uppercase tracking-widest text-slate-400">{t("pages.profile.clinicalHours")}</h3>
+                       <h3 className="text-xs font-semibold uppercase tracking-widest text-slate-400">{t("pages.profile.clinicalHours", { defaultValue: "Clinical Hours" })}</h3>
                     </div>
                     <button type="button" className="text-xs font-semibold text-teal-500 uppercase tracking-widest hover:underline">
-                      {t("pages.profile.edit")}
+                      {t("pages.profile.edit", { defaultValue: "Edit" })}
                     </button>
                  </div>
 
@@ -250,7 +250,7 @@ export function ProfilePage(): JSX.Element {
                          <div className="flex items-center gap-3">
                             <span className="text-xs font-semibold text-slate-400 w-8">{t(WEEKDAY_I18N[day] ?? day)}</span>
                             <span className="text-sm font-medium text-slate-800">
-                              {t("pages.profile.hoursDemo")}
+                              {t("pages.profile.hoursDemo", { defaultValue: "Hours Demo" })}
                             </span>
                          </div>
                          <div className="h-2 w-2 rounded-full bg-teal-500 shadow-[0_0_8px_rgba(20,184,166,0.4)]" />
@@ -263,17 +263,17 @@ export function ProfilePage(): JSX.Element {
                  <div className="flex items-center gap-2 mb-6">
                     <Activity size={16} className="text-slate-400" />
                     <h3 className="text-xs font-semibold uppercase tracking-widest text-slate-400">
-                      {t("pages.profile.efficiencyPulse")}
+                      {t("pages.profile.efficiencyPulse", { defaultValue: "Efficiency Pulse" })}
                     </h3>
                  </div>
                  
                  <div className="grid grid-cols-2 gap-3">
                     <div className="stat-card">
-                       <p className="stat-card-label">{t("pages.profile.retention")}</p>
+                       <p className="stat-card-label">{t("pages.profile.retention", { defaultValue: "Retention" })}</p>
                        <p className="stat-card-value">92%</p>
                     </div>
                     <div className="stat-card">
-                       <p className="stat-card-label">{t("pages.profile.nps")}</p>
+                       <p className="stat-card-label">{t("pages.profile.nps", { defaultValue: "Nps" })}</p>
                        <p className="stat-card-value">4.9</p>
                     </div>
                  </div>
@@ -288,7 +288,7 @@ export function ProfilePage(): JSX.Element {
 
               <div className="text-center py-4">
                  <p className="text-xs font-semibold text-slate-300 uppercase tracking-widest">
-                    {t("pages.profile.versionFooter")}
+                    {t("pages.profile.versionFooter", { defaultValue: "Version Footer" })}
                  </p>
               </div>
            </div>

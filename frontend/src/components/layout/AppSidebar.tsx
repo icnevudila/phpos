@@ -53,7 +53,7 @@ export function AppSidebar({
   return (
     <aside
       className={`flex h-full flex-col bg-brand-surface border-r border-brand-border transition-[width] duration-300 ease-out motion-reduce:transition-none ${widthClass}`}
-      aria-label={t("nav.primaryNavAria")}
+      aria-label={t("nav.primaryNavAria", { defaultValue: "Primary Nav Aria" })}
     >
       {/* Brand */}
       <div
@@ -128,12 +128,12 @@ export function AppSidebar({
             type="button"
             onClick={onToggleCollapse}
             className="flex min-h-10 w-full items-center justify-center gap-2 rounded-xl px-3 text-xs font-semibold text-brand-muted transition hover:bg-brand-surface-muted hover:text-brand-text sm:text-sm border border-transparent hover:border-brand-border"
-            aria-label={collapsed ? t("nav.sidebarExpand") : t("nav.sidebarCollapse")}
+            aria-label={collapsed ? t("nav.sidebarExpand", { defaultValue: "Sidebar Expand" }) : t("nav.sidebarCollapse", { defaultValue: "Sidebar Collapse" })}
           >
             {collapsed ? <ChevronRightIcon size={18} /> : (
               <>
                 <ChevronLeftIcon size={18} />
-                <span>{t("nav.sidebarCollapse")}</span>
+                <span>{t("nav.sidebarCollapse", { defaultValue: "Sidebar Collapse" })}</span>
               </>
             )}
           </button>

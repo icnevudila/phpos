@@ -81,7 +81,7 @@ export function PerioMeasurementEditor({
     <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(280px,360px)]">
       <div className="rounded-2xl border border-slate-200 bg-white p-4">
         <p className="mb-3 text-xs font-bold uppercase tracking-widest text-slate-500">
-          {t("pages.patientDetail.perio.selectToothHint")}
+          {t("pages.patientDetail.perio.selectToothHint", { defaultValue: "Select Tooth Hint" })}
         </p>
         <div className="flex flex-wrap gap-2">
           {Array.from({ length: 32 }, (_, i) => i + 1).map((n) => {
@@ -109,12 +109,12 @@ export function PerioMeasurementEditor({
 
       <div className="rounded-2xl border border-slate-200 bg-white p-4">
         {!tooth ? (
-          <p className="text-sm text-slate-500">{t("pages.patientDetail.perio.pickTooth")}</p>
+          <p className="text-sm text-slate-500">{t("pages.patientDetail.perio.pickTooth", { defaultValue: "Pick Tooth" })}</p>
         ) : (
           <div className="space-y-4">
             <div className="flex flex-wrap gap-4">
               <label className="text-xs font-bold text-slate-600">
-                {t("pages.patientDetail.perio.mobility")}
+                {t("pages.patientDetail.perio.mobility", { defaultValue: "Mobility" })}
                 <input
                   type="number"
                   min={0}
@@ -127,7 +127,7 @@ export function PerioMeasurementEditor({
                 />
               </label>
               <label className="text-xs font-bold text-slate-600">
-                {t("pages.patientDetail.perio.furcation")}
+                {t("pages.patientDetail.perio.furcation", { defaultValue: "Furcation" })}
                 <input
                   type="number"
                   min={0}
@@ -145,7 +145,7 @@ export function PerioMeasurementEditor({
                   checked={tooth.missing}
                   onChange={(e) => patchTooth({ missing: e.target.checked })}
                 />
-                {t("pages.patientDetail.perio.missing")}
+                {t("pages.patientDetail.perio.missing", { defaultValue: "Missing" })}
               </label>
             </div>
 
@@ -154,12 +154,12 @@ export function PerioMeasurementEditor({
                 <table className="w-full min-w-[520px] text-left text-xs">
                   <thead>
                     <tr className="border-b text-slate-500">
-                      <th className="py-2 pr-2">{t("pages.patientDetail.perio.site")}</th>
-                      <th className="py-2 pr-2">{t("pages.patientDetail.perio.colPd")}</th>
-                      <th className="py-2 pr-2">{t("pages.patientDetail.perio.colRec")}</th>
-                      <th className="py-2 pr-2">{t("pages.patientDetail.perio.colBop")}</th>
-                      <th className="py-2 pr-2">{t("pages.patientDetail.perio.colSup")}</th>
-                      <th className="py-2">{t("pages.patientDetail.perio.colPlq")}</th>
+                      <th className="py-2 pr-2">{t("pages.patientDetail.perio.site", { defaultValue: "Site" })}</th>
+                      <th className="py-2 pr-2">{t("pages.patientDetail.perio.colPd", { defaultValue: "Col Pd" })}</th>
+                      <th className="py-2 pr-2">{t("pages.patientDetail.perio.colRec", { defaultValue: "Col Rec" })}</th>
+                      <th className="py-2 pr-2">{t("pages.patientDetail.perio.colBop", { defaultValue: "Col Bop" })}</th>
+                      <th className="py-2 pr-2">{t("pages.patientDetail.perio.colSup", { defaultValue: "Col Sup" })}</th>
+                      <th className="py-2">{t("pages.patientDetail.perio.colPlq", { defaultValue: "Col Plq" })}</th>
                     </tr>
                   </thead>
                   <tbody>

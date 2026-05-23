@@ -148,8 +148,8 @@ export function DentalChart({
           ? (err as { response?: { data?: { message?: string } } }).response?.data?.message
           : err instanceof Error
             ? err.message
-            : t("pages.patientDetail.dentalToastFailed");
-      toast.error(msg ?? t("pages.patientDetail.dentalToastFailed"));
+            : t("pages.patientDetail.dentalToastFailed", { defaultValue: "Dental Toast Failed" });
+      toast.error(msg ?? t("pages.patientDetail.dentalToastFailed", { defaultValue: "Dental Toast Failed" }));
     }
   }, [patientId, onUpdate, showHistory, loadHistory, t]);
 

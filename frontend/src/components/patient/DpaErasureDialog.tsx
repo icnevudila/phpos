@@ -38,7 +38,7 @@ export function DpaErasureDialog({
       setConfirmId("");
       setReason("");
     } catch (e) {
-      setError(e instanceof Error ? e.message : t("pages.patientDetail.dpaErasureFailed"));
+      setError(e instanceof Error ? e.message : t("pages.patientDetail.dpaErasureFailed", { defaultValue: "Dpa Erasure Failed" }));
     } finally {
       setBusy(false);
     }
@@ -67,14 +67,14 @@ export function DpaErasureDialog({
         </motion.div>
 
         <h2 id="dpa-erasure-title" className="text-xl font-black text-slate-900">
-          {t("pages.patientDetail.dpaErasureTitle")}
+          {t("pages.patientDetail.dpaErasureTitle", { defaultValue: "Dpa Erasure Title" })}
         </h2>
         <p className="mt-2 text-sm text-slate-600">
           {t("pages.patientDetail.dpaErasureHint", { name: patientName })}
         </p>
 
         <label className="mt-6 block text-[10px] font-black uppercase tracking-widest text-slate-400">
-          {t("pages.patientDetail.dpaErasureConfirmLabel")}
+          {t("pages.patientDetail.dpaErasureConfirmLabel", { defaultValue: "Dpa Erasure Confirm Label" })}
           <input
             type="text"
             value={confirmId}
@@ -86,7 +86,7 @@ export function DpaErasureDialog({
         </label>
 
         <label className="mt-4 block text-[10px] font-black uppercase tracking-widest text-slate-400">
-          {t("pages.patientDetail.dpaErasureReasonLabel")}
+          {t("pages.patientDetail.dpaErasureReasonLabel", { defaultValue: "Dpa Erasure Reason Label" })}
           <textarea
             value={reason}
             onChange={(e) => setReason(e.target.value)}
@@ -116,7 +116,7 @@ export function DpaErasureDialog({
             disabled={!canSubmit}
             className="flex-1 rounded-xl bg-rose-600 px-4 py-3 text-sm font-bold text-white disabled:opacity-40"
           >
-            {busy ? t("pages.common.loading", { defaultValue: "Loading..." }) : t("pages.patientDetail.dpaErasureSubmit")}
+            {busy ? t("pages.common.loading", { defaultValue: "Loading..." }) : t("pages.patientDetail.dpaErasureSubmit", { defaultValue: "Dpa Erasure Submit" })}
           </button>
         </motion.div>
       </motion.div>

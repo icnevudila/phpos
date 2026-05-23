@@ -38,11 +38,11 @@ export function StickyNav(): JSX.Element {
   }, []);
 
   const links = [
-    { href: "#features", label: t("landing.navFeatures"), id: "features" },
-    { href: "#how", label: t("landing.navHowItWorks"), id: "how" },
-    { href: "#pricing", label: t("landing.navPricing"), id: "pricing" },
-    { href: "#testimonials", label: t("landing.testiEyebrow"), id: "testimonials" },
-    { href: "#faq", label: t("landing.faqEyebrow"), id: "faq" },
+    { href: "#features", label: t("landing.navFeatures", { defaultValue: "Nav Features" }), id: "features" },
+    { href: "#how", label: t("landing.navHowItWorks", { defaultValue: "Nav How It Works" }), id: "how" },
+    { href: "#pricing", label: t("landing.navPricing", { defaultValue: "Nav Pricing" }), id: "pricing" },
+    { href: "#testimonials", label: t("landing.testiEyebrow", { defaultValue: "Testi Eyebrow" }), id: "testimonials" },
+    { href: "#faq", label: t("landing.faqEyebrow", { defaultValue: "Faq Eyebrow" }), id: "faq" },
   ];
 
   return (
@@ -74,7 +74,7 @@ export function StickyNav(): JSX.Element {
             to="/contact"
             className="ml-1 min-h-10 shrink-0 rounded-lg px-2.5 py-2 text-xs font-semibold text-teal-700 transition hover:bg-teal-50 xl:px-3 xl:text-sm"
           >
-            {t("landing.navContact")}
+            {t("landing.navContact", { defaultValue: "Nav Contact" })}
           </Link>
         </div>
         <div className="flex items-center gap-1.5 sm:gap-2">
@@ -83,13 +83,13 @@ export function StickyNav(): JSX.Element {
             to={`/${PORTAL_DEMO_SLUG}/portal/login`}
             className="hidden max-w-[9rem] truncate rounded-lg px-2 py-2 text-xs font-semibold text-teal-700 transition hover:bg-teal-50 hover:text-teal-900 sm:inline-flex sm:max-w-none sm:px-3 sm:text-sm"
           >
-            {t("landing.navPatientPortal")}
+            {t("landing.navPatientPortal", { defaultValue: "Nav Patient Portal" })}
           </Link>
           <Link
             to="/login"
             className="inline-flex min-h-10 items-center gap-1.5 rounded-lg bg-teal-600 px-2.5 py-2 text-[11px] font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-teal-700 sm:px-4 sm:text-sm"
           >
-            {t("landing.navSignIn")}
+            {t("landing.navSignIn", { defaultValue: "Nav Sign In" })}
           </Link>
         </div>
       </nav>

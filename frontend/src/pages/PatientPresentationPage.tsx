@@ -31,7 +31,7 @@ export function PatientPresentationPage() {
 
   // Group by phase
   const phases = treatments.reduce((acc: any, curr: any) => {
-    const phaseName = curr.phase || t("pages.casePresentation.initialPhase");
+    const phaseName = curr.phase || t("pages.casePresentation.initialPhase", { defaultValue: "Initial Phase" });
     if (!acc[phaseName]) acc[phaseName] = [];
     acc[phaseName].push(curr);
     return acc;
@@ -73,7 +73,7 @@ export function PatientPresentationPage() {
             </button>
             <div>
                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-indigo-400 mb-1">
-                 {t("pages.casePresentation.kicker")}
+                 {t("pages.casePresentation.kicker", { defaultValue: "Kicker" })}
                </p>
                <h1 className="text-3xl font-black tracking-tighter">{patient.firstName} {patient.lastName}</h1>
             </div>
@@ -85,7 +85,7 @@ export function PatientPresentationPage() {
               className="h-14 px-6 rounded-2xl bg-white/5 border border-white/10 flex items-center gap-3 text-xs font-black uppercase tracking-widest text-slate-400 hover:text-white transition-all"
             >
                {isFullscreen ? <Minimize2 size={18} /> : <Maximize2 size={18} />} 
-               {isFullscreen ? t("pages.casePresentation.exitFullscreen") : t("pages.casePresentation.fullscreen")}
+               {isFullscreen ? t("pages.casePresentation.exitFullscreen", { defaultValue: "Exit Fullscreen" }) : t("pages.casePresentation.fullscreen", { defaultValue: "Fullscreen" })}
             </button>
          </div>
       </header>
@@ -114,13 +114,13 @@ export function PatientPresentationPage() {
                   <div className="grid grid-cols-2 gap-6">
                      <div className="p-8 rounded-[2.5rem] bg-white/5 border border-white/10 backdrop-blur-md">
                         <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">
-                          {t("pages.casePresentation.procedures")}
+                          {t("pages.casePresentation.procedures", { defaultValue: "Procedures" })}
                         </p>
                         <p className="text-4xl font-black">{currentPhaseItems.length}</p>
                      </div>
                      <div className="p-8 rounded-[2.5rem] bg-indigo-500/10 border border-indigo-500/20 backdrop-blur-md">
                         <p className="text-[10px] font-black uppercase tracking-widest text-indigo-400 mb-2">
-                          {t("pages.casePresentation.estimatedInvestment")}
+                          {t("pages.casePresentation.estimatedInvestment", { defaultValue: "Estimated Investment" })}
                         </p>
                         <p className="text-4xl font-black text-indigo-400">
                            ₱{currentPhaseItems.reduce((s: number, i: { unitPrice: string; quantity: number }) => s + (Number(i.unitPrice) * i.quantity), 0).toLocaleString()}
@@ -150,7 +150,7 @@ export function PatientPresentationPage() {
                                   ? t("pages.casePresentation.toothLabel", {
                                       teeth: item.toothIds.join(", "),
                                     })
-                                  : t("pages.casePresentation.generalProcedure")}
+                                  : t("pages.casePresentation.generalProcedure", { defaultValue: "General Procedure" })}
                              </p>
                           </div>
                        </div>
@@ -174,11 +174,11 @@ export function PatientPresentationPage() {
          <div className="flex items-center gap-8">
             <div className="flex items-center gap-3 text-slate-500">
                <Calendar size={18} />
-               <span className="text-xs font-bold">{t("pages.casePresentation.duration")}</span>
+               <span className="text-xs font-bold">{t("pages.casePresentation.duration", { defaultValue: "Duration" })}</span>
             </div>
             <div className="flex items-center gap-3 text-slate-500">
                <Wallet size={18} />
-               <span className="text-xs font-bold">{t("pages.casePresentation.installment")}</span>
+               <span className="text-xs font-bold">{t("pages.casePresentation.installment", { defaultValue: "Installment" })}</span>
             </div>
          </div>
 

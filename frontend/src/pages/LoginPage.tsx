@@ -24,9 +24,9 @@ export function LoginPage(): JSX.Element {
   const [error, setError] = useState<string | null>(null);
 
   const heroPoints = [
-    t("auth.loginHeroPoint1"),
-    t("auth.loginHeroPoint2"),
-    t("auth.loginHeroPoint3"),
+    t("auth.loginHeroPoint1", { defaultValue: "Login Hero Point1" }),
+    t("auth.loginHeroPoint2", { defaultValue: "Login Hero Point2" }),
+    t("auth.loginHeroPoint3", { defaultValue: "Login Hero Point3" }),
   ];
 
   useEffect(() => {
@@ -70,7 +70,7 @@ export function LoginPage(): JSX.Element {
         void navigate("/appointments", { replace: true });
       }
     } catch (e) {
-      setError((e as Error).message || t("errors.loginNetwork"));
+      setError((e as Error).message || t("errors.loginNetwork", { defaultValue: "Login Network" }));
     } finally {
       setLoading(false);
     }
@@ -91,10 +91,10 @@ export function LoginPage(): JSX.Element {
               </div>
 
               <h1 className="mt-16 max-w-md text-2xl font-bold leading-[1.1] tracking-tight text-slate-800">
-                {t("auth.loginHeroTitle")}
+                {t("auth.loginHeroTitle", { defaultValue: "Login Hero Title" })}
               </h1>
               <p className="mt-6 max-w-sm text-base leading-relaxed text-slate-500">
-                {t("auth.loginHeroSub")}
+                {t("auth.loginHeroSub", { defaultValue: "Login Hero Sub" })}
               </p>
             </div>
 
@@ -115,7 +115,7 @@ export function LoginPage(): JSX.Element {
 
               <div className="pt-8 border-t border-slate-200">
                 <p className="text-xs font-semibold uppercase tracking-widest text-slate-400">
-                  {t("auth.loginHeroFoot")}
+                  {t("auth.loginHeroFoot", { defaultValue: "Login Hero Foot" })}
                 </p>
               </div>
             </div>
@@ -128,15 +128,15 @@ export function LoginPage(): JSX.Element {
               <div className="mb-6 text-center">
                 <DentQLLogo size="md" className="mx-auto mb-4" />
                 <h2 className="text-2xl font-bold tracking-tight text-slate-800">
-                  {t("auth.loginTitle")}
+                  {t("auth.loginTitle", { defaultValue: "Login Title" })}
                 </h2>
-                <p className="mt-1 text-sm text-slate-500">{t("auth.loginSubtitle")}</p>
+                <p className="mt-1 text-sm text-slate-500">{t("auth.loginSubtitle", { defaultValue: "Login Subtitle" })}</p>
               </div>
 
               <form className="mt-6 space-y-5" onSubmit={handleSubmit}>
                 <div>
                   <label className="block text-xs font-semibold uppercase tracking-widest text-slate-400">
-                    {t("auth.emailLabel")}
+                    {t("auth.emailLabel", { defaultValue: "Email Label" })}
                   </label>
                   <input
                     type="email"
@@ -151,13 +151,13 @@ export function LoginPage(): JSX.Element {
                 <div>
                   <div className="flex items-center justify-between">
                     <label className="block text-xs font-semibold uppercase tracking-widest text-slate-400">
-                      {t("auth.password")}
+                      {t("auth.password", { defaultValue: "Password" })}
                     </label>
                     <Link
                       to="/forgot-password"
                       className="text-xs font-semibold text-teal-600 hover:underline"
                     >
-                      {t("auth.forgotLink")}
+                      {t("auth.forgotLink", { defaultValue: "Forgot Link" })}
                     </Link>
                   </div>
                   <input
@@ -184,7 +184,7 @@ export function LoginPage(): JSX.Element {
                     htmlFor="remember-me"
                     className="ml-2 block text-xs font-medium text-slate-600"
                   >
-                    {t("auth.rememberMe")}
+                    {t("auth.rememberMe", { defaultValue: "Remember Me" })}
                   </label>
                 </div>
 
@@ -204,22 +204,22 @@ export function LoginPage(): JSX.Element {
                   disabled={loading}
                   className="btn-primary w-full justify-center"
                 >
-                  {loading ? t("auth.signingIn") : t("auth.submit")}
+                  {loading ? t("auth.signingIn", { defaultValue: "Signing In" }) : t("auth.submit", { defaultValue: "Submit" })}
                 </button>
               </form>
 
               <div className="mt-8 space-y-4 text-center">
                 <p className="text-xs text-slate-500">
-                  {t("auth.noAccount")}{" "}
+                  {t("auth.noAccount", { defaultValue: "No Account" })}{" "}
                   <Link to="/register" className="font-bold text-teal-600 hover:underline">
-                    {t("auth.signUp")}
+                    {t("auth.signUp", { defaultValue: "Sign Up" })}
                   </Link>
                 </p>
                 <Link
                   to="/"
                   className="inline-flex items-center gap-2 text-xs font-bold text-slate-400 hover:text-slate-600"
                 >
-                  {t("auth.backToMarketing")}
+                  {t("auth.backToMarketing", { defaultValue: "Back To Marketing" })}
                 </Link>
               </div>
             </div>

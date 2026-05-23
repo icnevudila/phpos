@@ -27,36 +27,36 @@ export function PricingTeaser({ ctaHref: ctaHrefOverride }: { ctaHref?: string }
   const plans: Plan[] = [
     {
       key: "beta",
-      name: t("landing.plan1Name"),
-      price: t("landing.plan1Price"),
-      priceNote: t("landing.plan1PriceNote"),
-      desc: t("landing.plan1Desc"),
+      name: t("landing.plan1Name", { defaultValue: "Plan1 Name" }),
+      price: t("landing.plan1Price", { defaultValue: "Plan1 Price" }),
+      priceNote: t("landing.plan1PriceNote", { defaultValue: "Plan1 Price Note" }),
+      desc: t("landing.plan1Desc", { defaultValue: "Plan1 Desc" }),
       features: [
-        t("landing.plan1F1"),
-        t("landing.plan1F2"),
-        t("landing.plan1F3"),
-        t("landing.plan1F4"),
-        t("landing.plan1F5"),
+        t("landing.plan1F1", { defaultValue: "Plan1 F1" }),
+        t("landing.plan1F2", { defaultValue: "Plan1 F2" }),
+        t("landing.plan1F3", { defaultValue: "Plan1 F3" }),
+        t("landing.plan1F4", { defaultValue: "Plan1 F4" }),
+        t("landing.plan1F5", { defaultValue: "Plan1 F5" }),
       ],
-      cta: t("landing.plan1Cta"),
+      cta: t("landing.plan1Cta", { defaultValue: "Plan1 Cta" }),
       ctaHref,
       accent: "from-teal-400 to-sky-500",
       ring: "ring-teal-300",
     },
     {
       key: "standard",
-      name: t("landing.plan2Name"),
-      price: t("landing.plan2Price"),
-      priceNote: t("landing.plan2PriceNote"),
-      desc: t("landing.plan2Desc"),
+      name: t("landing.plan2Name", { defaultValue: "Plan2 Name" }),
+      price: t("landing.plan2Price", { defaultValue: "Plan2 Price" }),
+      priceNote: t("landing.plan2PriceNote", { defaultValue: "Plan2 Price Note" }),
+      desc: t("landing.plan2Desc", { defaultValue: "Plan2 Desc" }),
       features: [
-        t("landing.plan2F1"),
-        t("landing.plan2F2"),
-        t("landing.plan2F3"),
-        t("landing.plan2F4"),
-        t("landing.plan2F5"),
+        t("landing.plan2F1", { defaultValue: "Plan2 F1" }),
+        t("landing.plan2F2", { defaultValue: "Plan2 F2" }),
+        t("landing.plan2F3", { defaultValue: "Plan2 F3" }),
+        t("landing.plan2F4", { defaultValue: "Plan2 F4" }),
+        t("landing.plan2F5", { defaultValue: "Plan2 F5" }),
       ],
-      cta: t("landing.plan2Cta"),
+      cta: t("landing.plan2Cta", { defaultValue: "Plan2 Cta" }),
       ctaHref,
       popular: true,
       accent: "from-teal-500 to-fuchsia-500",
@@ -64,18 +64,18 @@ export function PricingTeaser({ ctaHref: ctaHrefOverride }: { ctaHref?: string }
     },
     {
       key: "multi",
-      name: t("landing.plan3Name"),
-      price: t("landing.plan3Price"),
-      priceNote: t("landing.plan3PriceNote"),
-      desc: t("landing.plan3Desc"),
+      name: t("landing.plan3Name", { defaultValue: "Plan3 Name" }),
+      price: t("landing.plan3Price", { defaultValue: "Plan3 Price" }),
+      priceNote: t("landing.plan3PriceNote", { defaultValue: "Plan3 Price Note" }),
+      desc: t("landing.plan3Desc", { defaultValue: "Plan3 Desc" }),
       features: [
-        t("landing.plan3F1"),
-        t("landing.plan3F2"),
-        t("landing.plan3F3"),
-        t("landing.plan3F4"),
-        t("landing.plan3F5"),
+        t("landing.plan3F1", { defaultValue: "Plan3 F1" }),
+        t("landing.plan3F2", { defaultValue: "Plan3 F2" }),
+        t("landing.plan3F3", { defaultValue: "Plan3 F3" }),
+        t("landing.plan3F4", { defaultValue: "Plan3 F4" }),
+        t("landing.plan3F5", { defaultValue: "Plan3 F5" }),
       ],
-      cta: t("landing.plan3Cta"),
+      cta: t("landing.plan3Cta", { defaultValue: "Plan3 Cta" }),
       ctaHref,
       accent: "from-amber-400 to-rose-500",
       ring: "ring-amber-300",
@@ -85,11 +85,11 @@ export function PricingTeaser({ ctaHref: ctaHrefOverride }: { ctaHref?: string }
   return (
     <div>
       <div className="mx-auto max-w-2xl text-center">
-        <SectionEyebrow label={t("landing.pricingEyebrow")} icon={IconPriceTag} accent="emerald" align="center" />
+        <SectionEyebrow label={t("landing.pricingEyebrow", { defaultValue: "Pricing Eyebrow" })} icon={IconPriceTag} accent="emerald" align="center" />
         <h2 className="mt-3 text-3xl font-bold tracking-tight text-brand-text sm:text-4xl">
-          {t("landing.pricingTitle")}
+          {t("landing.pricingTitle", { defaultValue: "Pricing Title" })}
         </h2>
-        <p className="mt-4 text-brand-muted">{t("landing.pricingSubtitle")}</p>
+        <p className="mt-4 text-brand-muted">{t("landing.pricingSubtitle", { defaultValue: "Pricing Subtitle" })}</p>
       </div>
 
       <div className="mt-12 grid gap-8 md:grid-cols-3">
@@ -109,7 +109,7 @@ export function PricingTeaser({ ctaHref: ctaHrefOverride }: { ctaHref?: string }
                 <span className="inline-flex h-4 w-4 items-center justify-center rounded-full bg-brand-surface/20 ring-1 ring-brand-border/10/40">
                   <IconCrown className="h-2.5 w-2.5 text-white" />
                 </span>
-                {t("landing.pricingPopular")}
+                {t("landing.pricingPopular", { defaultValue: "Pricing Popular" })}
               </span>
             )}
 
@@ -179,7 +179,7 @@ export function PricingTeaser({ ctaHref: ctaHrefOverride }: { ctaHref?: string }
       </div>
 
       <p className="mx-auto mt-8 max-w-xl text-center text-xs text-brand-muted">
-        {t("landing.pricingFinePrint")}
+        {t("landing.pricingFinePrint", { defaultValue: "Pricing Fine Print" })}
       </p>
     </div>
   );

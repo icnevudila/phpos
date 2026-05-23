@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Calendar as CalendarIcon, Clock, User as UserIcon, CheckCircle2 } from "lucide-react";
+import { Calendar as CalendarIcon, User as UserIcon, CheckCircle2, Sparkles } from "lucide-react";
 
 import { useUiLocale } from "../../hooks/useUiLocale";
 import { translatePortalError } from "../translatePortalError";
@@ -55,7 +55,7 @@ export function PortalBookPage(): JSX.Element {
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [availability, setAvailability] = useState<PortalAvailability | null>(null);
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
-  const [type, setType] = useState<string>("CHECKUP");
+  const [type, setType] = useState<string | null>(null);
   const [notes, setNotes] = useState("");
 
   const [loadingAvail, setLoadingAvail] = useState(false);
@@ -89,7 +89,7 @@ export function PortalBookPage(): JSX.Element {
   const days = useMemo(() => nextNDays(14), [calendarDayKey]);
 
   async function onConfirm(): Promise<void> {
-    if (!selectedDentist || !selectedSlot) return;
+    if (!selectedDentist || !selectedSlot || !type) return;
     setBooking(true);
     setError(null);
     try {
@@ -102,14 +102,13 @@ export function PortalBookPage(): JSX.Element {
       setSuccess(t("pages.portal.book.success", { status: res.status }));
       setTimeout(() => navigate(`/${slug}/portal/appointments${kioskSuffix}`), 1200);
     } catch (e) {
-      setError(e instanceof Error ? e.message : t("pages.portal.book.bookingFailed"));
+      setError(e instanceof Error ? e.message : t("pages.portal.book.bookingFailed", { defaultValue: "Booking Failed" }));
     } finally {
       setBooking(false);
     }
   }
 
   const selectedDentistObj = dentists.find((d) => d.id === selectedDentist);
-  const step = !selectedDentist ? 1 : !selectedDate ? 2 : !selectedSlot ? 3 : 4;
 
   const hasOpenSlot =
     availability &&
@@ -117,81 +116,96 @@ export function PortalBookPage(): JSX.Element {
     (availability.slots?.some((s) => s.available) ?? false);
 
   const slideUp = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" } }
+    hidden: { opacity: 0, y: 15 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: "easeOut" } }
   };
 
   return (
-    <div className="min-h-[100dvh] bg-brand-surface sm:bg-brand-bg flex flex-col items-center pt-8 sm:pt-16 pb-24 px-4 sm:px-6">
+    <div className="min-h-[100dvh] bg-brand-surface-soft flex flex-col items-center pt-8 sm:pt-16 pb-24 px-4 sm:px-6">
       
-      {/* Container */}
-      <div className="w-full max-w-xl mx-auto bg-brand-surface sm:rounded-[24px] sm:shadow-popover sm:border border-brand-border p-6 sm:p-10">
-         
-         <div className="text-center mb-10">
-            <h1 className="text-3xl font-bold tracking-tight text-brand-text mb-4">{t("pages.portal.book.title", { defaultValue: "Book Your Visit" })}</h1>
-            <div className="flex items-center justify-center gap-2 max-w-[200px] mx-auto">
-              {[1, 2, 3, 4].map((n) => (
-                <div
-                  key={n}
-                  className={`h-1.5 flex-1 rounded-full transition-all duration-500 ${n <= step ? "bg-brand-primary" : "bg-brand-surface-muted"}`}
-                />
-              ))}
-            </div>
-         </div>
+      {/* Header */}
+      <div className="w-full max-w-5xl mx-auto mb-8 text-center sm:text-left">
+        <h1 className="text-3xl font-bold tracking-tight text-brand-text mb-2">
+          {t("pages.portal.book.title", { defaultValue: "Appointment Builder" })}
+        </h1>
+        <p className="text-sm font-medium text-brand-muted">
+          We'll get you booked in just a few taps.
+        </p>
+      </div>
 
-         <div className="space-y-10">
-            {/* STEP 1: Select Provider */}
-            <motion.section variants={slideUp} initial="hidden" animate="visible" className="space-y-4">
-               <div className="flex items-center gap-2 mb-4">
-                  <div className={`h-8 w-8 rounded-full flex items-center justify-center font-bold text-sm ${step >= 1 ? 'bg-brand-primary text-white' : 'bg-brand-surface-muted text-brand-muted'}`}>1</div>
-                  <h2 className="text-lg font-bold text-brand-text">{t("pages.portal.book.step1", { defaultValue: "Select Provider" })}</h2>
+      <div className="w-full max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+         
+         {/* Left Column: Questions */}
+         <div className="lg:col-span-8 space-y-8">
+            
+            {/* Q1: What do you need help with? */}
+            <motion.section variants={slideUp} initial="hidden" animate="visible" className="card p-6 border-brand-border-strong">
+               <h2 className="text-lg font-bold text-brand-text mb-4">What do you need help with?</h2>
+               <div className="flex flex-wrap gap-2">
+                 {APPOINTMENT_TYPE_KEYS.map((key) => {
+                   const active = type === key;
+                   return (
+                     <button
+                       key={key}
+                       type="button"
+                       onClick={() => setType(key)}
+                       className={`min-h-12 rounded-xl border px-5 py-2.5 text-sm font-bold transition-all ${ active ? "border-brand-primary bg-brand-primary text-white shadow-md scale-[1.02]" : "border-brand-border bg-brand-surface text-brand-text hover:border-brand-primary/50 hover:bg-brand-surface-soft" }`}
+                     >
+                       {t(`pages.portal.book.types.${key}`)}
+                     </button>
+                   );
+                 })}
                </div>
-               
-               {dentistsLoading ? (
-                 <div className="h-32 rounded-2xl bg-brand-surface-soft animate-pulse" />
-               ) : dentistsError ? (
-                 <div className="rounded-2xl border border-brand-danger/20 bg-brand-danger-soft px-4 py-4 text-sm font-semibold text-brand-danger">
-                   {t("pages.portal.book.dentistsLoadFailed", { message: dentistsError })}
-                 </div>
-               ) : dentists.length === 0 ? (
-                 <div className="rounded-2xl border border-brand-warning/20 bg-brand-warning-soft px-4 py-4 text-sm font-semibold text-brand-warning">
-                   {t("pages.portal.book.noDentists", { defaultValue: "No providers available." })}
-                 </div>
-               ) : (
-                 <div className="grid grid-cols-2 gap-4">
-                   {dentists.map((d) => {
-                     const active = selectedDentist === d.id;
-                     return (
-                       <button
-                         key={d.id}
-                         type="button"
-                         onClick={() => { setSelectedDentist(d.id); setSelectedDate(null); setSelectedSlot(null); }}
-                         className={`relative flex flex-col items-center justify-center rounded-2xl border p-4 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary ${ active ? "border-brand-primary bg-brand-primary-soft shadow-sm scale-[1.02]" : "border-brand-border bg-brand-surface hover:border-brand-primary/50 hover:bg-brand-surface-soft" }`}
-                       >
-                         {active && <CheckCircle2 className="absolute top-3 right-3 text-brand-primary" size={18} />}
-                         <div
-                           className={`flex h-14 w-14 items-center justify-center rounded-full text-lg font-bold shadow-sm mb-3 ${ active ? "bg-brand-primary text-white" : "bg-brand-surface-muted text-brand-muted" }`}
-                         >
-                           {d.initials}
-                         </div>
-                         <p className={`text-sm font-bold ${active ? 'text-brand-primary' : 'text-brand-text'}`}>
-                           {t("pages.common.drPrefix", { defaultValue: "Dr." })} {d.firstName} {d.lastName}
-                         </p>
-                       </button>
-                     );
-                   })}
-                 </div>
-               )}
             </motion.section>
 
-            {/* STEP 2: Select Date */}
+            {/* Q2: Preferred Dentist? */}
             <AnimatePresence>
-              {selectedDentist && (
-                <motion.section variants={slideUp} initial="hidden" animate="visible" exit="hidden" className="space-y-4 pt-4 border-t border-brand-border">
-                   <div className="flex items-center gap-2 mb-4">
-                      <div className={`h-8 w-8 rounded-full flex items-center justify-center font-bold text-sm ${step >= 2 ? 'bg-brand-primary text-white' : 'bg-brand-surface-muted text-brand-muted'}`}>2</div>
-                      <h2 className="text-lg font-bold text-brand-text">{t("pages.portal.book.step2", { defaultValue: "Select Date" })}</h2>
-                   </div>
+              {type && (
+                <motion.section variants={slideUp} initial="hidden" animate="visible" exit="hidden" className="card p-6 border-brand-border-strong">
+                   <h2 className="text-lg font-bold text-brand-text mb-4">Do you have a preferred provider?</h2>
+                   
+                   {dentistsLoading ? (
+                     <div className="h-32 rounded-2xl bg-brand-surface-soft animate-pulse" />
+                   ) : dentistsError ? (
+                     <div className="rounded-xl border border-brand-danger/20 bg-brand-danger-soft px-4 py-4 text-sm font-semibold text-brand-danger">
+                       {t("pages.portal.book.dentistsLoadFailed", { message: dentistsError })}
+                     </div>
+                   ) : dentists.length === 0 ? (
+                     <div className="rounded-xl border border-brand-warning/20 bg-brand-warning-soft px-4 py-4 text-sm font-semibold text-brand-warning">
+                       {t("pages.portal.book.noDentists", { defaultValue: "No providers available." })}
+                     </div>
+                   ) : (
+                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                       {dentists.map((d) => {
+                         const active = selectedDentist === d.id;
+                         return (
+                           <button
+                             key={d.id}
+                             type="button"
+                             onClick={() => { setSelectedDentist(d.id); setSelectedDate(null); setSelectedSlot(null); }}
+                             className={`relative flex flex-col items-center justify-center rounded-2xl border p-4 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary ${ active ? "border-brand-primary bg-brand-primary-soft shadow-sm scale-[1.02]" : "border-brand-border bg-brand-surface hover:border-brand-primary/50 hover:bg-brand-surface-soft" }`}
+                           >
+                             {active && <CheckCircle2 className="absolute top-3 right-3 text-brand-primary" size={16} />}
+                             <div className={`flex h-12 w-12 items-center justify-center rounded-full text-base font-bold shadow-sm mb-3 ${ active ? "bg-brand-primary text-white" : "bg-brand-surface-muted text-brand-muted" }`}>
+                               {d.initials}
+                             </div>
+                             <p className={`text-sm font-bold text-center ${active ? 'text-brand-primary' : 'text-brand-text'}`}>
+                               Dr. {d.firstName} {d.lastName}
+                             </p>
+                           </button>
+                         );
+                       })}
+                     </div>
+                   )}
+                </motion.section>
+              )}
+            </AnimatePresence>
+
+            {/* Q3: Date & Time */}
+            <AnimatePresence>
+              {type && selectedDentist && (
+                <motion.section variants={slideUp} initial="hidden" animate="visible" exit="hidden" className="card p-6 border-brand-border-strong">
+                   <h2 className="text-lg font-bold text-brand-text mb-4">When works best for you?</h2>
                    
                    <div className="-mx-6 px-6 sm:mx-0 sm:px-0 overflow-x-auto pb-4 scrollbar-hide">
                      <div className="flex gap-3">
@@ -219,153 +233,149 @@ export function PortalBookPage(): JSX.Element {
                        })}
                      </div>
                    </div>
+
+                   {/* Time Slots */}
+                   <AnimatePresence>
+                     {selectedDate && (
+                       <motion.div variants={slideUp} initial="hidden" animate="visible" exit="hidden" className="pt-6 mt-2 border-t border-brand-border">
+                         {loadingAvail ? (
+                           <div className="h-24 rounded-2xl bg-brand-surface-soft animate-pulse" />
+                         ) : slotsError ? (
+                           <div className="rounded-xl border border-brand-danger/20 bg-brand-danger-soft px-4 py-4 text-sm font-semibold text-brand-danger" role="alert">
+                             {t("pages.portal.book.slotsLoadFailed", { message: slotsError, defaultValue: "Failed to load slots." })}
+                           </div>
+                         ) : availability?.closed ? (
+                           <div className="rounded-xl bg-brand-surface-soft p-4 text-center text-sm font-semibold text-brand-muted">
+                             {availability.reason ?? t("pages.portal.book.closedDefault", { defaultValue: "Clinic is closed on this date." })}
+                           </div>
+                         ) : !availability?.slots?.length ? (
+                           <div className="rounded-xl bg-brand-surface-soft p-4 text-center text-sm font-semibold text-brand-muted">
+                             {t("pages.portal.book.noSlotsReturned", { defaultValue: "No slots available on this date." })}
+                           </div>
+                         ) : !hasOpenSlot ? (
+                           <div className="rounded-xl bg-brand-warning-soft border border-brand-warning/20 p-4 text-center text-sm font-semibold text-brand-warning">
+                             {t("pages.portal.book.noSlotsAvailable", { defaultValue: "All slots are fully booked." })}
+                           </div>
+                         ) : (
+                           <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
+                             {availability.slots.map((s) => {
+                               const active = selectedSlot === s.iso;
+                               return (
+                                 <button
+                                   key={s.iso}
+                                   type="button"
+                                   disabled={!s.available}
+                                   onClick={() => setSelectedSlot(s.iso)}
+                                   className={`min-h-[48px] rounded-xl border py-2 text-sm font-bold transition-all ${ !s.available ? "cursor-not-allowed border-brand-border bg-brand-surface-muted text-brand-muted opacity-60 line-through" : active ? "border-brand-primary bg-brand-primary text-white shadow-md scale-105" : "border-brand-border bg-brand-surface text-brand-text hover:border-brand-primary/50 hover:bg-brand-surface-soft" }`}
+                                 >
+                                   {s.time}
+                                 </button>
+                               );
+                             })}
+                           </div>
+                         )}
+                       </motion.div>
+                     )}
+                   </AnimatePresence>
                 </motion.section>
               )}
             </AnimatePresence>
 
-            {/* STEP 3: Select Slot */}
+            {/* Q4: Contact Details (Notes) */}
             <AnimatePresence>
-              {selectedDentist && selectedDate && (
-                <motion.section variants={slideUp} initial="hidden" animate="visible" exit="hidden" className="space-y-4 pt-4 border-t border-brand-border">
-                  <div className="flex items-center gap-2 mb-4">
-                     <div className={`h-8 w-8 rounded-full flex items-center justify-center font-bold text-sm ${step >= 3 ? 'bg-brand-primary text-white' : 'bg-brand-surface-muted text-brand-muted'}`}>3</div>
-                     <h2 className="text-lg font-bold text-brand-text">{t("pages.portal.book.step3", { defaultValue: "Select Time" })}</h2>
-                  </div>
-                  
-                  {loadingAvail ? (
-                    <div className="h-24 rounded-2xl bg-brand-surface-soft animate-pulse" />
-                  ) : slotsError ? (
-                    <div className="rounded-xl border border-brand-danger/20 bg-brand-danger-soft px-4 py-4 text-sm font-semibold text-brand-danger" role="alert">
-                      {t("pages.portal.book.slotsLoadFailed", { message: slotsError, defaultValue: "Failed to load slots." })}
-                    </div>
-                  ) : availability?.closed ? (
-                    <div className="rounded-xl bg-brand-surface-soft p-4 text-center text-sm font-semibold text-brand-muted">
-                      {availability.reason ?? t("pages.portal.book.closedDefault", { defaultValue: "Clinic is closed on this date." })}
-                    </div>
-                  ) : !availability?.slots?.length ? (
-                    <div className="rounded-xl bg-brand-surface-soft p-4 text-center text-sm font-semibold text-brand-muted">
-                      {t("pages.portal.book.noSlotsReturned", { defaultValue: "No slots available on this date." })}
-                    </div>
-                  ) : !hasOpenSlot ? (
-                    <div className="rounded-xl bg-brand-warning-soft border border-brand-warning/20 p-4 text-center text-sm font-semibold text-brand-warning">
-                      {t("pages.portal.book.noSlotsAvailable", { defaultValue: "All slots are fully booked." })}
-                    </div>
-                  ) : (
-                    <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
-                      {availability.slots.map((s) => {
-                        const active = selectedSlot === s.iso;
-                        return (
-                          <button
-                            key={s.iso}
-                            type="button"
-                            disabled={!s.available}
-                            onClick={() => setSelectedSlot(s.iso)}
-                            className={`min-h-[48px] rounded-xl border py-2 text-sm font-bold transition-all ${ !s.available ? "cursor-not-allowed border-brand-border bg-brand-surface-muted text-brand-muted opacity-60 line-through" : active ? "border-brand-primary bg-brand-primary text-white shadow-md scale-105" : "border-brand-border bg-brand-surface text-brand-text hover:border-brand-primary/50 hover:bg-brand-surface-soft" }`}
-                          >
-                            {s.time}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  )}
-                </motion.section>
-              )}
-            </AnimatePresence>
-
-            {/* STEP 4: Details & Confirm */}
-            <AnimatePresence>
-              {selectedDentist && selectedDate && selectedSlot && (
-                <motion.section variants={slideUp} initial="hidden" animate="visible" exit="hidden" className="space-y-6 pt-4 border-t border-brand-border">
-                   <div className="flex items-center gap-2 mb-4">
-                      <div className={`h-8 w-8 rounded-full flex items-center justify-center font-bold text-sm ${step >= 4 ? 'bg-brand-primary text-white' : 'bg-brand-surface-muted text-brand-muted'}`}>4</div>
-                      <h2 className="text-lg font-bold text-brand-text">{t("pages.portal.book.step4", { defaultValue: "Final Details" })}</h2>
-                   </div>
-                   
-                   <div className="space-y-4">
-                     <h3 className="text-sm font-bold text-brand-text">{t("pages.portal.book.visitType", { defaultValue: "Reason for visit" })}</h3>
-                     <div className="flex flex-wrap gap-2">
-                       {APPOINTMENT_TYPE_KEYS.map((key) => (
-                         <button
-                           key={key}
-                           type="button"
-                           onClick={() => setType(key)}
-                           className={`min-h-11 rounded-xl border px-4 py-2 text-xs font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary ${ type === key ? "border-brand-primary bg-brand-primary-soft text-brand-primary" : "border-brand-border bg-brand-surface text-brand-muted hover:border-brand-border-strong hover:text-brand-text" }`}
-                         >
-                           {t(`pages.portal.book.types.${key}`)}
-                         </button>
-                       ))}
-                     </div>
-                   </div>
-
-                   <div className="space-y-2">
-                     <h3 className="text-sm font-bold text-brand-text">{t("pages.portal.book.notesLabel", { defaultValue: "Additional Notes (Optional)" })}</h3>
+               {type && selectedDentist && selectedDate && selectedSlot && (
+                  <motion.section variants={slideUp} initial="hidden" animate="visible" exit="hidden" className="card p-6 border-brand-border-strong">
+                     <h2 className="text-lg font-bold text-brand-text mb-4">Any details we should know before you arrive?</h2>
                      <textarea
-                       placeholder={t("pages.portal.book.notesPlaceholder")}
+                       placeholder="e.g. My tooth hurts when drinking cold water..."
                        rows={3}
                        value={notes}
                        onChange={(e) => setNotes(e.target.value)}
-                       className="w-full rounded-xl border border-brand-border bg-brand-surface-soft px-4 py-3 text-sm text-brand-text outline-none transition-colors focus:bg-brand-surface focus:border-brand-primary focus:ring-1 focus:ring-brand-primary resize-none placeholder:text-brand-muted"
+                       className="w-full rounded-xl border border-brand-border bg-brand-surface-soft px-4 py-3 text-sm font-medium text-brand-text outline-none transition-colors focus:bg-brand-surface focus:border-brand-primary focus:ring-1 focus:ring-brand-primary resize-none placeholder:text-brand-muted"
                      />
-                   </div>
-
-                   {/* Summary Card */}
-                   <div className="rounded-2xl bg-slate-900 p-6 text-white shadow-lg mt-8 relative overflow-hidden">
-                     <div className="absolute top-0 right-0 w-32 h-32 bg-brand-primary opacity-10 blur-3xl rounded-full" />
-                     
-                     <h3 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-4">
-                       {t("pages.portal.book.summary", { defaultValue: "Booking Summary" })}
-                     </h3>
-                     
-                     <div className="space-y-4 relative z-10">
-                        <div className="flex items-center gap-3">
-                           <div className="h-10 w-10 rounded-full bg-white/10 flex items-center justify-center">
-                              <UserIcon size={18} className="text-brand-primary" />
-                           </div>
-                           <div>
-                              <p className="text-xs font-semibold text-slate-400">{t("pages.portal.book.summaryProvider", { defaultValue: "Provider" })}</p>
-                              <p className="text-base font-bold text-white">
-                                {t("pages.common.drPrefix", { defaultValue: "Dr." })} {selectedDentistObj?.firstName} {selectedDentistObj?.lastName}
-                              </p>
-                           </div>
-                        </div>
-
-                        <div className="flex items-center gap-3">
-                           <div className="h-10 w-10 rounded-full bg-white/10 flex items-center justify-center">
-                              <CalendarIcon size={18} className="text-brand-primary" />
-                           </div>
-                           <div>
-                              <p className="text-xs font-semibold text-slate-400">{t("pages.portal.book.summaryDate", { defaultValue: "Date & Time" })}</p>
-                              <p className="text-base font-bold text-white">
-                                {new Intl.DateTimeFormat(locale, { dateStyle: "long", timeZone: "Asia/Manila" }).format(new Date(selectedSlot))} at {new Intl.DateTimeFormat(locale, { timeStyle: "short", timeZone: "Asia/Manila" }).format(new Date(selectedSlot))}
-                              </p>
-                           </div>
-                        </div>
-                     </div>
-                   </div>
-
-                   {error ? (
-                     <div className="rounded-xl border border-brand-danger/20 bg-brand-danger-soft px-4 py-3 text-sm font-semibold text-brand-danger">
-                       {error}
-                     </div>
-                   ) : null}
-                   {success ? (
-                     <div className="rounded-xl border border-brand-success/20 bg-brand-success-soft px-4 py-3 text-sm font-semibold text-brand-success">
-                       {success}
-                     </div>
-                   ) : null}
-
-                   <button
-                     type="button"
-                     onClick={onConfirm}
-                     disabled={booking}
-                     className="w-full min-h-[56px] rounded-xl bg-brand-primary text-white text-base font-bold shadow-lg shadow-brand-primary/25 transition-all hover:bg-brand-primary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-brand-primary"
-                   >
-                     {booking ? t("pages.portal.book.booking", { defaultValue: "Confirming..." }) : t("pages.portal.book.confirm", { defaultValue: "Confirm Appointment" })}
-                   </button>
-                </motion.section>
-              )}
+                  </motion.section>
+               )}
             </AnimatePresence>
          </div>
+
+         {/* Right Column: Live Appointment Card (Sticky) */}
+         <div className="lg:col-span-4 lg:sticky lg:top-24">
+            <div className="card p-6 border-brand-border-strong flex flex-col min-h-[300px]">
+               <h3 className="text-sm font-bold uppercase tracking-widest text-brand-muted mb-6 flex items-center gap-2">
+                 <Sparkles size={14} className="text-brand-primary" /> 
+                 Live Summary
+               </h3>
+
+               <div className="space-y-6 flex-1">
+                  {/* Type */}
+                  <div className="flex gap-4">
+                     <div className="w-10 h-10 rounded-full bg-brand-surface-soft flex items-center justify-center shrink-0">
+                        <CheckCircle2 size={16} className={type ? "text-brand-primary" : "text-brand-muted"} />
+                     </div>
+                     <div>
+                        <p className="text-xs font-bold uppercase tracking-widest text-brand-muted mb-0.5">Visit Reason</p>
+                        <p className={`text-sm font-bold ${type ? "text-brand-text" : "text-brand-muted italic"}`}>
+                           {type ? t(`pages.portal.book.types.${type}`) : "Not selected"}
+                        </p>
+                     </div>
+                  </div>
+
+                  {/* Dentist */}
+                  <div className="flex gap-4">
+                     <div className="w-10 h-10 rounded-full bg-brand-surface-soft flex items-center justify-center shrink-0">
+                        <UserIcon size={16} className={selectedDentist ? "text-brand-primary" : "text-brand-muted"} />
+                     </div>
+                     <div>
+                        <p className="text-xs font-bold uppercase tracking-widest text-brand-muted mb-0.5">Provider</p>
+                        <p className={`text-sm font-bold ${selectedDentistObj ? "text-brand-text" : "text-brand-muted italic"}`}>
+                           {selectedDentistObj ? `Dr. ${selectedDentistObj.firstName} ${selectedDentistObj.lastName}` : "Not selected"}
+                        </p>
+                     </div>
+                  </div>
+
+                  {/* Date & Time */}
+                  <div className="flex gap-4">
+                     <div className="w-10 h-10 rounded-full bg-brand-surface-soft flex items-center justify-center shrink-0">
+                        <CalendarIcon size={16} className={selectedSlot ? "text-brand-primary" : "text-brand-muted"} />
+                     </div>
+                     <div>
+                        <p className="text-xs font-bold uppercase tracking-widest text-brand-muted mb-0.5">Date & Time</p>
+                        <p className={`text-sm font-bold ${selectedSlot ? "text-brand-text" : "text-brand-muted italic"}`}>
+                           {selectedSlot ? (
+                             <>
+                               {new Intl.DateTimeFormat(locale, { dateStyle: "long", timeZone: "Asia/Manila" }).format(new Date(selectedSlot))} <br/>
+                               {new Intl.DateTimeFormat(locale, { timeStyle: "short", timeZone: "Asia/Manila" }).format(new Date(selectedSlot))}
+                             </>
+                           ) : "Not selected"}
+                        </p>
+                     </div>
+                  </div>
+               </div>
+
+               <div className="mt-8 pt-6 border-t border-brand-border">
+                  {error ? (
+                    <div className="rounded-xl border border-brand-danger/20 bg-brand-danger-soft px-4 py-3 text-sm font-semibold text-brand-danger mb-4">
+                      {error}
+                    </div>
+                  ) : null}
+                  {success ? (
+                    <div className="rounded-xl border border-brand-success/20 bg-brand-success-soft px-4 py-3 text-sm font-semibold text-brand-success mb-4">
+                      {success}
+                    </div>
+                  ) : null}
+
+                  <button
+                    type="button"
+                    onClick={onConfirm}
+                    disabled={!type || !selectedDentist || !selectedSlot || booking}
+                    className="btn-primary w-full h-12 text-sm"
+                  >
+                    {booking ? "Confirming..." : "Confirm Appointment"}
+                  </button>
+               </div>
+            </div>
+         </div>
+
       </div>
     </div>
   );

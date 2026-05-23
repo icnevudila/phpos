@@ -7,14 +7,14 @@ export function CookiesPage(): JSX.Element {
   return (
     <MarketingShell documentTitleKey="pages.cookies.title">
       <article className="prose prose-slate max-w-none">
-        <h1 className="text-2xl font-bold tracking-tight text-slate-800 sm:text-3xl">{t("pages.cookies.title")}</h1>
-        <p>{t("pages.cookies.intro")}</p>
-        <h2 className="text-xl font-bold text-slate-800">{t("pages.cookies.s1Title")}</h2>
-        <p>{t("pages.cookies.s1Body")}</p>
-        <h2 className="text-xl font-bold text-slate-800">{t("pages.cookies.s2Title")}</h2>
-        <p>{t("pages.cookies.s2Body")}</p>
-        <h2 className="text-xl font-bold text-slate-800">{t("pages.cookies.s3Title")}</h2>
-        <p>{t("pages.cookies.s3Body")}</p>
+        <h1 className="text-2xl font-bold tracking-tight text-slate-800 sm:text-3xl">{t("pages.cookies.title", { defaultValue: "Title" })}</h1>
+        <p>{t("pages.cookies.intro", { defaultValue: "Intro" })}</p>
+        <h2 className="text-xl font-bold text-slate-800">{t("pages.cookies.s1Title", { defaultValue: "S1 Title" })}</h2>
+        <p>{t("pages.cookies.s1Body", { defaultValue: "S1 Body" })}</p>
+        <h2 className="text-xl font-bold text-slate-800">{t("pages.cookies.s2Title", { defaultValue: "S2 Title" })}</h2>
+        <p>{t("pages.cookies.s2Body", { defaultValue: "S2 Body" })}</p>
+        <h2 className="text-xl font-bold text-slate-800">{t("pages.cookies.s3Title", { defaultValue: "S3 Title" })}</h2>
+        <p>{t("pages.cookies.s3Body", { defaultValue: "S3 Body" })}</p>
       </article>
     </MarketingShell>
   );

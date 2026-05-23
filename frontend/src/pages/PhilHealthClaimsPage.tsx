@@ -20,11 +20,11 @@ interface Claim {
   eClaimId?: string;
 }
 
-function mockClaims(t: (key: string) => string): Claim[] {
+function mockClaims(t: (key: string, options?: any) => string): Claim[] {
   return [
     {
       id: "1",
-      patientName: t("pages.philHealth.mockPatient1"),
+      patientName: t("pages.philHealth.mockPatient1", { defaultValue: "Mock Patient1" }),
       admissionDate: "2026-05-10",
       amount: "₱12,500.00",
       status: "APPROVED",
@@ -32,7 +32,7 @@ function mockClaims(t: (key: string) => string): Claim[] {
     },
     {
       id: "2",
-      patientName: t("pages.philHealth.mockPatient2"),
+      patientName: t("pages.philHealth.mockPatient2", { defaultValue: "Mock Patient2" }),
       admissionDate: "2026-05-12",
       amount: "₱8,200.00",
       status: "SUBMITTED",
@@ -40,7 +40,7 @@ function mockClaims(t: (key: string) => string): Claim[] {
     },
     {
       id: "3",
-      patientName: t("pages.philHealth.mockPatient3"),
+      patientName: t("pages.philHealth.mockPatient3", { defaultValue: "Mock Patient3" }),
       admissionDate: "2026-05-14",
       amount: "₱15,000.00",
       status: "DRAFT",
@@ -71,10 +71,10 @@ export function PhilHealthClaimsPage(): JSX.Element {
 
   const stats = useMemo(
     () => [
-      { label: t("pages.philHealth.statPending"), value: "12", icon: <Fingerprint className="text-teal-500" />, bg: "bg-teal-50" },
-      { label: t("pages.philHealth.statSubmitted"), value: "45", icon: <UploadCloud className="text-teal-500" />, bg: "bg-teal-50" },
-      { label: t("pages.philHealth.statApprovedYtd"), value: "₱450k", icon: <CheckCircle2 className="text-teal-600" />, bg: "bg-teal-50" },
-      { label: t("pages.philHealth.statRejected"), value: "3", icon: <AlertCircle className="text-rose-500" />, bg: "bg-rose-50" },
+      { label: t("pages.philHealth.statPending", { defaultValue: "Stat Pending" }), value: "12", icon: <Fingerprint className="text-teal-500" />, bg: "bg-teal-50" },
+      { label: t("pages.philHealth.statSubmitted", { defaultValue: "Stat Submitted" }), value: "45", icon: <UploadCloud className="text-teal-500" />, bg: "bg-teal-50" },
+      { label: t("pages.philHealth.statApprovedYtd", { defaultValue: "Stat Approved Ytd" }), value: "₱450k", icon: <CheckCircle2 className="text-teal-600" />, bg: "bg-teal-50" },
+      { label: t("pages.philHealth.statRejected", { defaultValue: "Stat Rejected" }), value: "3", icon: <AlertCircle className="text-rose-500" />, bg: "bg-rose-50" },
     ],
     [t],
   );
@@ -89,11 +89,11 @@ export function PhilHealthClaimsPage(): JSX.Element {
               <ShieldCheck size={16} aria-hidden />
             </span>
             <span className="text-xs font-semibold uppercase tracking-widest text-slate-400">
-              {t("pages.philHealth.kicker")}
+              {t("pages.philHealth.kicker", { defaultValue: "Kicker" })}
             </span>
           </div>
-          <h1 className="page-header-title">{t("pages.philHealth.title")}</h1>
-          <p className="page-header-sub">{t("pages.philHealth.subtitle")}</p>
+          <h1 className="page-header-title">{t("pages.philHealth.title", { defaultValue: "Title" })}</h1>
+          <p className="page-header-sub">{t("pages.philHealth.subtitle", { defaultValue: "Subtitle" })}</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <button
@@ -101,14 +101,14 @@ export function PhilHealthClaimsPage(): JSX.Element {
             className="btn-secondary flex items-center gap-2"
           >
             <Download size={16} aria-hidden />
-            {t("pages.philHealth.exportBatch")}
+            {t("pages.philHealth.exportBatch", { defaultValue: "Export Batch" })}
           </button>
           <button
             type="button"
             className="btn-primary flex items-center gap-2"
           >
             <UploadCloud size={16} aria-hidden />
-            {t("pages.philHealth.syncPecws")}
+            {t("pages.philHealth.syncPecws", { defaultValue: "Sync Pecws" })}
           </button>
         </div>
       </div>
@@ -138,7 +138,7 @@ export function PhilHealthClaimsPage(): JSX.Element {
               onClick={() => setActiveTab("active")}
               className={`px-4 py-2.5 text-sm font-semibold border-b-2 -mb-px transition-colors ${ activeTab === "active" ? "border-teal-500 text-teal-600" : "border-transparent text-slate-500 hover:text-slate-700" }`}
             >
-              {t("pages.philHealth.tabActive")}
+              {t("pages.philHealth.tabActive", { defaultValue: "Tab Active" })}
             </button>
             <button
               type="button"
@@ -147,14 +147,14 @@ export function PhilHealthClaimsPage(): JSX.Element {
               onClick={() => setActiveTab("history")}
               className={`px-4 py-2.5 text-sm font-semibold border-b-2 -mb-px transition-colors ${ activeTab === "history" ? "border-teal-500 text-teal-600" : "border-transparent text-slate-500 hover:text-slate-700" }`}
             >
-              {t("pages.philHealth.tabHistory")}
+              {t("pages.philHealth.tabHistory", { defaultValue: "Tab History" })}
             </button>
           </div>
           <div className="relative w-full sm:w-56">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={14} aria-hidden />
             <input
               type="search"
-              placeholder={t("pages.philHealth.searchPlaceholder")}
+              placeholder={t("pages.philHealth.searchPlaceholder", { defaultValue: "Search Placeholder" })}
               className="w-full rounded-xl border border-slate-100 bg-white py-2.5 pl-10 pr-4 text-sm outline-none transition-all focus:ring-2 focus:ring-teal-500"
             />
           </div>
@@ -164,12 +164,12 @@ export function PhilHealthClaimsPage(): JSX.Element {
           <table className="data-table">
             <thead>
               <tr>
-                <th>{t("pages.philHealth.colPatient")}</th>
-                <th>{t("pages.philHealth.colAdmission")}</th>
-                <th>{t("pages.philHealth.colAmount")}</th>
-                <th>{t("pages.philHealth.colEclaimId")}</th>
-                <th>{t("pages.philHealth.colStatus")}</th>
-                <th className="text-right">{t("pages.philHealth.colActions")}</th>
+                <th>{t("pages.philHealth.colPatient", { defaultValue: "Col Patient" })}</th>
+                <th>{t("pages.philHealth.colAdmission", { defaultValue: "Col Admission" })}</th>
+                <th>{t("pages.philHealth.colAmount", { defaultValue: "Col Amount" })}</th>
+                <th>{t("pages.philHealth.colEclaimId", { defaultValue: "Col Eclaim Id" })}</th>
+                <th>{t("pages.philHealth.colStatus", { defaultValue: "Col Status" })}</th>
+                <th className="text-right">{t("pages.philHealth.colActions", { defaultValue: "Col Actions" })}</th>
               </tr>
             </thead>
             <tbody>
@@ -196,14 +196,14 @@ export function PhilHealthClaimsPage(): JSX.Element {
                       <button
                         type="button"
                         className="rounded-lg p-2 text-slate-400 transition-all hover:bg-slate-50 hover:text-teal-500"
-                        aria-label={t("pages.philHealth.colActions")}
+                        aria-label={t("pages.philHealth.colActions", { defaultValue: "Col Actions" })}
                       >
                         <FileJson size={16} />
                       </button>
                       <button
                         type="button"
                         className="rounded-lg p-2 text-slate-400 transition-all hover:bg-slate-50 hover:text-teal-500"
-                        aria-label={t("pages.philHealth.exportBatch")}
+                        aria-label={t("pages.philHealth.exportBatch", { defaultValue: "Export Batch" })}
                       >
                         <Download size={16} />
                       </button>
@@ -221,9 +221,9 @@ export function PhilHealthClaimsPage(): JSX.Element {
         <AlertCircle className="shrink-0 text-amber-600 mt-0.5" size={20} aria-hidden />
         <div>
           <p className="text-sm font-semibold text-amber-900">
-            {t("pages.philHealth.complianceTitle")}
+            {t("pages.philHealth.complianceTitle", { defaultValue: "Compliance Title" })}
           </p>
-          <p className="mt-1 text-xs text-amber-700">{t("pages.philHealth.complianceBody")}</p>
+          <p className="mt-1 text-xs text-amber-700">{t("pages.philHealth.complianceBody", { defaultValue: "Compliance Body" })}</p>
         </div>
       </div>
     </div>

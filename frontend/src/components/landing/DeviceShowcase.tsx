@@ -21,29 +21,29 @@ function PhoneView(): JSX.Element {
         <div className="aspect-[9/19] p-4 text-[9px]">
           <div className="mt-4">
             <p className="font-bold text-brand-muted">Maria Santos</p>
-            <p className="text-[10px] font-bold text-brand-text">{t("landingPreview.devices.phoneMyAppointments")}</p>
+            <p className="text-[10px] font-bold text-brand-text">{t("landingPreview.devices.phoneMyAppointments", { defaultValue: "Phone My Appointments" })}</p>
           </div>
           <div className="mt-4 space-y-2">
             <div className="rounded-xl bg-brand-primary p-3 text-white">
-              <p className="text-[8px] opacity-80">{t("landingPreview.devices.phoneNextEyebrow")}</p>
-              <p className="text-sm font-bold">{t("landingPreview.devices.phoneNextLine")}</p>
+              <p className="text-[8px] opacity-80">{t("landingPreview.devices.phoneNextEyebrow", { defaultValue: "Phone Next Eyebrow" })}</p>
+              <p className="text-sm font-bold">{t("landingPreview.devices.phoneNextLine", { defaultValue: "Phone Next Line" })}</p>
               <p className="mt-1 text-[8px] opacity-90">Dr. dela Cruz</p>
             </div>
             <div className="rounded-xl border border-brand-border p-2.5">
-              <p className="text-[8px] font-bold uppercase text-brand-muted">{t("landingPreview.devices.phonePastLabel")}</p>
-              <p className="mt-0.5 text-[10px] font-semibold text-brand-text">{t("landingPreview.devices.phonePastLine")}</p>
-              <p className="text-[8px] text-brand-muted">{t("landingPreview.devices.phonePastPaid")}</p>
+              <p className="text-[8px] font-bold uppercase text-brand-muted">{t("landingPreview.devices.phonePastLabel", { defaultValue: "Phone Past Label" })}</p>
+              <p className="mt-0.5 text-[10px] font-semibold text-brand-text">{t("landingPreview.devices.phonePastLine", { defaultValue: "Phone Past Line" })}</p>
+              <p className="text-[8px] text-brand-muted">{t("landingPreview.devices.phonePastPaid", { defaultValue: "Phone Past Paid" })}</p>
             </div>
             <div className="flex gap-1.5">
               <button type="button" className="flex-1 rounded-lg bg-brand-primary py-1.5 text-[8px] font-bold text-white">
-                {t("landingPreview.devices.phoneBtnBook")}
+                {t("landingPreview.devices.phoneBtnBook", { defaultValue: "Phone Btn Book" })}
               </button>
               <button type="button" className="flex-1 rounded-lg bg-brand-surface-soft py-1.5 text-[8px] font-bold text-brand-text">
-                {t("landingPreview.devices.phoneBtnInvoices")}
+                {t("landingPreview.devices.phoneBtnInvoices", { defaultValue: "Phone Btn Invoices" })}
               </button>
             </div>
             <div className="rounded-lg bg-brand-primary-soft p-2">
-              <p className="text-[8px] font-semibold text-brand-primary">{t("landingPreview.devices.phoneGcash")}</p>
+              <p className="text-[8px] font-semibold text-brand-primary">{t("landingPreview.devices.phoneGcash", { defaultValue: "Phone Gcash" })}</p>
             </div>
           </div>
         </div>
@@ -59,9 +59,9 @@ function TabletView(): JSX.Element {
       <div className="overflow-hidden rounded-[16px] bg-brand-surface">
         <div className="aspect-[4/3] p-3 text-[9px]">
           <div className="flex items-center justify-between border-b border-brand-border pb-2">
-            <p className="font-bold text-brand-text">{t("landingPreview.devices.tabletHeader")}</p>
+            <p className="font-bold text-brand-text">{t("landingPreview.devices.tabletHeader", { defaultValue: "Tablet Header" })}</p>
             <span className="rounded-full bg-brand-primary-soft px-1.5 py-0.5 text-[8px] font-bold text-brand-primary">
-              {t("landingPreview.devices.tabletFdi")}
+              {t("landingPreview.devices.tabletFdi", { defaultValue: "Tablet Fdi" })}
             </span>
           </div>
           <div className="mt-3 space-y-1.5">
@@ -84,10 +84,10 @@ function TabletView(): JSX.Element {
           </div>
           <div className="mt-3 flex flex-wrap gap-1">
             {[
-              { l: t("landingPreview.devices.tabletLegendDecay"), c: "bg-brand-danger" },
-              { l: t("landingPreview.devices.tabletLegendFill"), c: "bg-sky-500" },
-              { l: t("landingPreview.devices.tabletLegendRct"), c: "bg-brand-primary" },
-              { l: t("landingPreview.devices.tabletLegendHealthy"), c: "bg-brand-surface-muted" },
+              { l: t("landingPreview.devices.tabletLegendDecay", { defaultValue: "Tablet Legend Decay" }), c: "bg-brand-danger" },
+              { l: t("landingPreview.devices.tabletLegendFill", { defaultValue: "Tablet Legend Fill" }), c: "bg-sky-500" },
+              { l: t("landingPreview.devices.tabletLegendRct", { defaultValue: "Tablet Legend Rct" }), c: "bg-brand-primary" },
+              { l: t("landingPreview.devices.tabletLegendHealthy", { defaultValue: "Tablet Legend Healthy" }), c: "bg-brand-surface-muted" },
             ].map((k) => (
               <span key={k.l} className="inline-flex items-center gap-1 rounded-full bg-brand-surface-soft px-1.5 py-0.5 text-[7px] font-bold text-brand-text">
                 <span className={`h-1 w-1 rounded-full ${k.c}`} /> {k.l}
@@ -95,8 +95,8 @@ function TabletView(): JSX.Element {
             ))}
           </div>
           <div className="mt-3 rounded-lg bg-brand-primary-soft p-2">
-            <p className="text-[8px] font-bold uppercase text-brand-primary">{t("landingPreview.devices.tabletNoteEyebrow")}</p>
-            <p className="text-[9px] font-semibold text-brand-text">{t("landingPreview.devices.tabletNoteLine")}</p>
+            <p className="text-[8px] font-bold uppercase text-brand-primary">{t("landingPreview.devices.tabletNoteEyebrow", { defaultValue: "Tablet Note Eyebrow" })}</p>
+            <p className="text-[9px] font-semibold text-brand-text">{t("landingPreview.devices.tabletNoteLine", { defaultValue: "Tablet Note Line" })}</p>
           </div>
         </div>
       </div>
@@ -118,19 +118,19 @@ function DesktopView(): JSX.Element {
                   <p className="font-bold text-brand-text">DentEase Admin</p>
                 </div>
                 <div className="flex gap-1">
-                  <span className="rounded-full bg-brand-surface-soft px-1.5 py-0.5 text-[6px] font-semibold uppercase tracking-wider text-brand-muted ring-1 ring-brand-border">{t("landing.mockBranch")}</span>
+                  <span className="rounded-full bg-brand-surface-soft px-1.5 py-0.5 text-[6px] font-semibold uppercase tracking-wider text-brand-muted ring-1 ring-brand-border">{t("landing.mockBranch", { defaultValue: "Mock Branch" })}</span>
                   <span className="inline-flex items-center gap-0.5 rounded-full bg-brand-primary-soft px-1.5 py-0.5 text-[6px] font-bold uppercase tracking-wider text-brand-primary ring-1 ring-brand-primary/20">
                     <span className="h-[3px] w-[3px] rounded-full bg-brand-primary" />
-                    {t("landing.mockLive")}
+                    {t("landing.mockLive", { defaultValue: "Mock Live" })}
                   </span>
                 </div>
               </div>
               <div className="mt-2 grid grid-cols-4 gap-1.5">
                 {[
-                  { l: t("landingPreview.devices.deskToday"), v: "₱ 43K", c: "text-brand-primary" },
-                  { l: t("landingPreview.devices.deskAppts"), v: "8", c: "text-sky-600" },
-                  { l: t("landingPreview.devices.deskHmo"), v: "3", c: "text-amber-600" },
-                  { l: t("landingPreview.devices.deskStock"), v: "2", c: "text-brand-danger" },
+                  { l: t("landingPreview.devices.deskToday", { defaultValue: "Desk Today" }), v: "₱ 43K", c: "text-brand-primary" },
+                  { l: t("landingPreview.devices.deskAppts", { defaultValue: "Desk Appts" }), v: "8", c: "text-sky-600" },
+                  { l: t("landingPreview.devices.deskHmo", { defaultValue: "Desk Hmo" }), v: "3", c: "text-amber-600" },
+                  { l: t("landingPreview.devices.deskStock", { defaultValue: "Desk Stock" }), v: "2", c: "text-brand-danger" },
                 ].map((s) => (
                   <div key={s.l} className="rounded bg-brand-surface-soft p-1.5">
                     <p className={`text-sm font-extrabold ${s.c}`}>{s.v}</p>
@@ -140,7 +140,7 @@ function DesktopView(): JSX.Element {
               </div>
               <div className="mt-2 grid grid-cols-[1fr_0.8fr] gap-1.5">
                 <div className="rounded bg-brand-surface-soft p-2">
-                  <p className="text-[7px] font-bold uppercase text-brand-muted">{t("landingPreview.devices.deskRevenue")}</p>
+                  <p className="text-[7px] font-bold uppercase text-brand-muted">{t("landingPreview.devices.deskRevenue", { defaultValue: "Desk Revenue" })}</p>
                   <div className="mt-1.5 flex h-8 items-end gap-0.5">
                     {[55, 70, 62, 80, 75, 90, 68].map((h, i) => (
                       <div
@@ -152,7 +152,7 @@ function DesktopView(): JSX.Element {
                   </div>
                 </div>
                 <div className="space-y-1 rounded bg-brand-surface-soft p-2">
-                  <p className="text-[7px] font-bold uppercase text-brand-muted">{t("landingPreview.devices.deskDentists")}</p>
+                  <p className="text-[7px] font-bold uppercase text-brand-muted">{t("landingPreview.devices.deskDentists", { defaultValue: "Desk Dentists" })}</p>
                   {["Reyes", "Cruz", "Liwanag"].map((n, i) => (
                     <div key={n} className="flex items-center justify-between">
                       <span className="text-[7px] font-semibold text-brand-text">{n}</span>
@@ -210,11 +210,11 @@ export function DeviceShowcase(): JSX.Element {
   return (
     <div>
       <div className="mx-auto max-w-2xl text-center">
-        <SectionEyebrow label={t("landing.deviceEyebrow")} icon={IconDevices} accent="sky" align="center" />
+        <SectionEyebrow label={t("landing.deviceEyebrow", { defaultValue: "Device Eyebrow" })} icon={IconDevices} accent="sky" align="center" />
         <h2 className="mt-3 text-3xl font-bold tracking-tight text-brand-text sm:text-4xl">
-          {t("landing.deviceTitle")}
+          {t("landing.deviceTitle", { defaultValue: "Device Title" })}
         </h2>
-        <p className="mt-4 text-brand-muted">{t("landing.deviceSubtitle")}</p>
+        <p className="mt-4 text-brand-muted">{t("landing.deviceSubtitle", { defaultValue: "Device Subtitle" })}</p>
       </div>
 
       <div className="mt-14 grid gap-10 md:grid-cols-3 md:gap-6">
@@ -251,7 +251,7 @@ export function DeviceShowcase(): JSX.Element {
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="h-3.5 w-3.5 text-brand-primary">
             <path d="M20 6 9 17l-5-5" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
-          {t("landing.deviceSync")}
+          {t("landing.deviceSync", { defaultValue: "Device Sync" })}
         </span>
       </div>
     </div>

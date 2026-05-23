@@ -23,7 +23,7 @@ export function MetricCardsGrid({ dashboard, canSeeManagementCards }: MetricCard
   const cards = [
     {
       to: "/appointments",
-      label: t("pages.dashboard.metricTodayAppts"),
+      label: t("pages.dashboard.metricTodayAppts", { defaultValue: "Metric Today Appts" }),
       value: dashboard.today.appointments,
       sub: t("pages.dashboard.metricTodayQueue", { count: dashboard.queue.total }),
       accent: "teal",
@@ -32,7 +32,7 @@ export function MetricCardsGrid({ dashboard, canSeeManagementCards }: MetricCard
     },
     ...(canSeeManagementCards ? [
       {
-        label: t("pages.dashboard.metricNewPatients"),
+        label: t("pages.dashboard.metricNewPatients", { defaultValue: "Metric New Patients" }),
         value: dashboard.thisMonth.newPatients,
         sub: t("pages.dashboard.metricMonthlyAppts", { count: dashboard.thisMonth.appointments }),
         accent: "emerald",
@@ -41,27 +41,27 @@ export function MetricCardsGrid({ dashboard, canSeeManagementCards }: MetricCard
       },
       {
         to: "/hmo-claims",
-        label: t("pages.dashboard.metricHmo"),
+        label: t("pages.dashboard.metricHmo", { defaultValue: "Metric Hmo" }),
         value: dashboard.operational.pendingHmoClaims,
-        sub: t("pages.dashboard.metricHmoSubWithClaims"),
+        sub: t("pages.dashboard.metricHmoSubWithClaims", { defaultValue: "Metric Hmo Sub With Claims" }),
         accent: "amber",
         icon: <ShieldCheck size={18} />,
         delay: 0.2
       },
       {
         to: "/inventory",
-        label: t("pages.dashboard.metricInventory"),
+        label: t("pages.dashboard.metricInventory", { defaultValue: "Metric Inventory" }),
         value: dashboard.operational.inventoryAlerts,
-        sub: t("pages.dashboard.metricInventorySubWithOpen"),
+        sub: t("pages.dashboard.metricInventorySubWithOpen", { defaultValue: "Metric Inventory Sub With Open" }),
         accent: "indigo",
         icon: <Package size={18} />,
         delay: 0.3
       }
     ] : [
       {
-        label: t("pages.dashboard.metricInventory"),
+        label: t("pages.dashboard.metricInventory", { defaultValue: "Metric Inventory" }),
         value: dashboard.operational.inventoryAlerts,
-        sub: t("pages.dashboard.metricInventorySub"),
+        sub: t("pages.dashboard.metricInventorySub", { defaultValue: "Metric Inventory Sub" }),
         accent: "slate",
         icon: <Package size={18} />,
         delay: 0.1

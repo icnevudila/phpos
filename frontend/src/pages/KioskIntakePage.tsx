@@ -33,8 +33,8 @@ export function KioskIntakePage() {
     await new Promise(r => setTimeout(r, 1500));
     setPatient({
       id: "123",
-      firstName: t("pages.kioskIntake.mockFirstName"),
-      lastName: t("pages.kioskIntake.mockLastName"),
+      firstName: t("pages.kioskIntake.mockFirstName", { defaultValue: "Mock First Name" }),
+      lastName: t("pages.kioskIntake.mockLastName", { defaultValue: "Mock Last Name" }),
       phone: searchQuery,
       email: "juan@example.com",
     });
@@ -47,24 +47,24 @@ export function KioskIntakePage() {
 
   const medicalConditions = useMemo(
     () => [
-      t("pages.kioskIntake.condHypertension"),
-      t("pages.kioskIntake.condDiabetes"),
-      t("pages.kioskIntake.condAsthma"),
-      t("pages.kioskIntake.condHeart"),
-      t("pages.kioskIntake.condAllergies"),
-      t("pages.kioskIntake.condPregnancy"),
-      t("pages.kioskIntake.condSurgery"),
-      t("pages.kioskIntake.condBloodThinners"),
+      t("pages.kioskIntake.condHypertension", { defaultValue: "Cond Hypertension" }),
+      t("pages.kioskIntake.condDiabetes", { defaultValue: "Cond Diabetes" }),
+      t("pages.kioskIntake.condAsthma", { defaultValue: "Cond Asthma" }),
+      t("pages.kioskIntake.condHeart", { defaultValue: "Cond Heart" }),
+      t("pages.kioskIntake.condAllergies", { defaultValue: "Cond Allergies" }),
+      t("pages.kioskIntake.condPregnancy", { defaultValue: "Cond Pregnancy" }),
+      t("pages.kioskIntake.condSurgery", { defaultValue: "Cond Surgery" }),
+      t("pages.kioskIntake.condBloodThinners", { defaultValue: "Cond Blood Thinners" }),
     ],
     [t],
   );
 
   const profileFields = useMemo(
     () => [
-      { label: t("pages.kioskIntake.fieldFirstName"), value: patient?.firstName, icon: <User /> },
-      { label: t("pages.kioskIntake.fieldLastName"), value: patient?.lastName, icon: <User /> },
-      { label: t("pages.kioskIntake.fieldMobile"), value: patient?.phone, icon: <Phone /> },
-      { label: t("pages.kioskIntake.fieldEmail"), value: patient?.email, icon: <ClipboardList /> },
+      { label: t("pages.kioskIntake.fieldFirstName", { defaultValue: "Field First Name" }), value: patient?.firstName, icon: <User /> },
+      { label: t("pages.kioskIntake.fieldLastName", { defaultValue: "Field Last Name" }), value: patient?.lastName, icon: <User /> },
+      { label: t("pages.kioskIntake.fieldMobile", { defaultValue: "Field Mobile" }), value: patient?.phone, icon: <Phone /> },
+      { label: t("pages.kioskIntake.fieldEmail", { defaultValue: "Field Email" }), value: patient?.email, icon: <ClipboardList /> },
     ],
     [patient, t],
   );
@@ -81,7 +81,7 @@ export function KioskIntakePage() {
         </button>
         <div className="text-center">
           <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-slate-500 mb-1">
-            {t("pages.kioskIntake.headerKicker")}
+            {t("pages.kioskIntake.headerKicker", { defaultValue: "Header Kicker" })}
           </p>
           <h2 className="text-xl font-black">
             {t("pages.kioskIntake.stepOf", { current: stepCurrent, total: 4 })}
@@ -104,8 +104,8 @@ export function KioskIntakePage() {
                 <div className="h-24 w-24 rounded-[2.5rem] bg-teal-500/10 border border-teal-500/20 flex items-center justify-center text-teal-500 mx-auto">
                   <Search size={40} />
                 </div>
-                <h1 className="text-4xl md:text-6xl font-black tracking-tight">{t("pages.kioskIntake.identifyTitle")}</h1>
-                <p className="text-lg text-slate-400 font-bold">{t("pages.kioskIntake.identifySub")}</p>
+                <h1 className="text-4xl md:text-6xl font-black tracking-tight">{t("pages.kioskIntake.identifyTitle", { defaultValue: "Identify Title" })}</h1>
+                <p className="text-lg text-slate-400 font-bold">{t("pages.kioskIntake.identifySub", { defaultValue: "Identify Sub" })}</p>
               </div>
 
               <div className="relative group">
@@ -114,7 +114,7 @@ export function KioskIntakePage() {
                 </div>
                 <input 
                   type="text"
-                  placeholder={t("pages.kioskIntake.phonePlaceholder")}
+                  placeholder={t("pages.kioskIntake.phonePlaceholder", { defaultValue: "Phone Placeholder" })}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="h-24 w-full rounded-[2.5rem] bg-white/5 border-2 border-white/10 pl-24 pr-10 text-3xl font-black outline-none focus:border-teal-500 focus:bg-white/10 transition-all placeholder:text-slate-700"
@@ -126,7 +126,7 @@ export function KioskIntakePage() {
                 disabled={!searchQuery || isSearching}
                 className="w-full h-24 rounded-[2.5rem] bg-teal-500 text-white text-xl font-black uppercase tracking-widest shadow-2xl shadow-teal-500/20 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-4"
               >
-                {isSearching ? <div className="h-8 w-8 border-4 border-white/30 border-t-white rounded-full animate-spin" /> : t("pages.kioskIntake.continue")}
+                {isSearching ? <div className="h-8 w-8 border-4 border-white/30 border-t-white rounded-full animate-spin" /> : t("pages.kioskIntake.continue", { defaultValue: "Continue" })}
                 {!isSearching && <ChevronRight size={24} />}
               </button>
             </motion.div>
@@ -144,7 +144,7 @@ export function KioskIntakePage() {
                 <h1 className="text-4xl md:text-5xl font-black tracking-tight">
                   {t("pages.kioskIntake.profileWelcome", { name: patient?.firstName ?? "" })}
                 </h1>
-                <p className="text-lg text-slate-400 font-bold">{t("pages.kioskIntake.profileSub")}</p>
+                <p className="text-lg text-slate-400 font-bold">{t("pages.kioskIntake.profileSub", { defaultValue: "Profile Sub" })}</p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -166,7 +166,7 @@ export function KioskIntakePage() {
                 onClick={() => setStep("MEDICAL")}
                 className="w-full h-24 rounded-[2.5rem] bg-white text-slate-900 text-xl font-black uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-4"
               >
-                {t("pages.kioskIntake.confirmNext")} <ChevronRight size={24} />
+                {t("pages.kioskIntake.confirmNext", { defaultValue: "Confirm Next" })} <ChevronRight size={24} />
               </button>
             </motion.div>
           )}
@@ -183,8 +183,8 @@ export function KioskIntakePage() {
                 <div className="h-20 w-20 rounded-[2rem] bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-500 mx-auto">
                   <HeartPulse size={32} />
                 </div>
-                <h1 className="text-4xl md:text-5xl font-black tracking-tight">{t("pages.kioskIntake.medicalTitle")}</h1>
-                <p className="text-lg text-slate-400 font-bold">{t("pages.kioskIntake.medicalSub")}</p>
+                <h1 className="text-4xl md:text-5xl font-black tracking-tight">{t("pages.kioskIntake.medicalTitle", { defaultValue: "Medical Title" })}</h1>
+                <p className="text-lg text-slate-400 font-bold">{t("pages.kioskIntake.medicalSub", { defaultValue: "Medical Sub" })}</p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -198,11 +198,11 @@ export function KioskIntakePage() {
 
               <div className="p-8 rounded-[2.5rem] bg-white/5 border border-white/10 space-y-4">
                 <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">
-                  {t("pages.kioskIntake.otherConditions")}
+                  {t("pages.kioskIntake.otherConditions", { defaultValue: "Other Conditions" })}
                 </p>
                 <textarea
                   rows={3}
-                  placeholder={t("pages.kioskIntake.otherPlaceholder")}
+                  placeholder={t("pages.kioskIntake.otherPlaceholder", { defaultValue: "Other Placeholder" })}
                   className="w-full bg-transparent text-xl font-bold outline-none text-white resize-none"
                 />
               </div>
@@ -211,7 +211,7 @@ export function KioskIntakePage() {
                 onClick={() => setStep("CONSENT")}
                 className="w-full h-24 rounded-[2.5rem] bg-teal-500 text-white text-xl font-black uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-4 shadow-2xl shadow-teal-500/20"
               >
-                {t("pages.kioskIntake.saveContinue")} <ChevronRight size={24} />
+                {t("pages.kioskIntake.saveContinue", { defaultValue: "Save Continue" })} <ChevronRight size={24} />
               </button>
             </motion.div>
           )}
@@ -225,9 +225,9 @@ export function KioskIntakePage() {
               className="max-w-5xl w-full"
             >
               <ElectronicConsent
-                title={t("pages.kioskIntake.consentTitle")}
+                title={t("pages.kioskIntake.consentTitle", { defaultValue: "Consent Title" })}
                 patientName={`${patient?.firstName} ${patient?.lastName}`}
-                content={t("pages.kioskIntake.consentBody")}
+                content={t("pages.kioskIntake.consentBody", { defaultValue: "Consent Body" })}
                 onSign={() => setStep("SUCCESS")}
                 className="!bg-slate-800 !border-white/10"
               />
@@ -254,15 +254,15 @@ export function KioskIntakePage() {
               </div>
               
               <div className="space-y-4">
-                <h1 className="text-4xl md:text-6xl font-black tracking-tight">{t("pages.kioskIntake.successTitle")}</h1>
-                <p className="text-xl text-slate-400 font-bold">{t("pages.kioskIntake.successSub")}</p>
+                <h1 className="text-4xl md:text-6xl font-black tracking-tight">{t("pages.kioskIntake.successTitle", { defaultValue: "Success Title" })}</h1>
+                <p className="text-xl text-slate-400 font-bold">{t("pages.kioskIntake.successSub", { defaultValue: "Success Sub" })}</p>
               </div>
 
               <button 
                 onClick={() => navigate(`/${slug}/kiosk`)}
                 className="px-12 h-20 rounded-[2rem] bg-white/5 border border-white/10 text-lg font-black uppercase tracking-widest hover:bg-white/10 transition-all flex items-center justify-center gap-4 mx-auto"
               >
-                {t("pages.kioskIntake.done")}
+                {t("pages.kioskIntake.done", { defaultValue: "Done" })}
               </button>
             </motion.div>
           )}

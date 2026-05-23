@@ -24,14 +24,15 @@ import { StaffTeamPanel } from "../components/settings/StaffTeamPanel";
 import { DentistLicensesPanel } from "../components/settings/DentistLicensesPanel";
 import { NotificationSettingsPanel } from "../components/settings/NotificationSettingsPanel";
 import { SecuritySettingsPanel } from "../components/settings/SecuritySettingsPanel";
+import { IntegrationsPanel } from "../components/settings/IntegrationsPanel";
 import { getAuthProfile } from "../hooks/authTokens";
 import { fetchClinic, patchClinic, type ClinicDto } from "../services/clinic";
 import { buildQueueDisplayUrl } from "../utils/queueDisplayUrl";
 
-type Tab = "clinic" | "hmo" | "team" | "licenses" | "notifications" | "security";
+type Tab = "clinic" | "hmo" | "team" | "licenses" | "notifications" | "security" | "integrations";
 
 const settingsField =
-  "h-14 w-full rounded-2xl border border-slate-200 bg-white px-6 text-sm font-bold text-slate-900 shadow-sm transition-all focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/10 disabled:bg-slate-50";
+  "h-10 w-full rounded-[var(--radius-md)] border border-brand-border bg-brand-surface px-3 py-2 text-xs font-semibold focus:border-brand-primary focus:outline-none focus:ring-1 focus:ring-brand-primary disabled:bg-brand-surface-muted transition-shadow";
 
 export function SettingsPage(): JSX.Element {
   const { t } = useTranslation();
@@ -64,7 +65,7 @@ export function SettingsPage(): JSX.Element {
         logoUrl: c.logoUrl ?? "",
       });
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : t("pages.settings.toastLoadClinicFailed"));
+      toast.error(e instanceof Error ? e.message : t("pages.settings.toastLoadClinicFailed", { defaultValue: "Toast Load Clinic Failed" }));
     } finally {
       setClinicLoading(false);
     }
@@ -122,21 +123,22 @@ export function SettingsPage(): JSX.Element {
         logoUrl: draft.logoUrl || null,
       });
       setClinic(updated);
-      toast.success(t("pages.settings.toastClinicSaved"));
+      toast.success(t("pages.settings.toastClinicSaved", { defaultValue: "Toast Clinic Saved" }));
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : t("pages.settings.toastSaveFailed"));
+      toast.error(e instanceof Error ? e.message : t("pages.settings.toastSaveFailed", { defaultValue: "Toast Save Failed" }));
     } finally {
       setClinicSaving(false);
     }
   }
 
   const tabs = [
-    { id: "clinic", label: t("pages.settings.tabClinic"), icon: Building2, show: true },
-    { id: "hmo", label: t("pages.settings.tabHmo"), icon: Shield, show: isAdmin },
-    { id: "team", label: t("pages.settings.tabTeam"), icon: Users, show: isAdmin },
-    { id: "licenses", label: t("pages.settings.tabLicenses"), icon: FileText, show: isDentist },
-    { id: "notifications", label: t("pages.settings.tabNotifications"), icon: Bell, show: isAdmin },
+    { id: "clinic", label: t("pages.settings.tabClinic", { defaultValue: "Tab Clinic" }), icon: Building2, show: true },
+    { id: "hmo", label: t("pages.settings.tabHmo", { defaultValue: "Tab Hmo" }), icon: Shield, show: isAdmin },
+    { id: "team", label: t("pages.settings.tabTeam", { defaultValue: "Tab Team" }), icon: Users, show: isAdmin },
+    { id: "licenses", label: t("pages.settings.tabLicenses", { defaultValue: "Tab Licenses" }), icon: FileText, show: isDentist },
+    { id: "notifications", label: t("pages.settings.tabNotifications", { defaultValue: "Tab Notifications" }), icon: Bell, show: isAdmin },
     { id: "security", label: "Security & API", icon: Shield, show: isAdmin },
+    { id: "integrations", label: "Integrations", icon: Activity, show: isAdmin },
   ] as const;
 
   return (
@@ -145,18 +147,18 @@ export function SettingsPage(): JSX.Element {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-teal-100 text-teal-600">
+            <span className="flex h-8 w-8 items-center justify-center rounded-[var(--radius-md)] bg-brand-primary-soft text-brand-primary">
               <Settings size={16} />
             </span>
-            <span className="text-xs font-semibold uppercase tracking-widest text-slate-400">
-              {t("pages.settings.kicker")}
+            <span className="text-xs font-semibold uppercase tracking-widest text-brand-muted">
+              {t("pages.settings.kicker", { defaultValue: "Administration" })}
             </span>
           </div>
           <h1 className="page-header-title">
-            {t("pages.settings.heroTitle")}{" "}
-            <span className="text-teal-500 italic">{t("pages.settings.heroAccent")}</span>
+            {t("pages.settings.heroTitle", { defaultValue: "Clinic" })}{" "}
+            <span className="text-brand-primary italic">{t("pages.settings.heroAccent", { defaultValue: "Control Room" })}</span>
           </h1>
-          <p className="page-header-sub">{t("pages.settings.subtitle")}</p>
+          <p className="page-header-sub">{t("pages.settings.subtitle", { defaultValue: "Manage operations, security, and clinic policies." })}</p>
         </div>
       </div>
 
@@ -166,7 +168,7 @@ export function SettingsPage(): JSX.Element {
           <nav
             className="flex md:flex-col gap-2 overflow-x-auto md:overflow-visible pb-4 md:pb-0"
             role="tablist"
-            aria-label={t("pages.settings.title")}
+            aria-label={t("pages.settings.title", { defaultValue: "Title" })}
           >
             {tabs.filter((tabItem) => tabItem.show).map((tabItem) => {
               const Icon = tabItem.icon;
@@ -179,9 +181,9 @@ export function SettingsPage(): JSX.Element {
                   aria-selected={active}
                   aria-label={t("pages.settings.tabAria", { label: tabItem.label })}
                   onClick={() => setTab(tabItem.id as Tab)}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 whitespace-nowrap ${ active ? "bg-teal-50 text-teal-700 shadow-sm border border-teal-100" : "text-slate-600 hover:bg-slate-50 hover:text-slate-900 border border-transparent" }`}
+                  className={`flex items-center gap-3 px-4 py-3 rounded-[var(--radius-md)] text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary whitespace-nowrap ${ active ? "bg-brand-primary-soft text-brand-primary shadow-sm border border-brand-primary-soft" : "text-brand-text hover:bg-brand-surface-muted border border-transparent" }`}
                 >
-                  <Icon size={18} className={active ? "text-teal-600" : "text-slate-400"} aria-hidden />
+                  <Icon size={18} className={active ? "text-brand-primary" : "text-brand-muted"} aria-hidden />
                   <span>{tabItem.label}</span>
                 </button>
               );
@@ -205,16 +207,16 @@ export function SettingsPage(): JSX.Element {
                 <div className="lg:col-span-7 space-y-6">
                   <div className="card">
                     <div className="flex items-center gap-4 mb-8">
-                      <div className="h-10 w-10 rounded-xl bg-teal-500 flex items-center justify-center text-white shadow-sm">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-[var(--radius-md)] bg-brand-primary text-white shadow-sm">
                         <Building2 size={20} />
                       </div>
-                      <h2 className="text-lg font-bold text-slate-800">{t("pages.settings.clinicProfile")}</h2>
+                      <h2 className="text-lg font-bold text-brand-text">{t("pages.settings.clinicProfile", { defaultValue: "Clinic Profile" })}</h2>
                     </div>
 
                     <div className="space-y-6">
                       <div className="grid gap-6 sm:grid-cols-2">
                         <div className="space-y-2">
-                          <label className="text-xs font-semibold uppercase tracking-widest text-slate-400">{t("pages.settings.name")}</label>
+                          <label className="text-xs font-semibold uppercase tracking-widest text-brand-muted">{t("pages.settings.name", { defaultValue: "Name" })}</label>
                           <input
                             className={settingsField}
                             value={draft.name}
@@ -223,7 +225,7 @@ export function SettingsPage(): JSX.Element {
                           />
                         </div>
                         <div className="space-y-2">
-                          <label className="text-xs font-semibold uppercase tracking-widest text-slate-400">{t("pages.settings.phone")}</label>
+                          <label className="text-xs font-semibold uppercase tracking-widest text-brand-muted">{t("pages.settings.phone", { defaultValue: "Phone" })}</label>
                           <input
                             className={settingsField}
                             value={draft.phone}
@@ -234,11 +236,11 @@ export function SettingsPage(): JSX.Element {
                       </div>
 
                       <div className="space-y-2">
-                        <label className="text-xs font-semibold uppercase tracking-widest text-slate-400">{t("pages.settings.address")}</label>
+                        <label className="text-xs font-semibold uppercase tracking-widest text-brand-muted">{t("pages.settings.address", { defaultValue: "Address" })}</label>
                         <div className="relative">
-                          <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={18} />
+                          <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-brand-muted" size={16} />
                           <input
-                            className={`${settingsField} pl-12`}
+                            className={`${settingsField} pl-10`}
                             value={draft.address}
                             disabled={!isAdmin}
                             onChange={(e) => setDraft((d) => ({ ...d, address: e.target.value }))}
@@ -248,7 +250,7 @@ export function SettingsPage(): JSX.Element {
 
                       <div className="grid gap-6 sm:grid-cols-2">
                         <div className="space-y-2">
-                          <label className="text-xs font-semibold uppercase tracking-widest text-slate-400">{t("pages.settings.city")}</label>
+                          <label className="text-xs font-semibold uppercase tracking-widest text-brand-muted">{t("pages.settings.city", { defaultValue: "City" })}</label>
                           <input
                             className={settingsField}
                             value={draft.city}
@@ -257,10 +259,10 @@ export function SettingsPage(): JSX.Element {
                           />
                         </div>
                         <div className="space-y-2">
-                          <label className="text-xs font-semibold uppercase tracking-widest text-slate-400">{t("pages.settings.logoUrl")}</label>
+                          <label className="text-xs font-semibold uppercase tracking-widest text-brand-muted">{t("pages.settings.logoUrl", { defaultValue: "Logo Url" })}</label>
                           <input
                             className={settingsField}
-                            placeholder={t("pages.settings.logoPlaceholder")}
+                            placeholder={t("pages.settings.logoPlaceholder", { defaultValue: "Logo Placeholder" })}
                             value={draft.logoUrl}
                             disabled={!isAdmin}
                             onChange={(e) => setDraft((d) => ({ ...d, logoUrl: e.target.value }))}
@@ -268,8 +270,8 @@ export function SettingsPage(): JSX.Element {
                         </div>
                       </div>
 
-                      <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
-                        {!isAdmin && <p className="text-xs font-bold text-amber-600 uppercase tracking-widest">{t("pages.settings.adminOnly")}</p>}
+                      <div className="pt-4 border-t border-brand-border flex items-center justify-between">
+                        {!isAdmin && <p className="text-xs font-bold text-brand-warning uppercase tracking-widest">{t("pages.settings.adminOnly", { defaultValue: "Admin Only" })}</p>}
                         <button
                           type="button"
                           onClick={() => void saveClinic()}
@@ -280,7 +282,7 @@ export function SettingsPage(): JSX.Element {
                             <RefreshCw className="animate-spin" size={16} />
                           ) : (
                             <div className="flex items-center gap-2">
-                              <Save size={16} /> {t("pages.settings.saveChanges")}
+                              <Save size={16} /> {t("pages.settings.saveChanges", { defaultValue: "Save Changes" })}
                             </div>
                           )}
                         </button>
@@ -291,20 +293,19 @@ export function SettingsPage(): JSX.Element {
 
                 {/* Kiosk & Queue Panel */}
                 <div className="lg:col-span-5 space-y-6">
-                  <div className="card bg-white text-white relative overflow-hidden">
-                    <div className="absolute -bottom-16 -right-16 h-48 w-48 bg-teal-500/20 rounded-full blur-[80px]" />
+                  <div className="card">
                     <div className="relative z-10 space-y-6">
                       <div className="flex items-center justify-between">
-                        <div className="h-10 w-10 rounded-xl bg-teal-500/20 flex items-center justify-center text-teal-400">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-[var(--radius-md)] bg-brand-primary-soft text-brand-primary">
                           <Layout size={20} />
                         </div>
-                        <div className="text-[10px] font-bold text-teal-400 bg-teal-400/10 px-3 py-1 rounded-full uppercase tracking-wider">Kiosk System</div>
+                        <div className="text-[10px] font-bold text-brand-primary bg-brand-primary-soft px-3 py-1 rounded-[var(--radius-sm)] uppercase tracking-wider">Kiosk System</div>
                       </div>
 
                       <div className="space-y-2">
-                        <h3 className="text-lg font-bold text-white">{t("pages.settings.kioskTabletTitle")}</h3>
-                        <p className="text-sm font-medium text-slate-400 leading-relaxed">
-                          {t("pages.settings.kioskTabletHint")}
+                        <h3 className="text-sm font-bold text-brand-text">{t("pages.settings.kioskTabletTitle", { defaultValue: "Kiosk Tablet Title" })}</h3>
+                        <p className="text-xs font-medium text-brand-muted leading-relaxed">
+                          {t("pages.settings.kioskTabletHint", { defaultValue: "Kiosk Tablet Hint" })}
                         </p>
                       </div>
 
@@ -312,69 +313,69 @@ export function SettingsPage(): JSX.Element {
                         <div className="relative">
                           <input
                             readOnly
-                            className="h-12 w-full rounded-xl bg-white/5 border border-white/10 pl-4 pr-20 text-xs font-mono text-teal-200 outline-none"
+                            className="h-10 w-full rounded-[var(--radius-md)] bg-brand-surface-muted border border-brand-border pl-3 pr-24 text-xs font-mono text-brand-text outline-none"
                             value={kioskUrl}
                           />
                           <button
                             onClick={() => void copyKioskUrl()}
-                            className="absolute right-1.5 top-1.5 h-9 px-3 rounded-lg bg-teal-500 text-white text-[10px] font-bold uppercase tracking-wider hover:bg-teal-600 transition-all"
+                            className="absolute right-1 top-1 h-8 px-3 rounded-[var(--radius-sm)] bg-brand-surface text-brand-text border border-brand-border text-[10px] font-bold uppercase tracking-wider hover:bg-brand-surface-muted transition-all"
                           >
-                            <Copy size={12} className="inline mr-1" /> {t("pages.settings.kioskCopyCta")}
+                            <Copy size={12} className="inline mr-1" /> {t("pages.settings.kioskCopyCta", { defaultValue: "Kiosk Copy Cta" })}
                           </button>
                         </div>
                         <a 
                           href={kioskUrl} 
                           target="_blank" 
                           rel="noreferrer"
-                          className="flex items-center justify-center gap-2 text-[10px] font-bold uppercase tracking-widest text-slate-500 hover:text-white transition-colors"
+                          className="flex items-center justify-center gap-2 text-[10px] font-bold uppercase tracking-widest text-brand-muted hover:text-brand-primary transition-colors"
                         >
-                          {t("pages.settings.kioskOpenPreview")} <ExternalLink size={12} />
+                          {t("pages.settings.kioskOpenPreview", { defaultValue: "Kiosk Open Preview" })} <ExternalLink size={12} />
                         </a>
                       </div>
 
-                      <div className="space-y-3 border-t border-white/10 pt-6">
+                      <div className="space-y-3 border-t border-brand-border pt-6">
                         <div className="flex items-center gap-2">
-                          <Monitor size={16} className="text-teal-400" aria-hidden />
-                          <h4 className="text-sm font-bold uppercase tracking-widest text-white">
-                            {t("pages.settings.queueDisplayTitle")}
+                          <Monitor size={16} className="text-brand-primary" aria-hidden />
+                          <h4 className="text-sm font-bold uppercase tracking-widest text-brand-text">
+                            {t("pages.settings.queueDisplayTitle", { defaultValue: "Queue Display Title" })}
                           </h4>
                         </div>
-                        <p className="text-xs font-medium leading-relaxed text-slate-400">
-                          {t("pages.settings.queueDisplayHint")}
+                        <p className="text-xs font-medium leading-relaxed text-brand-muted">
+                          {t("pages.settings.queueDisplayHint", { defaultValue: "Queue Display Hint" })}
                         </p>
                         <div className="relative">
                           <input
                             readOnly
-                            aria-label={t("pages.settings.queueDisplayUrlAria")}
-                            className="h-12 w-full rounded-xl border border-white/10 bg-white/5 pl-4 pr-20 font-mono text-[10px] text-teal-200 outline-none"
+                            aria-label={t("pages.settings.queueDisplayUrlAria", { defaultValue: "Queue Display Url Aria" })}
+                            className="h-10 w-full rounded-[var(--radius-md)] border border-brand-border bg-brand-surface-muted pl-3 pr-24 font-mono text-xs text-brand-text outline-none"
                             value={queueDisplayUrl}
                           />
                           <button
                             type="button"
                             onClick={() => void copyQueueDisplayUrl()}
-                            className="absolute right-1.5 top-1.5 flex h-9 items-center gap-1 rounded-lg bg-teal-500 px-3 text-[10px] font-bold uppercase tracking-wider text-white hover:bg-teal-600"
+                            className="absolute right-1 top-1 flex h-8 items-center gap-1 rounded-[var(--radius-sm)] bg-brand-surface border border-brand-border px-3 text-[10px] font-bold uppercase tracking-wider text-brand-text hover:bg-brand-surface-muted"
                           >
                             <Copy size={12} aria-hidden />
-                            {t("pages.settings.queueDisplayCopyCta")}
+                            {t("pages.settings.queueDisplayCopyCta", { defaultValue: "Queue Display Copy Cta" })}
                           </button>
                         </div>
                         <a
                           href={queueDisplayUrl}
                           target="_blank"
                           rel="noreferrer"
-                          className="flex items-center justify-center gap-2 text-[10px] font-bold uppercase tracking-widest text-slate-500 transition-colors hover:text-white"
+                          className="flex items-center justify-center gap-2 text-[10px] font-bold uppercase tracking-widest text-brand-muted transition-colors hover:text-brand-primary"
                         >
-                          {t("pages.settings.queueDisplayOpenPreview")} <ExternalLink size={12} />
+                          {t("pages.settings.queueDisplayOpenPreview", { defaultValue: "Queue Display Open Preview" })} <ExternalLink size={12} />
                         </a>
                       </div>
 
-                      <div className="pt-4 border-t border-white/5">
-                        <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-3">
+                      <div className="pt-4 border-t border-brand-border">
+                        <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest text-brand-muted mb-3">
                           <span>Portal Integrity</span>
-                          <span className="text-teal-400">Stable</span>
+                          <span className="text-brand-success">Stable</span>
                         </div>
-                        <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
-                          <div className="h-full w-[94%] bg-teal-500" />
+                        <div className="h-1.5 w-full bg-brand-surface-muted rounded-full overflow-hidden">
+                          <div className="h-full w-[94%] bg-brand-success" />
                         </div>
                       </div>
                     </div>
@@ -382,23 +383,23 @@ export function SettingsPage(): JSX.Element {
 
                   <div className="card">
                     <div className="flex items-center gap-3 mb-5">
-                      <div className="h-9 w-9 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500">
-                        <Activity size={18} />
+                      <div className="flex h-8 w-8 items-center justify-center rounded-[var(--radius-md)] bg-brand-surface-muted text-brand-muted">
+                        <Activity size={16} />
                       </div>
-                      <span className="text-xs font-semibold uppercase tracking-widest text-slate-400">System Information</span>
+                      <span className="text-xs font-semibold uppercase tracking-widest text-brand-muted">System Information</span>
                     </div>
                     <div className="space-y-3">
-                      <div className="flex justify-between py-2.5 border-b border-slate-50">
-                        <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Version</span>
-                        <span className="text-xs font-bold text-slate-900">v2.4.0-pro</span>
+                      <div className="flex justify-between py-2.5 border-b border-brand-border">
+                        <span className="text-xs font-bold text-brand-muted uppercase tracking-widest">Version</span>
+                        <span className="text-xs font-bold text-brand-text">v2.4.0-pro</span>
                       </div>
-                      <div className="flex justify-between py-2.5 border-b border-slate-50">
-                        <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Region</span>
-                        <span className="text-xs font-bold text-slate-900">PH-CENTRAL-1</span>
+                      <div className="flex justify-between py-2.5 border-b border-brand-border">
+                        <span className="text-xs font-bold text-brand-muted uppercase tracking-widest">Region</span>
+                        <span className="text-xs font-bold text-brand-text">PH-CENTRAL-1</span>
                       </div>
-                      <div className="flex justify-between py-2.5 border-b border-slate-50">
-                        <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Storage</span>
-                        <span className="text-xs font-bold text-slate-900">88% Utilized</span>
+                      <div className="flex justify-between py-2.5 border-b border-brand-border">
+                        <span className="text-xs font-bold text-brand-muted uppercase tracking-widest">Storage</span>
+                        <span className="text-xs font-bold text-brand-text">88% Utilized</span>
                       </div>
                     </div>
                   </div>
@@ -410,7 +411,12 @@ export function SettingsPage(): JSX.Element {
             {tab === "team" && isAdmin && <StaffTeamPanel />}
             {tab === "licenses" && isDentist && <DentistLicensesPanel />}
             {tab === "notifications" && isAdmin && <NotificationSettingsPanel />}
-            {tab === "security" && isAdmin && <SecuritySettingsPanel />}
+            {tab === "security" && (
+              <SecuritySettingsPanel />
+            )}
+            {tab === "integrations" && (
+              <IntegrationsPanel />
+            )}
           </motion.div>
         </AnimatePresence>
       </main>

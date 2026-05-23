@@ -66,7 +66,7 @@ export function NotificationsPage(): JSX.Element {
   const tableQ = useDebouncedValue(tableQInput, 300);
 
   useEffect(() => {
-    setTestMsg(t("pages.notifications.testMsgDefault"));
+    setTestMsg(t("pages.notifications.testMsgDefault", { defaultValue: "Test Msg Default" }));
   }, [t, i18n.resolvedLanguage]);
 
   const load = useCallback(async (silent = false) => {
@@ -76,7 +76,7 @@ export function NotificationsPage(): JSX.Element {
       const data = await fetchNotifications({ status: statusFilter || undefined, kind: kindFilter || undefined });
       setRows(data);
     } catch (e) {
-      setError(e instanceof Error ? e.message : t("pages.notifications.loadFailed"));
+      setError(e instanceof Error ? e.message : t("pages.notifications.loadFailed", { defaultValue: "Load Failed" }));
     } finally {
       setLoading(false);
     }
@@ -99,7 +99,7 @@ export function NotificationsPage(): JSX.Element {
         setBanner({
           msg: t("pages.notifications.retryFailed", {
             defaultValue: "Retry failed: {{message}}",
-            message: res.errorMessage ?? t("pages.notifications.testFailedUnknown"),
+            message: res.errorMessage ?? t("pages.notifications.testFailedUnknown", { defaultValue: "Test Failed Unknown" }),
           }),
           type: "error",
         });
@@ -118,16 +118,16 @@ export function NotificationsPage(): JSX.Element {
     try {
       const res = await sendTestNotification({ to: testTo, message: testMsg });
       if (res.status === "SENT") {
-        setBanner({ msg: t("pages.notifications.testQueued"), type: 'success' });
+        setBanner({ msg: t("pages.notifications.testQueued", { defaultValue: "Test Queued" }), type: 'success' });
       } else {
         setBanner({
-          msg: t("pages.notifications.testFailed", { message: res.errorMessage ?? t("pages.notifications.testFailedUnknown") }),
+          msg: t("pages.notifications.testFailed", { message: res.errorMessage ?? t("pages.notifications.testFailedUnknown", { defaultValue: "Test Failed Unknown" }) }),
           type: 'error'
         });
       }
       await load(true);
     } catch (e) {
-      setBanner({ msg: e instanceof Error ? e.message : t("pages.notifications.testSendFailed"), type: 'error' });
+      setBanner({ msg: e instanceof Error ? e.message : t("pages.notifications.testSendFailed", { defaultValue: "Test Send Failed" }), type: 'error' });
     } finally {
       setTestBusy(false);
     }
@@ -140,7 +140,7 @@ export function NotificationsPage(): JSX.Element {
       const res = await triggerNotificationCron(kindArg);
       setBanner({
         msg: t("pages.notifications.cronResult", {
-          label: kindArg === "daily" ? t("pages.notifications.cronDailyLabel") : t("pages.notifications.cronSoonLabel"),
+          label: kindArg === "daily" ? t("pages.notifications.cronDailyLabel", { defaultValue: "Cron Daily Label" }) : t("pages.notifications.cronSoonLabel", { defaultValue: "Cron Soon Label" }),
           found: res.found,
           sent: res.sent,
         }),
@@ -148,7 +148,7 @@ export function NotificationsPage(): JSX.Element {
       });
       await load(true);
     } catch (e) {
-      setBanner({ msg: e instanceof Error ? e.message : t("pages.notifications.cronTriggerFailed"), type: 'error' });
+      setBanner({ msg: e instanceof Error ? e.message : t("pages.notifications.cronTriggerFailed", { defaultValue: "Cron Trigger Failed" }), type: 'error' });
     } finally {
       setCronBusy(null);
     }
@@ -171,23 +171,23 @@ export function NotificationsPage(): JSX.Element {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-sky-50 text-sky-600">
+            <span className="flex h-7 w-7 items-center justify-center rounded-[var(--radius-md)] bg-brand-info-soft text-brand-info">
               <Bell size={15} />
             </span>
             <span className="text-xs font-semibold uppercase tracking-widest text-slate-400">
               Unified Dispatch Intelligence
             </span>
           </div>
-          <h1 className="page-header-title">{t("pages.notifications.title") || "Notifications"}</h1>
-          <p className="page-header-sub">{t("pages.notifications.subtitle")}</p>
+          <h1 className="page-header-title">{t("pages.notifications.title", { defaultValue: "Title" }) || "Notifications"}</h1>
+          <p className="page-header-sub">{t("pages.notifications.subtitle", { defaultValue: "Subtitle" })}</p>
         </div>
         <div className="flex items-center gap-3">
-          <div className="hidden lg:flex flex-col items-end pr-4 border-r border-slate-100">
-            <span className="text-[10px] font-semibold uppercase tracking-widest text-slate-400">
-              {t("pages.notifications.systemLink")}
+          <div className="hidden lg:flex flex-col items-end pr-4 border-r border-brand-border">
+            <span className="text-[10px] font-semibold uppercase tracking-widest text-brand-muted">
+              {t("pages.notifications.systemLink", { defaultValue: "System Link" })}
             </span>
-            <span className="flex items-center gap-1.5 text-xs font-semibold text-teal-500 mt-0.5">
-              <Zap size={12} className="fill-teal-500" /> {t("pages.common.syncHealthy")}
+            <span className="flex items-center gap-1.5 text-xs font-semibold text-brand-primary mt-0.5">
+              <Zap size={12} className="fill-brand-primary" /> {t("pages.common.syncHealthy", { defaultValue: "Sync Healthy" })}
             </span>
           </div>
           <button
@@ -205,27 +205,27 @@ export function NotificationsPage(): JSX.Element {
         <section className="lg:col-span-7 card">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-base font-bold text-slate-800">{t("pages.notifications.testTitle")}</h2>
-              <p className="text-sm text-slate-400 mt-0.5">{t("pages.notifications.testHint")}</p>
+              <h2 className="text-base font-bold text-slate-800">{t("pages.notifications.testTitle", { defaultValue: "Test Title" })}</h2>
+              <p className="text-sm text-slate-400 mt-0.5">{t("pages.notifications.testHint", { defaultValue: "Test Hint" })}</p>
             </div>
-            <div className="h-12 w-12 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center">
+            <div className="h-12 w-12 rounded-[var(--radius-md)] bg-brand-info-soft text-brand-info flex items-center justify-center">
               <Smartphone size={22} />
             </div>
           </div>
 
           <div className="space-y-4">
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold uppercase tracking-widest text-slate-400">{t("pages.notifications.testPhonePlaceholder")}</label>
+              <label className="text-xs font-semibold uppercase tracking-widest text-slate-400">{t("pages.notifications.testPhonePlaceholder", { defaultValue: "Test Phone Placeholder" })}</label>
               <input
                 value={testTo}
                 onChange={e => setTestTo(e.target.value)}
                 placeholder="+63 9xx xxx xxxx"
-                className="h-11 w-full rounded-xl bg-slate-50 px-4 text-sm font-medium outline-none ring-1 ring-slate-100 focus:ring-2 focus:ring-teal-500 transition-all"
+                className="h-11 w-full rounded-[var(--radius-md)] border border-brand-border bg-brand-surface-soft px-4 text-sm font-medium outline-none focus:ring-1 focus:ring-brand-primary transition-all"
               />
             </div>
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
-                <label className="text-xs font-semibold uppercase tracking-widest text-slate-400">{t("pages.notifications.colMessage")}</label>
+                <label className="text-xs font-semibold uppercase tracking-widest text-slate-400">{t("pages.notifications.colMessage", { defaultValue: "Col Message" })}</label>
                 <span className={`text-xs font-semibold ${testMsg.length > 160 ? 'text-amber-500' : 'text-slate-300'}`}>
                   {testMsg.length} / 160
                 </span>
@@ -233,7 +233,7 @@ export function NotificationsPage(): JSX.Element {
               <textarea
                 value={testMsg}
                 onChange={e => setTestMsg(e.target.value)}
-                className="h-32 w-full rounded-xl bg-slate-50 px-4 py-3 text-sm font-medium outline-none ring-1 ring-slate-100 focus:ring-2 focus:ring-teal-500 transition-all resize-none"
+                className="h-32 w-full rounded-[var(--radius-md)] border border-brand-border bg-brand-surface-soft px-4 py-3 text-sm font-medium outline-none focus:ring-1 focus:ring-brand-primary transition-all resize-none"
               />
             </div>
             <button
@@ -242,7 +242,7 @@ export function NotificationsPage(): JSX.Element {
               className="btn-primary w-full flex items-center justify-center gap-3 disabled:opacity-40"
             >
               {testBusy ? <RefreshCw className="animate-spin h-4 w-4" /> : <Send size={16} />}
-              {testBusy ? "Broadcasting..." : t("pages.notifications.sendTest")}
+              {testBusy ? "Broadcasting..." : t("pages.notifications.sendTest", { defaultValue: "Send Test" })}
             </button>
           </div>
         </section>
@@ -254,9 +254,9 @@ export function NotificationsPage(): JSX.Element {
               <div className="h-10 w-10 rounded-xl bg-white/10 flex items-center justify-center text-sky-400">
                 <Server size={20} />
               </div>
-              <h2 className="text-base font-bold text-white">{t("pages.notifications.cronTitle")}</h2>
+              <h2 className="text-base font-bold text-white">{t("pages.notifications.cronTitle", { defaultValue: "Cron Title" })}</h2>
             </div>
-            <p className="text-sm font-medium text-slate-400 mb-6 leading-relaxed">{t("pages.notifications.cronHint")}</p>
+            <p className="text-sm font-medium text-slate-400 mb-6 leading-relaxed">{t("pages.notifications.cronHint", { defaultValue: "Cron Hint" })}</p>
 
             <div className="grid grid-cols-1 gap-3">
               <button
@@ -266,7 +266,7 @@ export function NotificationsPage(): JSX.Element {
               >
                 <div className="text-left">
                   <p className="text-[10px] font-semibold uppercase tracking-widest text-sky-400 mb-0.5">Morning Dispatch</p>
-                  <p className="text-sm font-semibold text-white">{t("pages.notifications.cronDaily")}</p>
+                  <p className="text-sm font-semibold text-white">{t("pages.notifications.cronDaily", { defaultValue: "Cron Daily" })}</p>
                 </div>
                 {cronBusy === 'daily' ? <RefreshCw className="animate-spin text-sky-400 h-4 w-4" /> : <ChevronRight size={18} className="text-white/20 group-hover/btn:translate-x-1 group-hover/btn:text-white transition-all" />}
               </button>
@@ -278,7 +278,7 @@ export function NotificationsPage(): JSX.Element {
               >
                 <div className="text-left">
                   <p className="text-[10px] font-semibold uppercase tracking-widest text-amber-400 mb-0.5">Live Sentinel</p>
-                  <p className="text-sm font-semibold text-white">{t("pages.notifications.cronSoon")}</p>
+                  <p className="text-sm font-semibold text-white">{t("pages.notifications.cronSoon", { defaultValue: "Cron Soon" })}</p>
                 </div>
                 {cronBusy === 'soon' ? <RefreshCw className="animate-spin text-amber-400 h-4 w-4" /> : <ChevronRight size={18} className="text-white/20 group-hover/btn:translate-x-1 group-hover/btn:text-white transition-all" />}
               </button>
@@ -314,18 +314,18 @@ export function NotificationsPage(): JSX.Element {
       <section className="space-y-4">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center justify-between">
           {/* Status Tabs */}
-          <div className="flex items-center gap-1 bg-white p-1.5 rounded-xl shadow-sm ring-1 ring-slate-100 overflow-x-auto">
+          <div className="flex items-center gap-1 bg-brand-surface p-1.5 rounded-[var(--radius-md)] border border-brand-border overflow-x-auto">
             <button
               onClick={() => setStatusFilter("")}
-              className={`flex h-9 px-4 items-center gap-2 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all whitespace-nowrap ${ statusFilter === "" ? "bg-slate-800 text-white shadow-sm" : "text-slate-400 hover:text-slate-600" }`}
+              className={`flex h-9 px-4 items-center gap-2 rounded-[var(--radius-sm)] text-xs font-semibold uppercase tracking-wider transition-all whitespace-nowrap ${ statusFilter === "" ? "bg-brand-primary text-white shadow-sm" : "text-brand-muted hover:text-brand-text" }`}
             >
-              <Activity size={13} /> {t("pages.notifications.all")}
+              <Activity size={13} /> {t("pages.notifications.all", { defaultValue: "All" })}
             </button>
             {(['PENDING', 'SENT', 'FAILED'] as Status[]).map(s => (
               <button
                 key={s}
                 onClick={() => setStatusFilter(s)}
-                className={`flex h-9 px-4 items-center gap-2 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all whitespace-nowrap ${ statusFilter === s ? "bg-slate-800 text-white shadow-sm" : "text-slate-400 hover:text-slate-600" }`}
+                className={`flex h-9 px-4 items-center gap-2 rounded-[var(--radius-sm)] text-xs font-semibold uppercase tracking-wider transition-all whitespace-nowrap ${ statusFilter === s ? "bg-brand-primary text-white shadow-sm" : "text-brand-muted hover:text-brand-text" }`}
               >
                 <div className={`h-2 w-2 rounded-full ${STATUS_STYLES[s].color.replace('text', 'bg')}`} />
                 {s}
@@ -339,8 +339,8 @@ export function NotificationsPage(): JSX.Element {
             <input
               value={tableQInput}
               onChange={e => setTableQInput(e.target.value)}
-              placeholder={t("pages.notifications.tableSearchPlaceholder")}
-              className="h-11 w-full rounded-xl bg-white pl-11 pr-4 text-sm font-medium shadow-sm ring-1 ring-slate-100 outline-none focus:ring-2 focus:ring-teal-500 transition-all"
+              placeholder={t("pages.notifications.tableSearchPlaceholder", { defaultValue: "Table Search Placeholder" })}
+              className="h-11 w-full rounded-[var(--radius-md)] bg-brand-surface pl-11 pr-4 text-sm font-medium border border-brand-border outline-none focus:ring-1 focus:ring-brand-primary transition-all"
             />
           </div>
         </div>
@@ -356,8 +356,8 @@ export function NotificationsPage(): JSX.Element {
             ) : displayRows.length === 0 ? (
               <ListEmptyState
                 icon="bell"
-                title={t("pages.notifications.emptyTitle")}
-                description={t("pages.notifications.emptyHint")}
+                title={t("pages.notifications.emptyTitle", { defaultValue: "Empty Title" })}
+                description={t("pages.notifications.emptyHint", { defaultValue: "Empty Hint" })}
               />
             ) : (
               displayRows.map((r, idx) => {
@@ -369,7 +369,7 @@ export function NotificationsPage(): JSX.Element {
                     initial={{ opacity: 0, y: 16 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: Math.min(idx * 0.05, 0.5) }}
-                    className="group flex flex-col lg:flex-row lg:items-center gap-5 p-5 bg-white rounded-2xl shadow-sm ring-1 ring-slate-100 transition-all hover:shadow-md hover:scale-[1.005]"
+                    className="group flex flex-col lg:flex-row lg:items-center gap-5 p-5 bg-brand-surface rounded-[var(--radius-lg)] border border-brand-border transition-all hover:shadow-md hover:scale-[1.005]"
                   >
                     <div className="flex items-center gap-4 flex-1 min-w-0">
                       <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl ${style.bg} ${style.color}`}>

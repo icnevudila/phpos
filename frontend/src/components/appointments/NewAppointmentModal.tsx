@@ -89,15 +89,15 @@ export function NewAppointmentModal({
     setError(null);
 
     if (!patient) {
-      setError(t("pages.appointments.modal.selectPatient"));
+      setError(t("pages.appointments.modal.selectPatient", { defaultValue: "Select Patient" }));
       return;
     }
     if (!dentistId) {
-      setError(t("pages.appointments.modal.selectDentist"));
+      setError(t("pages.appointments.modal.selectDentist", { defaultValue: "Select Dentist" }));
       return;
     }
     if (!scheduledAt) {
-      setError(t("pages.appointments.modal.selectDateTime"));
+      setError(t("pages.appointments.modal.selectDateTime", { defaultValue: "Select Date Time" }));
       return;
     }
 
@@ -125,7 +125,7 @@ export function NewAppointmentModal({
           });
       onSaved(saved);
     } catch (err) {
-      const msg = err instanceof Error ? err.message : t("pages.appointments.modal.saveFailed");
+      const msg = err instanceof Error ? err.message : t("pages.appointments.modal.saveFailed", { defaultValue: "Save Failed" });
       setError(msg);
     } finally {
       setSubmitting(false);
@@ -138,14 +138,14 @@ export function NewAppointmentModal({
         <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
           <div>
             <h2 className="text-lg font-bold text-slate-900">
-              {editing ? t("pages.appointments.modal.editTitle") : t("pages.appointments.modal.newTitle")}
+              {editing ? t("pages.appointments.modal.editTitle", { defaultValue: "Edit Title" }) : t("pages.appointments.modal.newTitle", { defaultValue: "New Title" })}
             </h2>
-            <p className="text-xs text-slate-500">{t("pages.appointments.modal.hoursHint")}</p>
+            <p className="text-xs text-slate-500">{t("pages.appointments.modal.hoursHint", { defaultValue: "Hours Hint" })}</p>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-full p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-700"
+            className="rounded-[var(--radius-sm)] p-1 text-brand-muted hover:bg-brand-surface-soft hover:text-brand-text transition-colors"
           >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="h-5 w-5">
               <path d="m6 6 12 12M18 6 6 18" strokeLinecap="round" strokeLinejoin="round" />
@@ -155,8 +155,8 @@ export function NewAppointmentModal({
 
         <form onSubmit={onSubmit} className="space-y-4 px-6 py-5">
           <div>
-            <label className="mb-1 block text-xs font-semibold uppercase tracking-wider text-slate-500">
-              Patient
+            <label className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-brand-muted">
+              {t("pages.appointments.modal.patient", { defaultValue: "Patient" })}
             </label>
             <PatientAutocomplete
               value={patient}
@@ -167,8 +167,8 @@ export function NewAppointmentModal({
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label className="mb-1 block text-xs font-semibold uppercase tracking-wider text-slate-500">
-                Dentist
+              <label className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-brand-muted">
+                {t("pages.appointments.modal.dentist", { defaultValue: "Dentist" })}
               </label>
               <DentistSelect
                 dentists={dentists}
@@ -178,13 +178,13 @@ export function NewAppointmentModal({
               />
             </div>
             <div>
-              <label className="mb-1 block text-xs font-semibold uppercase tracking-wider text-slate-500">
-                Type
+              <label className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-brand-muted">
+                {t("pages.appointments.modal.type", { defaultValue: "Type" })}
               </label>
               <select
                 value={type}
                 onChange={(e) => setType(e.target.value as AppointmentType)}
-                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:border-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-100"
+                className="w-full h-10 rounded-[var(--radius-md)] border border-brand-border bg-brand-surface px-3 py-2 text-xs font-semibold focus:border-brand-primary focus:outline-none focus:ring-1 focus:ring-brand-primary transition-shadow"
               >
                 {APPOINTMENT_TYPES.map((t) => (
                   <option key={t} value={t}>
@@ -197,24 +197,24 @@ export function NewAppointmentModal({
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label className="mb-1 block text-xs font-semibold uppercase tracking-wider text-slate-500">
-                Date & time
+              <label className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-brand-muted">
+                {t("pages.appointments.modal.dateTime", { defaultValue: "Date & time" })}
               </label>
               <input
                 type="datetime-local"
                 value={scheduledAt}
                 onChange={(e) => setScheduledAt(e.target.value)}
-                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:border-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-100"
+                className="w-full h-10 rounded-[var(--radius-md)] border border-brand-border bg-brand-surface px-3 py-2 text-xs font-semibold focus:border-brand-primary focus:outline-none focus:ring-1 focus:ring-brand-primary transition-shadow"
               />
             </div>
             <div>
-              <label className="mb-1 block text-xs font-semibold uppercase tracking-wider text-slate-500">
-                Duration
+              <label className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-brand-muted">
+                {t("pages.appointments.modal.duration", { defaultValue: "Duration" })}
               </label>
               <select
                 value={duration}
                 onChange={(e) => setDuration(Number(e.target.value))}
-                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:border-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-100"
+                className="w-full h-10 rounded-[var(--radius-md)] border border-brand-border bg-brand-surface px-3 py-2 text-xs font-semibold focus:border-brand-primary focus:outline-none focus:ring-1 focus:ring-brand-primary transition-shadow"
               >
                 {DURATION_OPTIONS.map((d) => (
                   <option key={d} value={d}>
@@ -226,20 +226,20 @@ export function NewAppointmentModal({
           </div>
 
           <div>
-            <label className="mb-1 block text-xs font-semibold uppercase tracking-wider text-slate-500">
-              Chief complaint / notes
+            <label className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-brand-muted">
+              {t("pages.appointments.modal.notes", { defaultValue: "Chief complaint / notes" })}
             </label>
             <input
               value={chairNo}
               onChange={(e) => setChairNo(e.target.value)}
-              placeholder={t("pages.appointments.modal.chairPlaceholder")}
-              className="mb-2 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:border-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-100"
+              placeholder={t("pages.appointments.modal.chairPlaceholder", { defaultValue: "Chair Placeholder" })}
+              className="mb-2 w-full h-10 rounded-[var(--radius-md)] border border-brand-border bg-brand-surface px-3 py-2 text-xs font-semibold focus:border-brand-primary focus:outline-none focus:ring-1 focus:ring-brand-primary transition-shadow"
             />
             <textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               rows={3}
-              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:border-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-100"
+              className="w-full rounded-[var(--radius-md)] border border-brand-border bg-brand-surface px-3 py-2 text-xs font-semibold focus:border-brand-primary focus:outline-none focus:ring-1 focus:ring-brand-primary transition-shadow resize-none"
             />
           </div>
 
@@ -253,20 +253,20 @@ export function NewAppointmentModal({
             <button
               type="button"
               onClick={onClose}
-              className="rounded-lg px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100"
+              className="btn-secondary"
             >
-              Cancel
+              {t("pages.appointments.modal.cancel", { defaultValue: "Cancel" })}
             </button>
             <button
               type="submit"
               disabled={submitting}
-              className="rounded-lg bg-gradient-to-br from-teal-500 to-sky-500 px-5 py-2 text-sm font-semibold text-white shadow hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-70"
+              className="btn-primary"
             >
               {submitting
-                ? t("pages.appointments.modal.saving")
+                ? t("pages.appointments.modal.saving", { defaultValue: "Saving" })
                 : editing
-                  ? t("pages.appointments.modal.saveChanges")
-                  : t("pages.appointments.modal.create")}
+                  ? t("pages.appointments.modal.saveChanges", { defaultValue: "Save Changes" })
+                  : t("pages.appointments.modal.create", { defaultValue: "Create" })}
             </button>
           </div>
         </form>

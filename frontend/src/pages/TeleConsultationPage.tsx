@@ -58,7 +58,7 @@ export function TeleConsultationPage() {
          <div className="flex items-center gap-2.5">
             <div className="px-3 py-1.5 rounded-xl bg-teal-500/10 border border-teal-500/20 text-teal-400 text-[10px] font-semibold uppercase tracking-wider flex items-center gap-1.5">
                <div className="h-1.5 w-1.5 rounded-full bg-teal-500 animate-pulse" />
-               {t("pages.teleConsultation.secureConnection")}
+               {t("pages.teleConsultation.secureConnection", { defaultValue: "Secure Connection" })}
             </div>
          </div>
       </header>
@@ -72,8 +72,8 @@ export function TeleConsultationPage() {
                   <User size={56} />
                </div>
                <div>
-                  <h3 className="text-xl font-bold">{t("pages.teleConsultation.patientNameFallback")}</h3>
-                  <p className="text-slate-500 font-medium mt-1 text-sm">{t("pages.teleConsultation.connectingCamera")}</p>
+                  <h3 className="text-xl font-bold">{t("pages.teleConsultation.patientNameFallback", { defaultValue: "Patient Name Fallback" })}</h3>
+                  <p className="text-slate-500 font-medium mt-1 text-sm">{t("pages.teleConsultation.connectingCamera", { defaultValue: "Connecting Camera" })}</p>
                </div>
             </div>
             {/* Visual Effect */}
@@ -93,7 +93,7 @@ export function TeleConsultationPage() {
             )}
             <div className="absolute bottom-5 left-5 px-3 py-1.5 rounded-lg bg-white/80 backdrop-blur-md text-[10px] font-semibold uppercase tracking-wider border border-white/10">
                {t("pages.teleConsultation.selfView", {
-                 name: t("pages.teleConsultation.selfViewFallback"),
+                 name: t("pages.teleConsultation.selfViewFallback", { defaultValue: "Self View Fallback" }),
                })}
             </div>
          </div>
@@ -119,14 +119,14 @@ export function TeleConsultationPage() {
            onClick={() => {
              if (!isJoined) setIsJoined(true);
              else {
-               if (confirm(t("pages.teleConsultation.endConfirm"))) navigate(-1);
+               if (confirm(t("pages.teleConsultation.endConfirm", { defaultValue: "End Confirm" }))) navigate(-1);
              }
            }}
            className={`h-16 px-10 rounded-full flex items-center gap-3 transition-all shadow-xl ${isJoined ? "bg-rose-600 hover:bg-rose-700 shadow-rose-600/20" : "bg-teal-600 hover:bg-teal-700 shadow-teal-600/20"}`}
          >
             {isJoined ? <PhoneOff size={24} /> : <Video size={24} />}
             <span className="text-xs font-bold uppercase tracking-wider">
-               {isJoined ? t("pages.teleConsultation.endCall") : t("pages.teleConsultation.startCall")}
+               {isJoined ? t("pages.teleConsultation.endCall", { defaultValue: "End Call" }) : t("pages.teleConsultation.startCall", { defaultValue: "Start Call" })}
             </span>
          </button>
 

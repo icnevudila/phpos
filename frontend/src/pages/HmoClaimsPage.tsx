@@ -175,15 +175,15 @@ export function HmoClaimsPage(): JSX.Element {
   // priorityClaims removed
 
   const runbookSteps = useMemo(() => [
-    { key: "critical", label: t("pages.hmoClaims.runbookStepCritical"), count: openClaimAging.critical, tone: "teal", onClick: () => { setStatus("SUBMITTED"); setAgingBand("CRITICAL"); } },
-    { key: "submit", label: t("pages.hmoClaims.runbookStepSubmit"), count: claims.filter(c => c.status === "DRAFT").length, tone: "sky", onClick: () => { setStatus("DRAFT"); setAgingBand("ALL"); } },
-    { key: "cashflow", label: t("pages.hmoClaims.runbookStepCashflow"), count: claims.filter(c => c.status === "APPROVED").length, tone: "teal", onClick: () => { setStatus("APPROVED"); setAgingBand("ALL"); } },
+    { key: "critical", label: t("pages.hmoClaims.runbookStepCritical", { defaultValue: "Runbook Step Critical" }), count: openClaimAging.critical, tone: "teal", onClick: () => { setStatus("SUBMITTED"); setAgingBand("CRITICAL"); } },
+    { key: "submit", label: t("pages.hmoClaims.runbookStepSubmit", { defaultValue: "Runbook Step Submit" }), count: claims.filter(c => c.status === "DRAFT").length, tone: "sky", onClick: () => { setStatus("DRAFT"); setAgingBand("ALL"); } },
+    { key: "cashflow", label: t("pages.hmoClaims.runbookStepCashflow", { defaultValue: "Runbook Step Cashflow" }), count: claims.filter(c => c.status === "APPROVED").length, tone: "teal", onClick: () => { setStatus("APPROVED"); setAgingBand("ALL"); } },
   ], [openClaimAging.critical, claims, t]);
 
   const setClaimStatus = async (id: string, next: HmoClaimStatus) => {
     try {
       await updateHmoClaimStatus(id, next);
-      toast.success(t("pages.hmoClaims.toastUpdated"));
+      toast.success(t("pages.hmoClaims.toastUpdated", { defaultValue: "Toast Updated" }));
       void queryClient.invalidateQueries({ queryKey: ["hmoClaims"] });
     } catch (e) { toast.error((e as Error).message); }
   };
@@ -191,13 +191,13 @@ export function HmoClaimsPage(): JSX.Element {
   const onDownloadReconciliation = async () => {
     try {
       await downloadHmoClaimsReconciliationCsv({ year: reconYear, month: reconMonth, providerId: providerId || undefined });
-      toast.success(t("pages.hmoClaims.reconciliationReady"));
+      toast.success(t("pages.hmoClaims.reconciliationReady", { defaultValue: "Reconciliation Ready" }));
     } catch (e) { toast.error((e as Error).message); }
   };
 
   const onCopyLink = async () => {
     await navigator.clipboard.writeText(window.location.href);
-    toast.success(t("pages.hmoClaims.viewLinkCopied"));
+    toast.success(t("pages.hmoClaims.viewLinkCopied", { defaultValue: "View Link Copied" }));
   };
 
   return (
@@ -213,14 +213,14 @@ export function HmoClaimsPage(): JSX.Element {
               Clinical Revenue Operations
             </span>
           </div>
-          <h1 className="page-header-title">{t("pages.hmoClaims.title") || "HMO Claims"}</h1>
-          <p className="page-header-sub">{t("pages.hmoClaims.subtitle")}</p>
+          <h1 className="page-header-title">{t("pages.hmoClaims.title", { defaultValue: "Title" }) || "HMO Claims"}</h1>
+          <p className="page-header-sub">{t("pages.hmoClaims.subtitle", { defaultValue: "Subtitle" })}</p>
         </div>
         <div className="flex items-center gap-2">
           <button
             onClick={onCopyLink}
             className="btn-secondary flex items-center gap-2"
-            title={t("pages.hmoClaims.copyViewLink")}
+            title={t("pages.hmoClaims.copyViewLink", { defaultValue: "Copy View Link" })}
           >
             <Copy size={15} />
           </button>
@@ -235,10 +235,10 @@ export function HmoClaimsPage(): JSX.Element {
 
       {/* Metrics */}
       <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
-        <PulseMetric label={t("pages.hmoClaims.metricPending")} value={metrics.pending} iconBg="bg-brand-warning-soft text-brand-warning" icon={Clock} />
-        <PulseMetric label={t("pages.hmoClaims.metricApproved")} value={metrics.approved} iconBg="bg-brand-primary-soft text-brand-primary" icon={CheckCircle2} />
-        <PulseMetric label={t("pages.hmoClaims.metricRejected")} value={metrics.rejected} iconBg="bg-brand-danger-soft text-brand-danger" icon={XCircle} />
-        <PulseMetric label={t("pages.hmoClaims.metricRequested")} value={PHP.format(metrics.totalRequested)} iconBg="bg-brand-primary-soft text-brand-primary" icon={Wallet} isCurrency />
+        <PulseMetric label={t("pages.hmoClaims.metricPending", { defaultValue: "Metric Pending" })} value={metrics.pending} iconBg="bg-brand-warning-soft text-brand-warning" icon={Clock} />
+        <PulseMetric label={t("pages.hmoClaims.metricApproved", { defaultValue: "Metric Approved" })} value={metrics.approved} iconBg="bg-brand-primary-soft text-brand-primary" icon={CheckCircle2} />
+        <PulseMetric label={t("pages.hmoClaims.metricRejected", { defaultValue: "Metric Rejected" })} value={metrics.rejected} iconBg="bg-brand-danger-soft text-brand-danger" icon={XCircle} />
+        <PulseMetric label={t("pages.hmoClaims.metricRequested", { defaultValue: "Metric Requested" })} value={PHP.format(metrics.totalRequested)} iconBg="bg-brand-primary-soft text-brand-primary" icon={Wallet} isCurrency />
       </div>
 
       {/* Main Layout */}
@@ -282,12 +282,12 @@ export function HmoClaimsPage(): JSX.Element {
           {/* Efficiency Panel */}
           <div className="card bg-brand-navy ring-0 shadow-popover text-white">
             <h3 className="text-xs font-bold uppercase tracking-widest text-brand-primary mb-5 flex items-center gap-2">
-              <TrendingUp size={14} /> {t("pages.hmoClaims.efficiencyPulseTitle")}
+              <TrendingUp size={14} /> {t("pages.hmoClaims.efficiencyPulseTitle", { defaultValue: "Efficiency Pulse Title" })}
             </h3>
             <div className="space-y-4">
-              <EfficiencyBar label={t("pages.hmoClaims.slaCompliance")} value={88} color="bg-brand-primary" />
-              <EfficiencyBar label={t("pages.hmoClaims.submissionVelocity")} value={64} color="bg-brand-info" />
-              <EfficiencyBar label={t("pages.hmoClaims.approvalRate")} value={92} color="bg-brand-primary" />
+              <EfficiencyBar label={t("pages.hmoClaims.slaCompliance", { defaultValue: "Sla Compliance" })} value={88} color="bg-brand-primary" />
+              <EfficiencyBar label={t("pages.hmoClaims.submissionVelocity", { defaultValue: "Submission Velocity" })} value={64} color="bg-brand-info" />
+              <EfficiencyBar label={t("pages.hmoClaims.approvalRate", { defaultValue: "Approval Rate" })} value={92} color="bg-brand-primary" />
             </div>
           </div>
         </div>
@@ -334,10 +334,10 @@ export function HmoClaimsPage(): JSX.Element {
               <table className="data-table min-w-[800px]">
                 <thead className="bg-brand-surface-muted">
                   <tr>
-                    <th>{t("pages.hmoClaims.colClaimProfile")}</th>
-                    <th className="text-right">{t("pages.hmoClaims.colRequested")}</th>
-                    <th className="text-right">{t("pages.hmoClaims.colApproved")}</th>
-                    <th>{t("pages.hmoClaims.colStatus")}</th>
+                    <th>{t("pages.hmoClaims.colClaimProfile", { defaultValue: "Col Claim Profile" })}</th>
+                    <th className="text-right">{t("pages.hmoClaims.colRequested", { defaultValue: "Col Requested" })}</th>
+                    <th className="text-right">{t("pages.hmoClaims.colApproved", { defaultValue: "Col Approved" })}</th>
+                    <th>{t("pages.hmoClaims.colStatus", { defaultValue: "Col Status" })}</th>
                     <th></th>
                   </tr>
                 </thead>
@@ -354,7 +354,7 @@ export function HmoClaimsPage(): JSX.Element {
                         </td>
                       </tr>
                     ) : displayClaims.length === 0 ? (
-                      <tr><td colSpan={5} className="py-20"><ListEmptyState icon="shield" title={t("pages.hmoClaims.emptyTitle")} description={t("pages.hmoClaims.emptyHint")} primary={{ kind: "link", to: "/invoices", label: t("pages.hmoClaims.emptyCtaInvoices") }} /></td></tr>
+                      <tr><td colSpan={5} className="py-20"><ListEmptyState icon="shield" title={t("pages.hmoClaims.emptyTitle", { defaultValue: "Empty Title" })} description={t("pages.hmoClaims.emptyHint", { defaultValue: "Empty Hint" })} primary={{ kind: "link", to: "/invoices", label: t("pages.hmoClaims.emptyCtaInvoices", { defaultValue: "Empty Cta Invoices" }) }} /></td></tr>
                     ) : displayClaims.map((c, idx) => {
                       const cfg = STATUS_CONFIG[c.status];
                       const StatusIcon = cfg.icon;
@@ -400,16 +400,16 @@ export function HmoClaimsPage(): JSX.Element {
                             <div className="flex items-center justify-end gap-2">
                               <div className="flex opacity-0 group-hover:opacity-100 transition-all translate-x-3 group-hover:translate-x-0 gap-1.5">
                                 {canSetHmoClaimStatus(c.status, "SUBMITTED") && (
-                                  <button onClick={() => void setClaimStatus(c.id, "SUBMITTED")} className="h-8 px-3 rounded-[var(--radius-sm)] bg-brand-info-soft text-brand-info text-[10px] font-bold uppercase tracking-widest hover:bg-brand-info hover:text-white transition-all">{t("pages.hmoClaims.actionSubmit")}</button>
+                                  <button onClick={() => void setClaimStatus(c.id, "SUBMITTED")} className="h-8 px-3 rounded-[var(--radius-sm)] bg-brand-info-soft text-brand-info text-[10px] font-bold uppercase tracking-widest hover:bg-brand-info hover:text-white transition-all">{t("pages.hmoClaims.actionSubmit", { defaultValue: "Action Submit" })}</button>
                                 )}
                                 {canSetHmoClaimStatus(c.status, "DRAFT") && (
-                                  <button onClick={() => void setClaimStatus(c.id, "DRAFT")} className="h-8 px-3 rounded-[var(--radius-sm)] bg-brand-surface-muted text-brand-text text-[10px] font-bold uppercase tracking-widest hover:bg-brand-text hover:text-white transition-all">{t("pages.hmoClaims.actionWithdraw")}</button>
+                                  <button onClick={() => void setClaimStatus(c.id, "DRAFT")} className="h-8 px-3 rounded-[var(--radius-sm)] bg-brand-surface-muted text-brand-text text-[10px] font-bold uppercase tracking-widest hover:bg-brand-text hover:text-white transition-all">{t("pages.hmoClaims.actionWithdraw", { defaultValue: "Action Withdraw" })}</button>
                                 )}
                                 {canSetHmoClaimStatus(c.status, "APPROVED") && (
-                                  <button onClick={() => void setClaimStatus(c.id, "APPROVED")} className="h-8 px-3 rounded-[var(--radius-sm)] bg-brand-primary-soft text-brand-primary text-[10px] font-bold uppercase tracking-widest hover:bg-brand-primary hover:text-white transition-all">{t("pages.hmoClaims.actionApprove")}</button>
+                                  <button onClick={() => void setClaimStatus(c.id, "APPROVED")} className="h-8 px-3 rounded-[var(--radius-sm)] bg-brand-primary-soft text-brand-primary text-[10px] font-bold uppercase tracking-widest hover:bg-brand-primary hover:text-white transition-all">{t("pages.hmoClaims.actionApprove", { defaultValue: "Action Approve" })}</button>
                                 )}
                                 {canSetHmoClaimStatus(c.status, "PAID") && (
-                                  <button onClick={() => void setClaimStatus(c.id, "PAID")} className="h-8 px-3 rounded-[var(--radius-sm)] bg-brand-primary-soft text-brand-primary text-[10px] font-bold uppercase tracking-widest hover:bg-brand-primary hover:text-white transition-all">{t("pages.hmoClaims.actionPaid")}</button>
+                                  <button onClick={() => void setClaimStatus(c.id, "PAID")} className="h-8 px-3 rounded-[var(--radius-sm)] bg-brand-primary-soft text-brand-primary text-[10px] font-bold uppercase tracking-widest hover:bg-brand-primary hover:text-white transition-all">{t("pages.hmoClaims.actionPaid", { defaultValue: "Action Paid" })}</button>
                                 )}
                               </div>
                               <Link to={`/hmo-claims/${c.id}`} className="h-9 w-9 flex items-center justify-center rounded-[var(--radius-sm)] bg-brand-surface-muted text-brand-muted hover:bg-brand-primary hover:text-white transition-all">
@@ -447,7 +447,7 @@ export function HmoClaimsPage(): JSX.Element {
                   onClick={() => void onDownloadReconciliation()}
                   className="flex h-10 items-center gap-2 px-5 rounded-[var(--radius-sm)] bg-white text-brand-navy text-xs font-bold uppercase tracking-widest hover:scale-105 transition-transform"
                 >
-                  <Download size={14} /> {t("pages.hmoClaims.exportReconciliationCsv")}
+                  <Download size={14} /> {t("pages.hmoClaims.exportReconciliationCsv", { defaultValue: "Export Reconciliation Csv" })}
                 </button>
               </div>
             </div>

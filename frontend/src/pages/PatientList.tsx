@@ -85,7 +85,7 @@ export function PatientList(): JSX.Element {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const empty = t("common.empty");
+  const empty = t("common.empty", { defaultValue: "Empty" });
   const [qInput, setQInput] = useState("");
   const q = useDebouncedValue(qInput, 300);
   const [page, setPage] = useState(1);
@@ -100,11 +100,11 @@ export function PatientList(): JSX.Element {
     try {
       const rows = await fetchAllPatientsForExport(q);
       const headers = [
-        t("pages.patients.csvHeaders.name"),
-        t("pages.patients.csvHeaders.birthDate"),
-        t("pages.patients.csvHeaders.hmo"),
-        t("pages.patients.csvHeaders.phone"),
-        t("pages.patients.csvHeaders.lastVisit"),
+        t("pages.patients.csvHeaders.name", { defaultValue: "Name" }),
+        t("pages.patients.csvHeaders.birthDate", { defaultValue: "Birth Date" }),
+        t("pages.patients.csvHeaders.hmo", { defaultValue: "Hmo" }),
+        t("pages.patients.csvHeaders.phone", { defaultValue: "Phone" }),
+        t("pages.patients.csvHeaders.lastVisit", { defaultValue: "Last Visit" }),
       ];
       const body = rows.map((p) => [
         `${p.firstName} ${p.lastName}`.trim(),
@@ -117,7 +117,7 @@ export function PatientList(): JSX.Element {
       downloadCsv(`patients-${stamp}.csv`, rowsToCsv(headers, body));
       toast.success(t("pages.patients.exportReady", { count: rows.length }));
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : t("pages.patients.exportFailed"));
+      toast.error(e instanceof Error ? e.message : t("pages.patients.exportFailed", { defaultValue: "Export Failed" }));
     } finally {
       setExportBusy(false);
     }
@@ -142,7 +142,7 @@ export function PatientList(): JSX.Element {
         toast.message(t("pages.patients.importErrors", { count: errors.length, defaultValue: `${errors.length} row errors` }));
       }
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : t("pages.patients.importFailed"));
+      toast.error(e instanceof Error ? e.message : t("pages.patients.importFailed", { defaultValue: "Import Failed" }));
     } finally {
       setImportBusy(false);
     }
@@ -160,7 +160,7 @@ export function PatientList(): JSX.Element {
 
   useEffect(() => {
     if (rowsError) {
-      toast.error(t("pages.patients.loadFailed"));
+      toast.error(t("pages.patients.loadFailed", { defaultValue: "Load Failed" }));
     }
   }, [rowsError, t]);
 
@@ -186,9 +186,9 @@ export function PatientList(): JSX.Element {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="page-header-title">{t("nav.patients")}</h1>
+          <h1 className="page-header-title">{t("nav.patients", { defaultValue: "Patients" })}</h1>
           <p className="page-header-sub">
-            {data?.total ?? 0} {t("pages.patients.totalCountLabel") || "patients registered"}
+            {data?.total ?? 0} {t("pages.patients.totalCountLabel", { defaultValue: "Total Count Label" }) || "patients registered"}
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -216,14 +216,14 @@ export function PatientList(): JSX.Element {
             className="btn-secondary inline-flex items-center gap-2 disabled:opacity-40"
           >
             <Download size={16} />
-            {exportBusy ? t("pages.patients.exporting") : t("pages.patients.exportCsv")}
+            {exportBusy ? t("pages.patients.exporting", { defaultValue: "Exporting" }) : t("pages.patients.exportCsv", { defaultValue: "Export Csv" })}
           </button>
           <button
             onClick={() => setModalOpen(true)}
             className="btn-primary inline-flex items-center gap-2"
           >
             <Plus size={16} />
-            {t("pages.patients.newPatient")}
+            {t("pages.patients.newPatient", { defaultValue: "New Patient" })}
           </button>
         </div>
       </div>
@@ -234,7 +234,7 @@ export function PatientList(): JSX.Element {
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
           <input
             type="text"
-            placeholder={t("pages.patients.searchPlaceholder")}
+            placeholder={t("pages.patients.searchPlaceholder", { defaultValue: "Search Placeholder" })}
             value={qInput}
             onChange={(e) => {
               setQInput(e.target.value);
@@ -246,7 +246,7 @@ export function PatientList(): JSX.Element {
         <div className="flex items-center gap-2">
           <button className="btn-secondary inline-flex items-center gap-2">
             <Filter size={14} />
-            {t("common.filter") || "Filters"}
+            {t("common.filter", { defaultValue: "Filter" }) || "Filters"}
           </button>
         </div>
       </div>
@@ -257,10 +257,10 @@ export function PatientList(): JSX.Element {
           <table className="data-table">
             <thead>
               <tr>
-                <th>{t("pages.patients.colPatient")}</th>
-                <th>{t("pages.patients.colBirthDate")}</th>
-                <th>{t("pages.patients.colHmo")}</th>
-                <th>{t("pages.patients.colLastVisit")}</th>
+                <th>{t("pages.patients.colPatient", { defaultValue: "Col Patient" })}</th>
+                <th>{t("pages.patients.colBirthDate", { defaultValue: "Col Birth Date" })}</th>
+                <th>{t("pages.patients.colHmo", { defaultValue: "Col Hmo" })}</th>
+                <th>{t("pages.patients.colLastVisit", { defaultValue: "Col Last Visit" })}</th>
                 <th className="text-right"></th>
               </tr>
             </thead>
@@ -285,8 +285,8 @@ export function PatientList(): JSX.Element {
                     <td colSpan={5} className="px-6 py-20">
                       <ListEmptyState
                         icon="users"
-                        title={t("pages.patients.emptyTitle")}
-                        description={t("pages.patients.emptyHint")}
+                        title={t("pages.patients.emptyTitle", { defaultValue: "Empty Title" })}
+                        description={t("pages.patients.emptyHint", { defaultValue: "Empty Hint" })}
                       />
                     </td>
                   </tr>

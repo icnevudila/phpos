@@ -90,7 +90,7 @@ export function TreatmentEditorPanel({ appointmentId, disabled = false }: Props)
       setItems(rows);
       setInvoiceMeta(invoice);
     } catch (e) {
-      setError(e instanceof Error ? e.message : t("pages.appointments.treatmentEditor.loadFailed"));
+      setError(e instanceof Error ? e.message : t("pages.appointments.treatmentEditor.loadFailed", { defaultValue: "Load Failed" }));
     } finally {
       setLoading(false);
     }
@@ -141,21 +141,21 @@ export function TreatmentEditorPanel({ appointmentId, disabled = false }: Props)
       resetForm();
       await load();
     } catch (e) {
-      setError(e instanceof Error ? e.message : t("pages.appointments.treatmentEditor.saveFailed"));
+      setError(e instanceof Error ? e.message : t("pages.appointments.treatmentEditor.saveFailed", { defaultValue: "Save Failed" }));
     } finally {
       setBusy(false);
     }
   }
 
   async function remove(id: string): Promise<void> {
-    if (!confirm(t("pages.appointments.treatmentRowDeleteConfirm"))) return;
+    if (!confirm(t("pages.appointments.treatmentRowDeleteConfirm", { defaultValue: "Treatment Row Delete Confirm" }))) return;
     setBusy(true);
     setError(null);
     try {
       await deleteTreatment(id);
       await load();
     } catch (e) {
-      setError(e instanceof Error ? e.message : t("pages.appointments.treatmentEditor.deleteFailed"));
+      setError(e instanceof Error ? e.message : t("pages.appointments.treatmentEditor.deleteFailed", { defaultValue: "Delete Failed" }));
     } finally {
       setBusy(false);
     }
@@ -168,7 +168,7 @@ export function TreatmentEditorPanel({ appointmentId, disabled = false }: Props)
       await finalizeAppointmentTreatments(appointmentId);
       await load();
     } catch (e) {
-      setError(e instanceof Error ? e.message : t("pages.appointments.treatmentEditor.finalizeFailed"));
+      setError(e instanceof Error ? e.message : t("pages.appointments.treatmentEditor.finalizeFailed", { defaultValue: "Finalize Failed" }));
     } finally {
       setBusy(false);
     }
@@ -178,10 +178,10 @@ export function TreatmentEditorPanel({ appointmentId, disabled = false }: Props)
     <section className="space-y-3 rounded-xl border border-slate-200 bg-slate-50/70 p-3">
       <div className="flex items-center justify-between">
         <h4 className="text-xs font-bold uppercase tracking-wider text-slate-700">
-          {t("pages.appointments.treatmentEditor.title")}
+          {t("pages.appointments.treatmentEditor.title", { defaultValue: "Title" })}
         </h4>
         <div className="text-xs text-slate-600">
-          {t("pages.appointments.treatmentEditor.subtotal")}{" "}
+          {t("pages.appointments.treatmentEditor.subtotal", { defaultValue: "Subtotal" })}{" "}
           <strong className="text-slate-900">{PHP.format(subtotal)}</strong>
         </div>
       </div>
@@ -197,29 +197,29 @@ export function TreatmentEditorPanel({ appointmentId, disabled = false }: Props)
             status: invoiceMeta.status,
           })}{" "}
           <a href={`/invoices/${invoiceMeta.id}`} className="font-semibold underline">
-            {t("pages.appointments.treatmentEditor.openInvoice")}
+            {t("pages.appointments.treatmentEditor.openInvoice", { defaultValue: "Open Invoice" })}
           </a>
         </div>
       ) : (
         <div className="rounded-lg border border-amber-200 bg-amber-50 px-2 py-1 text-xs text-amber-800">
-          {t("pages.appointments.treatmentEditor.notFinalized")}
+          {t("pages.appointments.treatmentEditor.notFinalized", { defaultValue: "Not Finalized" })}
         </div>
       )}
 
       {loading ? (
-        <p className="text-xs text-slate-500">{t("pages.appointments.treatmentEditor.loadingRows")}</p>
+        <p className="text-xs text-slate-500">{t("pages.appointments.treatmentEditor.loadingRows", { defaultValue: "Loading Rows" })}</p>
       ) : items.length === 0 ? (
-        <p className="text-xs text-slate-500">{t("pages.appointments.treatmentEditor.emptyRows")}</p>
+        <p className="text-xs text-slate-500">{t("pages.appointments.treatmentEditor.emptyRows", { defaultValue: "Empty Rows" })}</p>
       ) : (
         <div className="max-h-44 overflow-y-auto rounded-lg border border-slate-200 bg-white">
           <table className="w-full text-xs">
             <thead className="bg-slate-50 text-slate-500">
               <tr>
-                <th className="px-2 py-1 text-left">{t("pages.appointments.treatmentEditor.colProcedure")}</th>
-                <th className="px-2 py-1 text-right">{t("pages.appointments.treatmentEditor.colQty")}</th>
-                <th className="px-2 py-1 text-right">{t("pages.appointments.treatmentEditor.colUnit")}</th>
-                <th className="px-2 py-1 text-right">{t("pages.appointments.treatmentEditor.colTotal")}</th>
-                <th className="px-2 py-1 text-right">{t("pages.appointments.treatmentEditor.colActions")}</th>
+                <th className="px-2 py-1 text-left">{t("pages.appointments.treatmentEditor.colProcedure", { defaultValue: "Col Procedure" })}</th>
+                <th className="px-2 py-1 text-right">{t("pages.appointments.treatmentEditor.colQty", { defaultValue: "Col Qty" })}</th>
+                <th className="px-2 py-1 text-right">{t("pages.appointments.treatmentEditor.colUnit", { defaultValue: "Col Unit" })}</th>
+                <th className="px-2 py-1 text-right">{t("pages.appointments.treatmentEditor.colTotal", { defaultValue: "Col Total" })}</th>
+                <th className="px-2 py-1 text-right">{t("pages.appointments.treatmentEditor.colActions", { defaultValue: "Col Actions" })}</th>
               </tr>
             </thead>
             <tbody>
@@ -228,7 +228,7 @@ export function TreatmentEditorPanel({ appointmentId, disabled = false }: Props)
                   <td className="px-2 py-1">
                     {row.procedure}
                     <div className="text-[10px] text-slate-500">
-                      {row.toothIds.join(", ") || t("pages.appointments.treatmentEditor.toothGeneral")}
+                      {row.toothIds.join(", ") || t("pages.appointments.treatmentEditor.toothGeneral", { defaultValue: "Tooth General" })}
                     </div>
                   </td>
                   <td className="px-2 py-1 text-right">{row.quantity}</td>
@@ -244,14 +244,14 @@ export function TreatmentEditorPanel({ appointmentId, disabled = false }: Props)
                           onClick={() => fillForEdit(row)}
                           className="rounded border border-slate-300 px-1.5 py-0.5 text-[10px] font-semibold text-slate-700 hover:bg-slate-50"
                         >
-                          {t("pages.appointments.treatmentEditor.edit")}
+                          {t("pages.appointments.treatmentEditor.edit", { defaultValue: "Edit" })}
                         </button>
                         <button
                           type="button"
                           onClick={() => void remove(row.id)}
                           className="rounded border border-rose-300 px-1.5 py-0.5 text-[10px] font-semibold text-rose-700 hover:bg-rose-50"
                         >
-                          {t("pages.appointments.treatmentEditor.delete")}
+                          {t("pages.appointments.treatmentEditor.delete", { defaultValue: "Delete" })}
                         </button>
                       </div>
                     ) : null}
@@ -280,7 +280,7 @@ export function TreatmentEditorPanel({ appointmentId, disabled = false }: Props)
             <input
               value={form.toothIdsText}
               onChange={(e) => setForm((s) => ({ ...s, toothIdsText: e.target.value }))}
-              placeholder={t("pages.appointments.treatmentEditor.placeholderToothIds")}
+              placeholder={t("pages.appointments.treatmentEditor.placeholderToothIds", { defaultValue: "Placeholder Tooth Ids" })}
               className="rounded border border-slate-300 px-2 py-1 text-xs"
             />
             <input
@@ -303,7 +303,7 @@ export function TreatmentEditorPanel({ appointmentId, disabled = false }: Props)
             value={form.notes}
             onChange={(e) => setForm((s) => ({ ...s, notes: e.target.value }))}
             rows={2}
-            placeholder={t("pages.appointments.treatmentEditor.placeholderNotes")}
+            placeholder={t("pages.appointments.treatmentEditor.placeholderNotes", { defaultValue: "Placeholder Notes" })}
             className="w-full rounded border border-slate-300 px-2 py-1 text-xs"
           />
           <div className="flex items-center justify-between">
@@ -314,8 +314,8 @@ export function TreatmentEditorPanel({ appointmentId, disabled = false }: Props)
               className="rounded bg-teal-600 px-2.5 py-1 text-xs font-semibold text-white hover:bg-teal-700 disabled:opacity-60"
             >
               {editingId
-                ? t("pages.appointments.treatmentEditor.updateRow")
-                : t("pages.appointments.treatmentEditor.addRow")}
+                ? t("pages.appointments.treatmentEditor.updateRow", { defaultValue: "Update Row" })
+                : t("pages.appointments.treatmentEditor.addRow", { defaultValue: "Add Row" })}
             </button>
             <div className="flex gap-1">
               {editingId ? (
@@ -324,7 +324,7 @@ export function TreatmentEditorPanel({ appointmentId, disabled = false }: Props)
                   onClick={resetForm}
                   className="rounded border border-slate-300 px-2 py-1 text-[10px] font-semibold text-slate-700"
                 >
-                  Cancel edit
+                  {t(`${TE}.cancelEdit`, { defaultValue: "Cancel edit" })}
                 </button>
               ) : null}
               <button
@@ -333,7 +333,7 @@ export function TreatmentEditorPanel({ appointmentId, disabled = false }: Props)
                 onClick={() => void finalize()}
                 className="rounded border border-indigo-300 bg-white px-2 py-1 text-[10px] font-semibold text-indigo-700 hover:bg-indigo-50 disabled:opacity-60"
               >
-                {t("pages.appointments.treatmentEditor.finalizeToInvoice")}
+                {t("pages.appointments.treatmentEditor.finalizeToInvoice", { defaultValue: "Finalize To Invoice" })}
               </button>
             </div>
           </div>

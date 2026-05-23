@@ -52,18 +52,18 @@ export function AnnouncementBar(): JSX.Element | null {
                 <span className="absolute inset-0 animate-ping rounded-full bg-teal-300 opacity-70" />
                 <span className="relative h-1.5 w-1.5 rounded-full bg-teal-300" />
               </span>
-              {t("landing.announceBadge")}
+              {t("landing.announceBadge", { defaultValue: "Announce Badge" })}
             </span>
             <p className="flex-1 truncate font-medium">
-              <span className="font-bold">{t("landing.announceTitle")}</span>
+              <span className="font-bold">{t("landing.announceTitle", { defaultValue: "Announce Title" })}</span>
               <span className="mx-2 opacity-60">·</span>
-              <span className="opacity-90">{t("landing.announceSub")}</span>
+              <span className="opacity-90">{t("landing.announceSub", { defaultValue: "Announce Sub" })}</span>
             </p>
             <a
               href="#cta"
               className="group hidden items-center gap-1 rounded-full bg-brand-surface/15 px-3 py-1 text-xs font-bold ring-1 ring-brand-border/10/30 transition hover:bg-brand-surface/25 sm:inline-flex"
             >
-              {t("landing.announceCta")}
+              {t("landing.announceCta", { defaultValue: "Announce Cta" })}
               <svg
                 viewBox="0 0 24 24"
                 fill="none"
@@ -76,7 +76,7 @@ export function AnnouncementBar(): JSX.Element | null {
             </a>
             <button
               onClick={dismiss}
-              aria-label={t("common.dismiss")}
+              aria-label={t("common.dismiss", { defaultValue: "Dismiss" })}
               className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-white/70 transition hover:bg-brand-surface/15 hover:text-white"
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="h-4 w-4">

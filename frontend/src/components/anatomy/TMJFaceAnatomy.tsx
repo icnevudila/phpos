@@ -210,7 +210,7 @@ export function TMJFaceAnatomy({
              onClick={() => selectedPoints.forEach(p => onPointClear?.(p))}
              className="pointer-events-auto flex items-center gap-2 rounded-full bg-teal-600 px-4 py-2 text-[10px] font-semibold uppercase text-white shadow-xl"
            >
-             <RotateCcw size={12} /> {t('common.clear')}
+             <RotateCcw size={12} /> {t('common.clear', { defaultValue: "Clear" })}
            </button>
         </div>
       </div>

@@ -50,7 +50,7 @@ export function ParallaxHero(): JSX.Element {
     return () => window.removeEventListener("mousemove", onMove);
   }, [heavyMotion, mx, my]);
 
-  const title = t("landing.heroTitle");
+  const title = t("landing.heroTitle", { defaultValue: "Hero Title" });
   const beforeBrand = title.split("<brand>")[0] ?? "";
   const brandText = title.match(/<brand>(.*?)<\/brand>/)?.[1] ?? "";
   const afterBrand = title.split("</brand>")[1] ?? "";
@@ -92,9 +92,9 @@ export function ParallaxHero(): JSX.Element {
                   <span className="absolute inset-0 animate-ping rounded-full bg-brand-primary/70" />
                   <span className="relative h-1.5 w-1.5 rounded-full bg-brand-primary" />
                 </span>
-                {t("landing.heroMetaStatus")}
+                {t("landing.heroMetaStatus", { defaultValue: "Hero Meta Status" })}
               </span>
-              <span className="truncate">{t("landing.heroMetaText")}</span>
+              <span className="truncate">{t("landing.heroMetaText", { defaultValue: "Hero Meta Text" })}</span>
             </a>
           </motion.div>
 
@@ -112,7 +112,7 @@ export function ParallaxHero(): JSX.Element {
             transition={{ delay: 0.5, duration: 0.5 }}
             className="mt-5 max-w-xl text-base leading-relaxed text-brand-muted sm:text-lg"
           >
-            {t("landing.heroSubtitle")}
+            {t("landing.heroSubtitle", { defaultValue: "Hero Subtitle" })}
           </motion.p>
 
           <motion.div
@@ -125,7 +125,7 @@ export function ParallaxHero(): JSX.Element {
               to="/login"
               className="group inline-flex min-h-11 w-full items-center justify-center gap-2.5 rounded-xl bg-brand-primary px-6 py-3 text-sm font-semibold text-white shadow-popover shadow-brand-primary/25 transition hover:-translate-y-0.5 hover:bg-brand-primary-hover sm:w-auto"
             >
-              <span>{t("landing.heroCtaPrimary")}</span>
+              <span>{t("landing.heroCtaPrimary", { defaultValue: "Hero Cta Primary" })}</span>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="h-4 w-4 transition group-hover:translate-x-0.5">
                 <path d="M5 12h14m-7-7 7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
@@ -145,10 +145,10 @@ export function ParallaxHero(): JSX.Element {
             className="mt-10 flex max-w-lg flex-wrap gap-2.5 border-t border-brand-border-strong pt-6"
           >
             {[
-              { Icon: IconTrustCloud, label: t("landing.trustCloud"), gradient: "from-sky-500 to-blue-500" },
-              { Icon: IconTrustShield, label: t("landing.trustPrivacy"), gradient: "from-teal-500 to-teal-500" },
-              { Icon: IconTrustDevice, label: t("landing.trustResponsive"), gradient: "from-teal-500 to-fuchsia-500" },
-              { Icon: IconTrustGlobe, label: t("landing.trustLangs"), gradient: "from-indigo-500 to-sky-500" },
+              { Icon: IconTrustCloud, label: t("landing.trustCloud", { defaultValue: "Trust Cloud" }), gradient: "from-sky-500 to-blue-500" },
+              { Icon: IconTrustShield, label: t("landing.trustPrivacy", { defaultValue: "Trust Privacy" }), gradient: "from-teal-500 to-teal-500" },
+              { Icon: IconTrustDevice, label: t("landing.trustResponsive", { defaultValue: "Trust Responsive" }), gradient: "from-teal-500 to-fuchsia-500" },
+              { Icon: IconTrustGlobe, label: t("landing.trustLangs", { defaultValue: "Trust Langs" }), gradient: "from-indigo-500 to-sky-500" },
             ].map((b) => (
               <span
                 key={b.label}

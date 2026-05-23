@@ -70,10 +70,10 @@ export function FeatureStack(): JSX.Element {
   const targetRef = useRef<HTMLDivElement>(null);
   
   const features = [
-    { title: t("landing.f1Title"), desc: t("landing.f1Desc"), icon: "📅" },
-    { title: t("landing.f2Title"), desc: t("landing.f2Desc"), icon: "🦷" },
-    { title: t("landing.f4Title"), desc: t("landing.f4Desc"), icon: "💳" },
-    { title: t("landing.f3Title"), desc: t("landing.f3Desc"), icon: "📋" },
+    { title: t("landing.f1Title", { defaultValue: "F1 Title" }), desc: t("landing.f1Desc", { defaultValue: "F1 Desc" }), icon: "📅" },
+    { title: t("landing.f2Title", { defaultValue: "F2 Title" }), desc: t("landing.f2Desc", { defaultValue: "F2 Desc" }), icon: "🦷" },
+    { title: t("landing.f4Title", { defaultValue: "F4 Title" }), desc: t("landing.f4Desc", { defaultValue: "F4 Desc" }), icon: "💳" },
+    { title: t("landing.f3Title", { defaultValue: "F3 Title" }), desc: t("landing.f3Desc", { defaultValue: "F3 Desc" }), icon: "📋" },
   ];
 
   return (

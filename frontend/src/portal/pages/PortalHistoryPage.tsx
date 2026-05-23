@@ -53,7 +53,7 @@ export function PortalHistoryPage(): JSX.Element {
       if (payUrl) {
         window.open(payUrl, "_blank");
       } else {
-        toast.warning(t("pages.portal.history.alertDevGcash"));
+        toast.warning(t("pages.portal.history.alertDevGcash", { defaultValue: "Alert Dev Gcash" }));
       }
     } catch (e) {
       toast.error(translatePortalError(e, t));
@@ -68,7 +68,7 @@ export function PortalHistoryPage(): JSX.Element {
   if (!data) {
     return (
       <div className="min-w-0 px-6 py-8 text-sm text-slate-500">
-        {t("pages.portal.history.loading")}
+        {t("pages.portal.history.loading", { defaultValue: "Loading" })}
       </div>
     );
   }
@@ -76,14 +76,14 @@ export function PortalHistoryPage(): JSX.Element {
   return (
     <div className="min-w-0 space-y-5 px-4 pt-5">
       <div>
-        <h1 className="text-xl font-black text-slate-900">{t("pages.portal.history.title")}</h1>
-        <p className="text-xs text-slate-500">{t("pages.portal.history.subtitle")}</p>
+        <h1 className="text-xl font-black text-slate-900">{t("pages.portal.history.title", { defaultValue: "Title" })}</h1>
+        <p className="text-xs text-slate-500">{t("pages.portal.history.subtitle", { defaultValue: "Subtitle" })}</p>
       </div>
 
       <div className="grid grid-cols-2 gap-3">
         <div className="rounded-2xl bg-teal-50 p-3 ring-1 ring-teal-100">
           <p className="text-[10px] font-bold uppercase tracking-wider text-teal-700">
-            {t("pages.portal.history.paidAllTime")}
+            {t("pages.portal.history.paidAllTime", { defaultValue: "Paid All Time" })}
           </p>
           <p className="mt-1 text-lg font-black text-teal-900">
             {php.format(Number(data.totals.paidAllTime))}
@@ -93,7 +93,7 @@ export function PortalHistoryPage(): JSX.Element {
           className={`rounded-2xl p-3 ring-1 ${ Number(data.totals.outstanding) > 0 ? "bg-rose-50 ring-rose-100 " : "bg-slate-50 ring-slate-200 " }`}
         >
           <p className="text-[10px] font-bold uppercase tracking-wider text-slate-600">
-            {t("pages.portal.history.outstanding")}
+            {t("pages.portal.history.outstanding", { defaultValue: "Outstanding" })}
           </p>
           <p
             className={`mt-1 text-lg font-black ${ Number(data.totals.outstanding) > 0 ? "text-rose-700 " : "text-slate-600 " }`}
@@ -111,7 +111,7 @@ export function PortalHistoryPage(): JSX.Element {
             onClick={() => setTab(k)}
             className={`min-h-10 flex-1 whitespace-nowrap rounded-full px-4 py-2 text-xs font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-inset ${ tab === k ? "bg-white text-slate-900 shadow-sm " : "text-slate-500 " }`}
           >
-            {k === "treatments" ? t("pages.portal.history.tabTreatments") : k === "invoices" ? t("pages.portal.history.tabInvoices") : "My Files"}
+            {k === "treatments" ? t("pages.portal.history.tabTreatments", { defaultValue: "Tab Treatments" }) : k === "invoices" ? t("pages.portal.history.tabInvoices", { defaultValue: "Tab Invoices" }) : "My Files"}
           </button>
         ))}
       </div>
@@ -119,7 +119,7 @@ export function PortalHistoryPage(): JSX.Element {
       {tab === "treatments" ? (
         data.treatments.length === 0 ? (
           <div className="rounded-2xl border-2 border-dashed border-slate-200 bg-white p-6 text-center text-sm text-slate-500">
-            {t("pages.portal.history.noTreatments")}
+            {t("pages.portal.history.noTreatments", { defaultValue: "No Treatments" })}
           </div>
         ) : (
           <ul className="space-y-3">
@@ -137,7 +137,7 @@ export function PortalHistoryPage(): JSX.Element {
                     {row.quantity > 1 ? ` ×${row.quantity}` : ""}
                   </p>
                   <p className="text-xs text-slate-500">
-                    {row.localDate} · {t("pages.common.drPrefix")} {row.dentistName}
+                    {row.localDate} · {t("pages.common.drPrefix", { defaultValue: "Dr Prefix" })} {row.dentistName}
                   </p>
                 </div>
                 <p className="shrink-0 text-sm font-black text-slate-900">
@@ -151,7 +151,7 @@ export function PortalHistoryPage(): JSX.Element {
         <ul className="space-y-3">
           {data.invoices.length === 0 ? (
             <div className="rounded-2xl border-2 border-dashed border-slate-200 bg-white p-6 text-center text-sm text-slate-500">
-              {t("pages.portal.history.noInvoices")}
+              {t("pages.portal.history.noInvoices", { defaultValue: "No Invoices" })}
             </div>
           ) : (
             data.invoices.map((inv) => (
@@ -161,7 +161,7 @@ export function PortalHistoryPage(): JSX.Element {
               >
                 <div className="flex items-center justify-between gap-2">
                   <p className="min-w-0 text-[11px] font-bold text-slate-600">
-                    {inv.orNumber ?? t("pages.portal.history.draft")}
+                    {inv.orNumber ?? t("pages.portal.history.draft", { defaultValue: "Draft" })}
                   </p>
                   <span
                     className={`shrink-0 rounded-full px-2 py-0.5 text-[9px] font-black uppercase tracking-wider ${ STATUS_STYLES[inv.status] ?? "bg-slate-200 text-slate-700 " }`}
@@ -178,7 +178,7 @@ export function PortalHistoryPage(): JSX.Element {
                   </p>
                 ) : (
                   <p className="mt-0.5 text-xs text-teal-700">
-                    {t("pages.portal.history.paidFull")}
+                    {t("pages.portal.history.paidFull", { defaultValue: "Paid Full" })}
                   </p>
                 )}
                 <div className="mt-3 flex gap-2">
@@ -188,7 +188,7 @@ export function PortalHistoryPage(): JSX.Element {
                       onClick={() => onPayWithGcash(inv.id)}
                       className="flex min-h-[44px] flex-1 items-center justify-center rounded-xl bg-[#007DFE] py-2.5 text-sm font-black text-white shadow-sm hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:ring-offset-2"
                     >
-                      {t("pages.portal.history.payGcash")}
+                      {t("pages.portal.history.payGcash", { defaultValue: "Pay Gcash" })}
                     </button>
                   ) : null}
                   <a

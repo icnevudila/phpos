@@ -1,3 +1,5 @@
+import { useTranslation } from "react-i18next";
+
 interface AppointmentRow {
   id: string;
   scheduledAt: string;
@@ -27,6 +29,7 @@ const STATUS_STYLES: Record<string, string> = {
 };
 
 export function AppointmentsTab({ items, dateLocale }: AppointmentsTabProps): JSX.Element {
+  const { t } = useTranslation();
   const dash = "--";
 
   const formatDateTime = (iso: string | null | undefined, empty: string, locale: string): string => {
@@ -44,7 +47,7 @@ export function AppointmentsTab({ items, dateLocale }: AppointmentsTabProps): JS
   if (items.length === 0) {
     return (
       <div className="card p-8 flex flex-col items-center justify-center text-center bg-brand-surface-soft border border-brand-border">
-        <p className="text-sm font-bold text-brand-muted uppercase tracking-widest">No Appointments Found</p>
+        <p className="text-sm font-bold text-brand-muted uppercase tracking-widest">{t("pages.patientDetail.appointments.empty", { defaultValue: "No Appointments Found" })}</p>
       </div>
     );
   }
@@ -55,11 +58,11 @@ export function AppointmentsTab({ items, dateLocale }: AppointmentsTabProps): JS
         <table className="w-full text-left border-collapse">
           <thead className="bg-brand-surface-muted border-b border-brand-border">
             <tr>
-              <th className="py-3 px-4 text-[10px] font-black uppercase tracking-widest text-brand-muted">When</th>
-              <th className="py-3 px-4 text-[10px] font-black uppercase tracking-widest text-brand-muted">Type</th>
-              <th className="py-3 px-4 text-[10px] font-black uppercase tracking-widest text-brand-muted">Provider</th>
-              <th className="py-3 px-4 text-[10px] font-black uppercase tracking-widest text-brand-muted">Duration</th>
-              <th className="py-3 px-4 text-[10px] font-black uppercase tracking-widest text-brand-muted">Status</th>
+              <th className="py-3 px-4 text-[10px] font-black uppercase tracking-widest text-brand-muted">{t("pages.patientDetail.appointments.colWhen", { defaultValue: "When" })}</th>
+              <th className="py-3 px-4 text-[10px] font-black uppercase tracking-widest text-brand-muted">{t("pages.patientDetail.appointments.colType", { defaultValue: "Type" })}</th>
+              <th className="py-3 px-4 text-[10px] font-black uppercase tracking-widest text-brand-muted">{t("pages.patientDetail.appointments.colProvider", { defaultValue: "Provider" })}</th>
+              <th className="py-3 px-4 text-[10px] font-black uppercase tracking-widest text-brand-muted">{t("pages.patientDetail.appointments.colDuration", { defaultValue: "Duration" })}</th>
+              <th className="py-3 px-4 text-[10px] font-black uppercase tracking-widest text-brand-muted">{t("pages.patientDetail.appointments.colStatus", { defaultValue: "Status" })}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-brand-border/50 bg-white">
@@ -68,7 +71,7 @@ export function AppointmentsTab({ items, dateLocale }: AppointmentsTabProps): JS
                 <td className="py-3 px-4 text-xs font-bold text-brand-text whitespace-nowrap">{formatDateTime(a.scheduledAt, dash, dateLocale)}</td>
                 <td className="py-3 px-4 text-xs font-bold text-brand-text uppercase tracking-tight">{a.type ? a.type.replace(/_/g, ' ') : dash}</td>
                 <td className="py-3 px-4 text-xs font-medium text-brand-muted">
-                  Dr. {a.dentist.firstName} {a.dentist.lastName}
+                  {t("pages.common.drPrefix", { defaultValue: "Dr." })} {a.dentist.firstName} {a.dentist.lastName}
                 </td>
                 <td className="py-3 px-4 text-xs font-bold text-brand-text-soft tabular-nums">
                   {a.duration} mins
@@ -77,7 +80,7 @@ export function AppointmentsTab({ items, dateLocale }: AppointmentsTabProps): JS
                   <span
                     className={`inline-flex items-center px-2 py-0.5 rounded-[var(--radius-sm)] border text-[10px] font-black uppercase tracking-widest ${ STATUS_STYLES[a.status] ?? "bg-brand-surface text-brand-text border-brand-border" }`}
                   >
-                    {a.status.replace(/_/g, ' ')}
+                    {t(`pages.patientDetail.appointments.status.${a.status}`, { defaultValue: a.status.replace(/_/g, ' ') })}
                   </span>
                 </td>
               </tr>

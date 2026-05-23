@@ -23,33 +23,33 @@ export function PersonasSection(): JSX.Element {
     {
       key: "owner",
       img: "/owner.png",
-      title: t("landing.persona1Title"),
-      desc: t("landing.persona1Desc"),
-      bullets: [t("landing.persona1B1"), t("landing.persona1B2"), t("landing.persona1B3")],
+      title: t("landing.persona1Title", { defaultValue: "Persona1 Title" }),
+      desc: t("landing.persona1Desc", { defaultValue: "Persona1 Desc" }),
+      bullets: [t("landing.persona1B1", { defaultValue: "Persona1 B1" }), t("landing.persona1B2", { defaultValue: "Persona1 B2" }), t("landing.persona1B3", { defaultValue: "Persona1 B3" })],
       gradient: "from-teal-500 to-teal-500",
     },
     {
       key: "dentist",
       img: "/dentist.png",
-      title: t("landing.persona2Title"),
-      desc: t("landing.persona2Desc"),
-      bullets: [t("landing.persona2B1"), t("landing.persona2B2"), t("landing.persona2B3")],
+      title: t("landing.persona2Title", { defaultValue: "Persona2 Title" }),
+      desc: t("landing.persona2Desc", { defaultValue: "Persona2 Desc" }),
+      bullets: [t("landing.persona2B1", { defaultValue: "Persona2 B1" }), t("landing.persona2B2", { defaultValue: "Persona2 B2" }), t("landing.persona2B3", { defaultValue: "Persona2 B3" })],
       gradient: "from-sky-500 to-teal-500",
     },
     {
       key: "reception",
       img: "/receptionist.png",
-      title: t("landing.persona3Title"),
-      desc: t("landing.persona3Desc"),
-      bullets: [t("landing.persona3B1"), t("landing.persona3B2"), t("landing.persona3B3")],
+      title: t("landing.persona3Title", { defaultValue: "Persona3 Title" }),
+      desc: t("landing.persona3Desc", { defaultValue: "Persona3 Desc" }),
+      bullets: [t("landing.persona3B1", { defaultValue: "Persona3 B1" }), t("landing.persona3B2", { defaultValue: "Persona3 B2" }), t("landing.persona3B3", { defaultValue: "Persona3 B3" })],
       gradient: "from-amber-500 to-rose-500",
     },
     {
       key: "patient",
       img: "/patient.png",
-      title: t("landing.persona4Title"),
-      desc: t("landing.persona4Desc"),
-      bullets: [t("landing.persona4B1"), t("landing.persona4B2"), t("landing.persona4B3")],
+      title: t("landing.persona4Title", { defaultValue: "Persona4 Title" }),
+      desc: t("landing.persona4Desc", { defaultValue: "Persona4 Desc" }),
+      bullets: [t("landing.persona4B1", { defaultValue: "Persona4 B1" }), t("landing.persona4B2", { defaultValue: "Persona4 B2" }), t("landing.persona4B3", { defaultValue: "Persona4 B3" })],
       gradient: "from-rose-400 to-fuchsia-500",
     },
   ];
@@ -59,11 +59,11 @@ export function PersonasSection(): JSX.Element {
   return (
     <div>
       <div className="mx-auto max-w-2xl text-center">
-        <SectionEyebrow label={t("landing.personasEyebrow")} icon={IconUsers} accent="sky" align="center" />
+        <SectionEyebrow label={t("landing.personasEyebrow", { defaultValue: "Personas Eyebrow" })} icon={IconUsers} accent="sky" align="center" />
         <h2 className="mt-3 text-4xl font-black tracking-tight text-brand-text sm:text-5xl">
-          {t("landing.personasTitle")}
+          {t("landing.personasTitle", { defaultValue: "Personas Title" })}
         </h2>
-        <p className="mt-4 text-lg font-medium text-brand-muted">{t("landing.personasSubtitle")}</p>
+        <p className="mt-4 text-lg font-medium text-brand-muted">{t("landing.personasSubtitle", { defaultValue: "Personas Subtitle" })}</p>
       </div>
 
       <div className="mt-12 grid gap-10 lg:grid-cols-[1fr_1.5fr]">

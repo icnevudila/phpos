@@ -65,7 +65,7 @@ export function InvoicesListPage(): JSX.Element {
       });
       setRows(items);
     } catch (e) {
-      setError(e instanceof Error ? e.message : t("pages.invoicesList.loadFailed"));
+      setError(e instanceof Error ? e.message : t("pages.invoicesList.loadFailed", { defaultValue: "Load Failed" }));
     } finally {
       setLoading(false);
     }
@@ -84,10 +84,10 @@ export function InvoicesListPage(): JSX.Element {
   }, [rows]);
 
   const stats = [
-    { label: t("pages.invoicesList.statInvoices"), value: totals.count.toString(), icon: FileText, iconBg: "bg-sky-50 text-sky-500" },
-    { label: t("pages.invoicesList.statBilled"), value: formatPHP(totals.billed), icon: TrendingUp, iconBg: "bg-teal-50 text-teal-500" },
-    { label: t("pages.invoicesList.statCollected"), value: formatPHP(totals.collected), icon: CheckCircle2, iconBg: "bg-teal-50 text-teal-600", valueClass: "text-teal-700" },
-    { label: t("pages.invoicesList.statOutstanding"), value: formatPHP(totals.outstanding), icon: Wallet, iconBg: "bg-rose-50 text-rose-500", valueClass: "text-rose-700" },
+    { label: t("pages.invoicesList.statInvoices", { defaultValue: "Stat Invoices" }), value: totals.count.toString(), icon: FileText, iconBg: "bg-sky-50 text-sky-500" },
+    { label: t("pages.invoicesList.statBilled", { defaultValue: "Stat Billed" }), value: formatPHP(totals.billed), icon: TrendingUp, iconBg: "bg-teal-50 text-teal-500" },
+    { label: t("pages.invoicesList.statCollected", { defaultValue: "Stat Collected" }), value: formatPHP(totals.collected), icon: CheckCircle2, iconBg: "bg-teal-50 text-teal-600", valueClass: "text-teal-700" },
+    { label: t("pages.invoicesList.statOutstanding", { defaultValue: "Stat Outstanding" }), value: formatPHP(totals.outstanding), icon: Wallet, iconBg: "bg-rose-50 text-rose-500", valueClass: "text-rose-700" },
   ];
 
   return (
@@ -95,8 +95,8 @@ export function InvoicesListPage(): JSX.Element {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="page-header-title">{t("nav.invoices") || "Invoices"}</h1>
-          <p className="page-header-sub">{t("pages.invoicesList.subtitle")}</p>
+          <h1 className="page-header-title">{t("nav.invoices", { defaultValue: "Invoices" }) || "Invoices"}</h1>
+          <p className="page-header-sub">{t("pages.invoicesList.subtitle", { defaultValue: "Subtitle" })}</p>
         </div>
         <div className="flex items-center gap-2">
           <button
@@ -104,7 +104,7 @@ export function InvoicesListPage(): JSX.Element {
             className="btn-secondary flex items-center gap-2"
           >
             <RefreshCw size={16} className={loading ? "animate-spin" : ""} />
-            {t("common.refresh") || "Refresh"}
+            {t("common.refresh", { defaultValue: "Refresh" }) || "Refresh"}
           </button>
         </div>
       </div>
@@ -138,7 +138,7 @@ export function InvoicesListPage(): JSX.Element {
             type="text"
             value={qInput}
             onChange={(e) => setQInput(e.target.value)}
-            placeholder={t("pages.invoicesList.searchPlaceholder")}
+            placeholder={t("pages.invoicesList.searchPlaceholder", { defaultValue: "Search Placeholder" })}
             className="h-11 w-full pl-10 pr-4 rounded-[var(--radius-md)] bg-brand-surface border border-brand-border text-sm font-medium outline-none focus:ring-2 focus:ring-brand-primary transition-all shadow-sm"
           />
         </div>
@@ -150,10 +150,10 @@ export function InvoicesListPage(): JSX.Element {
             onChange={(e) => setStatus(e.target.value as InvoiceStatus | "")}
             className="bg-transparent text-xs font-semibold text-brand-text-soft outline-none cursor-pointer"
           >
-            <option value="">{t("pages.invoicesList.all")}</option>
-            <option value="UNPAID">{t("pages.invoicesList.statusUnpaid")}</option>
-            <option value="PARTIAL">{t("pages.invoicesList.statusPartial")}</option>
-            <option value="PAID">{t("pages.invoicesList.statusPaid")}</option>
+            <option value="">{t("pages.invoicesList.all", { defaultValue: "All" })}</option>
+            <option value="UNPAID">{t("pages.invoicesList.statusUnpaid", { defaultValue: "Status Unpaid" })}</option>
+            <option value="PARTIAL">{t("pages.invoicesList.statusPartial", { defaultValue: "Status Partial" })}</option>
+            <option value="PAID">{t("pages.invoicesList.statusPaid", { defaultValue: "Status Paid" })}</option>
           </select>
         </div>
 
@@ -169,12 +169,12 @@ export function InvoicesListPage(): JSX.Element {
           disabled={rows.length === 0}
           onClick={() => {
             const headers = [
-              t("pages.invoicesList.colOr"),
-              t("pages.invoicesList.colPatient"),
-              t("pages.invoicesList.colTotal"),
-              t("pages.invoicesList.colPaid"),
-              t("pages.invoicesList.colBalance"),
-              t("pages.invoicesList.colStatus"),
+              t("pages.invoicesList.colOr", { defaultValue: "Col Or" }),
+              t("pages.invoicesList.colPatient", { defaultValue: "Col Patient" }),
+              t("pages.invoicesList.colTotal", { defaultValue: "Col Total" }),
+              t("pages.invoicesList.colPaid", { defaultValue: "Col Paid" }),
+              t("pages.invoicesList.colBalance", { defaultValue: "Col Balance" }),
+              t("pages.invoicesList.colStatus", { defaultValue: "Col Status" }),
             ];
             const body = rows.map((r) => [
               r.orNumber ?? "",
@@ -199,7 +199,7 @@ export function InvoicesListPage(): JSX.Element {
           onClick={() => setOpenHmoOnly(!openHmoOnly)}
           className={`h-11 px-4 rounded-[var(--radius-md)] text-xs font-semibold uppercase tracking-widest transition-colors ${openHmoOnly ? 'bg-brand-warning text-white shadow-sm' : 'bg-brand-surface-soft text-brand-muted border border-brand-border'}`}
         >
-          {t("pages.invoicesList.openHmoFilter")}
+          {t("pages.invoicesList.openHmoFilter", { defaultValue: "Open Hmo Filter" })}
         </button>
       </div>
 
@@ -209,12 +209,12 @@ export function InvoicesListPage(): JSX.Element {
           <table className="data-table min-w-[900px]">
             <thead>
               <tr>
-                <th>{t("pages.invoicesList.colOr")}</th>
-                <th>{t("pages.invoicesList.colPatient")}</th>
-                <th className="text-right">{t("pages.invoicesList.colTotal")}</th>
-                <th className="text-right">{t("pages.invoicesList.colPaid")}</th>
-                <th className="text-right">{t("pages.invoicesList.colBalance")}</th>
-                <th>{t("pages.invoicesList.colStatus")}</th>
+                <th>{t("pages.invoicesList.colOr", { defaultValue: "Col Or" })}</th>
+                <th>{t("pages.invoicesList.colPatient", { defaultValue: "Col Patient" })}</th>
+                <th className="text-right">{t("pages.invoicesList.colTotal", { defaultValue: "Col Total" })}</th>
+                <th className="text-right">{t("pages.invoicesList.colPaid", { defaultValue: "Col Paid" })}</th>
+                <th className="text-right">{t("pages.invoicesList.colBalance", { defaultValue: "Col Balance" })}</th>
+                <th>{t("pages.invoicesList.colStatus", { defaultValue: "Col Status" })}</th>
                 <th></th>
               </tr>
             </thead>
@@ -233,7 +233,7 @@ export function InvoicesListPage(): JSX.Element {
                 ) : error ? (
                   <tr><td colSpan={7} className="py-20 text-center text-brand-danger font-bold text-sm">{error}</td></tr>
                 ) : rows.length === 0 ? (
-                  <tr><td colSpan={7} className="py-20"><ListEmptyState icon="receipt" title={t("pages.invoicesList.emptyTitle")} description={t("pages.invoicesList.emptyHint")} /></td></tr>
+                  <tr><td colSpan={7} className="py-20"><ListEmptyState icon="receipt" title={t("pages.invoicesList.emptyTitle", { defaultValue: "Empty Title" })} description={t("pages.invoicesList.emptyHint", { defaultValue: "Empty Hint" })} /></td></tr>
                 ) : rows.map((r, idx) => (
                   <motion.tr
                     key={r.id}

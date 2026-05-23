@@ -37,23 +37,23 @@ export function QuoteAndPricingSection(): JSX.Element {
   const plans = [
     {
       key: "starter",
-      name: t("landing.quotePlanStarter"),
-      price: t("landing.quotePlanPriceStarter"),
-      blurb: t("landing.quotePlanBlurbStarter"),
+      name: t("landing.quotePlanStarter", { defaultValue: "Quote Plan Starter" }),
+      price: t("landing.quotePlanPriceStarter", { defaultValue: "Quote Plan Price Starter" }),
+      blurb: t("landing.quotePlanBlurbStarter", { defaultValue: "Quote Plan Blurb Starter" }),
       accent: "from-teal-400 to-sky-500",
     },
     {
       key: "pro",
-      name: t("landing.quotePlanPro"),
-      price: t("landing.quotePlanPricePro"),
-      blurb: t("landing.quotePlanBlurbPro"),
+      name: t("landing.quotePlanPro", { defaultValue: "Quote Plan Pro" }),
+      price: t("landing.quotePlanPricePro", { defaultValue: "Quote Plan Price Pro" }),
+      blurb: t("landing.quotePlanBlurbPro", { defaultValue: "Quote Plan Blurb Pro" }),
       accent: "from-teal-500 to-fuchsia-500",
     },
     {
       key: "ent",
-      name: t("landing.quotePlanEnterprise"),
-      price: t("landing.quotePlanPriceEnt"),
-      blurb: t("landing.quotePlanBlurbEnt"),
+      name: t("landing.quotePlanEnterprise", { defaultValue: "Quote Plan Enterprise" }),
+      price: t("landing.quotePlanPriceEnt", { defaultValue: "Quote Plan Price Ent" }),
+      blurb: t("landing.quotePlanBlurbEnt", { defaultValue: "Quote Plan Blurb Ent" }),
       accent: "from-amber-400 to-rose-500",
     },
   ] as const;
@@ -65,19 +65,19 @@ export function QuoteAndPricingSection(): JSX.Element {
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="mx-auto max-w-2xl text-center">
-          <SectionEyebrow label={t("landing.quoteBandEyebrow")} icon={IconSparkle} accent="emerald" align="center" />
+          <SectionEyebrow label={t("landing.quoteBandEyebrow", { defaultValue: "Quote Band Eyebrow" })} icon={IconSparkle} accent="emerald" align="center" />
           <h2 className="mt-3 text-2xl font-bold tracking-tight text-brand-text sm:text-3xl md:text-4xl">
-            {t("landing.quoteBandTitle")}
+            {t("landing.quoteBandTitle", { defaultValue: "Quote Band Title" })}
           </h2>
           <p className="mt-3 text-sm leading-relaxed text-brand-muted sm:text-base">
-            {t("landing.quoteBandSubtitle")}
+            {t("landing.quoteBandSubtitle", { defaultValue: "Quote Band Subtitle" })}
           </p>
         </div>
 
         <div className="mt-10 grid gap-8 lg:grid-cols-2 lg:gap-12">
           <div className="rounded-3xl border border-brand-border/80 bg-brand-surface/90 p-5 shadow-lg shadow-slate-900/5 backdrop-blur-sm sm:p-7">
-            <h3 className="text-lg font-bold text-brand-text">{t("landing.quoteBandPricingTitle")}</h3>
-            <p className="mt-1 text-xs text-brand-muted">{t("landing.quoteBandPricingHint")}</p>
+            <h3 className="text-lg font-bold text-brand-text">{t("landing.quoteBandPricingTitle", { defaultValue: "Quote Band Pricing Title" })}</h3>
+            <p className="mt-1 text-xs text-brand-muted">{t("landing.quoteBandPricingHint", { defaultValue: "Quote Band Pricing Hint" })}</p>
             <div className="mt-5 grid gap-3 sm:grid-cols-3">
               {plans.map((p) => (
                 <div
@@ -99,7 +99,7 @@ export function QuoteAndPricingSection(): JSX.Element {
               to="/pricing"
               className="mt-5 inline-flex min-h-11 w-full items-center justify-center rounded-xl border border-brand-border-strong text-sm font-bold text-brand-text transition hover:bg-brand-surface-soft sm:w-auto sm:px-5"
             >
-              {t("landing.quoteBandSeePricing")}
+              {t("landing.quoteBandSeePricing", { defaultValue: "Quote Band See Pricing" })}
             </Link>
           </div>
 
@@ -116,9 +116,9 @@ export function QuoteAndPricingSection(): JSX.Element {
                   <span className="flex h-14 w-14 items-center justify-center rounded-full bg-teal-500 text-2xl text-white shadow-lg">
                     ✓
                   </span>
-                  <p className="text-lg font-bold text-brand-text">{t("landing.quoteSuccess")}</p>
+                  <p className="text-lg font-bold text-brand-text">{t("landing.quoteSuccess", { defaultValue: "Quote Success" })}</p>
                   <Link to="/contact" className="text-sm font-semibold text-sky-600 underline-offset-2 hover:underline">
-                    {t("pages.contact.title")}
+                    {t("pages.contact.title", { defaultValue: "Title" })}
                   </Link>
                 </motion.div>
               ) : (
@@ -133,19 +133,19 @@ export function QuoteAndPricingSection(): JSX.Element {
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div className="sm:col-span-2">
                       <label className="text-[10px] font-bold uppercase tracking-wider text-brand-muted">
-                        {t("landing.quoteFieldClinic")}
+                        {t("landing.quoteFieldClinic", { defaultValue: "Quote Field Clinic" })}
                       </label>
                       <input className={fieldClass} required value={clinic} onChange={(e) => setClinic(e.target.value)} />
                     </div>
                     <div>
                       <label className="text-[10px] font-bold uppercase tracking-wider text-brand-muted">
-                        {t("landing.quoteFieldName")}
+                        {t("landing.quoteFieldName", { defaultValue: "Quote Field Name" })}
                       </label>
                       <input className={fieldClass} required value={name} onChange={(e) => setName(e.target.value)} />
                     </div>
                     <div>
                       <label className="text-[10px] font-bold uppercase tracking-wider text-brand-muted">
-                        {t("landing.quoteFieldEmail")}
+                        {t("landing.quoteFieldEmail", { defaultValue: "Quote Field Email" })}
                       </label>
                       <input
                         type="email"
@@ -157,26 +157,26 @@ export function QuoteAndPricingSection(): JSX.Element {
                     </div>
                     <div className="sm:col-span-2">
                       <label className="text-[10px] font-bold uppercase tracking-wider text-brand-muted">
-                        {t("landing.quoteFieldPhone")}
+                        {t("landing.quoteFieldPhone", { defaultValue: "Quote Field Phone" })}
                       </label>
                       <input className={fieldClass} value={phone} onChange={(e) => setPhone(e.target.value)} inputMode="tel" />
                     </div>
                     <div className="sm:col-span-2">
                       <label className="text-[10px] font-bold uppercase tracking-wider text-brand-muted">
-                        {t("landing.quoteFieldMessage")}
+                        {t("landing.quoteFieldMessage", { defaultValue: "Quote Field Message" })}
                       </label>
                       <textarea
                         className={`${fieldClass} min-h-24 resize-y`}
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
-                        placeholder={t("landing.quotePlaceholderMessage")}
+                        placeholder={t("landing.quotePlaceholderMessage", { defaultValue: "Quote Placeholder Message" })}
                       />
                     </div>
                   </div>
                   <p className="text-xs leading-relaxed text-brand-muted">
-                    {t("landing.quotePrivacy")}{" "}
+                    {t("landing.quotePrivacy", { defaultValue: "Quote Privacy" })}{" "}
                     <Link to="/privacy" className="font-semibold text-sky-600 underline-offset-2 hover:underline">
-                      {t("landing.footerPrivacy")}
+                      {t("landing.footerPrivacy", { defaultValue: "Footer Privacy" })}
                     </Link>
                   </p>
                   <button
@@ -184,7 +184,7 @@ export function QuoteAndPricingSection(): JSX.Element {
                     disabled={busy}
                     className="w-full min-h-12 rounded-xl bg-gradient-to-r from-teal-500 to-sky-600 text-sm font-bold text-white shadow-lg transition hover:opacity-95 disabled:opacity-60 sm:w-auto sm:px-8"
                   >
-                    {busy ? t("landing.quoteSubmitting") : t("landing.quoteSubmit")}
+                    {busy ? t("landing.quoteSubmitting", { defaultValue: "Quote Submitting" }) : t("landing.quoteSubmit", { defaultValue: "Quote Submit" })}
                   </button>
                 </motion.form>
               )}

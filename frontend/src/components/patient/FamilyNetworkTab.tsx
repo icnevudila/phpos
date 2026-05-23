@@ -57,9 +57,9 @@ export function FamilyNetworkTab({ patientId }: FamilyNetworkTabProps): JSX.Elem
     onSuccess: async () => {
       await invalidate();
       setFamilyName("");
-      toast.success(t("pages.patientDetail.family.created"));
+      toast.success(t("pages.patientDetail.family.created", { defaultValue: "Created" }));
     },
-    onError: (e) => toast.error(e instanceof Error ? e.message : t("common.error")),
+    onError: (e) => toast.error(e instanceof Error ? e.message : t("common.error", { defaultValue: "Error" })),
   });
 
   const linkMut = useMutation({
@@ -68,24 +68,24 @@ export function FamilyNetworkTab({ patientId }: FamilyNetworkTabProps): JSX.Elem
       await invalidate();
       setLinkOpen(false);
       setSearch("");
-      toast.success(t("pages.patientDetail.family.memberLinked"));
+      toast.success(t("pages.patientDetail.family.memberLinked", { defaultValue: "Member Linked" }));
     },
-    onError: (e) => toast.error(e instanceof Error ? e.message : t("common.error")),
+    onError: (e) => toast.error(e instanceof Error ? e.message : t("common.error", { defaultValue: "Error" })),
   });
 
   const unlinkMut = useMutation({
     mutationFn: (memberId: string) => unlinkFamilyMember(patientId, memberId),
     onSuccess: async () => {
       await invalidate();
-      toast.success(t("pages.patientDetail.family.memberRemoved"));
+      toast.success(t("pages.patientDetail.family.memberRemoved", { defaultValue: "Member Removed" }));
     },
-    onError: (e) => toast.error(e instanceof Error ? e.message : t("common.error")),
+    onError: (e) => toast.error(e instanceof Error ? e.message : t("common.error", { defaultValue: "Error" })),
   });
 
   if (isLoading) {
     return (
       <div className="py-16 text-center text-sm font-bold uppercase tracking-widest text-slate-400">
-        {t("common.loading")}
+        {t("common.loading", { defaultValue: "Loading" })}
       </div>
     );
   }
@@ -94,8 +94,8 @@ export function FamilyNetworkTab({ patientId }: FamilyNetworkTabProps): JSX.Elem
     <div className="space-y-8">
       <header className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h3 className="text-2xl font-black tracking-tight">{t("pages.patientDetail.family.title")}</h3>
-          <p className="text-sm text-slate-400">{t("pages.patientDetail.family.subtitle")}</p>
+          <h3 className="text-2xl font-black tracking-tight">{t("pages.patientDetail.family.title", { defaultValue: "Title" })}</h3>
+          <p className="text-sm text-slate-400">{t("pages.patientDetail.family.subtitle", { defaultValue: "Subtitle" })}</p>
           {family ? (
             <p className="mt-1 text-xs font-bold uppercase tracking-widest text-indigo-600">
               {family.name}
@@ -106,12 +106,12 @@ export function FamilyNetworkTab({ patientId }: FamilyNetworkTabProps): JSX.Elem
           <div className="flex flex-wrap items-end gap-3">
             <label className="block">
               <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
-                {t("pages.patientDetail.family.householdName")}
+                {t("pages.patientDetail.family.householdName", { defaultValue: "Household Name" })}
               </span>
               <input
                 value={familyName}
                 onChange={(e) => setFamilyName(e.target.value)}
-                placeholder={t("pages.patientDetail.family.householdPlaceholder")}
+                placeholder={t("pages.patientDetail.family.householdPlaceholder", { defaultValue: "Household Placeholder" })}
                 className="mt-1 h-11 w-56 rounded-xl border border-slate-200 px-3 text-sm"
               />
             </label>
@@ -122,7 +122,7 @@ export function FamilyNetworkTab({ patientId }: FamilyNetworkTabProps): JSX.Elem
               className="flex h-11 items-center gap-2 rounded-xl bg-indigo-600 px-5 text-[10px] font-black uppercase tracking-widest text-white hover:bg-indigo-500"
             >
               <UserPlus size={16} />
-              {t("pages.patientDetail.family.create")}
+              {t("pages.patientDetail.family.create", { defaultValue: "Create" })}
             </button>
           </div>
         ) : (
@@ -132,7 +132,7 @@ export function FamilyNetworkTab({ patientId }: FamilyNetworkTabProps): JSX.Elem
             className="flex h-11 items-center gap-2 rounded-xl bg-indigo-600 px-5 text-[10px] font-black uppercase tracking-widest text-white hover:bg-indigo-500"
           >
             <UserPlus size={16} />
-            {t("pages.patientDetail.family.addMember")}
+            {t("pages.patientDetail.family.addMember", { defaultValue: "Add Member" })}
           </button>
         )}
       </header>
@@ -152,8 +152,8 @@ export function FamilyNetworkTab({ patientId }: FamilyNetworkTabProps): JSX.Elem
               <div className="min-w-0 flex-1">
                 <p className="mb-1 text-[10px] font-black uppercase tracking-widest text-slate-400">
                   {member.id === patientId
-                    ? t("pages.patientDetail.family.currentPatient")
-                    : t("pages.patientDetail.family.member")}
+                    ? t("pages.patientDetail.family.currentPatient", { defaultValue: "Current Patient" })
+                    : t("pages.patientDetail.family.member", { defaultValue: "Member" })}
                 </p>
                 <Link
                   to={`/patients/${member.id}`}
@@ -169,7 +169,7 @@ export function FamilyNetworkTab({ patientId }: FamilyNetworkTabProps): JSX.Elem
                   disabled={unlinkMut.isPending}
                   onClick={() => unlinkMut.mutate(member.id)}
                   className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-300 opacity-0 transition-all hover:text-rose-500 group-hover:opacity-100"
-                  aria-label={t("pages.patientDetail.family.removeMember")}
+                  aria-label={t("pages.patientDetail.family.removeMember", { defaultValue: "Remove Member" })}
                 >
                   <Trash2 size={18} />
                 </button>
@@ -183,10 +183,10 @@ export function FamilyNetworkTab({ patientId }: FamilyNetworkTabProps): JSX.Elem
             <Users size={40} />
           </div>
           <h4 className="text-lg font-black text-slate-900">
-            {t("pages.patientDetail.family.emptyTitle")}
+            {t("pages.patientDetail.family.emptyTitle", { defaultValue: "Empty Title" })}
           </h4>
           <p className="mt-2 max-w-xs text-sm text-slate-500">
-            {t("pages.patientDetail.family.emptyHint")}
+            {t("pages.patientDetail.family.emptyHint", { defaultValue: "Empty Hint" })}
           </p>
         </div>
       )}
@@ -199,7 +199,7 @@ export function FamilyNetworkTab({ patientId }: FamilyNetworkTabProps): JSX.Elem
         >
           <div className="w-full max-w-md rounded-3xl bg-white p-6 shadow-2xl">
             <div className="mb-4 flex items-center justify-between">
-              <h4 className="text-lg font-black">{t("pages.patientDetail.family.linkTitle")}</h4>
+              <h4 className="text-lg font-black">{t("pages.patientDetail.family.linkTitle", { defaultValue: "Link Title" })}</h4>
               <button
                 type="button"
                 onClick={() => {
@@ -214,7 +214,7 @@ export function FamilyNetworkTab({ patientId }: FamilyNetworkTabProps): JSX.Elem
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder={t("pages.patientDetail.family.searchPlaceholder")}
+              placeholder={t("pages.patientDetail.family.searchPlaceholder", { defaultValue: "Search Placeholder" })}
               className="mb-4 h-12 w-full rounded-xl border border-slate-200 px-4 text-sm"
               autoFocus
             />
@@ -236,7 +236,7 @@ export function FamilyNetworkTab({ patientId }: FamilyNetworkTabProps): JSX.Elem
               ))}
               {q.trim().length >= 2 && !searchResults.length ? (
                 <li className="px-4 py-6 text-center text-sm text-slate-500">
-                  {t("pages.patientDetail.family.noSearchResults")}
+                  {t("pages.patientDetail.family.noSearchResults", { defaultValue: "No Search Results" })}
                 </li>
               ) : null}
             </ul>

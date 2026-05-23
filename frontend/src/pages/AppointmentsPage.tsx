@@ -225,10 +225,10 @@ export function AppointmentsPage(): JSX.Element {
   }
 
   return (
-    <div className="page-container space-y-6">
+    <div className="page-wrapper">
       <PageHeader 
-        title={t("pages.appointments.heroTitle", { defaultValue: "Calendar" })}
-        subtitle={t("pages.appointments.subtitle", { defaultValue: "Manage schedule and appointments." })}
+        title={t("pages.appointments.heroTitle", { defaultValue: "Chair Schedule" })}
+        subtitle={t("pages.appointments.subtitle", { defaultValue: "Manage daily chair flow and patient bookings." })}
         actions={
           <>
             <button
@@ -380,8 +380,8 @@ export function AppointmentsPage(): JSX.Element {
                 <div className="pointer-events-auto bg-brand-surface p-8 rounded-2xl shadow-popover border border-brand-border">
                   <EmptyState
                     icon={CalendarDays}
-                    title={t("pages.appointments.emptyRangeTitle", { defaultValue: "No appointments" })}
-                    description={t("pages.appointments.emptyRangeDescription", { range: rangeLabel, defaultValue: "No appointments scheduled for this date range." })}
+                    title={t("pages.appointments.emptyRangeTitle", { defaultValue: "No appointments scheduled" })}
+                    description={t("pages.appointments.emptyRangeDescription", { range: rangeLabel, defaultValue: "No chair activity for this time period." })}
                     action={<button className="btn-primary mt-2" onClick={() => openNew()}>{t("pages.appointments.new", { defaultValue: "New Appointment" })}</button>}
                   />
                 </div>

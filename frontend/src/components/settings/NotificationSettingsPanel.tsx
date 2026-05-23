@@ -56,7 +56,7 @@ export function NotificationSettingsPanel(): JSX.Element {
 
   function save(): void {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs));
-    toast.success(t("pages.settings.notifications.saved"));
+    toast.success(t("pages.settings.notifications.saved", { defaultValue: "Saved" }));
   }
 
   const getPreviewText = (): string => {
@@ -79,8 +79,8 @@ export function NotificationSettingsPanel(): JSX.Element {
           <Bell size={28} />
         </div>
         <div>
-          <h2 className="text-xl font-black text-slate-900">{t("pages.settings.notifications.title")}</h2>
-          <p className="text-sm text-slate-500">{t("pages.settings.notifications.subtitle")}</p>
+          <h2 className="text-xl font-black text-slate-900">{t("pages.settings.notifications.title", { defaultValue: "Title" })}</h2>
+          <p className="text-sm text-slate-500">{t("pages.settings.notifications.subtitle", { defaultValue: "Subtitle" })}</p>
         </div>
       </div>
 
@@ -93,7 +93,7 @@ export function NotificationSettingsPanel(): JSX.Element {
             <div className="border border-slate-100 rounded-2xl p-6 space-y-6 bg-slate-50/30">
               {/* Appointment Row */}
               <div className="space-y-2.5">
-                <p className="text-sm font-bold text-slate-800">{t("pages.settings.notifications.appointmentReminders")}</p>
+                <p className="text-sm font-bold text-slate-800">{t("pages.settings.notifications.appointmentReminders", { defaultValue: "Appointment Reminders" })}</p>
                 <div className="flex gap-6">
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input
@@ -118,7 +118,7 @@ export function NotificationSettingsPanel(): JSX.Element {
 
               {/* Invoice Row */}
               <div className="space-y-2.5">
-                <p className="text-sm font-bold text-slate-800">{t("pages.settings.notifications.invoiceReminders")}</p>
+                <p className="text-sm font-bold text-slate-800">{t("pages.settings.notifications.invoiceReminders", { defaultValue: "Invoice Reminders" })}</p>
                 <div className="flex gap-6">
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input
@@ -152,7 +152,7 @@ export function NotificationSettingsPanel(): JSX.Element {
                 onChange={(e) => setPrefs({ ...prefs, quietHoursEnabled: e.target.checked })}
                 className="rounded text-teal-600 focus:ring-teal-500 h-4 w-4"
               />
-              <span className="text-sm font-bold text-slate-800">{t("pages.settings.notifications.quietHours")}</span>
+              <span className="text-sm font-bold text-slate-800">{t("pages.settings.notifications.quietHours", { defaultValue: "Quiet Hours" })}</span>
             </label>
             {prefs.quietHoursEnabled ? (
               <div className="flex flex-wrap gap-4 mt-2">
@@ -182,7 +182,7 @@ export function NotificationSettingsPanel(): JSX.Element {
             onClick={save}
             className="rounded-2xl bg-teal-600 hover:bg-teal-500 transition-all font-black text-xs uppercase tracking-widest text-white px-8 py-4 shadow-xl shadow-teal-500/20"
           >
-            {t("pages.settings.notifications.save")}
+            {t("pages.settings.notifications.save", { defaultValue: "Save" })}
           </button>
         </div>
 

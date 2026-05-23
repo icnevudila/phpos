@@ -79,7 +79,7 @@ export function HmoClaimDetailPage(): JSX.Element {
       setExternalRefDraft(c.externalRef ?? "");
       setNotesDraft(c.notes ?? "");
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : t("pages.hmoClaimDetail.loadFailed"));
+      toast.error(e instanceof Error ? e.message : t("pages.hmoClaimDetail.loadFailed", { defaultValue: "Load Failed" }));
     } finally {
       setLoading(false);
     }
@@ -93,12 +93,12 @@ export function HmoClaimDetailPage(): JSX.Element {
     try {
       const approved = approvedDraft.trim() === "" ? null : Math.max(0, Number(approvedDraft));
       if (approved !== null && Number.isNaN(approved)) {
-        toast.error(t("pages.hmoClaimDetail.invalidNumber"));
+        toast.error(t("pages.hmoClaimDetail.invalidNumber", { defaultValue: "Invalid Number" }));
         return;
       }
       const copay = Math.max(0, Number(copayDraft));
       if (Number.isNaN(copay)) {
-        toast.error(t("pages.hmoClaimDetail.invalidNumber"));
+        toast.error(t("pages.hmoClaimDetail.invalidNumber", { defaultValue: "Invalid Number" }));
         return;
       }
       const updated = await updateHmoClaim(claim.id, {
@@ -108,9 +108,9 @@ export function HmoClaimDetailPage(): JSX.Element {
         notes: notesDraft.trim() || null,
       });
       setClaim({ ...updated, attachments: updated.attachments ?? claim.attachments ?? [] });
-      toast.success(t("pages.hmoClaimDetail.saved"));
+      toast.success(t("pages.hmoClaimDetail.saved", { defaultValue: "Saved" }));
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : t("pages.hmoClaimDetail.saveFailed"));
+      toast.error(e instanceof Error ? e.message : t("pages.hmoClaimDetail.saveFailed", { defaultValue: "Save Failed" }));
     } finally {
       setSaving(false);
     }
@@ -126,9 +126,9 @@ export function HmoClaimDetailPage(): JSX.Element {
       setCopayDraft(updated.patientCopay);
       setExternalRefDraft(updated.externalRef ?? "");
       setNotesDraft(updated.notes ?? "");
-      toast.success(t("pages.hmoClaimDetail.statusUpdated"));
+      toast.success(t("pages.hmoClaimDetail.statusUpdated", { defaultValue: "Status Updated" }));
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : t("pages.hmoClaimDetail.statusFailed"));
+      toast.error(e instanceof Error ? e.message : t("pages.hmoClaimDetail.statusFailed", { defaultValue: "Status Failed" }));
     } finally {
       setSaving(false);
     }
@@ -141,9 +141,9 @@ export function HmoClaimDetailPage(): JSX.Element {
     try {
       const created = await uploadHmoClaimAttachment(claim.id, file, uploadKind);
       setClaim(prev => prev ? { ...prev, attachments: [created, ...(prev.attachments ?? [])] } : prev);
-      toast.success(t("pages.hmoClaimDetail.attachmentUploaded"));
+      toast.success(t("pages.hmoClaimDetail.attachmentUploaded", { defaultValue: "Attachment Uploaded" }));
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : t("pages.hmoClaimDetail.uploadFailed"));
+      toast.error(e instanceof Error ? e.message : t("pages.hmoClaimDetail.uploadFailed", { defaultValue: "Upload Failed" }));
     }
   };
 
@@ -152,18 +152,18 @@ export function HmoClaimDetailPage(): JSX.Element {
       await downloadAuthedFile(`/hmo-claims/${id}/attachments/${attachId}/download`, fileName);
       // downloadAuthedFile already handles the download link creation
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : t("pages.hmoClaimDetail.downloadFailed"));
+      toast.error(e instanceof Error ? e.message : t("pages.hmoClaimDetail.downloadFailed", { defaultValue: "Download Failed" }));
     }
   };
 
   const onDeleteAttachment = async (attachId: string) => {
-    if (!confirm(t("pages.hmoClaimDetail.deleteAttachmentConfirm"))) return;
+    if (!confirm(t("pages.hmoClaimDetail.deleteAttachmentConfirm", { defaultValue: "Delete Attachment Confirm" }))) return;
     try {
       await deleteHmoClaimAttachment(id, attachId);
       setClaim(prev => prev ? { ...prev, attachments: (prev.attachments ?? []).filter(a => a.id !== attachId) } : prev);
-      toast.success(t("pages.hmoClaimDetail.attachmentDeleted"));
+      toast.success(t("pages.hmoClaimDetail.attachmentDeleted", { defaultValue: "Attachment Deleted" }));
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : t("pages.hmoClaimDetail.deleteFailed"));
+      toast.error(e instanceof Error ? e.message : t("pages.hmoClaimDetail.deleteFailed", { defaultValue: "Delete Failed" }));
     }
   };
 
@@ -193,7 +193,7 @@ export function HmoClaimDetailPage(): JSX.Element {
            <div className="flex h-10 w-10 items-center justify-center rounded-[var(--radius-md)] bg-brand-surface shadow-sm border border-brand-border group-hover:scale-110 transition-transform">
               <ArrowLeft size={18} />
            </div>
-           {t("pages.hmoClaimDetail.backList")}
+           {t("pages.hmoClaimDetail.backList", { defaultValue: "Back List" })}
          </Link>
 
          <div className="flex items-center gap-3">
@@ -202,7 +202,7 @@ export function HmoClaimDetailPage(): JSX.Element {
               className="btn-primary flex items-center gap-2 h-10"
             >
               <ExternalLink size={14} />
-              {t("pages.hmoClaimDetail.openInvoice")}
+              {t("pages.hmoClaimDetail.openInvoice", { defaultValue: "Open Invoice" })}
             </Link>
          </div>
       </header>
@@ -256,7 +256,7 @@ export function HmoClaimDetailPage(): JSX.Element {
 
                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                     <label className="text-[10px] font-bold uppercase tracking-widest text-brand-muted ml-1 block">{t("pages.hmoClaimDetail.approved")}</label>
+                     <label className="text-[10px] font-bold uppercase tracking-widest text-brand-muted ml-1 block">{t("pages.hmoClaimDetail.approved", { defaultValue: "Approved" })}</label>
                      <input 
                        value={approvedDraft}
                        onChange={e => setApprovedDraft(e.target.value)}
@@ -296,7 +296,7 @@ export function HmoClaimDetailPage(): JSX.Element {
                  className="btn-primary mt-6 w-full flex items-center justify-center gap-2 h-11"
                >
                  {saving ? <RefreshCw className="animate-spin" size={16} /> : <Save size={16} />}
-                 {saving ? t("pages.hmoClaimDetail.commitSaving") : t("pages.hmoClaimDetail.commitCta")}
+                 {saving ? t("pages.hmoClaimDetail.commitSaving", { defaultValue: "Commit Saving" }) : t("pages.hmoClaimDetail.commitCta", { defaultValue: "Commit Cta" })}
                </button>
             </section>
 
@@ -427,7 +427,7 @@ export function HmoClaimDetailPage(): JSX.Element {
                            <p className="text-sm font-bold text-brand-text uppercase leading-tight">{ln.treatment.procedure}</p>
                            <div className="flex items-center gap-2">
                               <span className="px-2 py-0.5 rounded-[var(--radius-sm)] bg-brand-surface-muted text-[10px] font-bold text-brand-text-soft uppercase tracking-widest border border-brand-border">
-                                 {ln.treatment.toothIds.join(", ") || t("pages.common.general")}
+                                 {ln.treatment.toothIds.join(", ") || t("pages.common.general", { defaultValue: "General" })}
                               </span>
                               <span className="text-[10px] font-bold text-brand-muted uppercase tracking-widest">
                                  Qty {ln.treatment.quantity}

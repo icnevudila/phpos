@@ -59,14 +59,14 @@ export function PortalAppointmentsPage(): JSX.Element {
   }, [t]);
 
   async function onCancel(id: string): Promise<void> {
-    if (!confirm(t("pages.portal.appointments.cancelConfirm"))) return;
+    if (!confirm(t("pages.portal.appointments.cancelConfirm", { defaultValue: "Cancel Confirm" }))) return;
     setCancelling(id);
     try {
       await cancelPortalAppointment(id);
-      toast.success(t("pages.portal.appointments.cancelSuccess"));
+      toast.success(t("pages.portal.appointments.cancelSuccess", { defaultValue: "Cancel Success" }));
       await load();
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : t("pages.portal.appointments.cancelFailed"));
+      toast.error(e instanceof Error ? e.message : t("pages.portal.appointments.cancelFailed", { defaultValue: "Cancel Failed" }));
     } finally {
       setCancelling(null);
     }
@@ -76,18 +76,18 @@ export function PortalAppointmentsPage(): JSX.Element {
 
   const emptyMessage =
     tab === "upcoming"
-      ? t("pages.portal.appointments.emptyUpcoming")
-      : t("pages.portal.appointments.emptyPast");
+      ? t("pages.portal.appointments.emptyUpcoming", { defaultValue: "Empty Upcoming" })
+      : t("pages.portal.appointments.emptyPast", { defaultValue: "Empty Past" });
 
   return (
     <div className="min-w-0 space-y-4 px-4 pt-5">
       <div className="flex items-center justify-between gap-2">
-        <h1 className="text-xl font-black text-slate-900">{t("pages.portal.appointments.title")}</h1>
+        <h1 className="text-xl font-black text-slate-900">{t("pages.portal.appointments.title", { defaultValue: "Title" })}</h1>
         <Link
           to={`/${slug}/portal/book${kioskSuffix}`}
           className="inline-flex min-h-10 shrink-0 items-center justify-center rounded-full bg-teal-600 px-3 py-2 text-[11px] font-black uppercase tracking-wider text-white shadow-sm hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2"
         >
-          {t("pages.portal.appointments.book")}
+          {t("pages.portal.appointments.book", { defaultValue: "Book" })}
         </Link>
       </div>
 
@@ -99,7 +99,7 @@ export function PortalAppointmentsPage(): JSX.Element {
             onClick={() => setTab(k)}
             className={`min-h-10 flex-1 rounded-full px-2 py-2 text-xs font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-inset ${ tab === k ? "bg-white text-slate-900 shadow-sm " : "text-slate-500 " }`}
           >
-            {k === "upcoming" ? t("pages.portal.appointments.upcoming") : t("pages.portal.appointments.past")}
+            {k === "upcoming" ? t("pages.portal.appointments.upcoming", { defaultValue: "Upcoming" }) : t("pages.portal.appointments.past", { defaultValue: "Past" })}
           </button>
         ))}
       </div>
@@ -111,7 +111,7 @@ export function PortalAppointmentsPage(): JSX.Element {
       ) : null}
 
       {items === null ? (
-        <p className="text-sm text-slate-500">{t("pages.portal.appointments.loading")}</p>
+        <p className="text-sm text-slate-500">{t("pages.portal.appointments.loading", { defaultValue: "Loading" })}</p>
       ) : filtered.length === 0 ? (
         <div className="rounded-2xl border-2 border-dashed border-slate-200 bg-white p-6 text-center text-sm text-slate-500">
           {emptyMessage}
@@ -135,15 +135,15 @@ export function PortalAppointmentsPage(): JSX.Element {
               </div>
               <div className="flex items-center gap-3 p-4">
                 <div className="flex h-14 w-14 flex-col items-center justify-center rounded-xl bg-teal-100 text-teal-700">
-                  <span className="text-[9px] font-bold uppercase">{t("pages.portal.appointments.time")}</span>
+                  <span className="text-[9px] font-bold uppercase">{t("pages.portal.appointments.time", { defaultValue: "Time" })}</span>
                   <span className="font-black">{a.localTime}</span>
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="font-bold text-slate-900">
-                    {t("pages.common.drPrefix")} {a.dentistName}
+                    {t("pages.common.drPrefix", { defaultValue: "Dr Prefix" })} {a.dentistName}
                   </p>
                   <p className="text-xs text-slate-500">
-                    {a.type?.replace(/_/g, " ") ?? t("pages.portal.appointments.defaultConsultation")}
+                    {a.type?.replace(/_/g, " ") ?? t("pages.portal.appointments.defaultConsultation", { defaultValue: "Default Consultation" })}
                   </p>
                 </div>
                 {a.canCancel ? (
@@ -153,13 +153,13 @@ export function PortalAppointmentsPage(): JSX.Element {
                     disabled={cancelling === a.id}
                     className="min-h-9 shrink-0 rounded-lg border border-rose-200 bg-rose-50 px-3 py-1.5 text-[11px] font-bold text-rose-700 hover:bg-rose-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-400 focus-visible:ring-offset-2 disabled:opacity-50"
                   >
-                    {cancelling === a.id ? t("pages.portal.appointments.cancelling") : t("pages.portal.appointments.cancel")}
+                    {cancelling === a.id ? t("pages.portal.appointments.cancelling", { defaultValue: "Cancelling" }) : t("pages.portal.appointments.cancel", { defaultValue: "Cancel" })}
                   </button>
                 ) : null}
               </div>
               {!a.canCancel && !a.isPast && a.status !== "CANCELLED" ? (
                 <p className="border-t border-slate-100 bg-amber-50 px-4 py-1.5 text-[10px] font-semibold text-amber-800">
-                  {t("pages.portal.appointments.cancelWindowClosed")}
+                  {t("pages.portal.appointments.cancelWindowClosed", { defaultValue: "Cancel Window Closed" })}
                 </p>
               ) : null}
             </li>

@@ -47,7 +47,7 @@ export function UserMenu({ profile }: UserMenuProps): JSX.Element {
 
   const fullName = profile
     ? `${profile.firstName ?? ""} ${profile.lastName ?? ""}`.trim() || profile.email
-    : t("userMenu.account");
+    : t("userMenu.account", { defaultValue: "Account" });
 
   return (
     <div ref={ref} className="relative">
@@ -95,7 +95,7 @@ export function UserMenu({ profile }: UserMenuProps): JSX.Element {
             role="menuitem"
           >
             <LogOutIcon size={16} />
-            {t("userMenu.signOut")}
+            {t("userMenu.signOut", { defaultValue: "Sign Out" })}
           </button>
         </div>
       ) : null}

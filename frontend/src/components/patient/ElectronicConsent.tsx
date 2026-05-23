@@ -109,7 +109,7 @@ export function ElectronicConsent({
                   <PenTool size={12} /> Patient Signature
                </p>
                <button onClick={clear} className="text-[10px] font-black uppercase text-rose-500 hover:text-rose-600 flex items-center gap-1">
-                  <RotateCcw size={10} /> {t('common.clear')}
+                  <RotateCcw size={10} /> {t('common.clear', { defaultValue: "Clear" })}
                </button>
             </div>
             

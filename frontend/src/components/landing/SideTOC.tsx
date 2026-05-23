@@ -45,7 +45,7 @@ export function SideTOC(): JSX.Element {
 
   return (
     <motion.nav
-      aria-label={t("landing.progress")}
+      aria-label={t("landing.progress", { defaultValue: "Progress" })}
       initial={{ opacity: 0, x: 16 }}
       animate={{ opacity: visible ? 1 : 0, x: visible ? 0 : 16 }}
       transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}

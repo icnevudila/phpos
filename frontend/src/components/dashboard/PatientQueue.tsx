@@ -30,7 +30,7 @@ export function PatientQueue({
       <div className="mb-3 flex items-center justify-between">
         <div>
           <h3 className="text-sm font-bold uppercase tracking-wider text-slate-700">
-            {t("pages.dashboard.queueTitle")}
+            {t("pages.dashboard.queueTitle", { defaultValue: "Queue Title" })}
           </h3>
           <p className="text-xs text-slate-500">
             {t("pages.dashboard.queueSubtitle", {
@@ -41,22 +41,22 @@ export function PatientQueue({
           </p>
         </div>
         <Link to="/appointments" className="text-xs font-bold text-teal-700 hover:underline">
-          {t("pages.dashboard.openCalendar")}
+          {t("pages.dashboard.openCalendar", { defaultValue: "Open Calendar" })}
         </Link>
       </div>
 
       {queue.rows.length === 0 ? (
         <p className="py-8 text-center text-sm text-slate-500">
-          {t("pages.dashboard.queueEmpty")}
+          {t("pages.dashboard.queueEmpty", { defaultValue: "Queue Empty" })}
         </p>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
             <thead className="border-b border-slate-100">
               <tr>
-                <th className="px-2 py-3 text-[11px] font-black uppercase text-slate-400">{t("pages.dashboard.queueTablePatient")}</th>
-                <th className="px-2 py-3 text-[11px] font-black uppercase text-slate-400">{t("pages.dashboard.queueTableStatus")}</th>
-                <th className="px-2 py-3 text-[11px] font-black uppercase text-slate-400">{t("pages.dashboard.queueTableWait")}</th>
+                <th className="px-2 py-3 text-[11px] font-black uppercase text-slate-400">{t("pages.dashboard.queueTablePatient", { defaultValue: "Queue Table Patient" })}</th>
+                <th className="px-2 py-3 text-[11px] font-black uppercase text-slate-400">{t("pages.dashboard.queueTableStatus", { defaultValue: "Queue Table Status" })}</th>
+                <th className="px-2 py-3 text-[11px] font-black uppercase text-slate-400">{t("pages.dashboard.queueTableWait", { defaultValue: "Queue Table Wait" })}</th>
                 <th className="px-2 py-3 text-[11px] font-black uppercase text-slate-400">Actions</th>
               </tr>
             </thead>

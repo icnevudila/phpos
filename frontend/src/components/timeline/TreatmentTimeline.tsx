@@ -65,12 +65,12 @@ export function TreatmentTimeline({
                </svg>
                <div className="flex flex-col items-center">
                   <span className="text-xl font-black text-slate-900">{stats.percent}%</span>
-                  <span className="text-[8px] font-black uppercase text-slate-400">{t("pages.patientDetail.timeline.successLabel")}</span>
+                  <span className="text-[8px] font-black uppercase text-slate-400">{t("pages.patientDetail.timeline.successLabel", { defaultValue: "Success Label" })}</span>
                </div>
             </div>
             <div>
-               <h3 className="text-sm font-black uppercase tracking-widest text-slate-400">{t("pages.patientDetail.timeline.headerKicker")}</h3>
-               <p className="text-lg font-black text-slate-900">{t("pages.patientDetail.timeline.headerTitle")}</p>
+               <h3 className="text-sm font-black uppercase tracking-widest text-slate-400">{t("pages.patientDetail.timeline.headerKicker", { defaultValue: "Header Kicker" })}</h3>
+               <p className="text-lg font-black text-slate-900">{t("pages.patientDetail.timeline.headerTitle", { defaultValue: "Header Title" })}</p>
                <div className="mt-1 flex items-center gap-2 text-[10px] font-bold text-slate-500 uppercase">
                   <span>{t("pages.patientDetail.timeline.stats.complete", { count: stats.completed })}</span>
                   <span className="h-1 w-1 rounded-full bg-slate-300" />
@@ -82,9 +82,9 @@ export function TreatmentTimeline({
          <div className="hidden md:flex items-center gap-2 bg-slate-50 p-3 rounded-2xl border border-slate-100">
             <Trophy className="text-amber-500" size={20} />
             <div className="pr-2">
-               <p className="text-[10px] font-black uppercase text-slate-400">{t("pages.patientDetail.timeline.nextMilestone")}</p>
+               <p className="text-[10px] font-black uppercase text-slate-400">{t("pages.patientDetail.timeline.nextMilestone", { defaultValue: "Next Milestone" })}</p>
                <p className="text-xs font-black text-slate-900">
-                  {sortedPhases.find(p => p.status !== 'completed')?.title || t("pages.patientDetail.timeline.finalized")}
+                  {sortedPhases.find(p => p.status !== 'completed')?.title || t("pages.patientDetail.timeline.finalized", { defaultValue: "Finalized" })}
                </p>
             </div>
          </div>
@@ -186,7 +186,7 @@ function JourneyPhaseNode({ phase, index, t }: any) {
 
                    {phase.notes && (
                      <div className="bg-sky-50/50 p-4 rounded-2xl border border-sky-100">
-                        <p className="text-[10px] font-black uppercase text-sky-600 mb-1">{t("pages.patientDetail.timeline.notesTitle")}</p>
+                        <p className="text-[10px] font-black uppercase text-sky-600 mb-1">{t("pages.patientDetail.timeline.notesTitle", { defaultValue: "Notes Title" })}</p>
                         <p className="text-xs font-bold text-sky-900">{phase.notes}</p>
                      </div>
                    )}

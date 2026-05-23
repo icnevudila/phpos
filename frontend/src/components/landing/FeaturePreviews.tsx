@@ -55,13 +55,13 @@ export function AppointmentsPreview(): JSX.Element {
       <div className="flex items-center justify-between border-b border-brand-border px-5 py-3">
         <div>
           <p className="text-xs font-semibold uppercase tracking-wider text-brand-muted">
-            {t("landingPreview.appointments.calendarLabel")}
+            {t("landingPreview.appointments.calendarLabel", { defaultValue: "Calendar Label" })}
           </p>
-          <p className="text-sm font-bold text-brand-text">{t("landingPreview.appointments.headerSub")}</p>
+          <p className="text-sm font-bold text-brand-text">{t("landingPreview.appointments.headerSub", { defaultValue: "Header Sub" })}</p>
         </div>
         <div className="flex items-center gap-2">
           <span className="inline-flex items-center gap-1 rounded-full bg-teal-50 px-2 py-0.5 text-[10px] font-bold text-teal-700 ring-1 ring-teal-200">
-            <span className="h-1.5 w-1.5 rounded-full bg-teal-500" /> {t("landingPreview.appointments.badge")}
+            <span className="h-1.5 w-1.5 rounded-full bg-teal-500" /> {t("landingPreview.appointments.badge", { defaultValue: "Badge" })}
           </span>
           <div className="flex gap-1">
             <div className="h-7 w-7 rounded-lg bg-brand-surface-muted" />
@@ -166,9 +166,9 @@ export function OdontogramPreview(): JSX.Element {
       <div className="flex items-start justify-between">
         <div>
           <p className="text-xs font-semibold uppercase tracking-wider text-brand-muted">
-            {t("landingPreview.odontogram.chartTitle")}
+            {t("landingPreview.odontogram.chartTitle", { defaultValue: "Chart Title" })}
           </p>
-          <p className="text-sm font-bold text-brand-text">{t("landingPreview.odontogram.subtitle")}</p>
+          <p className="text-sm font-bold text-brand-text">{t("landingPreview.odontogram.subtitle", { defaultValue: "Subtitle" })}</p>
         </div>
         <div className="hidden flex-wrap items-center gap-3 sm:flex">
           {statusKeys.map((k) => (
@@ -195,9 +195,9 @@ export function OdontogramPreview(): JSX.Element {
       </div>
 
       <div className="mt-5 grid gap-2 rounded-xl bg-brand-surface-soft p-3 text-xs sm:grid-cols-3">
-        <Field label={t("landingPreview.odontogram.fieldLastUpdate")} value={t("landingPreview.odontogram.fieldLastUpdateValue")} />
-        <Field label={t("landingPreview.odontogram.fieldDoctor")} value={t("landingPreview.odontogram.fieldDoctorValue")} />
-        <Field label={t("landingPreview.odontogram.fieldCompleted")} value={t("landingPreview.odontogram.fieldCompletedValue")} />
+        <Field label={t("landingPreview.odontogram.fieldLastUpdate", { defaultValue: "Field Last Update" })} value={t("landingPreview.odontogram.fieldLastUpdateValue", { defaultValue: "Field Last Update Value" })} />
+        <Field label={t("landingPreview.odontogram.fieldDoctor", { defaultValue: "Field Doctor" })} value={t("landingPreview.odontogram.fieldDoctorValue", { defaultValue: "Field Doctor Value" })} />
+        <Field label={t("landingPreview.odontogram.fieldCompleted", { defaultValue: "Field Completed" })} value={t("landingPreview.odontogram.fieldCompletedValue", { defaultValue: "Field Completed Value" })} />
       </div>
     </div>
   );
@@ -217,13 +217,13 @@ export function PatientRecordPreview(): JSX.Element {
         </div>
         <div className="min-w-0 flex-1">
           <p className="truncate text-base font-bold text-brand-text">Maria Santos</p>
-          <p className="text-xs text-brand-muted">{t("landingPreview.patient.metaLine")}</p>
+          <p className="text-xs text-brand-muted">{t("landingPreview.patient.metaLine", { defaultValue: "Meta Line" })}</p>
           <div className="mt-1 flex flex-wrap gap-1">
             <span className="inline-flex items-center gap-1 rounded-full bg-brand-surface px-2 py-0.5 text-[10px] font-semibold text-brand-text ring-1 ring-brand-border">
-              {t("landingPreview.patient.philhealthBadge")}
+              {t("landingPreview.patient.philhealthBadge", { defaultValue: "Philhealth Badge" })}
             </span>
             <span className="inline-flex items-center gap-1 rounded-full bg-rose-50 px-2 py-0.5 text-[10px] font-semibold text-rose-700 ring-1 ring-rose-200">
-              <IconAlert className="h-2.5 w-2.5" /> {t("landingPreview.patient.allergyBadge")}
+              <IconAlert className="h-2.5 w-2.5" /> {t("landingPreview.patient.allergyBadge", { defaultValue: "Allergy Badge" })}
             </span>
           </div>
         </div>
@@ -242,18 +242,18 @@ export function PatientRecordPreview(): JSX.Element {
 
       <div className="grid gap-4 p-5 sm:grid-cols-2">
         <div className="rounded-xl bg-brand-surface-soft p-4">
-          <p className="text-[10px] font-bold uppercase tracking-wider text-brand-muted">{t("landingPreview.patient.visitLabel")}</p>
-          <p className="mt-1 text-sm font-bold text-brand-text">{t("landingPreview.patient.visitLine")}</p>
-          <p className="mt-1 text-xs text-brand-muted">{t("landingPreview.patient.visitDr")}</p>
+          <p className="text-[10px] font-bold uppercase tracking-wider text-brand-muted">{t("landingPreview.patient.visitLabel", { defaultValue: "Visit Label" })}</p>
+          <p className="mt-1 text-sm font-bold text-brand-text">{t("landingPreview.patient.visitLine", { defaultValue: "Visit Line" })}</p>
+          <p className="mt-1 text-xs text-brand-muted">{t("landingPreview.patient.visitDr", { defaultValue: "Visit Dr" })}</p>
         </div>
         <div className="rounded-xl bg-brand-surface-soft p-4">
-          <p className="text-[10px] font-bold uppercase tracking-wider text-brand-muted">{t("landingPreview.patient.nextLabel")}</p>
-          <p className="mt-1 text-sm font-bold text-brand-text">{t("landingPreview.patient.nextLine")}</p>
-          <p className="mt-1 text-xs text-brand-muted">{t("landingPreview.patient.nextTime")}</p>
+          <p className="text-[10px] font-bold uppercase tracking-wider text-brand-muted">{t("landingPreview.patient.nextLabel", { defaultValue: "Next Label" })}</p>
+          <p className="mt-1 text-sm font-bold text-brand-text">{t("landingPreview.patient.nextLine", { defaultValue: "Next Line" })}</p>
+          <p className="mt-1 text-xs text-brand-muted">{t("landingPreview.patient.nextTime", { defaultValue: "Next Time" })}</p>
         </div>
         <div className="rounded-xl bg-brand-surface-soft p-4 sm:col-span-2">
-          <p className="text-[10px] font-bold uppercase tracking-wider text-brand-muted">{t("landingPreview.patient.notesLabel")}</p>
-          <p className="mt-1 text-sm leading-relaxed text-brand-text">{t("landingPreview.patient.notesBody")}</p>
+          <p className="text-[10px] font-bold uppercase tracking-wider text-brand-muted">{t("landingPreview.patient.notesLabel", { defaultValue: "Notes Label" })}</p>
+          <p className="mt-1 text-sm leading-relaxed text-brand-text">{t("landingPreview.patient.notesBody", { defaultValue: "Notes Body" })}</p>
         </div>
       </div>
     </div>
@@ -282,11 +282,11 @@ export function BillingPreview(): JSX.Element {
     <div className="overflow-hidden rounded-2xl border border-brand-border bg-brand-surface shadow-sm">
       <div className="flex items-center justify-between border-b border-brand-border px-5 py-3">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wider text-brand-muted">{t("landingPreview.billing.title")}</p>
-          <p className="text-sm font-bold text-brand-text">{t("landingPreview.billing.invLine")}</p>
+          <p className="text-xs font-semibold uppercase tracking-wider text-brand-muted">{t("landingPreview.billing.title", { defaultValue: "Title" })}</p>
+          <p className="text-sm font-bold text-brand-text">{t("landingPreview.billing.invLine", { defaultValue: "Inv Line" })}</p>
         </div>
         <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-bold text-amber-700 ring-1 ring-amber-200">
-          {t("landingPreview.billing.hmoPill")}
+          {t("landingPreview.billing.hmoPill", { defaultValue: "Hmo Pill" })}
         </span>
       </div>
 
@@ -304,15 +304,15 @@ export function BillingPreview(): JSX.Element {
 
       <div className="space-y-1 border-t border-brand-border bg-brand-surface-soft px-5 py-4 text-sm">
         <div className="flex items-center justify-between text-brand-muted">
-          <span>{t("landingPreview.billing.subtotal")}</span>
+          <span>{t("landingPreview.billing.subtotal", { defaultValue: "Subtotal" })}</span>
           <span className="font-mono">₱ {subtotal.toLocaleString()}</span>
         </div>
         <div className="flex items-center justify-between text-teal-700">
-          <span>{t("landingPreview.billing.hmoLine")}</span>
+          <span>{t("landingPreview.billing.hmoLine", { defaultValue: "Hmo Line" })}</span>
           <span className="font-mono">− ₱ {hmo.toLocaleString()}</span>
         </div>
         <div className="flex items-center justify-between border-t border-brand-border pt-2 text-base font-bold text-brand-text">
-          <span>{t("landingPreview.billing.net")}</span>
+          <span>{t("landingPreview.billing.net", { defaultValue: "Net" })}</span>
           <span className="font-mono">₱ {net.toLocaleString()}</span>
         </div>
       </div>
@@ -353,17 +353,17 @@ export function InventoryPreview(): JSX.Element {
     ok: {
       pill: "bg-teal-50 text-teal-700 ring-teal-200",
       bar: "bg-teal-500",
-      label: t("landingPreview.inventory.status.ok"),
+      label: t("landingPreview.inventory.status.ok", { defaultValue: "Ok" }),
     },
     low: {
       pill: "bg-amber-50 text-amber-700 ring-amber-200",
       bar: "bg-amber-500",
-      label: t("landingPreview.inventory.status.low"),
+      label: t("landingPreview.inventory.status.low", { defaultValue: "Low" }),
     },
     critical: {
       pill: "bg-rose-50 text-rose-700 ring-rose-200",
       bar: "bg-rose-500",
-      label: t("landingPreview.inventory.status.critical"),
+      label: t("landingPreview.inventory.status.critical", { defaultValue: "Critical" }),
     },
   };
 
@@ -371,11 +371,11 @@ export function InventoryPreview(): JSX.Element {
     <div className="overflow-hidden rounded-2xl border border-brand-border bg-brand-surface shadow-sm">
       <div className="flex items-center justify-between border-b border-brand-border px-5 py-3">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wider text-brand-muted">{t("landingPreview.inventory.title")}</p>
-          <p className="text-sm font-bold text-brand-text">{t("landingPreview.inventory.subtitle")}</p>
+          <p className="text-xs font-semibold uppercase tracking-wider text-brand-muted">{t("landingPreview.inventory.title", { defaultValue: "Title" })}</p>
+          <p className="text-sm font-bold text-brand-text">{t("landingPreview.inventory.subtitle", { defaultValue: "Subtitle" })}</p>
         </div>
         <span className="hidden items-center gap-1 rounded-full bg-rose-50 px-2 py-0.5 text-[10px] font-bold text-rose-700 ring-1 ring-rose-200 sm:inline-flex">
-          <IconAlert className="h-2.5 w-2.5" /> {t("landingPreview.inventory.reorderBadge")}
+          <IconAlert className="h-2.5 w-2.5" /> {t("landingPreview.inventory.reorderBadge", { defaultValue: "Reorder Badge" })}
         </span>
       </div>
 
@@ -398,7 +398,7 @@ export function InventoryPreview(): JSX.Element {
                     {s.level} {unit}
                   </span>
                   <span>
-                    {t("landingPreview.inventory.minPrefix")} {s.min}
+                    {t("landingPreview.inventory.minPrefix", { defaultValue: "Min Prefix" })} {s.min}
                   </span>
                 </div>
                 <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-brand-surface-muted">
@@ -427,7 +427,7 @@ export function RevenuePreview(): JSX.Element {
     <div className="overflow-hidden rounded-2xl border border-brand-border bg-brand-surface shadow-sm">
       <div className="flex items-center justify-between border-b border-brand-border px-5 py-3">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wider text-brand-muted">{t("landingPreview.devices.deskRevenue")}</p>
+          <p className="text-xs font-semibold uppercase tracking-wider text-brand-muted">{t("landingPreview.devices.deskRevenue", { defaultValue: "Desk Revenue" })}</p>
           <p className="text-sm font-bold text-brand-text">↑ ₱ 42,500 <span className="text-[10px] font-medium text-teal-600 ml-1">avg +12%</span></p>
         </div>
         <div className="flex gap-1">

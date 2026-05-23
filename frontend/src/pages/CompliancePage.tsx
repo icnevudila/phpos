@@ -123,16 +123,16 @@ export function CompliancePage() {
           className="card"
         >
           <div className="flex items-center gap-4 mb-4">
-            <div className="p-2.5 bg-teal-50 rounded-xl">
-              <CheckCircle2 className="w-5 h-5 text-teal-600" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-[var(--radius-md)] bg-brand-success-soft text-brand-success">
+              <CheckCircle2 size={20} />
             </div>
             <div>
               <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">{t(`${C}.passRate`)}</p>
               <h3 className="text-xl font-bold text-slate-800">{passRate}%</h3>
             </div>
           </div>
-          <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
-            <div className="bg-teal-500 h-full rounded-full" style={{ width: `${passRate}%` }} />
+          <div className="w-full bg-brand-surface-soft h-1.5 rounded-full overflow-hidden">
+            <div className="bg-brand-success h-full rounded-full" style={{ width: `${passRate}%` }} />
           </div>
         </motion.div>
 
@@ -143,8 +143,8 @@ export function CompliancePage() {
           className="card"
         >
           <div className="flex items-center gap-4 mb-4">
-            <div className="p-2.5 bg-blue-50 rounded-xl">
-              <History className="w-5 h-5 text-blue-600" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-[var(--radius-md)] bg-brand-info-soft text-brand-info">
+              <History size={20} />
             </div>
             <div>
               <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">{t(`${C}.cyclesThisMonth`)}</p>
@@ -160,8 +160,8 @@ export function CompliancePage() {
           className="card"
         >
           <div className="flex items-center gap-4 mb-4">
-            <div className="p-2.5 bg-amber-50 rounded-xl">
-              <Activity className="w-5 h-5 text-amber-600" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-[var(--radius-md)] bg-brand-warning-soft text-brand-warning">
+              <Activity size={20} />
             </div>
             <div>
               <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">{t(`${C}.nextBiTest`)}</p>
@@ -182,7 +182,7 @@ export function CompliancePage() {
             <input
               type="text"
               placeholder={t(`${C}.filterPlaceholder`)}
-              className="bg-slate-50 border-0 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-teal-500 outline-none"
+              className="h-10 rounded-[var(--radius-md)] border border-brand-border bg-brand-surface px-3 py-2 text-sm focus:border-brand-primary focus:outline-none focus:ring-1 focus:ring-brand-primary transition-shadow"
             />
           </div>
         </div>
@@ -229,14 +229,14 @@ export function CompliancePage() {
                       <div className="text-xs text-slate-400"># {log.cycleNumber}</div>
                     </td>
                     <td>
-                      <div className="flex items-center gap-2">
-                        <span className="flex items-center gap-1 text-xs font-medium bg-blue-50 text-blue-600 px-2 py-1 rounded-lg">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="badge badge-blue flex items-center gap-1">
                           <Thermometer className="w-3 h-3" /> {log.temperature}°C
                         </span>
-                        <span className="flex items-center gap-1 text-xs font-medium bg-teal-50 text-teal-600 px-2 py-1 rounded-lg">
+                        <span className="badge badge-teal flex items-center gap-1">
                           <Activity className="w-3 h-3" /> {log.pressure} bar
                         </span>
-                        <span className="flex items-center gap-1 text-xs font-medium bg-slate-100 text-slate-600 px-2 py-1 rounded-lg">
+                        <span className="badge badge-slate flex items-center gap-1">
                           <Clock className="w-3 h-3" /> {log.durationMinutes}m
                         </span>
                       </div>
@@ -264,9 +264,9 @@ export function CompliancePage() {
                     </td>
                     <td>
                       <div className="flex justify-center">
-                        {log.status === "SUCCESS" && <CheckCircle2 className="w-5 h-5 text-teal-500" />}
-                        {log.status === "FAILED" && <AlertTriangle className="w-5 h-5 text-rose-500" />}
-                        {log.status === "ABORTED" && <XCircle className="w-5 h-5 text-slate-400" />}
+                        {log.status === "SUCCESS" && <CheckCircle2 className="w-5 h-5 text-brand-success" />}
+                        {log.status === "FAILED" && <AlertTriangle className="w-5 h-5 text-brand-danger" />}
+                        {log.status === "ABORTED" && <XCircle className="w-5 h-5 text-brand-muted" />}
                       </div>
                     </td>
                   </motion.tr>
@@ -287,9 +287,9 @@ export function CompliancePage() {
               exit={{ scale: 0.9, opacity: 0 }}
               className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden"
             >
-              <div className="p-6 border-b border-slate-100 bg-slate-50/50">
-                <h2 className="text-lg font-bold text-slate-800">{t(`${C}.modalTitle`)}</h2>
-                <p className="text-sm text-slate-500 mt-1">{t(`${C}.modalSubtitle`)}</p>
+              <div className="p-6 border-b border-brand-border bg-brand-surface-soft">
+                <h2 className="text-lg font-bold text-brand-text">{t(`${C}.modalTitle`)}</h2>
+                <p className="text-xs text-brand-muted font-semibold mt-1 uppercase tracking-widest">{t(`${C}.modalSubtitle`)}</p>
               </div>
               <form onSubmit={handleSubmit} className="p-6 space-y-5">
                 <div className="grid grid-cols-2 gap-4">
@@ -299,7 +299,7 @@ export function CompliancePage() {
                       required
                       value={formData.autoclaveName}
                       onChange={(e) => setFormData({ ...formData, autoclaveName: e.target.value })}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-teal-500 outline-none"
+                      className="w-full h-10 rounded-[var(--radius-md)] border border-brand-border bg-brand-surface px-3 py-2 text-xs font-semibold focus:border-brand-primary focus:outline-none focus:ring-1 focus:ring-brand-primary transition-shadow"
                     />
                   </div>
                   <div className="space-y-1.5">
@@ -309,7 +309,7 @@ export function CompliancePage() {
                       required
                       value={formData.cycleNumber}
                       onChange={(e) => setFormData({ ...formData, cycleNumber: Number(e.target.value) })}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-teal-500 outline-none"
+                      className="w-full h-10 rounded-[var(--radius-md)] border border-brand-border bg-brand-surface px-3 py-2 text-xs font-semibold focus:border-brand-primary focus:outline-none focus:ring-1 focus:ring-brand-primary transition-shadow"
                     />
                   </div>
                 </div>
@@ -323,7 +323,7 @@ export function CompliancePage() {
                       required
                       value={formData.temperature}
                       onChange={(e) => setFormData({ ...formData, temperature: Number(e.target.value) })}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-teal-500 outline-none"
+                      className="w-full h-10 rounded-[var(--radius-md)] border border-brand-border bg-brand-surface px-3 py-2 text-xs font-semibold focus:border-brand-primary focus:outline-none focus:ring-1 focus:ring-brand-primary transition-shadow"
                     />
                   </div>
                   <div className="space-y-1.5">
@@ -334,7 +334,7 @@ export function CompliancePage() {
                       required
                       value={formData.pressure}
                       onChange={(e) => setFormData({ ...formData, pressure: Number(e.target.value) })}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-teal-500 outline-none"
+                      className="w-full h-10 rounded-[var(--radius-md)] border border-brand-border bg-brand-surface px-3 py-2 text-xs font-semibold focus:border-brand-primary focus:outline-none focus:ring-1 focus:ring-brand-primary transition-shadow"
                     />
                   </div>
                   <div className="space-y-1.5">
@@ -344,7 +344,7 @@ export function CompliancePage() {
                       required
                       value={formData.durationMinutes}
                       onChange={(e) => setFormData({ ...formData, durationMinutes: Number(e.target.value) })}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-teal-500 outline-none"
+                      className="w-full h-10 rounded-[var(--radius-md)] border border-brand-border bg-brand-surface px-3 py-2 text-xs font-semibold focus:border-brand-primary focus:outline-none focus:ring-1 focus:ring-brand-primary transition-shadow"
                     />
                   </div>
                 </div>
@@ -355,7 +355,7 @@ export function CompliancePage() {
                     required
                     value={formData.operatorId}
                     onChange={(e) => setFormData({ ...formData, operatorId: e.target.value })}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-teal-500 outline-none"
+                    className="w-full h-10 rounded-[var(--radius-md)] border border-brand-border bg-brand-surface px-3 py-2 text-xs font-semibold focus:border-brand-primary focus:outline-none focus:ring-1 focus:ring-brand-primary transition-shadow"
                   >
                     <option value="">{t(`${C}.selectOperator`)}</option>
                     {staff?.map((s: StaffUserDto) => (

@@ -16,20 +16,20 @@ export function UnauthorizedPage(): JSX.Element {
         className="flex flex-1 flex-col items-center justify-center gap-5 px-4 py-16 text-center outline-none"
       >
         <p className="text-sm font-semibold uppercase tracking-wider text-amber-600">403</p>
-        <h1 className="text-3xl font-bold text-slate-900">{t("pages.unauthorized.title")}</h1>
-        <p className="max-w-md text-slate-600">{t("pages.unauthorized.message")}</p>
+        <h1 className="text-3xl font-bold text-slate-900">{t("pages.unauthorized.title", { defaultValue: "Title" })}</h1>
+        <p className="max-w-md text-slate-600">{t("pages.unauthorized.message", { defaultValue: "Message" })}</p>
         <div className="flex flex-wrap items-center justify-center gap-3">
           <Link
             to="/login"
             className="rounded-lg bg-teal-600 px-5 py-2.5 text-sm font-semibold text-white shadow hover:bg-teal-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2"
           >
-            {t("pages.unauthorized.backToLogin")}
+            {t("pages.unauthorized.backToLogin", { defaultValue: "Back To Login" })}
           </Link>
           <Link
             to="/"
             className="rounded-lg border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-slate-800 shadow-sm hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-2"
           >
-            {t("pages.unauthorized.goHome")}
+            {t("pages.unauthorized.goHome", { defaultValue: "Go Home" })}
           </Link>
         </div>
       </main>

@@ -94,7 +94,7 @@ export function InvoicePage(): JSX.Element {
       setClaimSelectedLineIds(inv.treatments.map((t) => t.id));
       setClaimProviderId(m.find((x) => x.isPrimary)?.providerId ?? "");
     } catch (e) {
-      setError(e instanceof Error ? e.message : t("pages.invoice.loadFailed"));
+      setError(e instanceof Error ? e.message : t("pages.invoice.loadFailed", { defaultValue: "Load Failed" }));
     } finally {
       setLoading(false);
     }
@@ -112,9 +112,9 @@ export function InvoicePage(): JSX.Element {
       const updated = await updateInvoice(invoice.id, { discount: value });
       setInvoice(updated);
       setEditingDiscount(false);
-      toast.success(t("pages.invoice.saved"));
+      toast.success(t("pages.invoice.saved", { defaultValue: "Saved" }));
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : t("pages.invoice.alertDiscountFailed"));
+      toast.error(e instanceof Error ? e.message : t("pages.invoice.alertDiscountFailed", { defaultValue: "Alert Discount Failed" }));
     }
   }
 
@@ -128,7 +128,7 @@ export function InvoicePage(): JSX.Element {
       setPaymongoMock(res.mock);
       window.open(payUrl, "_blank");
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : t("pages.invoice.alertGcashFailed"));
+      toast.error(e instanceof Error ? e.message : t("pages.invoice.alertGcashFailed", { defaultValue: "Alert Gcash Failed" }));
     } finally {
       setBusyGcash(false);
     }
@@ -140,9 +140,9 @@ export function InvoicePage(): JSX.Element {
       const updated = await simulatePaymongoPaid(invoice.id);
       setInvoice(updated);
       setPaymongoUrl(null);
-      toast.success(t("pages.invoice.paidFull", { date: t("pages.invoice.paidJustNow") }));
+      toast.success(t("pages.invoice.paidFull", { date: t("pages.invoice.paidJustNow", { defaultValue: "Demo mode: payment recorded locally. No live gateway was charged." }) }));
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : t("pages.invoice.alertSimulateFailed"));
+      toast.error(e instanceof Error ? e.message : t("pages.invoice.alertSimulateFailed", { defaultValue: "Alert Simulate Failed" }));
     }
   }
 
@@ -163,11 +163,11 @@ export function InvoicePage(): JSX.Element {
            <FileText size={40} />
         </div>
         <div>
-          <p className="text-xl font-bold text-slate-800">{error ?? t("pages.invoice.notFound")}</p>
+          <p className="text-xl font-bold text-slate-800">{error ?? t("pages.invoice.notFound", { defaultValue: "Not Found" })}</p>
           <p className="mt-2 text-sm font-medium text-slate-400">The requested financial record could not be retrieved.</p>
         </div>
         <Link to="/invoices" className="btn-primary">
-          {t("pages.invoice.backList")}
+          {t("pages.invoice.backList", { defaultValue: "Back List" })}
         </Link>
       </div>
     );
@@ -184,11 +184,11 @@ export function InvoicePage(): JSX.Element {
 
   async function submitClaim(): Promise<void> {
     if (!claimProviderId) {
-      toast.error(t("pages.invoice.toastSelectProvider"));
+      toast.error(t("pages.invoice.toastSelectProvider", { defaultValue: "Toast Select Provider" }));
       return;
     }
     if (claimRequested <= 0) {
-      toast.error(t("pages.invoice.toastSelectLine"));
+      toast.error(t("pages.invoice.toastSelectLine", { defaultValue: "Toast Select Line" }));
       return;
     }
     setClaimBusy(true);
@@ -197,7 +197,7 @@ export function InvoicePage(): JSX.Element {
         .filter((t) => claimSelectedLineIds.includes(t.id))
         .map(
           (tr) =>
-            `${tr.procedure}(${tr.toothIds.join(",") || t("pages.invoice.generalLine")})`,
+            `${tr.procedure}(${tr.toothIds.join(",") || t("pages.invoice.generalLine", { defaultValue: "General Line" })})`,
         )
         .join(" | ");
       await createHmoClaim({
@@ -211,11 +211,11 @@ export function InvoicePage(): JSX.Element {
         status: "SUBMITTED",
         notes: claimNotes || t("pages.invoice.claimNotesAuto", { lines: lineDesc }),
       });
-      toast.success(t("pages.invoice.toastClaimSubmitted"));
+      toast.success(t("pages.invoice.toastClaimSubmitted", { defaultValue: "Demo mode: claim transmission simulated." }));
       setClaimOpen(false);
       await load();
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : t("pages.invoice.toastClaimFailed"));
+      toast.error(e instanceof Error ? e.message : t("pages.invoice.toastClaimFailed", { defaultValue: "Toast Claim Failed" }));
     } finally {
       setClaimBusy(false);
     }
@@ -230,7 +230,7 @@ export function InvoicePage(): JSX.Element {
            className="group inline-flex items-center gap-2 rounded-xl bg-white px-4 py-2 text-sm font-semibold uppercase tracking-widest text-slate-500 shadow-sm ring-1 ring-slate-100 transition-all hover:bg-slate-50 hover:text-teal-600"
          >
            <ArrowLeft size={16} className="transition-transform group-hover:-translate-x-1" />
-           {t("pages.invoice.backInvoices")}
+           {t("pages.invoice.backInvoices", { defaultValue: "Back Invoices" })}
          </Link>
 
          <div className="flex items-center gap-2">
@@ -242,7 +242,7 @@ export function InvoicePage(): JSX.Element {
               Print
             </button>
             <button
-              onClick={() => openInvoicePdf(invoice.id).catch(() => toast.error(t("pages.invoice.pdfFailed")))}
+              onClick={() => openInvoicePdf(invoice.id).catch(() => toast.error(t("pages.invoice.pdfFailed", { defaultValue: "Pdf Failed" })))}
               className="btn-secondary text-xs px-3 py-1.5 h-8"
             >
               <Download size={14} />
@@ -250,7 +250,7 @@ export function InvoicePage(): JSX.Element {
             </button>
             {invoice.patient.philhealthNo && (
               <button
-                onClick={() => openPhilhealthWorksheetPdf(invoice.id).catch(() => toast.error(t("pages.invoice.philhealthWorksheetPdfFailed")))}
+                onClick={() => openPhilhealthWorksheetPdf(invoice.id).catch(() => toast.error(t("pages.invoice.philhealthWorksheetPdfFailed", { defaultValue: "Philhealth Worksheet Pdf Failed" })))}
                 className="btn-secondary text-xs px-3 py-1.5 h-8 text-brand-warning border-brand-warning/30 hover:bg-brand-warning-soft"
               >
                 <FileText size={14} />
@@ -258,7 +258,7 @@ export function InvoicePage(): JSX.Element {
               </button>
             )}
             <button
-              onClick={() => openBir2307Pdf(invoice.id).catch(() => toast.error(t("pages.invoice.bir2307Failed")))}
+              onClick={() => openBir2307Pdf(invoice.id).catch(() => toast.error(t("pages.invoice.bir2307Failed", { defaultValue: "Bir2307 Failed" })))}
               className="btn-secondary text-xs px-3 py-1.5 h-8 text-brand-info border-brand-info/30 hover:bg-brand-info-soft"
             >
               <Shield size={14} />
@@ -282,7 +282,7 @@ export function InvoicePage(): JSX.Element {
                   <InvoiceStatusBadge status={invoice.status} />
                 </div>
                 <h1 className="text-2xl font-bold tracking-tight text-brand-text font-mono">
-                  {invoice.orNumber || t("pages.invoice.orNumberPending")}
+                  {invoice.orNumber || t("pages.invoice.orNumberPending", { defaultValue: "Or Number Pending" })}
                 </h1>
                 <p className="text-xs font-bold text-brand-muted uppercase tracking-widest">
                   Issued {fmtDateTime(invoice.createdAt)}
@@ -668,7 +668,7 @@ export function InvoicePage(): JSX.Element {
         onSaved={(inv) => {
           setInvoice(inv);
           setModalOpen(false);
-          toast.success(t("pages.invoice.saved"));
+          toast.success(t("pages.invoice.saved", { defaultValue: "Saved" }));
         }}
       />
     </div>

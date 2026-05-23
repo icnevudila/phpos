@@ -101,7 +101,7 @@ export function TestimonialMarquee(): JSX.Element {
   return (
     <div className="space-y-4">
       <p className="text-center text-[10px] font-bold uppercase tracking-widest text-brand-muted">
-        {t("landing.testimonialsSample")}
+        {t("landing.testimonialsSample", { defaultValue: "Testimonials Sample" })}
       </p>
       <Row items={rowA} direction="left" duration={45} />
       <Row items={rowB} direction="right" duration={55} />

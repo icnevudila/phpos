@@ -160,7 +160,7 @@ export function MedicalHistoryForm({ patientId, patientGender, canEdit }: Props)
       })
       .catch((err: any) => {
         if (cancelled) return;
-        const msg = err.response?.data?.message || err.message || t("medicalHistory.loadFailedFallback");
+        const msg = err.response?.data?.message || err.message || t("medicalHistory.loadFailedFallback", { defaultValue: "Load Failed Fallback" });
         setLoadError(msg);
         toast.error(msg);
       })
@@ -216,9 +216,9 @@ export function MedicalHistoryForm({ patientId, patientGender, canEdit }: Props)
         setRecordedBy(`Dr. ${res.data.data.recordedBy.firstName} ${res.data.data.recordedBy.lastName}`);
       }
       setRecordedAt(res.data.data.recordedAt ?? new Date().toISOString());
-      toast.success(t("pages.patientDetail.medicalSaveSuccess"));
+      toast.success(t("pages.patientDetail.medicalSaveSuccess", { defaultValue: "Medical Save Success" }));
     } catch (err: any) {
-      toast.error(err.response?.data?.message || err.message || t("pages.patientDetail.medicalSaveFailed"));
+      toast.error(err.response?.data?.message || err.message || t("pages.patientDetail.medicalSaveFailed", { defaultValue: "Medical Save Failed" }));
     } finally {
       setSaving(false);
     }
@@ -228,7 +228,7 @@ export function MedicalHistoryForm({ patientId, patientGender, canEdit }: Props)
     return (
       <div className="flex flex-col items-center justify-center py-24 gap-4 bg-slate-50/50 rounded-[2.5rem] border border-dashed border-slate-200">
         <div className="h-10 w-10 border-4 border-teal-500 border-t-transparent rounded-full animate-spin" />
-        <p className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400">{t("medicalHistory.loading")}</p>
+        <p className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400">{t("medicalHistory.loading", { defaultValue: "Loading" })}</p>
       </div>
     );
   }
@@ -237,7 +237,7 @@ export function MedicalHistoryForm({ patientId, patientGender, canEdit }: Props)
     return (
       <div className="rounded-[2.5rem] border border-rose-100 bg-rose-50/30 p-12 text-center shadow-sm" role="alert">
         <AlertTriangle className="mx-auto h-12 w-12 text-rose-500 mb-4" />
-        <h3 className="text-xl font-black text-slate-900 uppercase tracking-tight mb-2">{t("medicalHistory.loadFailed")}</h3>
+        <h3 className="text-xl font-black text-slate-900 uppercase tracking-tight mb-2">{t("medicalHistory.loadFailed", { defaultValue: "Load Failed" })}</h3>
         <p className="text-sm font-medium text-slate-500 mb-8 max-w-xs mx-auto">{loadError}</p>
         <button
           onClick={() => setReloadKey((k) => k + 1)}
@@ -262,7 +262,7 @@ export function MedicalHistoryForm({ patientId, patientGender, canEdit }: Props)
               <Stethoscope size={24} />
            </div>
            <div>
-              <h2 className="text-xl font-bold tracking-tight text-brand-text">{t("medicalHistory.title")}</h2>
+              <h2 className="text-xl font-bold tracking-tight text-brand-text">{t("medicalHistory.title", { defaultValue: "Title" })}</h2>
               <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-medium text-brand-muted">
                  <span className="flex items-center gap-1.5 rounded-md bg-brand-surface-soft px-2 py-1 border border-brand-border">
                     <CheckCircle2 size={12} className="text-brand-primary" />
@@ -294,7 +294,7 @@ export function MedicalHistoryForm({ patientId, patientGender, canEdit }: Props)
             ) : (
               <Save size={16} />
             )}
-            {saving ? t("medicalHistory.saving") : t("medicalHistory.save")}
+            {saving ? t("medicalHistory.saving", { defaultValue: "Saving" }) : t("medicalHistory.save", { defaultValue: "Save" })}
           </button>
         )}
       </header>
@@ -303,30 +303,30 @@ export function MedicalHistoryForm({ patientId, patientGender, canEdit }: Props)
       <section className="space-y-6">
         <div className="flex items-center gap-3 px-4">
            <Activity className="text-teal-500" size={20} />
-           <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-400">{t("medicalHistory.sections.general")}</h3>
+           <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-400">{t("medicalHistory.sections.general", { defaultValue: "General" })}</h3>
         </div>
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <YesNoWithReason
-            label={t("medicalHistory.questions.physicianCare")}
+            label={t("medicalHistory.questions.physicianCare", { defaultValue: "Physician Care" })}
             checked={state.underPhysicianCare}
             reason={state.underPhysicianCareReason ?? ""}
             onToggle={(v) => setField("underPhysicianCare", v)}
             onReason={(v) => setField("underPhysicianCareReason", v)}
             disabled={disabled}
-            reasonPlaceholder={t("medicalHistory.fields.reason")}
+            reasonPlaceholder={t("medicalHistory.fields.reason", { defaultValue: "Reason" })}
           />
           <YesNoWithReason
-            label={t("medicalHistory.questions.hospitalized")}
+            label={t("medicalHistory.questions.hospitalized", { defaultValue: "Hospitalized" })}
             checked={state.hospitalized}
             reason={state.hospitalizedReason ?? ""}
             onToggle={(v) => setField("hospitalized", v)}
             onReason={(v) => setField("hospitalizedReason", v)}
             disabled={disabled}
-            reasonPlaceholder={t("medicalHistory.fields.details")}
+            reasonPlaceholder={t("medicalHistory.fields.details", { defaultValue: "Details" })}
             extra={
               <input
                 type="number"
-                placeholder={t("medicalHistory.fields.year")}
+                placeholder={t("medicalHistory.fields.year", { defaultValue: "Year" })}
                 disabled={disabled}
                 value={state.hospitalizedYear ?? ""}
                 onChange={(e) =>
@@ -337,22 +337,22 @@ export function MedicalHistoryForm({ patientId, patientGender, canEdit }: Props)
             }
           />
           <YesNoWithReason
-            label={t("medicalHistory.questions.medications")}
+            label={t("medicalHistory.questions.medications", { defaultValue: "Medications" })}
             checked={state.takingMedications}
             reason={state.medicationsList ?? ""}
             onToggle={(v) => setField("takingMedications", v)}
             onReason={(v) => setField("medicationsList", v)}
             disabled={disabled}
-            reasonPlaceholder={t("medicalHistory.fields.medList")}
+            reasonPlaceholder={t("medicalHistory.fields.medList", { defaultValue: "Med List" })}
           />
           <YesNoWithReason
-            label={t("medicalHistory.questions.seriousIllness")}
+            label={t("medicalHistory.questions.seriousIllness", { defaultValue: "Serious Illness" })}
             checked={state.seriousIllness}
             reason={state.seriousIllnessDetails ?? ""}
             onToggle={(v) => setField("seriousIllness", v)}
             onReason={(v) => setField("seriousIllnessDetails", v)}
             disabled={disabled}
-            reasonPlaceholder={t("medicalHistory.fields.details")}
+            reasonPlaceholder={t("medicalHistory.fields.details", { defaultValue: "Details" })}
           />
         </div>
       </section>
@@ -361,7 +361,7 @@ export function MedicalHistoryForm({ patientId, patientGender, canEdit }: Props)
       <section className="space-y-4">
         <div className="flex items-center gap-2 px-1">
            <ShieldAlert className="text-brand-warning" size={16} />
-           <h3 className="text-xs font-bold uppercase tracking-wider text-brand-muted">{t("medicalHistory.sections.conditions")}</h3>
+           <h3 className="text-xs font-bold uppercase tracking-wider text-brand-muted">{t("medicalHistory.sections.conditions", { defaultValue: "Conditions" })}</h3>
         </div>
         <div className="card">
            <div className="grid grid-cols-1 gap-x-8 gap-y-2 sm:grid-cols-2">
@@ -397,7 +397,7 @@ export function MedicalHistoryForm({ patientId, patientGender, canEdit }: Props)
            <div className="mt-8 border-t border-brand-border pt-6">
              <div className="flex items-center gap-2 mb-2">
                 <Info size={14} className="text-brand-muted" />
-                <label className="text-xs font-medium text-brand-muted">{t("medicalHistory.fields.otherConditions")}</label>
+                <label className="text-xs font-medium text-brand-muted">{t("medicalHistory.fields.otherConditions", { defaultValue: "Other Conditions" })}</label>
              </div>
              <textarea
                disabled={disabled}
@@ -414,7 +414,7 @@ export function MedicalHistoryForm({ patientId, patientGender, canEdit }: Props)
       <section className="space-y-6">
         <div className="flex items-center gap-3 px-4">
            <Flame className="text-rose-500" size={20} />
-           <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-400">{t("medicalHistory.sections.allergies")}</h3>
+           <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-400">{t("medicalHistory.sections.allergies", { defaultValue: "Allergies" })}</h3>
         </div>
         <div className="rounded-[2.5rem] border border-slate-100 bg-white p-8 shadow-sm">
           <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
@@ -446,7 +446,7 @@ export function MedicalHistoryForm({ patientId, patientGender, canEdit }: Props)
             ))}
           </div>
           <div className="mt-8">
-             <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3 block">{t("medicalHistory.fields.otherAllergies")}</label>
+             <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3 block">{t("medicalHistory.fields.otherAllergies", { defaultValue: "Other Allergies" })}</label>
              <input
                disabled={disabled}
                type="text"
@@ -462,13 +462,13 @@ export function MedicalHistoryForm({ patientId, patientGender, canEdit }: Props)
       <section className="space-y-6">
         <div className="flex items-center gap-3 px-4">
            <Wind className="text-sky-500" size={20} />
-           <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-400">{t("medicalHistory.sections.lifestyle")}</h3>
+           <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-400">{t("medicalHistory.sections.lifestyle", { defaultValue: "Lifestyle" })}</h3>
         </div>
         <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
           {(["smoker", "alcohol", "recreationalDrug"] as const).map((key) => (
             <div key={key} className="rounded-[2rem] border border-slate-100 bg-white p-6 shadow-sm">
               <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-4 block">
-                {key === "smoker" ? t("medicalHistory.lifestyle.smoking") : key === "alcohol" ? t("medicalHistory.lifestyle.alcohol") : t("medicalHistory.lifestyle.drugs")}
+                {key === "smoker" ? t("medicalHistory.lifestyle.smoking", { defaultValue: "Smoking" }) : key === "alcohol" ? t("medicalHistory.lifestyle.alcohol", { defaultValue: "Alcohol" }) : t("medicalHistory.lifestyle.drugs", { defaultValue: "Drugs" })}
               </label>
               <div className="space-y-2">
                 {LIFESTYLE_OPTS.map((o) => (
@@ -493,18 +493,18 @@ export function MedicalHistoryForm({ patientId, patientGender, canEdit }: Props)
         <section className="space-y-6">
           <div className="flex items-center gap-3 px-4">
              <Droplet className="text-pink-500" size={20} />
-             <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-400">{t("medicalHistory.sections.female")}</h3>
+             <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-400">{t("medicalHistory.sections.female", { defaultValue: "Female" })}</h3>
           </div>
           <div className="rounded-[2.5rem] border border-slate-100 bg-white p-8 shadow-sm">
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
                <FemaleToggle 
-                 label={t("medicalHistory.questions.pregnant")} 
+                 label={t("medicalHistory.questions.pregnant", { defaultValue: "Pregnant" })} 
                  checked={state.isPregnant} 
                  onChange={(v) => setField("isPregnant", v)} 
                  disabled={disabled}
                />
                <div className={`transition-opacity ${!state.isPregnant ? 'opacity-30' : ''}`}>
-                 <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 block">{t("medicalHistory.fields.pregnancyMonth")}</label>
+                 <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 block">{t("medicalHistory.fields.pregnancyMonth", { defaultValue: "Pregnancy Month" })}</label>
                  <input
                    type="number"
                    disabled={disabled || !state.isPregnant}
@@ -516,13 +516,13 @@ export function MedicalHistoryForm({ patientId, patientGender, canEdit }: Props)
                  />
                </div>
                <FemaleToggle 
-                 label={t("medicalHistory.questions.breastfeeding")} 
+                 label={t("medicalHistory.questions.breastfeeding", { defaultValue: "Breastfeeding" })} 
                  checked={state.isBreastfeeding} 
                  onChange={(v) => setField("isBreastfeeding", v)} 
                  disabled={disabled}
                />
                <FemaleToggle 
-                 label={t("medicalHistory.questions.contraceptives")} 
+                 label={t("medicalHistory.questions.contraceptives", { defaultValue: "Contraceptives" })} 
                  checked={state.usesContraceptive} 
                  onChange={(v) => setField("usesContraceptive", v)} 
                  disabled={disabled}
@@ -536,14 +536,14 @@ export function MedicalHistoryForm({ patientId, patientGender, canEdit }: Props)
       <section className="space-y-6">
         <div className="flex items-center gap-3 px-4">
            <Zap className="text-indigo-500" size={20} />
-           <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-400">{t("medicalHistory.sections.notes")}</h3>
+           <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-400">{t("medicalHistory.sections.notes", { defaultValue: "Notes" })}</h3>
         </div>
         <div className="rounded-[2.5rem] border border-slate-100 bg-white p-8 shadow-sm">
           <textarea
             disabled={disabled}
             rows={5}
             value={state.notes ?? ""}
-            placeholder={t("medicalHistory.fields.additionalNotes")}
+            placeholder={t("medicalHistory.fields.additionalNotes", { defaultValue: "Additional Notes" })}
             onChange={(e) => setField("notes", e.target.value)}
             className="w-full rounded-3xl border-none bg-slate-50 p-6 text-sm font-bold text-slate-900 ring-1 ring-slate-100 transition-all focus:ring-4 focus:ring-indigo-500/10"
           />
@@ -600,7 +600,7 @@ function YesNoWithReason({
             onClick={() => onToggle(true)}
             className={`h-11 flex-1 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${ checked ? "bg-teal-500 text-white shadow-lg" : "bg-slate-50 text-slate-400 hover:bg-slate-100 " }`}
           >
-            {t("medicalHistory.yes")}
+            {t("medicalHistory.yes", { defaultValue: "Yes" })}
           </button>
           <button
             type="button"
@@ -608,7 +608,7 @@ function YesNoWithReason({
             onClick={() => onToggle(false)}
             className={`h-11 flex-1 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${ !checked ? "bg-white text-white shadow-lg " : "bg-slate-50 text-slate-400 hover:bg-slate-100 " }`}
           >
-            {t("medicalHistory.no")}
+            {t("medicalHistory.no", { defaultValue: "No" })}
           </button>
         </div>
       </div>
@@ -624,7 +624,7 @@ function YesNoWithReason({
               <input
                 type="text"
                 disabled={disabled}
-                placeholder={reasonPlaceholder ?? t("medicalHistory.specifyDetailsPlaceholder")}
+                placeholder={reasonPlaceholder ?? t("medicalHistory.specifyDetailsPlaceholder", { defaultValue: "Specify Details Placeholder" })}
                 value={reason}
                 onChange={(e) => onReason(e.target.value)}
                 className="h-12 w-full rounded-xl border-none bg-white px-4 text-xs font-bold text-slate-900 ring-1 ring-sky-200 transition-all focus:ring-2 focus:ring-sky-500"

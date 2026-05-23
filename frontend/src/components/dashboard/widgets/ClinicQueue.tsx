@@ -32,12 +32,12 @@ export function ClinicQueue({
               <Activity size={20} />
            </div>
            <h2 className="text-3xl font-black text-slate-900 tracking-tighter uppercase">
-             {t("pages.dashboard.opsTitle")}
+             {t("pages.dashboard.opsTitle", { defaultValue: "Ops Title" })}
            </h2>
         </div>
         <div className="flex items-center gap-2">
            <span className="h-2 w-2 rounded-full bg-teal-500 animate-pulse" />
-           <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{t("pages.dashboard.opsLiveBadge")}</span>
+           <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{t("pages.dashboard.opsLiveBadge", { defaultValue: "Ops Live Badge" })}</span>
         </div>
       </div>
 
@@ -48,7 +48,7 @@ export function ClinicQueue({
           <div className="flex items-center justify-between mb-8">
              <div className="flex items-center gap-3">
                <div className="h-1.5 w-1.5 rounded-full bg-teal-500" />
-               <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">{t("pages.dashboard.opsInClinic")}</p>
+               <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">{t("pages.dashboard.opsInClinic", { defaultValue: "Ops In Clinic" })}</p>
              </div>
              <span className="text-[10px] font-black text-teal-500">
                {t("pages.dashboard.opsActiveCount", { count: currentlyInClinic.length })}
@@ -58,7 +58,7 @@ export function ClinicQueue({
           {currentlyInClinic.length === 0 ? (
             <div className="py-12 text-center">
                <Clock className="h-8 w-8 text-slate-100 mx-auto mb-4" />
-               <p className="text-xs font-bold text-slate-300 uppercase tracking-widest">{t("pages.dashboard.opsEmpty")}</p>
+               <p className="text-xs font-bold text-slate-300 uppercase tracking-widest">{t("pages.dashboard.opsEmpty", { defaultValue: "Ops Empty" })}</p>
             </div>
           ) : (
             <ul className="space-y-4">
@@ -67,7 +67,7 @@ export function ClinicQueue({
                   <div className="min-w-0">
                     <span className="block truncate text-sm font-black text-slate-900 uppercase tracking-tight">{r.patientName}</span>
                     <span className="text-[10px] font-black text-teal-600 uppercase tracking-widest mt-1 block">
-                      {r.chairNo || t("pages.dashboard.opsLobbyChair")} · {t(`pages.dashboard.queueStatus.${r.status}`)}
+                      {r.chairNo || t("pages.dashboard.opsLobbyChair", { defaultValue: "Ops Lobby Chair" })} · {t(`pages.dashboard.queueStatus.${r.status}`)}
                     </span>
                   </div>
                   <div className={`h-2.5 w-2.5 rounded-full ${r.status === "IN_PROGRESS" ? "bg-teal-500 animate-pulse shadow-lg shadow-teal-500/50" : "bg-sky-500"}`} />
@@ -82,7 +82,7 @@ export function ClinicQueue({
           <div className="flex items-center justify-between mb-8">
              <div className="flex items-center gap-3">
                <div className="h-1.5 w-1.5 rounded-full bg-teal-500" />
-               <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">{t("pages.dashboard.opsUpcoming")}</p>
+               <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">{t("pages.dashboard.opsUpcoming", { defaultValue: "Ops Upcoming" })}</p>
              </div>
              <span className="text-[10px] font-black text-teal-500">
                {t("pages.dashboard.opsQueuedCount", { count: nextAppointments.length })}
@@ -90,7 +90,7 @@ export function ClinicQueue({
           </div>
 
           {nextAppointments.length === 0 ? (
-            <div className="py-12 text-center font-black text-slate-200">{t("pages.dashboard.opsEmpty")}</div>
+            <div className="py-12 text-center font-black text-slate-200">{t("pages.dashboard.opsEmpty", { defaultValue: "Ops Empty" })}</div>
           ) : (
             <ul className="space-y-4">
               {nextAppointments.slice(0, 4).map((r) => (
@@ -112,13 +112,13 @@ export function ClinicQueue({
           <div className="flex items-center justify-between mb-8 relative z-10">
              <div className="flex items-center gap-3">
                <div className="h-1.5 w-1.5 rounded-full bg-white animate-pulse" />
-               <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/60">{t("pages.dashboard.opsOverdueActions")}</p>
+               <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/60">{t("pages.dashboard.opsOverdueActions", { defaultValue: "Ops Overdue Actions" })}</p>
              </div>
              <Bell size={16} className="text-white/40" />
           </div>
 
           {overdueAppointments.length === 0 ? (
-            <div className="py-12 text-center text-white/20 font-black uppercase tracking-widest">{t("pages.dashboard.opsEmpty")}</div>
+            <div className="py-12 text-center text-white/20 font-black uppercase tracking-widest">{t("pages.dashboard.opsEmpty", { defaultValue: "Ops Empty" })}</div>
           ) : (
             <ul className="space-y-4 relative z-10">
               {overdueAppointments.slice(0, 3).map((r) => (
@@ -138,7 +138,7 @@ export function ClinicQueue({
                       disabled={queueBusyId === r.id}
                       className="h-10 rounded-xl bg-white/10 text-[10px] font-black uppercase tracking-widest text-white hover:bg-white/20 transition-all border border-white/10"
                     >
-                      {t("pages.dashboard.actionSendAlert")}
+                      {t("pages.dashboard.actionSendAlert", { defaultValue: "Action Send Alert" })}
                     </button>
                     <button
                       type="button"
@@ -146,7 +146,7 @@ export function ClinicQueue({
                       disabled={queueBusyId === r.id}
                       className="h-10 rounded-xl bg-white text-[10px] font-black uppercase tracking-widest text-rose-600 hover:scale-105 transition-all shadow-lg"
                     >
-                      {t("pages.dashboard.actionCheckIn")}
+                      {t("pages.dashboard.actionCheckIn", { defaultValue: "Action Check In" })}
                     </button>
                   </div>
                 </li>

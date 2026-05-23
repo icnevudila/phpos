@@ -101,11 +101,11 @@ export function EverythingInside(): JSX.Element {
   return (
     <div className="space-y-12">
       <div className="mx-auto max-w-2xl text-center">
-        <SectionEyebrow label={t("landing.chipEyebrow")} icon={IconSparkle} accent="indigo" align="center" />
+        <SectionEyebrow label={t("landing.chipEyebrow", { defaultValue: "Chip Eyebrow" })} icon={IconSparkle} accent="indigo" align="center" />
         <h2 className="mt-3 text-4xl font-black tracking-tight text-brand-text sm:text-5xl">
-          {t("landing.chipTitle")}
+          {t("landing.chipTitle", { defaultValue: "Chip Title" })}
         </h2>
-        <p className="mt-4 text-lg font-medium text-brand-muted">{t("landing.chipSubtitle")}</p>
+        <p className="mt-4 text-lg font-medium text-brand-muted">{t("landing.chipSubtitle", { defaultValue: "Chip Subtitle" })}</p>
       </div>
 
       <div className="grid gap-8 lg:grid-cols-[1fr_350px]">
@@ -141,7 +141,7 @@ export function EverythingInside(): JSX.Element {
                       {t(`landing.chip_${key}`)}
                       {COMING_SOON_CHIPS.has(key) ? (
                         <span className="ml-1 rounded-full bg-amber-100 px-1.5 py-0.5 text-[9px] font-black uppercase text-amber-800">
-                          {t("landing.comingSoon")}
+                          {t("landing.comingSoon", { defaultValue: "Coming Soon" })}
                         </span>
                       ) : null}
                     </button>
@@ -174,7 +174,7 @@ export function EverythingInside(): JSX.Element {
                 </p>
                 {COMING_SOON_CHIPS.has(activeKey ?? "") ? (
                   <p className="mt-6 text-xs font-bold uppercase tracking-widest text-amber-600">
-                    {t("landing.comingSoon")}
+                    {t("landing.comingSoon", { defaultValue: "Coming Soon" })}
                   </p>
                 ) : (
                   <div className="mt-8 flex items-center gap-2 text-xs font-bold text-teal-600">
@@ -189,7 +189,7 @@ export function EverythingInside(): JSX.Element {
       </div>
 
       <p className="text-center text-[10px] font-black uppercase tracking-[0.4em] text-brand-muted">
-        {t("landing.chipFoot")}
+        {t("landing.chipFoot", { defaultValue: "Chip Foot" })}
       </p>
     </div>
   );

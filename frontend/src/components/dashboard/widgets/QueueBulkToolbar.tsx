@@ -37,7 +37,7 @@ export function QueueBulkToolbar({
   if (!hasOverdue && !hasNext) {
     return (
       <p className="rounded-2xl border border-dashed border-slate-200 bg-slate-50/80 px-4 py-3 text-center text-xs font-bold uppercase tracking-widest text-slate-400">
-        {t("pages.dashboard.bulkNone")}
+        {t("pages.dashboard.bulkNone", { defaultValue: "Bulk None" })}
       </p>
     );
   }
@@ -45,7 +45,7 @@ export function QueueBulkToolbar({
   return (
     <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
       <span className="mr-1 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
-        {t("pages.dashboard.bulkLabel")}
+        {t("pages.dashboard.bulkLabel", { defaultValue: "Bulk Label" })}
       </span>
       {syncLabel ? (
         <span className="text-[10px] font-bold text-teal-600">{syncLabel}</span>

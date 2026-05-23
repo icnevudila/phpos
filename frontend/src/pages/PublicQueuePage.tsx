@@ -43,7 +43,7 @@ export function PublicQueuePage() {
       setQueue(data);
       setLoadError(null);
     } catch (err) {
-      setLoadError(err instanceof Error ? err.message : t("pages.publicQueue.loadFailed"));
+      setLoadError(err instanceof Error ? err.message : t("pages.publicQueue.loadFailed", { defaultValue: "Load Failed" }));
     }
   }, [canFetch, token, clinicId, slug, t]);
 
@@ -92,9 +92,9 @@ export function PublicQueuePage() {
   );
 
   const statusLabel = (status: string): string => {
-    if (status === "CHECKED_IN") return t("pages.publicQueue.statusProceeding");
-    if (status === "IN_PROGRESS") return t("pages.publicQueue.statusInProgress");
-    return t("pages.publicQueue.statusWaiting");
+    if (status === "CHECKED_IN") return t("pages.publicQueue.statusProceeding", { defaultValue: "Status Proceeding" });
+    if (status === "IN_PROGRESS") return t("pages.publicQueue.statusInProgress", { defaultValue: "Status In Progress" });
+    return t("pages.publicQueue.statusWaiting", { defaultValue: "Status Waiting" });
   };
 
   if (!canFetch) {
@@ -102,8 +102,8 @@ export function PublicQueuePage() {
       <div className="flex h-screen items-center justify-center bg-[#f5f7f9] p-8 text-center text-white">
         <div className="max-w-lg space-y-4">
           <IconStethoscope className="mx-auto text-teal-400" size={48} />
-          <h1 className="text-2xl font-black">{t("pages.publicQueue.setupTitle")}</h1>
-          <p className="text-slate-400">{t("pages.publicQueue.setupHint")}</p>
+          <h1 className="text-2xl font-black">{t("pages.publicQueue.setupTitle", { defaultValue: "Setup Title" })}</h1>
+          <p className="text-slate-400">{t("pages.publicQueue.setupHint", { defaultValue: "Setup Hint" })}</p>
         </div>
       </div>
     );
@@ -119,7 +119,7 @@ export function PublicQueuePage() {
           className="flex shrink-0 items-center justify-center gap-3 bg-amber-500 px-4 py-3 text-sm font-bold text-amber-950"
         >
           <WifiOff size={18} aria-hidden />
-          {t("pages.publicQueue.offlineBanner")}
+          {t("pages.publicQueue.offlineBanner", { defaultValue: "Offline Banner" })}
         </div>
       ) : null}
 
@@ -143,11 +143,11 @@ export function PublicQueuePage() {
             <h1
               className={`font-black leading-none tracking-tight text-slate-900 ${ tvMode ? "text-4xl md:text-5xl" : "text-3xl md:text-5xl" }`}
             >
-              {t("pages.publicQueue.brand")}{" "}
-              <span className="italic text-teal-500">{t("pages.publicQueue.brandAccent")}</span>
+              {t("pages.publicQueue.brand", { defaultValue: "Brand" })}{" "}
+              <span className="italic text-teal-500">{t("pages.publicQueue.brandAccent", { defaultValue: "Brand Accent" })}</span>
             </h1>
             <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 md:text-xs">
-              {t("pages.publicQueue.subtitle")}
+              {t("pages.publicQueue.subtitle", { defaultValue: "Subtitle" })}
             </p>
           </div>
         </div>
@@ -180,7 +180,7 @@ export function PublicQueuePage() {
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-teal-400 opacity-75" />
               <span className="relative inline-flex h-4 w-4 rounded-full bg-teal-500" />
             </span>
-            {t("pages.publicQueue.activeSession")}
+            {t("pages.publicQueue.activeSession", { defaultValue: "Active Session" })}
           </h2>
 
           <div className="flex flex-1 flex-col justify-center">
@@ -212,9 +212,9 @@ export function PublicQueuePage() {
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
                   <Activity size={64} className="text-slate-200" aria-hidden />
                   <p className="text-4xl font-black uppercase italic leading-tight tracking-tighter text-slate-200 md:text-6xl">
-                    {t("pages.publicQueue.standbyLine1")}
+                    {t("pages.publicQueue.standbyLine1", { defaultValue: "Standby Line1" })}
                     <br />
-                    {t("pages.publicQueue.standbyLine2")}
+                    {t("pages.publicQueue.standbyLine2", { defaultValue: "Standby Line2" })}
                   </p>
                 </motion.div>
               )}
@@ -224,10 +224,10 @@ export function PublicQueuePage() {
           <div className="mt-auto rounded-[2rem] border border-slate-200 bg-white p-8">
             <p className="mb-3 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.3em] text-teal-400">
               <Volume2 size={14} aria-hidden />
-              {t("pages.publicQueue.announcementKicker")}
+              {t("pages.publicQueue.announcementKicker", { defaultValue: "Announcement Kicker" })}
             </p>
             <p className="text-lg font-bold leading-snug text-white md:text-xl">
-              {t("pages.publicQueue.announcementBody")}
+              {t("pages.publicQueue.announcementBody", { defaultValue: "Announcement Body" })}
             </p>
           </div>
         </section>
@@ -236,7 +236,7 @@ export function PublicQueuePage() {
           <div className="mb-10 flex items-center justify-between">
             <h2 className="flex items-center gap-4 text-xs font-black uppercase tracking-[0.5em] text-slate-400">
               <IconUsers size={18} className="opacity-40" aria-hidden />
-              {t("pages.publicQueue.waitlistTitle")}
+              {t("pages.publicQueue.waitlistTitle", { defaultValue: "Waitlist Title" })}
             </h2>
             <div className="rounded-2xl bg-white px-6 py-3 text-xs font-black uppercase tracking-[0.2em] shadow-xl ring-1 ring-slate-100">
               {t("pages.publicQueue.pipelineCount", { count: waiting.length })}
@@ -279,15 +279,15 @@ export function PublicQueuePage() {
           <div className="mt-10 flex flex-wrap items-center justify-center gap-8 opacity-40 md:gap-16">
             <span className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.3em]">
               <ShieldCheck size={18} className="text-teal-500" aria-hidden />
-              {t("pages.publicQueue.footerEncrypted")}
+              {t("pages.publicQueue.footerEncrypted", { defaultValue: "Footer Encrypted" })}
             </span>
             <span className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.3em]">
               <IconDone size={18} className="text-teal-500" aria-hidden />
-              {t("pages.publicQueue.footerSync")}
+              {t("pages.publicQueue.footerSync", { defaultValue: "Footer Sync" })}
             </span>
             <span className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.3em]">
               <Heart size={18} className="text-rose-500" aria-hidden />
-              {t("pages.publicQueue.footerCare")}
+              {t("pages.publicQueue.footerCare", { defaultValue: "Footer Care" })}
             </span>
           </div>
         </section>
@@ -301,9 +301,9 @@ export function PublicQueuePage() {
         >
           {[0, 1].map((dup) => (
             <span key={dup} className="flex gap-16">
-              <span>{t("pages.publicQueue.ticker1")}</span>
-              <span>{t("pages.publicQueue.ticker2")}</span>
-              <span>{t("pages.publicQueue.ticker3")}</span>
+              <span>{t("pages.publicQueue.ticker1", { defaultValue: "Ticker1" })}</span>
+              <span>{t("pages.publicQueue.ticker2", { defaultValue: "Ticker2" })}</span>
+              <span>{t("pages.publicQueue.ticker3", { defaultValue: "Ticker3" })}</span>
             </span>
           ))}
         </motion.div>

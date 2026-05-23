@@ -97,15 +97,15 @@ function expiryBadge(
 
 function toCsv(rows: InventoryDto[], t: TFunction): string {
   const header = [
-    t("pages.inventory.csvHeaders.item"),
-    t("pages.inventory.csvHeaders.category"),
-    t("pages.inventory.csvHeaders.unit"),
-    t("pages.inventory.csvHeaders.quantity"),
-    t("pages.inventory.csvHeaders.minimumStock"),
-    t("pages.inventory.csvHeaders.unitCost"),
-    t("pages.inventory.csvHeaders.supplier"),
-    t("pages.inventory.csvHeaders.expiry"),
-    t("pages.inventory.csvHeaders.status"),
+    t("pages.inventory.csvHeaders.item", { defaultValue: "Item" }),
+    t("pages.inventory.csvHeaders.category", { defaultValue: "Category" }),
+    t("pages.inventory.csvHeaders.unit", { defaultValue: "Unit" }),
+    t("pages.inventory.csvHeaders.quantity", { defaultValue: "Quantity" }),
+    t("pages.inventory.csvHeaders.minimumStock", { defaultValue: "Minimum Stock" }),
+    t("pages.inventory.csvHeaders.unitCost", { defaultValue: "Unit Cost" }),
+    t("pages.inventory.csvHeaders.supplier", { defaultValue: "Supplier" }),
+    t("pages.inventory.csvHeaders.expiry", { defaultValue: "Expiry" }),
+    t("pages.inventory.csvHeaders.status", { defaultValue: "Status" }),
   ].join(",");
   const escape = (v: string): string => {
     if (v.includes(",") || v.includes('"') || v.includes("\n")) {
@@ -200,7 +200,7 @@ export function InventoryPage(): JSX.Element {
         toast.message(t("pages.inventory.importErrors", { count: errors.length }));
       }
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : t("pages.inventory.importFailed"));
+      toast.error(e instanceof Error ? e.message : t("pages.inventory.importFailed", { defaultValue: "Import Failed" }));
     } finally {
       setImportBusy(false);
     }
@@ -235,7 +235,7 @@ export function InventoryPage(): JSX.Element {
       await queryClient.invalidateQueries({ queryKey: ["inventory"] });
       await queryClient.invalidateQueries({ queryKey: ["inventoryAlerts"] });
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : t("pages.inventory.deleteFailed"));
+      toast.error(e instanceof Error ? e.message : t("pages.inventory.deleteFailed", { defaultValue: "Delete Failed" }));
     }
   }
 
@@ -252,12 +252,12 @@ export function InventoryPage(): JSX.Element {
       const ok = await printInventoryLabel(label);
       if (!ok) {
         printInventoryFallback(label);
-        toast.message(t("pages.inventory.printFallback"));
+        toast.message(t("pages.inventory.printFallback", { defaultValue: "Print Fallback" }));
       } else {
-        toast.success(t("pages.inventory.printSent"));
+        toast.success(t("pages.inventory.printSent", { defaultValue: "Demo mode: print job simulated. No hardware was contacted." }));
       }
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : t("pages.inventory.printFailed"));
+      toast.error(e instanceof Error ? e.message : t("pages.inventory.printFailed", { defaultValue: "Print Failed" }));
     }
   }
 
@@ -295,7 +295,7 @@ export function InventoryPage(): JSX.Element {
     return parts;
   }, [alerts, t]);
 
-  const emptyDash = t("pages.common.empty");
+  const emptyDash = t("pages.common.empty", { defaultValue: "Empty" });
 
   return (
     <div className="page-wrapper">
@@ -303,18 +303,19 @@ export function InventoryPage(): JSX.Element {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-teal-50 text-teal-600">
+            <span className="flex h-7 w-7 items-center justify-center rounded-[var(--radius-sm)] bg-brand-primary-soft text-brand-primary">
               <Package size={15} />
             </span>
-            <span className="text-xs font-semibold uppercase tracking-widest text-slate-400">
-              {t("pages.reports.eyebrow")}
+            <span className="text-xs font-semibold uppercase tracking-widest text-brand-muted">
+              {t("pages.reports.eyebrow", { defaultValue: "Supply Chain & Risk" })}
             </span>
           </div>
-          <h1 className="page-header-title">{t("pages.inventory.title")}</h1>
+          <h1 className="page-header-title">{t("pages.inventory.title", { defaultValue: "Risk Shelf" })}</h1>
           <p className="page-header-sub">
             {t("pages.inventory.subtitle", {
               count: totals.count,
               value: money(totals.totalValue),
+              defaultValue: "Manage clinical stock, critical items, and expiry alerts."
             })}
           </p>
         </div>
@@ -323,7 +324,7 @@ export function InventoryPage(): JSX.Element {
             className={`btn-secondary inline-flex items-center gap-2 cursor-pointer ${importBusy ? "pointer-events-none opacity-50" : ""}`}
           >
             <Upload size={15} />
-            {t("pages.inventory.importCsv")}
+            {t("pages.inventory.importCsv", { defaultValue: "Import Csv" })}
             <input
               type="file"
               accept=".csv,text/csv"
@@ -340,13 +341,13 @@ export function InventoryPage(): JSX.Element {
             onClick={downloadCsv}
             className="btn-secondary flex items-center gap-2"
           >
-            <Download size={15} /> {t("pages.inventory.exportCsv")}
+            <Download size={15} /> {t("pages.inventory.exportCsv", { defaultValue: "Export Csv" })}
           </button>
           <button
             onClick={() => setScannerOpen(true)}
             className="btn-secondary flex items-center gap-2"
           >
-            <Camera size={15} /> Scan QR
+            <Camera size={15} /> {t("pages.inventory.scanQr", { defaultValue: "Scan QR" })}
           </button>
           <button
             onClick={() => {
@@ -355,7 +356,7 @@ export function InventoryPage(): JSX.Element {
             }}
             className="btn-primary flex items-center gap-2"
           >
-            <Plus size={16} /> {t("pages.inventory.newItem")}
+            <Plus size={16} /> {t("pages.inventory.newItem", { defaultValue: "New Item" })}
           </button>
         </div>
       </div>
@@ -381,7 +382,7 @@ export function InventoryPage(): JSX.Element {
               onClick={() => setLowStockOnly(true)}
               className="flex h-8 items-center gap-2 rounded-lg bg-white px-3 text-xs font-semibold uppercase tracking-widest text-rose-600 shadow-sm ring-1 ring-rose-200 transition-all hover:bg-rose-50"
             >
-              <Filter size={13} /> {t("pages.inventory.filterLowStock")}
+              <Filter size={13} /> {t("pages.inventory.filterLowStock", { defaultValue: "Filter Low Stock" })}
             </button>
           </motion.div>
         )}
@@ -391,47 +392,47 @@ export function InventoryPage(): JSX.Element {
       <div className="card flex flex-col gap-4 lg:flex-row lg:items-center justify-between">
         <div className="flex-1 flex flex-col lg:flex-row gap-3">
           <div className="relative group flex-1">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-teal-500 transition-colors" size={16} />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-brand-muted group-focus-within:text-brand-primary transition-colors" size={16} />
             <input
               type="text"
               value={qInput}
               onChange={(e) => setQInput(e.target.value)}
-              placeholder={t("pages.inventory.searchPlaceholder")}
-              className="h-11 w-full rounded-xl bg-slate-50 pl-11 pr-4 text-sm font-medium outline-none ring-1 ring-slate-100 focus:ring-2 focus:ring-teal-500 transition-all"
+              placeholder={t("pages.inventory.searchPlaceholder", { defaultValue: "Search Placeholder" })}
+              className="h-10 w-full rounded-[var(--radius-md)] bg-brand-surface pl-10 pr-4 text-sm font-medium outline-none border border-brand-border focus:ring-1 focus:ring-brand-primary transition-all shadow-sm"
             />
           </div>
           <div className="flex items-center gap-3">
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value as InventoryCategory | "")}
-              className="h-11 rounded-xl bg-slate-50 px-4 text-xs font-semibold uppercase tracking-widest outline-none ring-1 ring-slate-100 focus:ring-2 focus:ring-teal-500 transition-all cursor-pointer"
+              className="h-10 rounded-[var(--radius-md)] bg-brand-surface px-3 text-xs font-semibold uppercase tracking-widest outline-none border border-brand-border focus:ring-1 focus:ring-brand-primary transition-all cursor-pointer shadow-sm text-brand-text"
             >
-              <option value="">{t("pages.inventory.all")}</option>
+              <option value="">{t("pages.inventory.all", { defaultValue: "All" })}</option>
               {INVENTORY_CATEGORIES.map((c) => (
                 <option key={c} value={c}>
                   {t(`pages.inventory.categories.${INVENTORY_CATEGORY_I18N_KEY[c]}`)}
                 </option>
               ))}
             </select>
-            <label className="flex h-11 items-center gap-3 rounded-xl bg-slate-50 px-4 cursor-pointer ring-1 ring-slate-100 hover:bg-slate-100 transition-all">
+            <label className="flex h-10 items-center gap-3 rounded-[var(--radius-md)] bg-brand-surface px-3 cursor-pointer border border-brand-border hover:bg-brand-surface-muted transition-all shadow-sm">
               <input
                 type="checkbox"
                 checked={lowStockOnly}
                 onChange={(e) => setLowStockOnly(e.target.checked)}
-                className="h-4 w-4 rounded border-slate-300 text-teal-500 focus:ring-teal-500"
+                className="h-4 w-4 rounded border-brand-border text-brand-primary focus:ring-brand-primary"
               />
-              <span className="text-xs font-semibold uppercase tracking-widest text-slate-500">
-                {t("pages.inventory.lowStockCheck")}
+              <span className="text-xs font-semibold uppercase tracking-widest text-brand-muted">
+                {t("pages.inventory.lowStockCheck", { defaultValue: "Low Stock Check" })}
               </span>
             </label>
-            <label className="flex h-11 items-center gap-3 rounded-xl bg-slate-50 px-4 cursor-pointer ring-1 ring-slate-100 hover:bg-slate-100 transition-all">
+            <label className="flex h-10 items-center gap-3 rounded-[var(--radius-md)] bg-brand-surface px-3 cursor-pointer border border-brand-border hover:bg-brand-surface-muted transition-all shadow-sm">
               <input
                 type="checkbox"
                 checked={expiringSoonOnly}
                 onChange={(e) => setExpiringSoonOnly(e.target.checked)}
-                className="h-4 w-4 rounded border-slate-300 text-teal-500 focus:ring-teal-500"
+                className="h-4 w-4 rounded border-brand-border text-brand-primary focus:ring-brand-primary"
               />
-              <span className="text-xs font-semibold uppercase tracking-widest text-slate-500">
+              <span className="text-xs font-semibold uppercase tracking-widest text-brand-muted">
                 {t("pages.inventory.expiringSoonCheck", "Expiring Soon")}
               </span>
             </label>
@@ -443,14 +444,14 @@ export function InventoryPage(): JSX.Element {
               onClick={resetInventoryFilters}
               className="btn-secondary flex items-center gap-2 text-rose-500"
             >
-              <RefreshCw size={13} /> {t("pages.inventory.resetFilters")}
+              <RefreshCw size={13} /> {t("pages.inventory.resetFilters", { defaultValue: "Reset Filters" })}
             </button>
           )}
-          <div className="h-10 w-px bg-slate-100 mx-1 hidden lg:block" />
+          <div className="h-8 w-px bg-brand-border mx-1 hidden lg:block" />
           <div className="flex items-center gap-2">
-            <div className={`h-2.5 w-2.5 rounded-full ${rowsFetching ? 'bg-teal-500 animate-pulse' : 'bg-slate-200'}`} />
-            <span className="text-xs font-medium text-slate-400">
-              {rowsFetching ? t("pages.inventory.syncing") : t("pages.inventory.upToDate")}
+            <div className={`h-2.5 w-2.5 rounded-full ${rowsFetching ? 'bg-brand-primary animate-pulse' : 'bg-brand-border'}`} />
+            <span className="text-xs font-medium text-brand-muted">
+              {rowsFetching ? t("pages.inventory.syncing", { defaultValue: "Syncing" }) : t("pages.inventory.upToDate", { defaultValue: "Up To Date" })}
             </span>
           </div>
         </div>
@@ -462,13 +463,13 @@ export function InventoryPage(): JSX.Element {
           <table className="data-table min-w-[1100px]">
             <thead>
               <tr>
-                <th>{t("pages.inventory.colItem")}</th>
-                <th>{t("pages.inventory.colCategory")}</th>
-                <th className="text-right">{t("pages.inventory.colStock")}</th>
-                <th className="text-right">{t("pages.inventory.colMin")}</th>
-                <th className="text-right">{t("pages.inventory.colUnitCost")}</th>
-                <th>{t("pages.inventory.colExpiry")}</th>
-                <th>{t("pages.inventory.colStatus")}</th>
+                <th>{t("pages.inventory.colItem", { defaultValue: "Col Item" })}</th>
+                <th>{t("pages.inventory.colCategory", { defaultValue: "Col Category" })}</th>
+                <th className="text-right">{t("pages.inventory.colStock", { defaultValue: "Col Stock" })}</th>
+                <th className="text-right">{t("pages.inventory.colMin", { defaultValue: "Col Min" })}</th>
+                <th className="text-right">{t("pages.inventory.colUnitCost", { defaultValue: "Col Unit Cost" })}</th>
+                <th>{t("pages.inventory.colExpiry", { defaultValue: "Col Expiry" })}</th>
+                <th>{t("pages.inventory.colStatus", { defaultValue: "Col Status" })}</th>
                 <th></th>
               </tr>
             </thead>
@@ -478,8 +479,8 @@ export function InventoryPage(): JSX.Element {
                   <motion.tr initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                     <td colSpan={8} className="py-20 text-center">
                       <div className="flex items-center justify-center">
-                        <div className="h-8 w-8 rounded-xl bg-teal-50 flex items-center justify-center">
-                          <RefreshCw className="h-4 w-4 animate-spin text-teal-500" />
+                        <div className="h-8 w-8 rounded-[var(--radius-md)] bg-brand-primary-soft flex items-center justify-center">
+                          <RefreshCw className="h-4 w-4 animate-spin text-brand-primary" />
                         </div>
                       </div>
                     </td>
@@ -500,15 +501,15 @@ export function InventoryPage(): JSX.Element {
                     <td colSpan={8} className="p-0">
                       <ListEmptyState
                         icon="box"
-                        title={t("pages.inventory.emptyTitle")}
-                        description={t("pages.inventory.emptyHint")}
+                        title={t("pages.inventory.emptyTitle", { defaultValue: "Empty Title" })}
+                        description={t("pages.inventory.emptyHint", { defaultValue: "Empty Hint" })}
                         primary={{
                           kind: "button",
                           onClick: () => {
                             setEditing(null);
                             setFormOpen(true);
                           },
-                          label: t("pages.inventory.newItem"),
+                          label: t("pages.inventory.newItem", { defaultValue: "New Item" }),
                         }}
                       />
                     </td>
@@ -525,12 +526,12 @@ export function InventoryPage(): JSX.Element {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: idx * 0.02 }}
-                        className={`group hover:bg-teal-50/30 transition-colors ${isCritical ? "border-l-4 border-l-rose-500" : "border-l-4 border-l-transparent"}`}
+                        className={`group hover:bg-brand-surface-muted transition-colors ${isCritical ? "border-l-4 border-l-brand-danger" : "border-l-4 border-l-transparent"}`}
                       >
                         <td>
                           <div className="flex items-center gap-3">
-                            <div className="h-11 w-11 rounded-xl bg-slate-100 flex items-center justify-center text-slate-400 group-hover:bg-teal-500 group-hover:text-white transition-all">
-                              <Box size={20} />
+                            <div className="h-10 w-10 rounded-[var(--radius-md)] bg-brand-surface-muted border border-brand-border flex items-center justify-center text-brand-muted group-hover:bg-brand-primary group-hover:text-white transition-all">
+                              <Box size={18} />
                             </div>
                             <div>
                               <p className="text-sm font-semibold text-slate-800 leading-tight">{r.itemName}</p>
@@ -581,40 +582,40 @@ export function InventoryPage(): JSX.Element {
                             <div className="flex gap-1.5 mr-4 opacity-0 group-hover:opacity-100 transition-all translate-x-3 group-hover:translate-x-0">
                               <button
                                 onClick={() => { setAdjustMode("in"); setAdjustItem(r); }}
-                                className="h-9 w-9 flex items-center justify-center rounded-lg bg-teal-50 text-teal-600 hover:bg-teal-500 hover:text-white transition-all"
-                                title={t("pages.inventory.titleStockIn")}
+                                className="h-8 w-8 flex items-center justify-center rounded-[var(--radius-sm)] bg-brand-primary-soft text-brand-primary hover:bg-brand-primary hover:text-white transition-all"
+                                title={t("pages.inventory.titleStockIn", { defaultValue: "Title Stock In" })}
                               >
-                                <PlusCircle size={16} />
+                                <PlusCircle size={14} />
                               </button>
                               <button
                                 onClick={() => { setAdjustMode("out"); setAdjustItem(r); }}
-                                className="h-9 w-9 flex items-center justify-center rounded-lg bg-rose-50 text-rose-500 hover:bg-rose-500 hover:text-white transition-all"
-                                title={t("pages.inventory.titleStockOut")}
+                                className="h-8 w-8 flex items-center justify-center rounded-[var(--radius-sm)] bg-brand-danger-soft text-brand-danger hover:bg-brand-danger hover:text-white transition-all"
+                                title={t("pages.inventory.titleStockOut", { defaultValue: "Title Stock Out" })}
                               >
-                                <MinusCircle size={16} />
+                                <MinusCircle size={14} />
                               </button>
                               <button
                                 onClick={() => void handlePrintLabel(r)}
-                                className="h-9 w-9 flex items-center justify-center rounded-lg bg-sky-50 text-sky-600 hover:bg-sky-500 hover:text-white transition-all"
-                                title={t("pages.inventory.printLabel")}
+                                className="h-8 w-8 flex items-center justify-center rounded-[var(--radius-sm)] bg-brand-info-soft text-brand-info hover:bg-brand-info hover:text-white transition-all"
+                                title={t("pages.inventory.printLabel", { defaultValue: "Print Label" })}
                               >
-                                <Printer size={16} />
+                                <Printer size={14} />
                               </button>
                               <button
                                 onClick={() => { setEditing(r); setFormOpen(true); }}
-                                className="h-9 w-9 flex items-center justify-center rounded-lg bg-slate-50 text-slate-600 hover:bg-slate-800 hover:text-white transition-all"
+                                className="h-8 w-8 flex items-center justify-center rounded-[var(--radius-sm)] bg-brand-surface-muted text-brand-muted hover:bg-brand-text hover:text-white transition-all"
                               >
-                                <Edit3 size={16} />
+                                <Edit3 size={14} />
                               </button>
                               <button
                                 onClick={() => void handleDelete(r)}
-                                className="h-9 w-9 flex items-center justify-center rounded-lg bg-slate-50 text-slate-400 hover:bg-rose-500 hover:text-white transition-all"
+                                className="h-8 w-8 flex items-center justify-center rounded-[var(--radius-sm)] bg-brand-surface-muted text-brand-muted hover:bg-brand-danger hover:text-white transition-all"
                               >
-                                <Trash2 size={16} />
+                                <Trash2 size={14} />
                               </button>
                             </div>
-                            <button className="h-9 w-9 flex items-center justify-center rounded-lg bg-slate-50 text-slate-400 hover:bg-teal-500 hover:text-white transition-all">
-                              <ChevronRight size={18} />
+                            <button className="h-8 w-8 flex items-center justify-center rounded-[var(--radius-sm)] bg-brand-surface-muted text-brand-muted hover:bg-brand-primary hover:text-white transition-all">
+                              <ChevronRight size={16} />
                             </button>
                           </div>
                         </td>
@@ -632,43 +633,43 @@ export function InventoryPage(): JSX.Element {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="stat-card">
           <div className="flex items-center gap-2 mb-4">
-            <div className="h-9 w-9 rounded-xl bg-sky-50 flex items-center justify-center text-sky-600">
+            <div className="h-9 w-9 rounded-[var(--radius-md)] bg-brand-info-soft flex items-center justify-center text-brand-info">
               <Layers size={18} />
             </div>
-            <span className="stat-card-label">{t("pages.inventory.inventoryDepth")}</span>
+            <span className="stat-card-label">{t("pages.inventory.inventoryDepth", { defaultValue: "Inventory Depth" })}</span>
           </div>
           <div className="flex items-baseline gap-2">
-            <p className="text-3xl font-bold text-slate-800 tabular-nums">{totals.count}</p>
-            <span className="text-xs font-semibold text-slate-400 uppercase tracking-widest">SKUS</span>
+            <p className="stat-card-value">{totals.count}</p>
+            <span className="text-xs font-semibold text-brand-muted uppercase tracking-widest">SKUS</span>
           </div>
         </div>
 
         <div className="stat-card">
           <div className="flex items-center gap-2 mb-4">
-            <div className="h-9 w-9 rounded-xl bg-teal-50 flex items-center justify-center text-teal-600">
+            <div className="h-9 w-9 rounded-[var(--radius-md)] bg-brand-primary-soft flex items-center justify-center text-brand-primary">
               <TrendingUp size={18} />
             </div>
-            <span className="stat-card-label">{t("pages.inventory.totalAssetValue")}</span>
+            <span className="stat-card-label">{t("pages.inventory.totalAssetValue", { defaultValue: "Total Asset Value" })}</span>
           </div>
           <div className="flex items-baseline gap-2">
-            <p className="text-3xl font-bold text-slate-800 tabular-nums">{money(totals.totalValue).split('.')[0]}</p>
-            <span className="text-xs font-semibold text-slate-400 uppercase tracking-widest">PHP</span>
+            <p className="stat-card-value">{money(totals.totalValue).split('.')[0]}</p>
+            <span className="text-xs font-semibold text-brand-muted uppercase tracking-widest">PHP</span>
           </div>
         </div>
 
-        <div className="stat-card bg-slate-800 ring-0 text-white">
+        <div className="stat-card bg-brand-navy ring-0 text-white shadow-popover border-0">
           <div className="flex items-center gap-2 mb-4">
-            <div className="h-9 w-9 rounded-xl bg-teal-500/20 flex items-center justify-center text-teal-400">
+            <div className="h-9 w-9 rounded-[var(--radius-md)] bg-brand-primary/20 flex items-center justify-center text-brand-primary">
               <ShieldCheck size={18} />
             </div>
-            <span className="text-[10px] font-semibold uppercase tracking-widest text-slate-400">
-              {t("pages.inventory.opsIntegrity")}
+            <span className="text-[10px] font-semibold uppercase tracking-widest text-brand-muted">
+              {t("pages.inventory.opsIntegrity", { defaultValue: "Ops Integrity" })}
             </span>
           </div>
           <div className="flex items-baseline gap-2">
-            <p className="text-3xl font-bold text-white tabular-nums">99.8%</p>
-            <span className="text-xs font-semibold text-teal-400 uppercase tracking-widest">
-              {t("pages.common.syncHealthy")}
+            <p className="stat-card-value text-white">99.8%</p>
+            <span className="text-xs font-semibold text-brand-primary uppercase tracking-widest">
+              {t("pages.common.syncHealthy", { defaultValue: "Sync Healthy" })}
             </span>
           </div>
         </div>

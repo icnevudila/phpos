@@ -50,7 +50,7 @@ export function QueuePage() {
       setQueue(res.data);
     } catch (err: any) {
       console.error("Queue fetch error:", err);
-      toast.error(err.response?.data?.message || t("pages.queue.syncFailed"));
+      toast.error(err.response?.data?.message || t("pages.queue.syncFailed", { defaultValue: "Sync Failed" }));
     } finally {
       setLoading(false);
     }
@@ -64,44 +64,44 @@ export function QueuePage() {
 
   const refreshQueue = () => {
     void fetchQueueData();
-    toast.success(t("pages.queue.synced"));
+    toast.success(t("pages.queue.synced", { defaultValue: "Synced" }));
   };
 
   return (
-    <div className="min-h-screen w-full pb-24 bg-[#f5f7f9]">
-      <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-10 space-y-6 pt-8">
+    <div className="page-wrapper">
+      <div className="space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-1">
                <span className="relative flex h-2.5 w-2.5">
-                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-teal-400 opacity-75" />
-                 <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-teal-500" />
+                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand-primary opacity-75" />
+                 <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-brand-primary" />
                </span>
-               <span className="text-xs font-semibold uppercase tracking-widest text-teal-600">
-                  {t("pages.queue.liveFlow")}
+               <span className="text-xs font-semibold uppercase tracking-widest text-brand-primary">
+                  {t("pages.queue.liveFlow", { defaultValue: "Live Flow" })}
                </span>
             </div>
-            <h1 className="page-header-title">{t("pages.queue.title")}</h1>
-            <p className="page-header-sub">{t("pages.queue.subtitle")}</p>
+            <h1 className="page-header-title">{t("pages.queue.title", { defaultValue: "Title" })}</h1>
+            <p className="page-header-sub">{t("pages.queue.subtitle", { defaultValue: "Subtitle" })}</p>
           </div>
 
           <div className="flex items-center gap-3">
              <div className="card flex items-center gap-4 p-4">
                 <div>
                    <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
-                     {t("pages.queue.waitingCount")}
+                     {t("pages.queue.waitingCount", { defaultValue: "Waiting Count" })}
                    </p>
                    <p className="text-2xl font-bold text-slate-800 mt-0.5 tabular-nums">{queue.length}</p>
                 </div>
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-teal-500 text-white shadow-lg shadow-teal-500/20">
+                 <div className="flex h-12 w-12 items-center justify-center rounded-[var(--radius-md)] bg-brand-primary-soft text-brand-primary">
                    <IconUsers size={22} />
-                </div>
+                 </div>
              </div>
              <button
                type="button"
                onClick={refreshQueue}
-               aria-label={t("pages.queue.refreshQueueAria")}
+               aria-label={t("pages.queue.refreshQueueAria", { defaultValue: "Refresh Queue Aria" })}
                className="btn-primary h-14 w-14 flex items-center justify-center"
              >
                <IconClock className={loading ? "animate-spin" : ""} size={22} />
@@ -116,14 +116,14 @@ export function QueuePage() {
           <div className="lg:col-span-8 space-y-4">
              <div className="flex items-center justify-between px-1">
                 <h2 className="text-xs font-semibold uppercase tracking-widest text-slate-400">
-                  {t("pages.queue.waitingArea")}
+                  {t("pages.queue.waitingArea", { defaultValue: "Waiting Area" })}
                 </h2>
                 <div className="flex gap-5 text-[10px] font-semibold uppercase tracking-widest text-slate-400">
                    <div className="flex items-center gap-2">
-                      <div className="h-2 w-2 rounded-full bg-teal-500" /> {t("pages.queue.typeAppt")}
+                      <div className="h-2 w-2 rounded-full bg-teal-500" /> {t("pages.queue.typeAppt", { defaultValue: "Type Appt" })}
                    </div>
                    <div className="flex items-center gap-2">
-                      <div className="h-2 w-2 rounded-full bg-amber-500" /> {t("pages.queue.typeWait")}
+                      <div className="h-2 w-2 rounded-full bg-amber-500" /> {t("pages.queue.typeWait", { defaultValue: "Type Wait" })}
                    </div>
                 </div>
              </div>
@@ -136,16 +136,16 @@ export function QueuePage() {
                        animate={{ opacity: 1, scale: 1 }}
                        className="flex flex-col items-center justify-center py-16 text-center card"
                      >
-                        <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-50">
-                          <IconUsers className="h-6 w-6 text-slate-300" />
+                        <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-[var(--radius-md)] bg-brand-surface-muted text-brand-muted">
+                          <IconUsers className="h-6 w-6" />
                         </div>
-                        <p className="text-sm font-medium text-slate-500">{t("pages.queue.empty")}</p>
+                        <p className="text-sm font-medium text-slate-500">{t("pages.queue.empty", { defaultValue: "Empty" })}</p>
                      </motion.div>
                    )}
                    {loading && queue.length === 0 && (
                      <div className="flex items-center justify-center py-20">
-                       <div className="h-8 w-8 rounded-xl bg-teal-50 flex items-center justify-center">
-                         <RefreshCw className="h-4 w-4 animate-spin text-teal-500" />
+                       <div className="h-8 w-8 rounded-[var(--radius-md)] bg-brand-primary-soft flex items-center justify-center">
+                         <RefreshCw className="h-4 w-4 animate-spin text-brand-primary" />
                        </div>
                      </div>
                    )}
@@ -157,13 +157,13 @@ export function QueuePage() {
                        animate={{ opacity: 1, y: 0 }}
                        exit={{ opacity: 0, scale: 0.95 }}
                        transition={{ delay: index * 0.05, type: "spring", stiffness: 100 }}
-                       className="group relative flex flex-col gap-6 rounded-2xl bg-white p-6 shadow-sm transition-all hover:shadow-md lg:flex-row lg:items-center lg:justify-between overflow-hidden ring-1 ring-slate-100"
+                       className="group relative flex flex-col gap-6 rounded-[var(--radius-lg)] bg-brand-surface p-6 shadow-sm transition-all hover:shadow-md lg:flex-row lg:items-center lg:justify-between overflow-hidden border border-brand-border"
                      >
                        {/* Indicator Tab */}
-                       <div className={`absolute left-0 top-0 h-full w-1.5 transition-all group-hover:w-2.5 ${item.type === 'APPOINTMENT' ? 'bg-teal-500' : 'bg-amber-500'}`} />
+                       <div className={`absolute left-0 top-0 h-full w-1.5 transition-all group-hover:w-2.5 ${item.type === 'APPOINTMENT' ? 'bg-brand-primary' : 'bg-brand-warning'}`} />
 
                        <div className="flex items-start gap-6 lg:items-center">
-                          <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-xl bg-slate-50 text-2xl font-bold text-slate-200 transition-all group-hover:bg-teal-50 group-hover:text-teal-500">
+                          <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-[var(--radius-md)] bg-brand-surface-muted text-lg font-bold text-brand-muted transition-all group-hover:bg-brand-primary-soft group-hover:text-brand-primary">
                              {index + 1}
                           </div>
 
@@ -178,30 +178,30 @@ export function QueuePage() {
                                     transition={{ repeat: Infinity, duration: 1.5 }}
                                     className="inline-flex items-center gap-1.5 rounded-lg bg-rose-500 px-3 py-1 text-[10px] font-bold text-white uppercase tracking-wider shadow-sm shadow-rose-500/20"
                                   >
-                                    <IconAlert size={10} /> {t("pages.queue.urgent")}
+                                    <IconAlert size={10} /> {t("pages.queue.urgent", { defaultValue: "Urgent" })}
                                   </motion.span>
                                 )}
                              </div>
                              
                              <div className="flex flex-wrap items-center gap-x-6 gap-y-1.5">
-                                <div className="flex items-center gap-2">
-                                   <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-teal-50 text-teal-600">
+                                 <div className="flex items-center gap-2">
+                                   <div className="flex h-7 w-7 items-center justify-center rounded-[var(--radius-sm)] bg-brand-primary-soft text-brand-primary">
                                       <IconStethoscope size={14} />
                                    </div>
                                    <span className="text-sm font-medium text-slate-600">{item.procedure}</span>
                                 </div>
-                                <div className="flex items-center gap-2">
-                                   <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-slate-50 text-slate-400">
+                                 <div className="flex items-center gap-2">
+                                   <div className="flex h-7 w-7 items-center justify-center rounded-[var(--radius-sm)] bg-brand-surface-muted text-brand-muted">
                                       <IconRoom size={14} />
                                    </div>
                                    <span className="text-sm font-medium text-slate-400 uppercase tracking-wider">
-                                      {t("pages.queue.assigned")}: <span className="text-slate-700">{item.room}</span>
+                                      {t("pages.queue.assigned", { defaultValue: "Assigned" })}: <span className="text-slate-700">{item.room}</span>
                                    </span>
                                 </div>
                              </div>
 
                              {item.notes && (
-                               <div className="mt-2 flex items-start gap-2.5 rounded-xl bg-amber-50 p-3.5 text-sm font-medium text-amber-800 border border-amber-100">
+                               <div className="mt-2 flex items-start gap-2.5 rounded-[var(--radius-sm)] bg-brand-warning-soft p-3.5 text-sm font-medium text-brand-warning border border-brand-warning-soft">
                                   <IconNote size={15} className="flex-shrink-0 opacity-50 mt-0.5" />
                                   <p className="leading-snug">{item.notes}</p>
                                </div>
@@ -213,12 +213,12 @@ export function QueuePage() {
                           <div className="text-right space-y-1.5">
                              <div className="flex items-center justify-end gap-1.5 text-[10px] font-semibold text-slate-400 uppercase tracking-wider bg-slate-50 px-2.5 py-1.5 rounded-lg">
                                 <IconClock size={11} />
-                                {t("pages.queue.arrived")}: {item.arrivalTime}
+                                {t("pages.queue.arrived", { defaultValue: "Arrived" })}: {item.arrivalTime}
                              </div>
                              {item.appointmentTime && (
                                <div className="flex items-center justify-end gap-1.5 text-[10px] font-semibold text-teal-600 uppercase tracking-wider bg-teal-50 px-2.5 py-1.5 rounded-lg">
                                   <IconCalendar size={11} />
-                                  {t("pages.queue.apptTime")}: {item.appointmentTime}
+                                  {t("pages.queue.apptTime", { defaultValue: "Appt Time" })}: {item.appointmentTime}
                                </div>
                              )}
                           </div>
@@ -226,7 +226,7 @@ export function QueuePage() {
                           <div className="mt-4 flex items-center gap-3">
                              <div className="mr-6 hidden text-right lg:block">
                                 <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">
-                                  {t("pages.queue.waitTime")}
+                                  {t("pages.queue.waitTime", { defaultValue: "Wait Time" })}
                                 </p>
                                 <p className={`text-xl font-bold mt-0.5 tabular-nums ${item.waitTime > 20 ? 'text-rose-500' : 'text-slate-700'}`}>
                                    {item.waitTime} <span className="text-xs tracking-wider text-slate-400">MIN</span>
@@ -236,9 +236,9 @@ export function QueuePage() {
                                 <button className="flex h-12 w-12 items-center justify-center rounded-xl bg-slate-800 text-white shadow-sm transition-all hover:bg-teal-500 hover:scale-105 active:scale-95">
                                    <IconArrowRight size={20} />
                                 </button>
-                                <button className="flex h-12 w-12 items-center justify-center rounded-xl bg-slate-50 text-slate-400 transition-all hover:bg-slate-100">
-                                   <IconDots size={20} />
-                                </button>
+                                 <button className="flex h-10 w-10 items-center justify-center rounded-[var(--radius-md)] bg-brand-surface-muted text-brand-muted hover:bg-brand-primary hover:text-white transition-all">
+                                    <IconDots size={20} />
+                                 </button>
                              </div>
                           </div>
                        </div>
@@ -253,34 +253,34 @@ export function QueuePage() {
              {/* Active Session Info */}
              <div className="space-y-3">
                 <h2 className="px-1 text-xs font-semibold uppercase tracking-widest text-slate-400">
-                  {t("pages.queue.activeSessions")}
+                  {t("pages.queue.activeSessions", { defaultValue: "Active Sessions" })}
                 </h2>
-                <div className="rounded-2xl bg-slate-800 p-8 space-y-6 shadow-xl relative overflow-hidden group">
-                   <div className="absolute -top-20 -right-20 h-64 w-64 bg-teal-500/20 rounded-full blur-[80px] transition-all group-hover:scale-150 duration-1000" />
+                <div className="rounded-[var(--radius-lg)] bg-slate-800 p-8 space-y-6 shadow-xl relative overflow-hidden group">
+                   <div className="absolute -top-20 -right-20 h-64 w-64 bg-brand-primary/20 rounded-full blur-[80px] transition-all group-hover:scale-150 duration-1000" />
                    
                    <div className="flex items-center justify-between relative z-10">
-                      <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-teal-500 text-white shadow-lg shadow-teal-500/20">
+                      <div className="flex h-14 w-14 items-center justify-center rounded-[var(--radius-md)] bg-brand-primary text-white shadow-lg shadow-brand-primary/20">
                          <Activity size={28} />
                       </div>
                       <div className="text-right">
                          <span className="text-[10px] font-semibold uppercase tracking-wider text-teal-400">
-                           {t("pages.queue.servingNow")}
+                           {t("pages.queue.servingNow", { defaultValue: "Serving Now" })}
                          </span>
                          <h4 className="text-lg font-bold text-white leading-tight mt-0.5">
-                           {t("pages.queue.demoServingName")}
+                           {t("pages.queue.demoServingName", { defaultValue: "Demo Serving Name" })}
                          </h4>
                       </div>
                    </div>
                    
                    <div className="space-y-4 relative z-10">
                       <div className="flex justify-between items-center text-xs font-semibold uppercase tracking-wider">
-                         <span className="text-slate-400">{t("pages.queue.procedure")}</span>
+                         <span className="text-slate-400">{t("pages.queue.procedure", { defaultValue: "Procedure" })}</span>
                          <span className="text-white bg-slate-700 px-2.5 py-1 rounded-lg">
-                           {t("pages.queue.demoServingProcedure")}
+                           {t("pages.queue.demoServingProcedure", { defaultValue: "Demo Serving Procedure" })}
                          </span>
                       </div>
                       <div className="flex justify-between items-center text-xs font-semibold uppercase tracking-wider">
-                         <span className="text-slate-400">{t("pages.queue.elapsedTime")}</span>
+                         <span className="text-slate-400">{t("pages.queue.elapsedTime", { defaultValue: "Elapsed Time" })}</span>
                          <span className="text-teal-400 font-mono text-lg tabular-nums">18:42</span>
                       </div>
                       <div className="relative h-2.5 w-full rounded-full bg-slate-700 overflow-hidden">
@@ -293,7 +293,7 @@ export function QueuePage() {
                    </div>
 
                    <button className="group w-full flex items-center justify-center gap-2.5 rounded-xl bg-white py-4 text-xs font-bold uppercase tracking-wider text-slate-800 shadow-lg transition-all hover:scale-[1.02] active:scale-95 relative z-10">
-                      {t("pages.queue.viewClinicalChart")}
+                      {t("pages.queue.viewClinicalChart", { defaultValue: "View Clinical Chart" })}
                       <ChevronRight size={14} className="transition-transform group-hover:translate-x-1" />
                    </button>
                 </div>
@@ -302,20 +302,20 @@ export function QueuePage() {
              {/* Quick Statistics */}
              <div className="space-y-3">
                 <h2 className="px-1 text-xs font-semibold uppercase tracking-widest text-slate-400">
-                  {t("pages.queue.metrics")}
+                  {t("pages.queue.metrics", { defaultValue: "Metrics" })}
                 </h2>
                 <div className="grid grid-cols-1 gap-3">
                    <div className="card">
                       <div className="flex items-center gap-2.5 mb-3">
                          <IconClock size={15} className="text-sky-500" />
                          <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
-                           {t("pages.queue.avgWait")}
+                           {t("pages.queue.avgWait", { defaultValue: "Avg Wait" })}
                          </p>
                       </div>
                       <div className="flex items-baseline gap-2">
                          <p className="text-3xl font-bold text-slate-800 tabular-nums">14</p>
                          <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
-                           {t("pages.queue.minutesUnit")}
+                           {t("pages.queue.minutesUnit", { defaultValue: "Minutes Unit" })}
                          </p>
                       </div>
                    </div>
@@ -323,13 +323,13 @@ export function QueuePage() {
                       <div className="flex items-center gap-2.5 mb-3">
                          <TrendingUp size={15} className="text-teal-500" />
                          <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
-                           {t("pages.queue.satisfaction")}
+                           {t("pages.queue.satisfaction", { defaultValue: "Satisfaction" })}
                          </p>
                       </div>
                       <div className="flex items-baseline gap-2">
                          <p className="text-3xl font-bold text-slate-800 tabular-nums">4.8</p>
                          <p className="text-xs font-semibold text-teal-500 uppercase tracking-wider">
-                           {t("pages.queue.scoreUnit")}
+                           {t("pages.queue.scoreUnit", { defaultValue: "Score Unit" })}
                          </p>
                       </div>
                    </div>
@@ -342,11 +342,11 @@ export function QueuePage() {
                    <div className="flex items-center gap-2.5">
                       <ShieldCheck size={16} className="text-teal-500" />
                       <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
-                         {t("pages.queue.syncStatus")}
+                         {t("pages.queue.syncStatus", { defaultValue: "Sync Status" })}
                       </span>
                    </div>
                    <span className="flex items-center gap-1.5 text-[10px] font-semibold text-teal-600 bg-teal-50 px-2.5 py-1 rounded-lg uppercase tracking-wider">
-                      <Zap size={10} /> {t("pages.queue.syncHealthy")}
+                      <Zap size={10} /> {t("pages.queue.syncHealthy", { defaultValue: "Sync Healthy" })}
                    </span>
                 </div>
              </div>

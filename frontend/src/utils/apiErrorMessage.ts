@@ -14,7 +14,7 @@ export function messageFromApiError(data: {
   requestId?: string;
 }): string {
   const key = data.code ? CODE_I18N[data.code] : undefined;
-  const base = key ? i18n.t(key) : data.error ?? data.message ?? i18n.t("errors.requestFailed");
+  const base = key ? i18n.t(key) : data.error ?? data.message ?? i18n.t("errors.requestFailed", { defaultValue: "Request Failed" });
   const rid = data.requestId?.trim();
   if (!rid) return base;
   return `${base} (${rid.slice(0, 8)})`;

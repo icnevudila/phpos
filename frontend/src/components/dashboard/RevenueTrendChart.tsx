@@ -32,7 +32,7 @@ export function RevenueTrendChart({
   return (
     <div className="h-64">
       {!hasData ? (
-        <DashboardChartEmpty message={t("pages.dashboard.chartRevenueEmpty")} />
+        <DashboardChartEmpty message={t("pages.dashboard.chartRevenueEmpty", { defaultValue: "Chart Revenue Empty" })} />
       ) : (
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={data} margin={{ top: 10, right: 10, bottom: 0, left: 0 }}>

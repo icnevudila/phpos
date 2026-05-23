@@ -96,7 +96,7 @@ export function PerioExamWorkspace({ patientId }: PerioExamWorkspaceProps): JSX.
   async function handleSave(): Promise<void> {
     const validation = validatePerioTeeth(teeth);
     if (!validation.ok) {
-      toast.error(validation.errors[0] ?? t("pages.patientDetail.perio.validationFailed"));
+      toast.error(validation.errors[0] ?? t("pages.patientDetail.perio.validationFailed", { defaultValue: "Validation Failed" }));
       return;
     }
 
@@ -108,30 +108,30 @@ export function PerioExamWorkspace({ patientId }: PerioExamWorkspaceProps): JSX.
       };
       if (examId) {
         await updatePerioExam(examId, payload);
-        toast.success(t("pages.patientDetail.perio.saved"));
+        toast.success(t("pages.patientDetail.perio.saved", { defaultValue: "Saved" }));
       } else {
         const created = await createPerioExam(patientId, payload);
         setExamId(created.id);
-        toast.success(t("pages.patientDetail.perio.created"));
+        toast.success(t("pages.patientDetail.perio.created", { defaultValue: "Created" }));
       }
       await queryClient.invalidateQueries({ queryKey: ["perioExams", patientId] });
       await queryClient.invalidateQueries({ queryKey: ["latestPerioExam", patientId] });
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : t("pages.patientDetail.perio.saveFailed"));
+      toast.error(e instanceof Error ? e.message : t("pages.patientDetail.perio.saveFailed", { defaultValue: "Save Failed" }));
     } finally {
       setSaving(false);
     }
   }
 
   if (listLoading && teeth.length === 0) {
-    return <p className="text-sm text-slate-500">{t("pages.patientDetail.perio.loading")}</p>;
+    return <p className="text-sm text-slate-500">{t("pages.patientDetail.perio.loading", { defaultValue: "Loading" })}</p>;
   }
 
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <label className="text-xs font-bold uppercase text-slate-500">{t("pages.patientDetail.perio.selectExam")}</label>
+          <label className="text-xs font-bold uppercase text-slate-500">{t("pages.patientDetail.perio.selectExam", { defaultValue: "Select Exam" })}</label>
           <select
             className="mt-1 block rounded-lg border border-slate-200 px-3 py-2 text-sm"
             value={examId ?? ""}
@@ -140,17 +140,17 @@ export function PerioExamWorkspace({ patientId }: PerioExamWorkspaceProps): JSX.
               if (v) void loadExam(v);
             }}
           >
-            <option value="">{t("pages.patientDetail.perio.newExamOption")}</option>
+            <option value="">{t("pages.patientDetail.perio.newExamOption", { defaultValue: "New Exam Option" })}</option>
             {exams.map((ex) => (
               <option key={ex.id} value={ex.id}>
-                {new Date(ex.examDate).toLocaleDateString()} — {ex._count?.teeth ?? 0} {t("pages.patientDetail.perio.teeth")}
+                {new Date(ex.examDate).toLocaleDateString()} — {ex._count?.teeth ?? 0} {t("pages.patientDetail.perio.teeth", { defaultValue: "Teeth" })}
               </option>
             ))}
           </select>
         </div>
         <div className="flex gap-2">
           <button type="button" onClick={startNewExam} className="inline-flex items-center gap-2 rounded-xl border px-4 py-2 text-xs font-bold">
-            <Plus size={14} /> {t("pages.patientDetail.perio.newExam")}
+            <Plus size={14} /> {t("pages.patientDetail.perio.newExam", { defaultValue: "New Exam" })}
           </button>
           <button
             type="button"
@@ -158,14 +158,14 @@ export function PerioExamWorkspace({ patientId }: PerioExamWorkspaceProps): JSX.
             onClick={() => void handleSave()}
             className="inline-flex items-center gap-2 rounded-xl bg-teal-600 px-4 py-2 text-xs font-black text-white disabled:opacity-50"
           >
-            <Save size={14} /> {saving ? t("pages.patientDetail.perio.saving") : t("pages.patientDetail.perio.save")}
+            <Save size={14} /> {saving ? t("pages.patientDetail.perio.saving", { defaultValue: "Saving" }) : t("pages.patientDetail.perio.save", { defaultValue: "Save" })}
           </button>
         </div>
       </div>
       <textarea
         className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm"
         rows={2}
-        placeholder={t("pages.patientDetail.perio.notesPlaceholder")}
+        placeholder={t("pages.patientDetail.perio.notesPlaceholder", { defaultValue: "Notes Placeholder" })}
         value={notes}
         onChange={(e) => setNotes(e.target.value)}
       />

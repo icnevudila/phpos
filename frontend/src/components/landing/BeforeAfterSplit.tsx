@@ -15,7 +15,7 @@ function BeforeSide(): JSX.Element {
       {/* fake "paper" card */}
       <div className="relative rotate-[-2deg] rounded-lg bg-brand-surface p-4 shadow-md ring-1 ring-brand-border">
         <p className="font-mono text-[10px] font-bold uppercase text-brand-muted">
-          {t("landingPreview.beforeAfter.paperTitle")}
+          {t("landingPreview.beforeAfter.paperTitle", { defaultValue: "Paper Title" })}
         </p>
         <div className="mt-2 space-y-1">
           <div className="h-2 w-4/5 rounded bg-brand-border" />
@@ -24,14 +24,14 @@ function BeforeSide(): JSX.Element {
           <div className="h-2 w-1/2 rounded bg-rose-200" />
         </div>
         <p className="mt-3 font-mono text-[9px] italic text-rose-500">
-          {t("landingPreview.beforeAfter.coffeeStain")}
+          {t("landingPreview.beforeAfter.coffeeStain", { defaultValue: "Coffee Stain" })}
         </p>
       </div>
 
       {/* excel-like card */}
       <div className="relative rotate-[1.2deg] overflow-hidden rounded-lg bg-brand-surface shadow-md ring-1 ring-brand-border">
         <div className="flex items-center gap-1 bg-teal-600 px-2 py-1 text-[9px] font-bold text-white">
-          <IconSpreadsheet className="h-3 w-3" /> {t("landingPreview.beforeAfter.excelTitle")}
+          <IconSpreadsheet className="h-3 w-3" /> {t("landingPreview.beforeAfter.excelTitle", { defaultValue: "Excel Title" })}
         </div>
         <div className="grid grid-cols-4 divide-x divide-slate-200 text-[9px]">
           {excelHeaders.map((h) => (
@@ -55,7 +55,7 @@ function BeforeSide(): JSX.Element {
       {/* sticky note */}
       <div className="relative -mt-2 max-w-[80%] rotate-[3deg] self-end bg-amber-200 px-3 py-2 shadow-md">
         <p className="flex items-center gap-1 font-mono text-[10px] font-bold text-amber-900">
-          <IconAlert className="h-3 w-3" /> {t("landingPreview.beforeAfter.stickyNote")}
+          <IconAlert className="h-3 w-3" /> {t("landingPreview.beforeAfter.stickyNote", { defaultValue: "Sticky Note" })}
         </p>
       </div>
 
@@ -71,7 +71,7 @@ function BeforeSide(): JSX.Element {
             <path d="M6 6l12 12M18 6 6 18" strokeLinecap="round" />
           </svg>
         </span>
-        {t("landing.beforeTag")}
+        {t("landing.beforeTag", { defaultValue: "Before Tag" })}
       </div>
     </div>
   );
@@ -87,7 +87,7 @@ function AfterSide(): JSX.Element {
             <path d="m5 12 4 4 10-10" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </span>
-        {t("landing.afterTag")}
+        {t("landing.afterTag", { defaultValue: "After Tag" })}
       </div>
 
       {/* unified dashboard mock */}
@@ -102,14 +102,14 @@ function AfterSide(): JSX.Element {
               <span className="absolute inset-0 animate-ping rounded-full bg-teal-400/70" />
               <span className="relative h-1 w-1 rounded-full bg-teal-500" />
             </span>
-            {t("landing.mockLiveSync")}
+            {t("landing.mockLiveSync", { defaultValue: "Mock Live Sync" })}
           </span>
         </div>
         <div className="grid grid-cols-3 gap-2 p-3">
           {[
-            { l: t("landingPreview.beforeAfter.tileCalendar"), v: "8" },
-            { l: t("landingPreview.beforeAfter.tileHmo"), v: "3" },
-            { l: t("landingPreview.beforeAfter.tileStock"), v: "✓" },
+            { l: t("landingPreview.beforeAfter.tileCalendar", { defaultValue: "Tile Calendar" }), v: "8" },
+            { l: t("landingPreview.beforeAfter.tileHmo", { defaultValue: "Tile Hmo" }), v: "3" },
+            { l: t("landingPreview.beforeAfter.tileStock", { defaultValue: "Tile Stock" }), v: "✓" },
           ].map((s) => (
             <div key={s.l} className="rounded-lg bg-brand-surface-soft p-2">
               <p className="text-lg font-extrabold text-brand-text">{s.v}</p>
@@ -119,15 +119,15 @@ function AfterSide(): JSX.Element {
         </div>
         <div className="border-t border-brand-border p-3">
           <div className="flex items-center justify-between text-xs">
-            <span className="font-semibold text-brand-text">{t("landingPreview.beforeAfter.row1Left")}</span>
+            <span className="font-semibold text-brand-text">{t("landingPreview.beforeAfter.row1Left", { defaultValue: "Row1 Left" })}</span>
             <span className="rounded-full bg-teal-500 px-2 py-0.5 text-[9px] font-bold text-white">
-              {t("landingPreview.beforeAfter.row1Pill")}
+              {t("landingPreview.beforeAfter.row1Pill", { defaultValue: "Row1 Pill" })}
             </span>
           </div>
           <div className="mt-2 flex items-center justify-between text-xs">
-            <span className="font-semibold text-brand-text">{t("landingPreview.beforeAfter.row2Left")}</span>
+            <span className="font-semibold text-brand-text">{t("landingPreview.beforeAfter.row2Left", { defaultValue: "Row2 Left" })}</span>
             <span className="rounded-full bg-sky-500 px-2 py-0.5 text-[9px] font-bold text-white">
-              {t("landingPreview.beforeAfter.row2Pill")}
+              {t("landingPreview.beforeAfter.row2Pill", { defaultValue: "Row2 Pill" })}
             </span>
           </div>
         </div>
@@ -136,10 +136,10 @@ function AfterSide(): JSX.Element {
       {/* floating benefit pills */}
       <div className="mt-4 flex flex-wrap gap-2">
         {[
-          t("landingPreview.beforeAfter.pill1"),
-          t("landingPreview.beforeAfter.pill2"),
-          t("landingPreview.beforeAfter.pill3"),
-          t("landingPreview.beforeAfter.pill4"),
+          t("landingPreview.beforeAfter.pill1", { defaultValue: "Pill1" }),
+          t("landingPreview.beforeAfter.pill2", { defaultValue: "Pill2" }),
+          t("landingPreview.beforeAfter.pill3", { defaultValue: "Pill3" }),
+          t("landingPreview.beforeAfter.pill4", { defaultValue: "Pill4" }),
         ].map((x) => (
           <span
             key={x}
@@ -160,21 +160,21 @@ export function BeforeAfterSplit(): JSX.Element {
   const { t } = useTranslation();
 
   const rows = [
-    { before: t("landing.ba1Before"), after: t("landing.ba1After") },
-    { before: t("landing.ba2Before"), after: t("landing.ba2After") },
-    { before: t("landing.ba3Before"), after: t("landing.ba3After") },
-    { before: t("landing.ba4Before"), after: t("landing.ba4After") },
-    { before: t("landing.ba5Before"), after: t("landing.ba5After") },
+    { before: t("landing.ba1Before", { defaultValue: "Ba1 Before" }), after: t("landing.ba1After", { defaultValue: "Ba1 After" }) },
+    { before: t("landing.ba2Before", { defaultValue: "Ba2 Before" }), after: t("landing.ba2After", { defaultValue: "Ba2 After" }) },
+    { before: t("landing.ba3Before", { defaultValue: "Ba3 Before" }), after: t("landing.ba3After", { defaultValue: "Ba3 After" }) },
+    { before: t("landing.ba4Before", { defaultValue: "Ba4 Before" }), after: t("landing.ba4After", { defaultValue: "Ba4 After" }) },
+    { before: t("landing.ba5Before", { defaultValue: "Ba5 Before" }), after: t("landing.ba5After", { defaultValue: "Ba5 After" }) },
   ];
 
   return (
     <div>
       <div className="mx-auto max-w-2xl text-center">
-        <SectionEyebrow label={t("landing.baEyebrow")} icon={IconSwap} accent="amber" align="center" />
+        <SectionEyebrow label={t("landing.baEyebrow", { defaultValue: "Ba Eyebrow" })} icon={IconSwap} accent="amber" align="center" />
         <h2 className="mt-3 text-3xl font-bold tracking-tight text-brand-text sm:text-4xl">
-          {t("landing.baTitle")}
+          {t("landing.baTitle", { defaultValue: "Ba Title" })}
         </h2>
-        <p className="mt-4 text-brand-muted">{t("landing.baSubtitle")}</p>
+        <p className="mt-4 text-brand-muted">{t("landing.baSubtitle", { defaultValue: "Ba Subtitle" })}</p>
       </div>
 
       <div className="mt-12 grid gap-6 md:grid-cols-2">
@@ -185,11 +185,11 @@ export function BeforeAfterSplit(): JSX.Element {
       <div className="mt-10 overflow-hidden rounded-3xl border border-brand-border bg-brand-surface shadow-sm">
         <div className="grid grid-cols-[1fr_auto_1fr] divide-x divide-slate-100 text-sm">
           <div className="bg-rose-50/40 px-5 py-3 text-center text-[10px] font-bold uppercase tracking-widest text-rose-700">
-            {t("landing.beforeTag")}
+            {t("landing.beforeTag", { defaultValue: "Before Tag" })}
           </div>
           <div className="bg-brand-surface-muted px-3 py-3 text-center">→</div>
           <div className="bg-teal-50/40 px-5 py-3 text-center text-[10px] font-bold uppercase tracking-widest text-teal-700">
-            {t("landing.afterTag")}
+            {t("landing.afterTag", { defaultValue: "After Tag" })}
           </div>
           {rows.map((r, i) => (
             <div key={i} className="contents">

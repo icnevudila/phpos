@@ -118,18 +118,18 @@ export function AppointmentBooking() {
             <button
               key={t.id}
               onClick={() => { setState({ ...state, treatmentId: t.id }); setTimeout(nextStep, 300); }}
-              className={`flex items-start gap-4 p-4 rounded-2xl border-2 text-left transition-all ${
+              className={`flex items-start gap-4 p-4 rounded-[var(--radius-lg)] border-2 text-left transition-all ${
                 isSelected 
-                  ? "border-teal-500 bg-teal-50 shadow-sm" 
-                  : "border-slate-100 bg-white hover:border-teal-200 hover:bg-slate-50"
+                  ? "border-brand-primary bg-brand-primary-soft shadow-sm" 
+                  : "border-brand-border bg-brand-surface hover:border-brand-primary/40 hover:bg-brand-surface-muted"
               }`}
             >
-              <div className={`p-2 rounded-xl ${isSelected ? "bg-teal-500 text-white" : "bg-slate-100 text-teal-600"}`}>
+              <div className={`p-2 rounded-[var(--radius-md)] ${isSelected ? "bg-brand-primary text-white" : "bg-brand-surface-muted text-brand-primary"}`}>
                 {t.icon}
               </div>
               <div className="flex-1">
-                <h4 className="font-semibold text-slate-900">{t.name}</h4>
-                <div className="flex items-center gap-3 mt-1 text-sm text-slate-500">
+                <h4 className="font-semibold text-brand-text">{t.name}</h4>
+                <div className="flex items-center gap-3 mt-1 text-sm text-brand-muted">
                   <span className="flex items-center gap-1"><Clock size={14} /> {t.duration}</span>
                   <span>{t.price}</span>
                 </div>
@@ -151,20 +151,20 @@ export function AppointmentBooking() {
             <button
               key={d.id}
               onClick={() => { setState({ ...state, doctorId: d.id }); setTimeout(nextStep, 300); }}
-              className={`flex items-center gap-4 p-4 rounded-2xl border-2 text-left transition-all ${
+              className={`flex items-center gap-4 p-4 rounded-[var(--radius-lg)] border-2 text-left transition-all ${
                 isSelected 
-                  ? "border-teal-500 bg-teal-50 shadow-sm" 
-                  : "border-slate-100 bg-white hover:border-teal-200 hover:bg-slate-50"
+                  ? "border-brand-primary bg-brand-primary-soft shadow-sm" 
+                  : "border-brand-border bg-brand-surface hover:border-brand-primary/40 hover:bg-brand-surface-muted"
               }`}
             >
-              <img src={d.avatar} alt={d.name} className="w-16 h-16 rounded-full object-cover border-2 border-white shadow-sm" />
+              <img src={d.avatar} alt={d.name} className="w-16 h-16 rounded-full object-cover border-2 border-brand-surface shadow-sm" />
               <div className="flex-1">
-                <h4 className="font-semibold text-slate-900 text-lg">{d.name}</h4>
-                <p className="text-sm text-slate-500">{d.specialty}</p>
+                <h4 className="font-semibold text-brand-text text-lg">{d.name}</h4>
+                <p className="text-sm text-brand-muted">{d.specialty}</p>
                 <div className="flex items-center gap-2 mt-2">
-                  <span className="text-xs font-semibold bg-slate-100 text-slate-600 px-2 py-1 rounded-md">★ {d.rating}</span>
-                  <span className={`text-xs font-semibold px-2 py-1 rounded-md ${
-                    isBusy ? "bg-rose-50 text-rose-600" : "bg-teal-50 text-teal-600"
+                  <span className="text-xs font-semibold bg-brand-surface-muted text-brand-text px-2 py-1 rounded-[var(--radius-sm)]">★ {d.rating}</span>
+                  <span className={`text-xs font-semibold px-2 py-1 rounded-[var(--radius-sm)] ${
+                    isBusy ? "bg-brand-danger-soft text-brand-danger" : "bg-brand-primary-soft text-brand-primary"
                   }`}>
                     {d.availability}
                   </span>
@@ -181,7 +181,7 @@ export function AppointmentBooking() {
     <div className="space-y-8">
       {/* Date Selection */}
       <div>
-        <h4 className="font-semibold text-slate-900 mb-4 flex items-center gap-2"><CalendarIcon size={18} className="text-teal-500"/> Select Date</h4>
+        <h4 className="font-semibold text-brand-text mb-4 flex items-center gap-2"><CalendarIcon size={18} className="text-brand-primary"/> Select Date</h4>
         <div className="flex gap-3 overflow-x-auto pb-2 hide-scrollbar">
           {DATES.map((d, i) => {
             const isSelected = state.date?.toDateString() === d.toDateString();
@@ -193,15 +193,15 @@ export function AppointmentBooking() {
               <button
                 key={i}
                 onClick={() => setState({ ...state, date: d, time: null })}
-                className={`flex-shrink-0 w-20 py-3 rounded-2xl border-2 flex flex-col items-center transition-all ${
+                className={`flex-shrink-0 w-20 py-3 rounded-[var(--radius-lg)] border-2 flex flex-col items-center transition-all ${
                   isSelected 
-                    ? "border-teal-500 bg-teal-500 text-white shadow-md" 
-                    : "border-slate-100 bg-white hover:border-teal-200 text-slate-600"
+                    ? "border-brand-primary bg-brand-primary text-white shadow-md" 
+                    : "border-brand-border bg-brand-surface hover:border-brand-primary/40 text-brand-muted"
                 }`}
               >
-                <span className={`text-xs font-semibold uppercase ${isSelected ? "text-teal-100" : "text-slate-400"}`}>{monthName}</span>
-                <span className="text-2xl font-bold my-1">{dayNum}</span>
-                <span className={`text-xs ${isSelected ? "text-teal-100" : "text-slate-500"}`}>{dayName}</span>
+                <span className={`text-xs font-semibold uppercase tracking-wider ${isSelected ? "text-white/80" : "text-brand-muted"}`}>{monthName}</span>
+                <span className={`text-2xl font-bold my-1 ${isSelected ? "text-white" : "text-brand-text"}`}>{dayNum}</span>
+                <span className={`text-xs ${isSelected ? "text-white/80" : "text-brand-muted"}`}>{dayName}</span>
               </button>
             )
           })}
@@ -216,7 +216,7 @@ export function AppointmentBooking() {
             animate={{ opacity: 1, height: "auto" }}
             className="pt-2"
           >
-            <h4 className="font-semibold text-slate-900 mb-4 flex items-center gap-2"><Clock size={18} className="text-teal-500"/> Select Time</h4>
+            <h4 className="font-semibold text-brand-text mb-4 flex items-center gap-2"><Clock size={18} className="text-brand-primary"/> Select Time</h4>
             <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
               {TIMES.map((time, i) => {
                 const isSelected = state.time === time;
@@ -228,12 +228,12 @@ export function AppointmentBooking() {
                     key={time}
                     disabled={isDisabled}
                     onClick={() => { setState({ ...state, time }); setTimeout(nextStep, 300); }}
-                    className={`py-2.5 rounded-xl text-sm font-semibold transition-all border-2 ${
+                    className={`py-2.5 rounded-[var(--radius-md)] text-sm font-semibold transition-all border-2 ${
                       isDisabled
-                        ? "bg-slate-50 border-transparent text-slate-300 cursor-not-allowed line-through"
+                        ? "bg-brand-surface-muted border-transparent text-brand-muted/50 cursor-not-allowed line-through"
                         : isSelected
-                          ? "bg-teal-500 border-teal-500 text-white shadow-md"
-                          : "bg-white border-slate-100 text-slate-700 hover:border-teal-300"
+                          ? "bg-brand-primary border-brand-primary text-white shadow-md"
+                          : "bg-brand-surface border-brand-border text-brand-text hover:border-brand-primary/40"
                     }`}
                   >
                     {time}
@@ -251,12 +251,12 @@ export function AppointmentBooking() {
     <div className="space-y-5">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
         <div className="space-y-1.5">
-          <label className="text-sm font-semibold text-slate-700">Full Name *</label>
+          <label className="text-sm font-semibold text-brand-text">Full Name *</label>
           <div className="relative">
-            <User size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+            <User size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-brand-muted" />
             <input 
               type="text" 
-              className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-teal-500 focus:ring-2 focus:ring-teal-200 outline-none transition-all bg-slate-50 focus:bg-white"
+              className="w-full pl-10 pr-4 py-3 rounded-[var(--radius-md)] border border-brand-border focus:border-brand-primary focus:ring-1 focus:ring-brand-primary outline-none transition-all bg-brand-surface-muted focus:bg-brand-surface text-brand-text"
               placeholder="John Doe"
               value={state.patient.fullName}
               onChange={(e) => setState({...state, patient: {...state.patient, fullName: e.target.value}})}
@@ -264,12 +264,12 @@ export function AppointmentBooking() {
           </div>
         </div>
         <div className="space-y-1.5">
-          <label className="text-sm font-semibold text-slate-700">Phone Number *</label>
+          <label className="text-sm font-semibold text-brand-text">Phone Number *</label>
           <div className="relative">
-            <Phone size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+            <Phone size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-brand-muted" />
             <input 
               type="tel" 
-              className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-teal-500 focus:ring-2 focus:ring-teal-200 outline-none transition-all bg-slate-50 focus:bg-white"
+              className="w-full pl-10 pr-4 py-3 rounded-[var(--radius-md)] border border-brand-border focus:border-brand-primary focus:ring-1 focus:ring-brand-primary outline-none transition-all bg-brand-surface-muted focus:bg-brand-surface text-brand-text"
               placeholder="+1 (555) 000-0000"
               value={state.patient.phone}
               onChange={(e) => setState({...state, patient: {...state.patient, phone: e.target.value}})}
@@ -277,12 +277,12 @@ export function AppointmentBooking() {
           </div>
         </div>
         <div className="space-y-1.5">
-          <label className="text-sm font-semibold text-slate-700">Email Address</label>
+          <label className="text-sm font-semibold text-brand-text">Email Address</label>
           <div className="relative">
-            <Mail size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+            <Mail size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-brand-muted" />
             <input 
               type="email" 
-              className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-teal-500 focus:ring-2 focus:ring-teal-200 outline-none transition-all bg-slate-50 focus:bg-white"
+              className="w-full pl-10 pr-4 py-3 rounded-[var(--radius-md)] border border-brand-border focus:border-brand-primary focus:ring-1 focus:ring-brand-primary outline-none transition-all bg-brand-surface-muted focus:bg-brand-surface text-brand-text"
               placeholder="john@example.com"
               value={state.patient.email}
               onChange={(e) => setState({...state, patient: {...state.patient, email: e.target.value}})}
@@ -290,10 +290,10 @@ export function AppointmentBooking() {
           </div>
         </div>
         <div className="space-y-1.5">
-          <label className="text-sm font-semibold text-slate-700">Date of Birth</label>
+          <label className="text-sm font-semibold text-brand-text">Date of Birth</label>
           <input 
             type="date" 
-            className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-teal-500 focus:ring-2 focus:ring-teal-200 outline-none transition-all bg-slate-50 focus:bg-white text-slate-700"
+            className="w-full px-4 py-3 rounded-[var(--radius-md)] border border-brand-border focus:border-brand-primary focus:ring-1 focus:ring-brand-primary outline-none transition-all bg-brand-surface-muted focus:bg-brand-surface text-brand-text"
             value={state.patient.dob}
             onChange={(e) => setState({...state, patient: {...state.patient, dob: e.target.value}})}
           />
@@ -301,10 +301,10 @@ export function AppointmentBooking() {
       </div>
       
       <div className="space-y-1.5">
-        <label className="text-sm font-semibold text-slate-700">Notes / Symptoms</label>
+        <label className="text-sm font-semibold text-brand-text">Notes / Symptoms</label>
         <textarea 
           rows={3}
-          className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-teal-500 focus:ring-2 focus:ring-teal-200 outline-none transition-all bg-slate-50 focus:bg-white resize-none"
+          className="w-full px-4 py-3 rounded-[var(--radius-md)] border border-brand-border focus:border-brand-primary focus:ring-1 focus:ring-brand-primary outline-none transition-all bg-brand-surface-muted focus:bg-brand-surface resize-none text-brand-text"
           placeholder="Briefly describe your dental issue or any special requests..."
           value={state.patient.notes}
           onChange={(e) => setState({...state, patient: {...state.patient, notes: e.target.value}})}
@@ -314,11 +314,11 @@ export function AppointmentBooking() {
       <div className="space-y-4 pt-2">
         <label className="flex items-start gap-3 cursor-pointer group">
           <div className={`mt-0.5 w-5 h-5 rounded border flex items-center justify-center transition-all ${
-            state.patient.firstTime ? "bg-teal-500 border-teal-500" : "border-slate-300 bg-white group-hover:border-teal-400"
+            state.patient.firstTime ? "bg-brand-primary border-brand-primary" : "border-brand-border bg-brand-surface group-hover:border-brand-primary"
           }`}>
             {state.patient.firstTime && <Check size={14} className="text-white" />}
           </div>
-          <span className="text-sm text-slate-700 font-medium">This is my first time visiting the clinic</span>
+          <span className="text-sm text-brand-text font-medium">This is my first time visiting the clinic</span>
           <input 
             type="checkbox" 
             className="sr-only"
@@ -329,11 +329,11 @@ export function AppointmentBooking() {
         
         <label className="flex items-start gap-3 cursor-pointer group">
           <div className={`mt-0.5 w-5 h-5 rounded border flex items-center justify-center transition-all ${
-            state.patient.consent ? "bg-teal-500 border-teal-500" : "border-slate-300 bg-white group-hover:border-teal-400"
+            state.patient.consent ? "bg-brand-primary border-brand-primary" : "border-brand-border bg-brand-surface group-hover:border-brand-primary"
           }`}>
             {state.patient.consent && <Check size={14} className="text-white" />}
           </div>
-          <span className="text-sm text-slate-600">I agree to the processing of my personal data in accordance with the Privacy Policy. *</span>
+          <span className="text-sm text-brand-muted">I agree to the processing of my personal data in accordance with the Privacy Policy. *</span>
           <input 
             type="checkbox" 
             className="sr-only"
@@ -346,7 +346,7 @@ export function AppointmentBooking() {
       <button 
         onClick={nextStep}
         disabled={!state.patient.fullName || !state.patient.phone || !state.patient.consent}
-        className="w-full mt-6 py-4 bg-teal-600 hover:bg-teal-700 disabled:bg-slate-200 disabled:text-slate-400 text-white rounded-xl font-bold text-lg shadow-sm transition-all"
+        className="btn-primary w-full mt-6 py-3 font-bold text-base flex items-center justify-center"
       >
         Continue to Review
       </button>
@@ -360,51 +360,51 @@ export function AppointmentBooking() {
 
     return (
       <div className="space-y-6">
-        <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100">
-          <h4 className="text-lg font-bold text-slate-900 mb-6">Appointment Summary</h4>
+        <div className="bg-brand-surface-muted p-6 rounded-[var(--radius-lg)] border border-brand-border">
+          <h4 className="text-lg font-bold text-brand-text mb-6">Appointment Summary</h4>
           
           <div className="space-y-4">
-            <div className="flex items-start justify-between pb-4 border-b border-slate-200">
+            <div className="flex items-start justify-between pb-4 border-b border-brand-border">
               <div>
-                <p className="text-sm text-slate-500 font-medium mb-1">Treatment</p>
-                <p className="font-semibold text-slate-900">{treatment?.name}</p>
+                <p className="text-sm text-brand-muted font-medium mb-1">Treatment</p>
+                <p className="font-semibold text-brand-text">{treatment?.name}</p>
               </div>
-              <button onClick={() => setStep(1)} className="text-sm text-teal-600 font-semibold hover:underline">Edit</button>
+              <button onClick={() => setStep(1)} className="text-sm text-brand-primary font-semibold hover:underline">Edit</button>
             </div>
             
-            <div className="flex items-start justify-between pb-4 border-b border-slate-200">
+            <div className="flex items-start justify-between pb-4 border-b border-brand-border">
               <div>
-                <p className="text-sm text-slate-500 font-medium mb-1">Doctor</p>
+                <p className="text-sm text-brand-muted font-medium mb-1">Doctor</p>
                 <div className="flex items-center gap-2">
                   <img src={doctor?.avatar} alt={doctor?.name} className="w-6 h-6 rounded-full" />
-                  <p className="font-semibold text-slate-900">{doctor?.name}</p>
+                  <p className="font-semibold text-brand-text">{doctor?.name}</p>
                 </div>
               </div>
-              <button onClick={() => setStep(2)} className="text-sm text-teal-600 font-semibold hover:underline">Edit</button>
+              <button onClick={() => setStep(2)} className="text-sm text-brand-primary font-semibold hover:underline">Edit</button>
             </div>
 
-            <div className="flex items-start justify-between pb-4 border-b border-slate-200">
+            <div className="flex items-start justify-between pb-4 border-b border-brand-border">
               <div>
-                <p className="text-sm text-slate-500 font-medium mb-1">Date & Time</p>
-                <p className="font-semibold text-slate-900">{dateStr} at {state.time}</p>
+                <p className="text-sm text-brand-muted font-medium mb-1">Date & Time</p>
+                <p className="font-semibold text-brand-text">{dateStr} at {state.time}</p>
               </div>
-              <button onClick={() => setStep(3)} className="text-sm text-teal-600 font-semibold hover:underline">Edit</button>
+              <button onClick={() => setStep(3)} className="text-sm text-brand-primary font-semibold hover:underline">Edit</button>
             </div>
 
             <div className="flex items-start justify-between pt-2">
               <div>
-                <p className="text-sm text-slate-500 font-medium mb-1">Patient Details</p>
-                <p className="font-semibold text-slate-900">{state.patient.fullName}</p>
-                <p className="text-sm text-slate-600">{state.patient.phone}</p>
+                <p className="text-sm text-brand-muted font-medium mb-1">Patient Details</p>
+                <p className="font-semibold text-brand-text">{state.patient.fullName}</p>
+                <p className="text-sm text-brand-text">{state.patient.phone}</p>
               </div>
-              <button onClick={() => setStep(4)} className="text-sm text-teal-600 font-semibold hover:underline">Edit</button>
+              <button onClick={() => setStep(4)} className="text-sm text-brand-primary font-semibold hover:underline">Edit</button>
             </div>
           </div>
         </div>
 
         <button 
           onClick={handleConfirm}
-          className="w-full py-4 bg-teal-600 hover:bg-teal-700 text-white rounded-xl font-bold text-lg shadow-lg shadow-teal-500/20 transition-all flex items-center justify-center gap-2"
+          className="btn-primary w-full py-4 text-lg flex items-center justify-center gap-2"
         >
           <CheckCircle2 size={20} />
           Confirm Booking
@@ -419,16 +419,16 @@ export function AppointmentBooking() {
       animate={{ opacity: 1, scale: 1 }}
       className="py-12 text-center"
     >
-      <div className="w-20 h-20 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
-        <CheckCircle2 size={40} className="text-teal-500" />
+      <div className="w-20 h-20 bg-brand-primary-soft rounded-[var(--radius-md)] flex items-center justify-center mx-auto mb-6">
+        <CheckCircle2 size={40} className="text-brand-primary" />
       </div>
-      <h3 className="text-2xl font-bold text-slate-900 mb-3">Booking Confirmed!</h3>
-      <p className="text-slate-600 mb-8 max-w-md mx-auto">
+      <h3 className="text-2xl font-bold text-brand-text mb-3">Booking Confirmed!</h3>
+      <p className="text-brand-muted mb-8 max-w-md mx-auto">
         Your appointment for <strong>{TREATMENTS.find(t=>t.id===state.treatmentId)?.name}</strong> on <strong>{state.date?.toLocaleDateString()} at {state.time}</strong> has been successfully booked. We've sent the details to your email and phone.
       </p>
       <button 
         onClick={reset}
-        className="px-8 py-3 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl font-semibold transition-all"
+        className="btn-secondary px-8 py-3 font-semibold"
       >
         Book Another Visit
       </button>
@@ -446,18 +446,18 @@ export function AppointmentBooking() {
   ];
 
   return (
-    <div className="max-w-2xl mx-auto w-full">
-      <div className="bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] ring-1 ring-slate-100 overflow-hidden">
+    <div className="max-w-2xl mx-auto w-full mt-8">
+      <div className="bg-brand-surface rounded-[var(--radius-xl)] shadow-popover border border-brand-border overflow-hidden">
         
         {/* Header / Stepper */}
         {!isSuccess && (
-          <div className="bg-slate-50/50 p-6 sm:p-8 border-b border-slate-100">
-            <h2 className="text-2xl font-bold text-slate-900 mb-6">Book an Appointment</h2>
+          <div className="bg-brand-surface-muted p-6 sm:p-8 border-b border-brand-border">
+            <h2 className="text-2xl font-bold text-brand-text mb-6">Book an Appointment</h2>
             
             <div className="flex items-center justify-between relative">
-              <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-slate-200 rounded-full" />
+              <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-brand-border rounded-full" />
               <div 
-                className="absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-teal-500 rounded-full transition-all duration-500" 
+                className="absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-brand-primary rounded-full transition-all duration-500" 
                 style={{ width: `${((step - 1) / 4) * 100}%` }}
               />
               
@@ -468,10 +468,10 @@ export function AppointmentBooking() {
                   <div key={num} className="relative z-10 flex flex-col items-center">
                     <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-300 ${
                       isActive 
-                        ? "bg-teal-500 text-white shadow-md ring-4 ring-teal-50" 
+                        ? "bg-brand-primary text-white shadow-md ring-4 ring-brand-primary/20" 
                         : isPassed 
-                          ? "bg-teal-500 text-white" 
-                          : "bg-slate-200 text-slate-400"
+                          ? "bg-brand-primary text-white" 
+                          : "bg-brand-surface border border-brand-border text-brand-muted"
                     }`}>
                       {isPassed ? <Check size={16} /> : num}
                     </div>
@@ -481,8 +481,8 @@ export function AppointmentBooking() {
             </div>
             
             <div className="mt-4 text-center">
-              <span className="text-teal-600 font-semibold text-sm uppercase tracking-wider">Step {step} of 5</span>
-              <h3 className="text-slate-900 font-bold text-lg">{stepTitles[step - 1]}</h3>
+              <span className="text-brand-primary font-semibold text-sm uppercase tracking-wider">Step {step} of 5</span>
+              <h3 className="text-brand-text font-bold text-lg">{stepTitles[step - 1]}</h3>
             </div>
           </div>
         )}
@@ -510,12 +510,12 @@ export function AppointmentBooking() {
         
         {/* Footer Navigation */}
         {!isSuccess && step > 1 && step < 5 && (
-          <div className="px-6 sm:px-8 py-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
+          <div className="px-6 sm:px-8 py-4 bg-brand-surface-muted border-t border-brand-border flex items-center justify-between">
             <button 
               onClick={prevStep}
-              className="flex items-center gap-2 text-slate-500 hover:text-slate-800 font-semibold px-4 py-2 rounded-lg hover:bg-slate-200 transition-all"
+              className="btn-secondary flex items-center gap-2"
             >
-              <ChevronLeft size={18} /> Back
+              <ChevronLeft size={16} /> Back
             </button>
             <button 
               onClick={nextStep}
@@ -523,9 +523,9 @@ export function AppointmentBooking() {
                 (step === 2 && !state.doctorId) || 
                 (step === 3 && (!state.date || !state.time))
               }
-              className="flex items-center gap-2 text-teal-600 hover:text-teal-700 font-bold px-4 py-2 rounded-lg hover:bg-teal-50 transition-all disabled:opacity-50 disabled:hover:bg-transparent"
+              className="btn-primary flex items-center gap-2 disabled:opacity-50"
             >
-              Continue <ChevronRight size={18} />
+              Continue <ChevronRight size={16} />
             </button>
           </div>
         )}

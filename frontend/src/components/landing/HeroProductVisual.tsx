@@ -20,7 +20,7 @@ export function HeroProductVisual(): JSX.Element {
         />
         <img
           src="/hero_mockup.png"
-          alt={t("landing.heroMockupAlt")}
+          alt={t("landing.heroMockupAlt", { defaultValue: "Hero Mockup Alt" })}
           width={1200}
           height={900}
           className="relative w-full rounded-2xl object-contain drop-shadow-2xl ring-1 ring-brand-border/60"
@@ -29,7 +29,7 @@ export function HeroProductVisual(): JSX.Element {
         />
       </motion.div>
       <p className="mt-4 text-center text-[11px] font-medium text-brand-muted">
-        {t("landing.heroMockupCaption")}
+        {t("landing.heroMockupCaption", { defaultValue: "Hero Mockup Caption" })}
       </p>
     </div>
   );

@@ -98,10 +98,10 @@ export function PortalRegisterPage(): JSX.Element {
     <div>
       <div className="mx-auto w-full max-w-sm px-4 py-8">
         <h2 className="text-center text-xl font-black text-slate-900">
-          {step === "form" ? t("pages.portal.register.title") : t("pages.portal.login.titleCode")}
+          {step === "form" ? t("pages.portal.register.title", { defaultValue: "Title" }) : t("pages.portal.login.titleCode", { defaultValue: "Title Code" })}
         </h2>
         <p className="mt-2 text-center text-sm text-slate-600">
-          {step === "form" ? t("pages.portal.register.subtitle") : t("pages.portal.login.subtitleCode", { phone })}
+          {step === "form" ? t("pages.portal.register.subtitle", { defaultValue: "Subtitle" }) : t("pages.portal.login.subtitleCode", { phone })}
         </p>
 
         {step === "form" ? (
@@ -110,14 +110,14 @@ export function PortalRegisterPage(): JSX.Element {
               required
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
-              placeholder={t("pages.portal.register.firstName")}
+              placeholder={t("pages.portal.register.firstName", { defaultValue: "First Name" })}
               className={fieldRing}
             />
             <input
               required
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
-              placeholder={t("pages.portal.register.lastName")}
+              placeholder={t("pages.portal.register.lastName", { defaultValue: "Last Name" })}
               className={fieldRing}
             />
             <input
@@ -125,14 +125,14 @@ export function PortalRegisterPage(): JSX.Element {
               type="tel"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              placeholder={t("pages.portal.login.phonePlaceholder")}
+              placeholder={t("pages.portal.login.phonePlaceholder", { defaultValue: "Phone Placeholder" })}
               className={fieldRing}
             />
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder={t("pages.portal.register.emailOptional")}
+              placeholder={t("pages.portal.register.emailOptional", { defaultValue: "Email Optional" })}
               className={fieldRing}
             />
             {error ? <p className="text-xs font-bold text-rose-600" role="alert">{error}</p> : null}
@@ -141,7 +141,7 @@ export function PortalRegisterPage(): JSX.Element {
               disabled={loading}
               className="w-full min-h-12 rounded-xl bg-teal-600 py-3 text-sm font-bold text-white disabled:opacity-50"
             >
-              {loading ? t("pages.portal.register.submitting") : t("pages.portal.register.submit")}
+              {loading ? t("pages.portal.register.submitting", { defaultValue: "Submitting" }) : t("pages.portal.register.submit", { defaultValue: "Submit" })}
             </button>
           </form>
         ) : (
@@ -152,7 +152,7 @@ export function PortalRegisterPage(): JSX.Element {
               maxLength={6}
               value={code}
               onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
-              placeholder={t("pages.portal.login.codeLabel")}
+              placeholder={t("pages.portal.login.codeLabel", { defaultValue: "Code Label" })}
               className={`${fieldRing} text-center tracking-[0.4em]`}
             />
             {error ? <p className="text-xs font-bold text-rose-600" role="alert">{error}</p> : null}
@@ -161,7 +161,7 @@ export function PortalRegisterPage(): JSX.Element {
               disabled={loading || code.length !== 6}
               className="w-full min-h-12 rounded-xl bg-teal-600 py-3 text-sm font-bold text-white disabled:opacity-50"
             >
-              {loading ? t("pages.portal.login.verifying") : t("pages.portal.login.verifyEnter")}
+              {loading ? t("pages.portal.login.verifying", { defaultValue: "Verifying" }) : t("pages.portal.login.verifyEnter", { defaultValue: "Verify Enter" })}
             </button>
             <button
               type="button"
@@ -171,15 +171,15 @@ export function PortalRegisterPage(): JSX.Element {
             >
               {cooldown > 0
                 ? t("pages.portal.login.resendIn", { seconds: cooldown })
-                : t("pages.portal.login.resend")}
+                : t("pages.portal.login.resend", { defaultValue: "Resend" })}
             </button>
           </form>
         )}
 
         <p className="mt-6 text-center text-xs text-slate-500">
-          {t("pages.portal.register.haveAccount")}{" "}
+          {t("pages.portal.register.haveAccount", { defaultValue: "Have Account" })}{" "}
           <Link to={`/${slug}/portal/login${kioskSuffix}`} className="font-bold text-teal-600">
-            {t("pages.portal.register.signIn")}
+            {t("pages.portal.register.signIn", { defaultValue: "Sign In" })}
           </Link>
         </p>
       </div>

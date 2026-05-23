@@ -22,7 +22,7 @@ export function IntegrationsStrip(): JSX.Element {
   return (
     <div className="rounded-3xl border border-brand-border bg-brand-surface px-6 py-6 shadow-sm sm:px-8">
       <p className="mb-4 text-center text-xs font-bold uppercase tracking-widest text-brand-muted">
-        {t("landing.integrationsTitle")}
+        {t("landing.integrationsTitle", { defaultValue: "Integrations Title" })}
       </p>
       <div className="overflow-hidden [mask-image:linear-gradient(90deg,transparent,black_10%,black_90%,transparent)]">
         {reduce ? (

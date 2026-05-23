@@ -249,26 +249,26 @@ export function PatientDetailPage(): JSX.Element {
 
   const tabDefs = useMemo(
     () => [
-      { key: "overview" as const, label: t("pages.patientDetail.tabs.overview"), icon: <Layout size={16} /> },
-      { key: "medical" as const, label: t("pages.patientDetail.tabs.medical"), icon: <Activity size={16} /> },
-      { key: "soap" as const, label: t("pages.patientDetail.tabs.soap"), icon: <FileText size={16} /> },
-      { key: "chart" as const, label: t("pages.patientDetail.tabs.chart"), icon: <Stethoscope size={16} /> },
-      { key: "perio" as const, label: t("pages.patientDetail.tabs.perio"), icon: <Scissors size={16} /> },
-      { key: "advanced-perio" as const, label: t("pages.patientDetail.tabs.advancedPerio"), icon: <FlaskConical size={16} /> },
-      { key: "tmj" as const, label: t("pages.patientDetail.tabs.tmj"), icon: <Settings size={16} /> },
-      { key: "treatment-timeline" as const, label: t("pages.patientDetail.tabs.timeline"), icon: <Clock size={16} /> },
-      { key: "before-after" as const, label: t("pages.patientDetail.tabs.progress"), icon: <ImageIcon size={16} /> },
-      { key: "hmo" as const, label: t("pages.patientDetail.tabs.hmo"), icon: <ShieldCheck size={16} /> },
-      { key: "appointments" as const, label: t("pages.patientDetail.tabs.appointments"), icon: <Clock size={16} /> },
-      { key: "treatments" as const, label: t("pages.patientDetail.tabs.treatments"), icon: <Clipboard size={16} /> },
-      { key: "invoices" as const, label: t("pages.patientDetail.tabs.invoices"), icon: <FileText size={16} /> },
-      { key: "documents" as const, label: t("pages.patientDetail.tabs.documents"), icon: <FileText size={16} /> },
-      { key: "prescriptions" as const, label: t("pages.patientDetail.tabs.prescriptions"), icon: <FlaskConical size={16} /> },
-      { key: "xray" as const, label: t("pages.patientDetail.tabs.xray"), icon: <ImageIcon size={16} /> },
-      { key: "intraoral" as const, label: t("pages.patientDetail.tabs.intraoral"), icon: <ImageIcon size={16} /> },
-      { key: "lab" as const, label: t("pages.patientDetail.tabs.lab"), icon: <FlaskConical size={16} /> },
-      { key: "family" as const, label: t("pages.patientDetail.tabs.family"), icon: <Users size={16} /> },
-      { key: "consents" as const, label: t("pages.patientDetail.tabs.consents"), icon: <ShieldCheck size={16} /> },
+      { key: "overview" as const, label: t("pages.patientDetail.tabs.overview", { defaultValue: "Overview" }), icon: <Layout size={16} /> },
+      { key: "medical" as const, label: t("pages.patientDetail.tabs.medical", { defaultValue: "Medical" }), icon: <Activity size={16} /> },
+      { key: "soap" as const, label: t("pages.patientDetail.tabs.soap", { defaultValue: "Soap" }), icon: <FileText size={16} /> },
+      { key: "chart" as const, label: t("pages.patientDetail.tabs.chart", { defaultValue: "Chart" }), icon: <Stethoscope size={16} /> },
+      { key: "perio" as const, label: t("pages.patientDetail.tabs.perio", { defaultValue: "Perio" }), icon: <Scissors size={16} /> },
+      { key: "advanced-perio" as const, label: t("pages.patientDetail.tabs.advancedPerio", { defaultValue: "Advanced Perio" }), icon: <FlaskConical size={16} /> },
+      { key: "tmj" as const, label: t("pages.patientDetail.tabs.tmj", { defaultValue: "Tmj" }), icon: <Settings size={16} /> },
+      { key: "treatment-timeline" as const, label: t("pages.patientDetail.tabs.timeline", { defaultValue: "Timeline" }), icon: <Clock size={16} /> },
+      { key: "before-after" as const, label: t("pages.patientDetail.tabs.progress", { defaultValue: "Progress" }), icon: <ImageIcon size={16} /> },
+      { key: "hmo" as const, label: t("pages.patientDetail.tabs.hmo", { defaultValue: "Hmo" }), icon: <ShieldCheck size={16} /> },
+      { key: "appointments" as const, label: t("pages.patientDetail.tabs.appointments", { defaultValue: "Appointments" }), icon: <Clock size={16} /> },
+      { key: "treatments" as const, label: t("pages.patientDetail.tabs.treatments", { defaultValue: "Treatments" }), icon: <Clipboard size={16} /> },
+      { key: "invoices" as const, label: t("pages.patientDetail.tabs.invoices", { defaultValue: "Invoices" }), icon: <FileText size={16} /> },
+      { key: "documents" as const, label: t("pages.patientDetail.tabs.documents", { defaultValue: "Documents" }), icon: <FileText size={16} /> },
+      { key: "prescriptions" as const, label: t("pages.patientDetail.tabs.prescriptions", { defaultValue: "Prescriptions" }), icon: <FlaskConical size={16} /> },
+      { key: "xray" as const, label: t("pages.patientDetail.tabs.xray", { defaultValue: "Xray" }), icon: <ImageIcon size={16} /> },
+      { key: "intraoral" as const, label: t("pages.patientDetail.tabs.intraoral", { defaultValue: "Intraoral" }), icon: <ImageIcon size={16} /> },
+      { key: "lab" as const, label: t("pages.patientDetail.tabs.lab", { defaultValue: "Lab" }), icon: <FlaskConical size={16} /> },
+      { key: "family" as const, label: t("pages.patientDetail.tabs.family", { defaultValue: "Family" }), icon: <Users size={16} /> },
+      { key: "consents" as const, label: t("pages.patientDetail.tabs.consents", { defaultValue: "Consents" }), icon: <ShieldCheck size={16} /> },
     ],
     [t]
   );
@@ -284,9 +284,9 @@ export function PatientDetailPage(): JSX.Element {
   if (!id) {
     return (
       <div className="flex h-[50vh] flex-col items-center justify-center space-y-4">
-        <p className="text-sm font-semibold text-slate-500 uppercase tracking-widest">{t("pages.patientDetail.invalid")}</p>
+        <p className="text-sm font-semibold text-slate-500 uppercase tracking-widest">{t("pages.patientDetail.invalid", { defaultValue: "Invalid" })}</p>
         <Link to="/patients" className="inline-flex items-center gap-2 text-teal-600 hover:underline">
-          <ChevronLeft size={16} /> {t("pages.patientDetail.back")}
+          <ChevronLeft size={16} /> {t("pages.patientDetail.back", { defaultValue: "Back" })}
         </Link>
       </div>
     );
@@ -301,13 +301,13 @@ export function PatientDetailPage(): JSX.Element {
           className="group inline-flex items-center gap-2 rounded-xl bg-white px-4 py-2 text-sm font-semibold uppercase tracking-widest text-slate-500 shadow-sm ring-1 ring-slate-100 transition-all hover:bg-slate-50 hover:text-teal-600"
         >
           <ChevronLeft size={16} className="transition-transform group-hover:-translate-x-1" />
-          {t("pages.patientDetail.back")}
+          {t("pages.patientDetail.back", { defaultValue: "Back" })}
         </Link>
 
         {data && (
           <div className="flex items-center gap-3">
              <span className="hidden text-xs font-medium text-slate-400 sm:block">
-               {t("pages.patientDetail.lastUpdated")}: {new Intl.DateTimeFormat(dateLocale).format(new Date())}
+               {t("pages.patientDetail.lastUpdated", { defaultValue: "Last Updated" })}: {new Intl.DateTimeFormat(dateLocale).format(new Date())}
              </span>
           </div>
         )}
@@ -322,15 +322,15 @@ export function PatientDetailPage(): JSX.Element {
             </div>
           </div>
           <div>
-            <p className="text-base font-semibold tracking-tight text-slate-800">{t("pages.patientDetail.loading")}</p>
-            <p className="mt-1 text-sm font-medium text-slate-400">{t("pages.patientDetail.syncingRecords")}</p>
+            <p className="text-base font-semibold tracking-tight text-slate-800">{t("pages.patientDetail.loading", { defaultValue: "Loading" })}</p>
+            <p className="mt-1 text-sm font-medium text-slate-400">{t("pages.patientDetail.syncingRecords", { defaultValue: "Syncing Records" })}</p>
           </div>
         </div>
       ) : !data ? (
         <div className="rounded-2xl border border-rose-100 bg-rose-50 px-8 py-16 text-center">
-          <p className="text-base font-semibold tracking-tight text-rose-900">{t("pages.patientDetail.notFound")}</p>
+          <p className="text-base font-semibold tracking-tight text-rose-900">{t("pages.patientDetail.notFound", { defaultValue: "Not Found" })}</p>
           <Link to="/patients" className="mt-4 inline-block text-sm font-semibold text-rose-600 hover:underline">
-             {t("pages.patientDetail.returnToDirectory")}
+             {t("pages.patientDetail.returnToDirectory", { defaultValue: "Return To Directory" })}
           </Link>
         </div>
       ) : (

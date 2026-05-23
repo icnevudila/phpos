@@ -34,9 +34,9 @@ export function RegisterPage(): JSX.Element {
         email: email.trim(),
         password,
       });
-      navigate("/login", { state: { message: t("auth.registerBanner") } });
+      navigate("/login", { state: { message: t("auth.registerBanner", { defaultValue: "Register Banner" }) } });
     } catch (e) {
-      setError((e as Error).message || t("auth.registerClinic.failed"));
+      setError((e as Error).message || t("auth.registerClinic.failed", { defaultValue: "Failed" }));
     } finally {
       setLoading(false);
     }
@@ -57,20 +57,20 @@ export function RegisterPage(): JSX.Element {
               </div>
 
               <h1 className="mt-16 max-w-md text-2xl font-bold leading-[1.1] tracking-tight text-slate-800">
-                {t("auth.registerClinic.heroTitle")}
+                {t("auth.registerClinic.heroTitle", { defaultValue: "Hero Title" })}
               </h1>
               <p className="mt-6 max-w-sm text-base leading-relaxed text-slate-500">
-                {t("auth.registerClinic.heroSub")}
+                {t("auth.registerClinic.heroSub", { defaultValue: "Hero Sub" })}
               </p>
             </div>
 
             <div className="mt-16">
               <div className="rounded-3xl bg-white/60 p-8 border border-white shadow-sm">
                 <p className="text-sm font-semibold italic text-slate-700">
-                  &ldquo;{t("auth.registerClinic.testimonial")}&rdquo;
+                  &ldquo;{t("auth.registerClinic.testimonial", { defaultValue: "Testimonial" })}&rdquo;
                 </p>
                 <p className="mt-4 text-xs font-bold text-teal-600 uppercase tracking-widest">
-                  {t("auth.registerClinic.testimonialAuthor")}
+                  {t("auth.registerClinic.testimonialAuthor", { defaultValue: "Testimonial Author" })}
                 </p>
               </div>
             </div>
@@ -85,17 +85,17 @@ export function RegisterPage(): JSX.Element {
                   <DentQLLogo size="md" />
                 </div>
                 <h2 className="text-2xl font-bold tracking-tight text-slate-800">
-                  {t("auth.registerClinic.formTitle")}
+                  {t("auth.registerClinic.formTitle", { defaultValue: "Form Title" })}
                 </h2>
                 <p className="mt-1 text-sm text-slate-500">
-                  {t("auth.registerClinic.formSub")}
+                  {t("auth.registerClinic.formSub", { defaultValue: "Form Sub" })}
                 </p>
               </div>
 
               <form className="grid gap-x-6 gap-y-5 sm:grid-cols-2" onSubmit={handleSubmit}>
                 <div className="sm:col-span-2">
                   <label className="block text-xs font-semibold uppercase tracking-widest text-slate-400">
-                    {t("auth.registerClinic.clinicName")}
+                    {t("auth.registerClinic.clinicName", { defaultValue: "Clinic Name" })}
                   </label>
                   <input
                     type="text"
@@ -103,13 +103,13 @@ export function RegisterPage(): JSX.Element {
                     value={clinicName}
                     onChange={(e) => setClinicName(e.target.value)}
                     className="mt-1.5 rounded-xl border border-slate-200 px-4 py-3 text-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-400 outline-none w-full transition"
-                    placeholder={t("auth.registerClinic.clinicNamePlaceholder")}
+                    placeholder={t("auth.registerClinic.clinicNamePlaceholder", { defaultValue: "Clinic Name Placeholder" })}
                   />
                 </div>
 
                 <div>
                   <label className="block text-xs font-semibold uppercase tracking-widest text-slate-400">
-                    {t("auth.registerClinic.firstName")}
+                    {t("auth.registerClinic.firstName", { defaultValue: "First Name" })}
                   </label>
                   <input
                     type="text"
@@ -117,12 +117,12 @@ export function RegisterPage(): JSX.Element {
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
                     className="mt-1.5 rounded-xl border border-slate-200 px-4 py-3 text-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-400 outline-none w-full transition"
-                    placeholder={t("auth.registerClinic.firstNamePlaceholder")}
+                    placeholder={t("auth.registerClinic.firstNamePlaceholder", { defaultValue: "First Name Placeholder" })}
                   />
                 </div>
                 <div>
                   <label className="block text-xs font-semibold uppercase tracking-widest text-slate-400">
-                    {t("auth.registerClinic.lastName")}
+                    {t("auth.registerClinic.lastName", { defaultValue: "Last Name" })}
                   </label>
                   <input
                     type="text"
@@ -130,13 +130,13 @@ export function RegisterPage(): JSX.Element {
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
                     className="mt-1.5 rounded-xl border border-slate-200 px-4 py-3 text-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-400 outline-none w-full transition"
-                    placeholder={t("auth.registerClinic.lastNamePlaceholder")}
+                    placeholder={t("auth.registerClinic.lastNamePlaceholder", { defaultValue: "Last Name Placeholder" })}
                   />
                 </div>
 
                 <div>
                   <label className="block text-xs font-semibold uppercase tracking-widest text-slate-400">
-                    {t("auth.registerClinic.phone")}
+                    {t("auth.registerClinic.phone", { defaultValue: "Phone" })}
                   </label>
                   <input
                     type="tel"
@@ -144,12 +144,12 @@ export function RegisterPage(): JSX.Element {
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     className="mt-1.5 rounded-xl border border-slate-200 px-4 py-3 text-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-400 outline-none w-full transition"
-                    placeholder={t("auth.registerClinic.phonePlaceholder")}
+                    placeholder={t("auth.registerClinic.phonePlaceholder", { defaultValue: "Phone Placeholder" })}
                   />
                 </div>
                 <div>
                   <label className="block text-xs font-semibold uppercase tracking-widest text-slate-400">
-                    {t("auth.registerClinic.location")}
+                    {t("auth.registerClinic.location", { defaultValue: "Location" })}
                   </label>
                   <input
                     type="text"
@@ -157,13 +157,13 @@ export function RegisterPage(): JSX.Element {
                     value={location}
                     onChange={(e) => setLocation(e.target.value)}
                     className="mt-1.5 rounded-xl border border-slate-200 px-4 py-3 text-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-400 outline-none w-full transition"
-                    placeholder={t("auth.registerClinic.locationPlaceholder")}
+                    placeholder={t("auth.registerClinic.locationPlaceholder", { defaultValue: "Location Placeholder" })}
                   />
                 </div>
 
                 <div className="sm:col-span-2">
                   <label className="block text-xs font-semibold uppercase tracking-widest text-slate-400">
-                    {t("auth.registerClinic.workEmail")}
+                    {t("auth.registerClinic.workEmail", { defaultValue: "Work Email" })}
                   </label>
                   <input
                     type="email"
@@ -171,12 +171,12 @@ export function RegisterPage(): JSX.Element {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="mt-1.5 rounded-xl border border-slate-200 px-4 py-3 text-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-400 outline-none w-full transition"
-                    placeholder={t("auth.registerClinic.workEmailPlaceholder")}
+                    placeholder={t("auth.registerClinic.workEmailPlaceholder", { defaultValue: "Work Email Placeholder" })}
                   />
                 </div>
                 <div className="sm:col-span-2">
                   <label className="block text-xs font-semibold uppercase tracking-widest text-slate-400">
-                    {t("auth.registerClinic.password")}
+                    {t("auth.registerClinic.password", { defaultValue: "Password" })}
                   </label>
                   <input
                     type="password"
@@ -201,21 +201,21 @@ export function RegisterPage(): JSX.Element {
                     {loading ? (
                       <>
                         <Spinner />
-                        {t("auth.registerClinic.creating")}
+                        {t("auth.registerClinic.creating", { defaultValue: "Creating" })}
                       </>
                     ) : (
-                      t("auth.registerClinic.submit")
+                      t("auth.registerClinic.submit", { defaultValue: "Submit" })
                     )}
                   </button>
 
                   <p className="mt-6 text-center text-xs text-slate-500">
-                    {t("auth.registerClinic.termsPrefix")}{" "}
+                    {t("auth.registerClinic.termsPrefix", { defaultValue: "Terms Prefix" })}{" "}
                     <a href="#" className="font-bold underline">
-                      {t("auth.registerClinic.terms")}
+                      {t("auth.registerClinic.terms", { defaultValue: "Terms" })}
                     </a>{" "}
-                    {t("auth.registerClinic.termsAnd")}{" "}
+                    {t("auth.registerClinic.termsAnd", { defaultValue: "Terms And" })}{" "}
                     <a href="#" className="font-bold underline">
-                      {t("auth.registerClinic.privacy")}
+                      {t("auth.registerClinic.privacy", { defaultValue: "Privacy" })}
                     </a>
                     .
                   </p>
@@ -224,9 +224,9 @@ export function RegisterPage(): JSX.Element {
 
               <div className="mt-10 border-t border-slate-100 pt-8 text-center">
                 <p className="text-xs text-slate-500">
-                  {t("auth.registerClinic.alreadyRegistered")}{" "}
+                  {t("auth.registerClinic.alreadyRegistered", { defaultValue: "Already Registered" })}{" "}
                   <Link to="/login" className="font-bold text-teal-600 hover:underline">
-                    {t("auth.registerClinic.signInWorkspace")}
+                    {t("auth.registerClinic.signInWorkspace", { defaultValue: "Sign In Workspace" })}
                   </Link>
                 </p>
               </div>

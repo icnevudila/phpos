@@ -8,6 +8,7 @@ import { AppShellLoading } from "./AppShellLoading";
 import { AppSidebar } from "./AppSidebar";
 import { AppTopbar } from "./AppTopbar";
 import { XIcon } from "./icons";
+import { Activity } from "lucide-react";
 
 const COLLAPSE_KEY = "dentease_sidebar_collapsed";
 
@@ -73,7 +74,7 @@ export function AppLayout(): JSX.Element {
         href="#main"
         className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-xl focus:bg-brand-primary focus:px-4 focus:py-2 focus:text-sm focus:font-bold focus:text-white focus:shadow-popover"
       >
-        {t("nav.skipToContent")}
+        {t("nav.skipToContent", { defaultValue: "Skip To Content" })}
       </a>
 
       {/* Desktop sidebar */}
@@ -91,13 +92,13 @@ export function AppLayout(): JSX.Element {
           className="fixed inset-0 z-40 flex lg:hidden"
           role="dialog"
           aria-modal
-          aria-label={t("nav.mobileMenuTitle")}
+          aria-label={t("nav.mobileMenuTitle", { defaultValue: "Mobile Menu Title" })}
         >
           <button
             type="button"
             className="absolute inset-0 bg-brand-text/30 backdrop-blur-[2px] transition-opacity"
             onClick={() => setDrawerOpen(false)}
-            aria-label={t("nav.closeBackdrop")}
+            aria-label={t("nav.closeBackdrop", { defaultValue: "Close Backdrop" })}
           />
           <div
             className="relative z-10 flex h-full max-w-[min(22rem,calc(100vw-2.5rem))] flex-col shadow-popover motion-safe:animate-nav-drawer-in sm:max-w-[24rem]"
@@ -117,7 +118,7 @@ export function AppLayout(): JSX.Element {
               onClick={() => setDrawerOpen(false)}
               className="absolute right-2 top-2 flex min-h-11 min-w-11 items-center justify-center rounded-xl border border-brand-border bg-brand-surface/90 text-brand-text shadow-sm backdrop-blur hover:bg-brand-surface-soft sm:right-3 sm:top-3"
               style={{ top: "max(0.5rem, env(safe-area-inset-top))", right: "max(0.5rem, env(safe-area-inset-right))" }}
-              aria-label={t("nav.closeMenu")}
+              aria-label={t("nav.closeMenu", { defaultValue: "Close Menu" })}
             >
               <XIcon size={18} />
             </button>
@@ -128,6 +129,13 @@ export function AppLayout(): JSX.Element {
       {/* Main column */}
       <div className="flex min-h-0 min-w-0 flex-1 flex-col">
         <AppTopbar profile={profile} onOpenDrawer={() => setDrawerOpen(true)} />
+        
+        {/* Persistent Demo Mode Banner */}
+        <div className="bg-brand-warning/10 border-b border-brand-warning/20 px-4 py-2 flex items-center justify-center gap-2 text-xs font-semibold text-brand-warning shadow-sm z-10 shrink-0 relative">
+          <Activity size={14} className="animate-pulse" />
+          <span>Demo Mode: Data is local. External services (SMS, Payments, Claims, X-Ray) are simulated.</span>
+        </div>
+
         <main
           id="main"
           tabIndex={-1}
