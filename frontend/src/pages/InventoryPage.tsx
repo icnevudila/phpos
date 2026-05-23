@@ -138,6 +138,7 @@ export function InventoryPage(): JSX.Element {
   const q = useDebouncedValue(qInput, 250);
   const [category, setCategory] = useState<InventoryCategory | "">("");
   const [lowStockOnly, setLowStockOnly] = useState(false);
+  const [expiringSoonOnly, setExpiringSoonOnly] = useState(false);
 
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<InventoryDto | null>(null);
@@ -147,7 +148,7 @@ export function InventoryPage(): JSX.Element {
   const [scannerOpen, setScannerOpen] = useState(false);
   const [importBusy, setImportBusy] = useState(false);
 
-  const { data: rows = [], isLoading: rowsLoading, error: rowsError, isFetching: rowsFetching } = useQuery({
+  const { data: rawRows = [], isLoading: rowsLoading, error: rowsError, isFetching: rowsFetching } = useQuery({
     queryKey: ["inventory", category, lowStockOnly, q],
     queryFn: () => fetchInventory({
       category: category || undefined,
@@ -155,6 +156,11 @@ export function InventoryPage(): JSX.Element {
       q: q || undefined,
     }),
   });
+
+  const rows = useMemo(() => {
+    if (!expiringSoonOnly) return rawRows;
+    return rawRows.filter(r => r.daysUntilExpiry !== null && r.daysUntilExpiry <= 30);
+  }, [rawRows, expiringSoonOnly]);
 
   const { data: alerts = null } = useQuery({
     queryKey: ["inventoryAlerts"],
@@ -165,14 +171,15 @@ export function InventoryPage(): JSX.Element {
   const error = (rowsError as Error)?.message || null;
 
   const hasInventoryFilters = useMemo(
-    () => Boolean(category || lowStockOnly || qInput.trim()),
-    [category, lowStockOnly, qInput],
+    () => Boolean(category || lowStockOnly || expiringSoonOnly || qInput.trim()),
+    [category, lowStockOnly, expiringSoonOnly, qInput],
   );
 
   function resetInventoryFilters(): void {
     setQInput("");
     setCategory("");
     setLowStockOnly(false);
+    setExpiringSoonOnly(false);
   }
 
   async function onImportCsv(file: File): Promise<void> {
@@ -180,12 +187,12 @@ export function InventoryPage(): JSX.Element {
     try {
       const fd = new FormData();
       fd.append("file", file);
-      const res = await api.post<{
+      const res = await api.post<any, {
         data: { created: number; skipped: number; errors: Array<{ row: number; message: string }> };
       }>("/inventory/import/csv", fd, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      const { created, skipped, errors } = res.data.data;
+      const { created, skipped, errors } = res.data;
       await queryClient.invalidateQueries({ queryKey: ["inventory"] });
       await queryClient.invalidateQueries({ queryKey: ["inventoryAlerts"] });
       toast.success(t("pages.inventory.importResult", { created, skipped }));
@@ -360,24 +367,19 @@ export function InventoryPage(): JSX.Element {
             initial={{ opacity: 0, y: -16 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -16 }}
-            className="flex flex-col gap-4 lg:flex-row lg:items-center justify-between rounded-2xl bg-rose-50 p-5 ring-1 ring-rose-100"
+            className="flex items-center justify-between rounded-xl bg-rose-50 px-4 py-3 ring-1 ring-rose-200 shadow-sm"
           >
-            <div className="flex items-start lg:items-center gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-rose-500 text-white shadow-sm">
-                <AlertTriangle size={24} />
+            <div className="flex items-center gap-3">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-rose-500 text-white shadow-sm">
+                <AlertTriangle size={16} />
               </div>
-              <div>
-                <h4 className="text-sm font-semibold uppercase tracking-wider text-rose-800">
-                  {t("pages.inventory.alertsTitle")}
-                </h4>
-                <p className="text-sm font-medium text-rose-700 mt-0.5">
-                  {alertBanner.join(" · ")}
-                </p>
-              </div>
+              <p className="text-sm font-semibold text-rose-800">
+                {alertBanner.join(" · ")}
+              </p>
             </div>
             <button
               onClick={() => setLowStockOnly(true)}
-              className="flex h-10 items-center gap-2 rounded-xl bg-white px-4 text-xs font-semibold uppercase tracking-widest text-rose-600 shadow-sm ring-1 ring-rose-200 transition-all hover:bg-rose-50"
+              className="flex h-8 items-center gap-2 rounded-lg bg-white px-3 text-xs font-semibold uppercase tracking-widest text-rose-600 shadow-sm ring-1 ring-rose-200 transition-all hover:bg-rose-50"
             >
               <Filter size={13} /> {t("pages.inventory.filterLowStock")}
             </button>
@@ -420,6 +422,17 @@ export function InventoryPage(): JSX.Element {
               />
               <span className="text-xs font-semibold uppercase tracking-widest text-slate-500">
                 {t("pages.inventory.lowStockCheck")}
+              </span>
+            </label>
+            <label className="flex h-11 items-center gap-3 rounded-xl bg-slate-50 px-4 cursor-pointer ring-1 ring-slate-100 hover:bg-slate-100 transition-all">
+              <input
+                type="checkbox"
+                checked={expiringSoonOnly}
+                onChange={(e) => setExpiringSoonOnly(e.target.checked)}
+                className="h-4 w-4 rounded border-slate-300 text-teal-500 focus:ring-teal-500"
+              />
+              <span className="text-xs font-semibold uppercase tracking-widest text-slate-500">
+                {t("pages.inventory.expiringSoonCheck", "Expiring Soon")}
               </span>
             </label>
           </div>
@@ -504,13 +517,15 @@ export function InventoryPage(): JSX.Element {
                   rows.map((r, idx) => {
                     const style = INVENTORY_STATUS_STYLES[r.status];
                     const eb = expiryBadge(t, r.daysUntilExpiry);
+                    const isCritical = r.status === "CRITICAL";
+                    
                     return (
                       <motion.tr
                         key={r.id}
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: idx * 0.02 }}
-                        className="group hover:bg-teal-50/30 transition-colors"
+                        className={`group hover:bg-teal-50/30 transition-colors ${isCritical ? "border-l-4 border-l-rose-500" : "border-l-4 border-l-transparent"}`}
                       >
                         <td>
                           <div className="flex items-center gap-3">

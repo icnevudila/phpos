@@ -1,10 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
 import { Camera, RefreshCw, Upload, X } from "lucide-react";
 import { toast } from "sonner";
 
-import { ListEmptyState } from "../ListEmptyState";
 import {
   fetchPatientFileBlob,
   isIntraoralPhoto,
@@ -13,10 +11,7 @@ import {
   type PatientFileDto,
 } from "../../services/patientFiles";
 
-const NS = "pages.patientDetail.intraoral";
-
 export function IntraoralPhotosTab({ patientId }: { patientId: string }): JSX.Element {
-  const { t } = useTranslation();
   const inputRef = useRef<HTMLInputElement>(null);
   const [files, setFiles] = useState<PatientFileDto[]>([]);
   const [loading, setLoading] = useState(true);
@@ -31,11 +26,11 @@ export function IntraoralPhotosTab({ patientId }: { patientId: string }): JSX.El
       const all = await listPatientFiles(patientId);
       setFiles(all.filter(isIntraoralPhoto));
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : t(`${NS}.loadFailed`));
+      toast.error(e instanceof Error ? e.message : "Failed to load photos.");
     } finally {
       setLoading(false);
     }
-  }, [patientId, t]);
+  }, [patientId]);
 
   useEffect(() => {
     void load();
@@ -62,7 +57,7 @@ export function IntraoralPhotosTab({ patientId }: { patientId: string }): JSX.El
       setPreviewUrl(url);
       setSelected(file);
     } catch {
-      toast.error(t(`${NS}.previewFailed`));
+      toast.error("Failed to load full resolution photo.");
     }
   }
 
@@ -71,16 +66,16 @@ export function IntraoralPhotosTab({ patientId }: { patientId: string }): JSX.El
     e.target.value = "";
     if (!file) return;
     if (!file.type.startsWith("image/")) {
-      toast.error(t(`${NS}.imagesOnly`));
+      toast.error("Only image files are allowed.");
       return;
     }
     setUploading(true);
     try {
       const row = await uploadIntraoralPhoto(patientId, file);
       setFiles((prev) => [row, ...prev]);
-      toast.success(t(`${NS}.uploaded`));
+      toast.success("Photo uploaded successfully.");
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : t(`${NS}.uploadFailed`));
+      toast.error(err instanceof Error ? err.message : "Failed to upload photo.");
     } finally {
       setUploading(false);
     }
@@ -88,12 +83,12 @@ export function IntraoralPhotosTab({ patientId }: { patientId: string }): JSX.El
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div className="flex items-start gap-3">
-          <Camera className="mt-1 text-rose-500" size={22} />
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div className="flex items-center gap-2">
+          <Camera className="text-brand-primary" size={16} />
           <div>
-            <h3 className="text-lg font-black text-slate-900">{t(`${NS}.title`)}</h3>
-            <p className="text-sm text-slate-500">{t(`${NS}.subtitle`)}</p>
+            <h3 className="text-sm font-bold text-brand-text uppercase tracking-widest">Intraoral Imagery</h3>
+            <p className="text-xs text-brand-muted">Clinical photographs and visual records.</p>
           </div>
         </div>
         <div className="flex gap-2">
@@ -101,19 +96,19 @@ export function IntraoralPhotosTab({ patientId }: { patientId: string }): JSX.El
             type="button"
             onClick={() => void load()}
             disabled={loading}
-            className="inline-flex items-center gap-1 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-bold text-slate-600"
+            className="btn-secondary h-8 px-2 text-[10px] gap-1.5"
           >
-            <RefreshCw size={14} className={loading ? "animate-spin" : ""} />
-            {t(`${NS}.refresh`)}
+            <RefreshCw size={12} className={loading ? "animate-spin" : ""} />
+            Refresh
           </button>
           <button
             type="button"
             disabled={uploading}
             onClick={() => inputRef.current?.click()}
-            className="inline-flex items-center gap-2 rounded-xl bg-rose-600 px-4 py-2 text-xs font-black uppercase text-white disabled:opacity-50"
+            className="btn-primary h-8 px-3 text-[10px] gap-1.5 disabled:opacity-50"
           >
-            <Upload size={14} />
-            {uploading ? t(`${NS}.uploading`) : t(`${NS}.upload`)}
+            <Upload size={12} />
+            {uploading ? "Uploading..." : "Upload Photo"}
           </button>
           <input
             ref={inputRef}
@@ -126,19 +121,21 @@ export function IntraoralPhotosTab({ patientId }: { patientId: string }): JSX.El
       </div>
 
       {loading ? (
-        <p className="text-sm text-slate-500">{t(`${NS}.loading`)}</p>
+        <div className="card p-8 flex flex-col items-center justify-center text-center bg-brand-surface border border-brand-border">
+          <RefreshCw className="animate-spin text-brand-muted mb-2" size={20} />
+          <p className="text-[10px] font-bold text-brand-muted uppercase tracking-widest">Loading imagery...</p>
+        </div>
       ) : files.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50">
-          <ListEmptyState
-            icon="box"
-            title={t(`${NS}.empty`)}
-            description={t(`${NS}.emptyHint`)}
-            primary={{
-              kind: "button",
-              onClick: () => inputRef.current?.click(),
-              label: t(`${NS}.upload`),
-            }}
-          />
+        <div className="card p-8 flex flex-col items-center justify-center text-center bg-brand-surface-soft border border-brand-border">
+          <Camera className="text-brand-muted mb-2" size={24} />
+          <p className="text-[10px] font-bold text-brand-muted uppercase tracking-widest mb-4">No photos recorded</p>
+          <button
+            type="button"
+            onClick={() => inputRef.current?.click()}
+            className="btn-secondary h-8 px-4 text-xs"
+          >
+            Upload First Photo
+          </button>
         </div>
       ) : (
         <PhotoGrid files={files} patientId={patientId} onOpen={(f) => void openPreview(f)} />
@@ -150,7 +147,7 @@ export function IntraoralPhotosTab({ patientId }: { patientId: string }): JSX.El
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[60] flex items-center justify-center bg-[#f5f7f9]/90 p-6"
+            className="fixed inset-0 z-[60] flex items-center justify-center bg-black/90 p-6 backdrop-blur-sm"
             onClick={() => {
               setSelected(null);
               setPreviewUrl(null);
@@ -158,23 +155,26 @@ export function IntraoralPhotosTab({ patientId }: { patientId: string }): JSX.El
           >
             <button
               type="button"
-              className="absolute right-6 top-6 rounded-full bg-white/10 p-2 text-white"
+              className="absolute right-6 top-6 h-10 w-10 flex items-center justify-center rounded-full bg-white/10 text-white hover:bg-rose-500 transition-colors"
               onClick={() => {
                 setSelected(null);
                 setPreviewUrl(null);
               }}
             >
-              <X size={24} />
+              <X size={20} />
             </button>
             <img
               src={previewUrl}
               alt={selected.fileName}
-              className="max-h-[85vh] max-w-full rounded-2xl object-contain shadow-2xl"
+              className="max-h-[85vh] max-w-full rounded-[var(--radius-md)] object-contain shadow-2xl ring-1 ring-white/10"
               onClick={(e) => e.stopPropagation()}
             />
-            <p className="absolute bottom-8 text-xs font-bold uppercase tracking-widest text-white/70">
-              {new Date(selected.createdAt).toLocaleString()}
-            </p>
+            <div className="absolute bottom-6 flex items-center gap-3 bg-black/60 backdrop-blur-md px-4 py-2 rounded-full border border-white/10">
+               <Camera size={14} className="text-white/70" />
+               <p className="text-xs font-bold uppercase tracking-widest text-white/90">
+                 {new Date(selected.createdAt).toLocaleString()}
+               </p>
+            </div>
           </motion.div>
         ) : null}
       </AnimatePresence>
@@ -218,23 +218,29 @@ function PhotoGrid({
         if (u.startsWith("blob:")) URL.revokeObjectURL(u);
       });
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- revoke on files change
   }, [files, patientId]);
 
   return (
-    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
       {files.map((f) => (
         <button
           key={f.id}
           type="button"
           onClick={() => onOpen(f)}
-          className="group relative aspect-square overflow-hidden rounded-2xl bg-slate-100"
+          className="group relative aspect-square overflow-hidden rounded-[var(--radius-md)] bg-brand-surface border border-brand-border"
         >
           {urls[f.id] ? (
-            <img src={urls[f.id]} alt="" className="h-full w-full object-cover transition group-hover:scale-105" />
+            <img src={urls[f.id]} alt="" className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110" />
           ) : (
-            <div className="flex h-full items-center justify-center text-[10px] font-bold text-slate-400">…</div>
+            <div className="flex h-full items-center justify-center">
+               <RefreshCw className="animate-spin text-brand-muted" size={16} />
+            </div>
           )}
+          <div className="absolute inset-x-0 bottom-0 p-2 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+             <p className="text-[9px] font-black uppercase tracking-widest text-white text-left">
+               {new Date(f.createdAt).toLocaleDateString()}
+             </p>
+          </div>
         </button>
       ))}
     </div>

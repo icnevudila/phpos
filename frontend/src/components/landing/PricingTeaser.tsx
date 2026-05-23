@@ -86,10 +86,10 @@ export function PricingTeaser({ ctaHref: ctaHrefOverride }: { ctaHref?: string }
     <div>
       <div className="mx-auto max-w-2xl text-center">
         <SectionEyebrow label={t("landing.pricingEyebrow")} icon={IconPriceTag} accent="emerald" align="center" />
-        <h2 className="mt-3 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+        <h2 className="mt-3 text-3xl font-bold tracking-tight text-brand-text sm:text-4xl">
           {t("landing.pricingTitle")}
         </h2>
-        <p className="mt-4 text-slate-600">{t("landing.pricingSubtitle")}</p>
+        <p className="mt-4 text-brand-muted">{t("landing.pricingSubtitle")}</p>
       </div>
 
       <div className="mt-12 grid gap-8 md:grid-cols-3">
@@ -100,13 +100,13 @@ export function PricingTeaser({ ctaHref: ctaHrefOverride }: { ctaHref?: string }
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.2 }}
             transition={{ delay: i * 0.1, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            className={`relative flex flex-col rounded-[2.5rem] p-8 transition-all duration-500 hover:-translate-y-2 ${ p.popular ? "bg-white shadow-[0_30px_60px_-12px_rgba(16,185,129,0.15)] ring-2 ring-teal-500 " : "border border-slate-200 bg-white/50 shadow-sm backdrop-blur-sm hover:shadow-xl " }`}
+            className={`relative flex flex-col rounded-[2.5rem] p-8 transition-all duration-500 hover:-translate-y-2 ${ p.popular ? "bg-brand-surface shadow-[0_30px_60px_-12px_rgba(16,185,129,0.15)] ring-2 ring-teal-500 " : "border border-brand-border bg-brand-surface/50 shadow-sm backdrop-blur-sm hover:shadow-xl " }`}
           >
             {p.popular && (
               <span
-                className={`absolute -top-3 left-1/2 inline-flex -translate-x-1/2 items-center gap-1.5 rounded-full bg-gradient-to-r ${p.accent} py-1 pl-1.5 pr-3 text-[10px] font-bold uppercase tracking-[0.18em] text-white shadow-[0_4px_12px_-2px_rgba(16,185,129,0.4),0_2px_4px_rgba(15,23,42,0.08)] ring-1 ring-white/40`}
+                className={`absolute -top-3 left-1/2 inline-flex -translate-x-1/2 items-center gap-1.5 rounded-full bg-gradient-to-r ${p.accent} py-1 pl-1.5 pr-3 text-[10px] font-bold uppercase tracking-[0.18em] text-white shadow-[0_4px_12px_-2px_rgba(16,185,129,0.4),0_2px_4px_rgba(15,23,42,0.08)] ring-1 ring-brand-border/10/40`}
               >
-                <span className="inline-flex h-4 w-4 items-center justify-center rounded-full bg-white/20 ring-1 ring-white/40">
+                <span className="inline-flex h-4 w-4 items-center justify-center rounded-full bg-brand-surface/20 ring-1 ring-brand-border/10/40">
                   <IconCrown className="h-2.5 w-2.5 text-white" />
                 </span>
                 {t("landing.pricingPopular")}
@@ -118,16 +118,16 @@ export function PricingTeaser({ ctaHref: ctaHrefOverride }: { ctaHref?: string }
                 <span className={`inline-flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br ${p.accent} text-xs font-bold text-white shadow-md`}>
                   {i + 1}
                 </span>
-                <p className="text-sm font-bold text-slate-900">{p.name}</p>
+                <p className="text-sm font-bold text-brand-text">{p.name}</p>
               </div>
-              <p className="mt-1 text-xs text-slate-500">{p.desc}</p>
+              <p className="mt-1 text-xs text-brand-muted">{p.desc}</p>
             </div>
 
-            <div className="mt-5 border-b border-slate-100 pb-5">
-              <p className="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
+            <div className="mt-5 border-b border-brand-border pb-5">
+              <p className="text-3xl font-extrabold tracking-tight text-brand-text sm:text-4xl">
                 {p.price}
               </p>
-              <p className="mt-1 text-xs font-semibold text-slate-500">{p.priceNote}</p>
+              <p className="mt-1 text-xs font-semibold text-brand-muted">{p.priceNote}</p>
             </div>
 
             <ul className="mt-5 flex-1 space-y-2.5">
@@ -140,7 +140,7 @@ export function PricingTeaser({ ctaHref: ctaHrefOverride }: { ctaHref?: string }
                       <path d="M20 6 9 17l-5-5" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                   </span>
-                  <span className="text-slate-700">{f}</span>
+                  <span className="text-brand-text">{f}</span>
                 </li>
               ))}
             </ul>
@@ -151,7 +151,7 @@ export function PricingTeaser({ ctaHref: ctaHrefOverride }: { ctaHref?: string }
                 className={`mt-6 inline-flex min-h-11 items-center justify-center gap-1.5 rounded-xl px-4 py-3 text-sm font-bold transition ${
                   p.popular
                     ? `bg-gradient-to-r ${p.accent} text-white shadow-md hover:-translate-y-0.5 hover:shadow-lg`
-                    : "bg-white text-white hover:bg-slate-800   "
+                    : "bg-brand-surface text-white hover:bg-brand-bg   "
                 }`}
               >
                 {p.cta}
@@ -165,7 +165,7 @@ export function PricingTeaser({ ctaHref: ctaHrefOverride }: { ctaHref?: string }
                 className={`mt-6 inline-flex min-h-11 items-center justify-center gap-1.5 rounded-xl px-4 py-3 text-sm font-bold transition ${
                   p.popular
                     ? `bg-gradient-to-r ${p.accent} text-white shadow-md hover:-translate-y-0.5 hover:shadow-lg`
-                    : "bg-white text-white hover:bg-slate-800   "
+                    : "bg-brand-surface text-white hover:bg-brand-bg   "
                 }`}
               >
                 {p.cta}
@@ -178,7 +178,7 @@ export function PricingTeaser({ ctaHref: ctaHrefOverride }: { ctaHref?: string }
         ))}
       </div>
 
-      <p className="mx-auto mt-8 max-w-xl text-center text-xs text-slate-500">
+      <p className="mx-auto mt-8 max-w-xl text-center text-xs text-brand-muted">
         {t("landing.pricingFinePrint")}
       </p>
     </div>

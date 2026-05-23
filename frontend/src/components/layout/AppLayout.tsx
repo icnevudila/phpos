@@ -68,10 +68,10 @@ export function AppLayout(): JSX.Element {
   }, []);
 
   return (
-    <div className="flex h-[100dvh] min-h-0 w-full bg-[#f5f7f9] text-slate-800">
+    <div className="flex h-[100dvh] min-h-0 w-full bg-brand-bg text-brand-text">
       <a
         href="#main"
-        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-xl focus:bg-teal-600 focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white focus:shadow-lg"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-xl focus:bg-brand-primary focus:px-4 focus:py-2 focus:text-sm focus:font-bold focus:text-white focus:shadow-popover"
       >
         {t("nav.skipToContent")}
       </a>
@@ -95,12 +95,12 @@ export function AppLayout(): JSX.Element {
         >
           <button
             type="button"
-            className="absolute inset-0 bg-white/30 backdrop-blur-[2px] transition-opacity"
+            className="absolute inset-0 bg-brand-text/30 backdrop-blur-[2px] transition-opacity"
             onClick={() => setDrawerOpen(false)}
             aria-label={t("nav.closeBackdrop")}
           />
           <div
-            className="relative z-10 flex h-full max-w-[min(22rem,calc(100vw-2.5rem))] flex-col shadow-2xl shadow-slate-900/10 motion-safe:animate-nav-drawer-in sm:max-w-[24rem]"
+            className="relative z-10 flex h-full max-w-[min(22rem,calc(100vw-2.5rem))] flex-col shadow-popover motion-safe:animate-nav-drawer-in sm:max-w-[24rem]"
             style={{
               paddingLeft: "max(0px, env(safe-area-inset-left))",
               paddingBottom: "max(0px, env(safe-area-inset-bottom))",
@@ -115,7 +115,7 @@ export function AppLayout(): JSX.Element {
             <button
               type="button"
               onClick={() => setDrawerOpen(false)}
-              className="absolute right-2 top-2 flex min-h-11 min-w-11 items-center justify-center rounded-xl border border-teal-200 bg-white/90 text-teal-700 shadow-sm backdrop-blur hover:bg-teal-50 sm:right-3 sm:top-3"
+              className="absolute right-2 top-2 flex min-h-11 min-w-11 items-center justify-center rounded-xl border border-brand-border bg-brand-surface/90 text-brand-text shadow-sm backdrop-blur hover:bg-brand-surface-soft sm:right-3 sm:top-3"
               style={{ top: "max(0.5rem, env(safe-area-inset-top))", right: "max(0.5rem, env(safe-area-inset-right))" }}
               aria-label={t("nav.closeMenu")}
             >
@@ -131,14 +131,14 @@ export function AppLayout(): JSX.Element {
         <main
           id="main"
           tabIndex={-1}
-          className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden overscroll-y-contain outline-none focus-visible:ring-2 focus-visible:ring-teal-500/30 focus-visible:ring-inset scrollbar-thin"
+          className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden overscroll-y-contain outline-none focus-visible:ring-2 focus-visible:ring-brand-primary/30 focus-visible:ring-inset scrollbar-thin"
         >
           <div
-            className="mx-auto w-full min-w-0 max-w-7xl px-4 py-5 sm:px-6 sm:py-6 md:px-8 md:py-8"
+            className="page-container"
             style={{
               paddingLeft: "max(1rem, env(safe-area-inset-left))",
               paddingRight: "max(1rem, env(safe-area-inset-right))",
-              paddingBottom: "max(1.25rem, env(safe-area-inset-bottom))",
+              paddingBottom: "max(4rem, env(safe-area-inset-bottom))",
             }}
           >
             {meReady ? <Outlet /> : <AppShellLoading />}

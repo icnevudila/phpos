@@ -1,5 +1,5 @@
-import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
 
 interface InvoiceRow {
   id: string;
@@ -19,70 +19,84 @@ interface InvoicesTabProps {
 }
 
 const STATUS_STYLES: Record<string, string> = {
-  PAID: "bg-teal-100 text-teal-700",
-  PARTIAL: "bg-amber-100 text-amber-700",
-  UNPAID: "bg-rose-100 text-rose-700",
-  CANCELLED: "bg-slate-200 text-slate-600",
-  PENDING: "bg-slate-100 text-slate-700",
+  PAID: "bg-teal-50 text-teal-800 border-teal-200",
+  PARTIAL: "bg-amber-50 text-amber-800 border-amber-200",
+  UNPAID: "bg-rose-50 text-rose-800 border-rose-200",
+  CANCELLED: "bg-brand-surface text-brand-muted border-brand-border",
+  PENDING: "bg-amber-50 text-amber-700 border-amber-200",
 };
 
 const money = (v: string | number | null | undefined): string => {
-  if (v === null || v === undefined || v === "") return "₱ 0.00";
+  if (v === null || v === undefined || v === "") return "₱0.00";
   const num = typeof v === "string" ? Number(v) : v;
-  return `₱ ${num.toLocaleString("en-PH", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  return `₱${num.toLocaleString("en-PH", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 };
 
 const formatDate = (iso: string | null | undefined, empty: string, locale: string): string => {
   if (!iso) return empty;
-  return new Date(iso).toLocaleDateString(locale, { timeZone: "Asia/Manila" });
+  return new Date(iso).toLocaleDateString(locale, { 
+    timeZone: "Asia/Manila",
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric'
+  });
 };
 
 export function InvoicesTab({ items, dateLocale }: InvoicesTabProps): JSX.Element {
-  const { t } = useTranslation();
-  const dash = t("pages.common.empty");
+  const dash = "--";
 
   if (items.length === 0) {
-    return <p className="text-sm text-slate-500">{t("pages.patientDetail.invoices.empty")}</p>;
+    return (
+      <div className="card p-8 flex flex-col items-center justify-center text-center bg-brand-surface-soft border border-brand-border">
+        <p className="text-sm font-bold text-brand-muted uppercase tracking-widest">No Invoices Found</p>
+      </div>
+    );
   }
 
   return (
-    <div className="overflow-x-auto">
-      <table className="min-w-[760px] w-full text-sm">
-        <thead>
-          <tr className="border-b border-slate-200 text-left text-xs font-medium uppercase tracking-wide text-slate-500">
-            <th className="px-2 py-2">{t("pages.patientDetail.invoices.colOr")}</th>
-            <th className="px-2 py-2">{t("pages.patientDetail.invoices.colDate")}</th>
-            <th className="px-2 py-2">{t("pages.patientDetail.invoices.colSubtotal")}</th>
-            <th className="px-2 py-2">{t("pages.patientDetail.invoices.colDiscount")}</th>
-            <th className="px-2 py-2">{t("pages.patientDetail.invoices.colTotal")}</th>
-            <th className="px-2 py-2">{t("pages.patientDetail.invoices.colStatus")}</th>
-            <th className="px-2 py-2" aria-hidden />
-          </tr>
-        </thead>
-        <tbody>
-          {items.map((inv) => (
-            <tr key={inv.id} className="border-b border-slate-100">
-              <td className="px-2 py-2 font-mono text-xs text-slate-700">{inv.orNumber ?? dash}</td>
-              <td className="px-2 py-2 text-slate-800">{formatDate(inv.createdAt, dash, dateLocale)}</td>
-              <td className="px-2 py-2 text-slate-600">{money(inv.subtotal)}</td>
-              <td className="px-2 py-2 text-slate-600">{money(inv.discount)}</td>
-              <td className="px-2 py-2 font-medium text-slate-900">{money(inv.total)}</td>
-              <td className="px-2 py-2">
-                <span
-                  className={`rounded-full px-2 py-0.5 text-xs font-medium ${ STATUS_STYLES[inv.status] ?? "bg-slate-100 text-slate-700" }`}
-                >
-                  {t(`pages.patientDetail.invoices.statusLabels.${inv.status}`, { defaultValue: inv.status })}
-                </span>
-              </td>
-              <td className="px-2 py-2 text-right">
-                <Link to={`/invoices/${inv.id}`} className="text-xs text-sky-600 hover:underline">
-                  {t("pages.patientDetail.invoices.open")}
-                </Link>
-              </td>
+    <div className="card border border-brand-border overflow-hidden">
+      <div className="overflow-x-auto">
+        <table className="w-full text-left border-collapse">
+          <thead className="bg-brand-surface-muted border-b border-brand-border">
+            <tr>
+              <th className="py-3 px-4 text-[10px] font-black uppercase tracking-widest text-brand-muted">OR Number</th>
+              <th className="py-3 px-4 text-[10px] font-black uppercase tracking-widest text-brand-muted">Date</th>
+              <th className="py-3 px-4 text-[10px] font-black uppercase tracking-widest text-brand-muted text-right">Subtotal</th>
+              <th className="py-3 px-4 text-[10px] font-black uppercase tracking-widest text-brand-muted text-right">Discount</th>
+              <th className="py-3 px-4 text-[10px] font-black uppercase tracking-widest text-brand-muted text-right">Total</th>
+              <th className="py-3 px-4 text-[10px] font-black uppercase tracking-widest text-brand-muted">Status</th>
+              <th className="py-3 px-4" aria-hidden />
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody className="divide-y divide-brand-border/50 bg-white">
+            {items.map((inv) => (
+              <tr key={inv.id} className="hover:bg-brand-surface-soft transition-colors group">
+                <td className="py-3 px-4 font-mono text-xs font-bold text-brand-text">{inv.orNumber ?? dash}</td>
+                <td className="py-3 px-4 text-xs font-medium text-brand-muted whitespace-nowrap">{formatDate(inv.createdAt, dash, dateLocale)}</td>
+                <td className="py-3 px-4 text-right text-xs font-bold text-brand-text-soft tabular-nums">{money(inv.subtotal)}</td>
+                <td className="py-3 px-4 text-right text-xs font-bold text-brand-danger tabular-nums">{Number(inv.discount) > 0 ? `-${money(inv.discount)}` : dash}</td>
+                <td className="py-3 px-4 text-right text-sm font-black text-brand-text tabular-nums tracking-tight">{money(inv.total)}</td>
+                <td className="py-3 px-4">
+                  <span
+                    className={`inline-flex items-center px-2 py-0.5 rounded-[var(--radius-sm)] border text-[10px] font-black uppercase tracking-widest ${ STATUS_STYLES[inv.status] ?? "bg-brand-surface text-brand-text border-brand-border" }`}
+                  >
+                    {inv.status}
+                  </span>
+                </td>
+                <td className="py-3 px-4 text-right">
+                  <Link 
+                    to={`/invoices/${inv.id}`} 
+                    className="inline-flex h-8 w-8 items-center justify-center rounded-[var(--radius-sm)] text-brand-muted hover:bg-white hover:text-brand-primary hover:shadow-sm border border-transparent hover:border-brand-border transition-all opacity-0 group-hover:opacity-100 focus:opacity-100"
+                    title="Open Invoice"
+                  >
+                    <ArrowRight size={14} />
+                  </Link>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

@@ -44,8 +44,8 @@ export function FamilyNetworkTab({ patientId }: FamilyNetworkTabProps): JSX.Elem
     enabled: linkOpen && q.trim().length >= 2,
     queryFn: async () => {
       const params = new URLSearchParams({ page: "1", limit: "8", q: q.trim() });
-      const res = await api.get<{ data: { data: PatientSearchRow[] } }>(`/patients?${params}`);
-      return res.data.data.data.filter((p) => p.id !== patientId);
+      const res = await api.get<any, { data: { data: PatientSearchRow[] } }>(`/patients?${params}`);
+      return res.data.data.filter((p: PatientSearchRow) => p.id !== patientId);
     },
   });
 
@@ -219,7 +219,7 @@ export function FamilyNetworkTab({ patientId }: FamilyNetworkTabProps): JSX.Elem
               autoFocus
             />
             <ul className="max-h-64 space-y-2 overflow-y-auto">
-              {searchResults.map((p) => (
+              {searchResults.map((p: PatientSearchRow) => (
                 <li key={p.id}>
                   <button
                     type="button"

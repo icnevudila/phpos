@@ -46,7 +46,7 @@ export function FloatingSidebar(): JSX.Element {
               </motion.span>
             )}
           </AnimatePresence>
-          <div className={`h-2 transition-all duration-300 rounded-full ${activeSection === section.id ? 'w-8 bg-teal-500' : 'w-2 bg-slate-200 group-hover:bg-slate-300'}`} />
+          <div className={`h-2 transition-all duration-300 rounded-full ${activeSection === section.id ? 'w-8 bg-teal-500' : 'w-2 bg-brand-border group-hover:bg-brand-border'}`} />
         </a>
       ))}
     </div>

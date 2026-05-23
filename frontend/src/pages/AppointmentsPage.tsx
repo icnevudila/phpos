@@ -20,7 +20,8 @@ import {
 import { toast } from "sonner";
 import { downloadCsv, rowsToCsv } from "../utils/downloadCsv";
 
-import { ListEmptyState } from "../components/ListEmptyState";
+import { EmptyState } from "../components/ui/EmptyState";
+import { PageHeader } from "../components/ui/PageHeader";
 import { AppointmentDetailSidebar } from "../components/appointments/AppointmentDetailSidebar";
 import { DentistSelect } from "../components/appointments/DentistSelect";
 import { NewAppointmentModal } from "../components/appointments/NewAppointmentModal";
@@ -72,14 +73,14 @@ function CalendarEventContent({ arg }: { arg: EventContentArg }): JSX.Element {
   const { t } = useTranslation();
   const a = arg.event.extendedProps.appointment as AppointmentDto;
   return (
-    <div className="flex flex-col gap-0.5 overflow-hidden px-2 py-1.5 text-[10px] leading-tight group">
+    <div className="flex flex-col gap-0.5 overflow-hidden px-2 py-1.5 text-[10px] leading-tight group h-full">
       <div className="flex items-center justify-between gap-1">
-         <span className="truncate font-semibold uppercase tracking-tight opacity-80">{arg.timeText}</span>
+         <span className="truncate font-bold uppercase tracking-tight opacity-90">{arg.timeText}</span>
          <div className="h-1.5 w-1.5 rounded-full bg-white opacity-40 group-hover:opacity-100 transition-opacity" />
       </div>
-      <span className="truncate font-bold text-xs uppercase tracking-tight leading-none mb-0.5">{a.patient.fullName}</span>
-      <span className="truncate font-medium opacity-60 uppercase tracking-wide text-[8px]">
-        {t("pages.appointments.eventDentist", { lastName: a.dentist.lastName })}
+      <span className="truncate font-black text-xs uppercase tracking-tight leading-none my-0.5">{a.patient.fullName}</span>
+      <span className="truncate font-semibold opacity-75 uppercase tracking-wide text-[9px]">
+        Dr. {a.dentist.lastName}
       </span>
     </div>
   );
@@ -116,8 +117,6 @@ export function AppointmentsPage(): JSX.Element {
     }),
   });
 
-  // loading/error removed
-
   const onDatesSet = useCallback((arg: DatesSetArg) => {
     const start = arg.start;
     const endEx = arg.end;
@@ -141,7 +140,7 @@ export function AppointmentsPage(): JSX.Element {
           start: a.scheduledAt,
           end: a.endsAt,
           extendedProps: { appointment: a, styleClasses: style },
-          classNames: [style.bg, style.border, style.text, "border", "!rounded-2xl", "!shadow-sm", "!mx-0.5", "!cursor-pointer", "hover:brightness-95", "transition-all"],
+          classNames: [style.bg, style.border, style.text, "border", "!rounded-xl", "!shadow-sm", "!m-[1px]", "!cursor-pointer", "hover:brightness-95", "transition-all"],
         };
       }),
     [appointments],
@@ -207,12 +206,11 @@ export function AppointmentsPage(): JSX.Element {
   function onExportCsv(): void {
     if (!appointments.length) return;
     const headers = [
-      t("pages.appointments.csvHeaders.patient"),
-      t("pages.appointments.csvHeaders.phone"),
-      t("pages.appointments.csvHeaders.dentist"),
-      t("pages.appointments.csvHeaders.scheduledAt"),
-      t("pages.appointments.csvHeaders.status"),
-      t("pages.appointments.csvHeaders.type"),
+      t("pages.appointments.csvHeaders.patient", { defaultValue: "Patient" }),
+      t("pages.appointments.csvHeaders.phone", { defaultValue: "Phone" }),
+      t("pages.appointments.csvHeaders.dentist", { defaultValue: "Dentist" }),
+      t("pages.appointments.csvHeaders.scheduledAt", { defaultValue: "Time" }),
+      t("pages.appointments.csvHeaders.status", { defaultValue: "Status" }),
     ];
     const rows = appointments.map((a) => [
       a.patient.fullName,
@@ -220,218 +218,228 @@ export function AppointmentsPage(): JSX.Element {
       `Dr. ${a.dentist.lastName}`,
       new Date(a.scheduledAt).toLocaleString(),
       a.status,
-      a.type ?? "",
     ]);
     const stamp = new Date().toISOString().slice(0, 10);
     downloadCsv(`appointments-${range.from}-${stamp}.csv`, rowsToCsv(headers, rows));
-    toast.success(t("pages.appointments.exportReady", { count: appointments.length }));
+    toast.success(t("pages.appointments.exportReady", { defaultValue: "Exported", count: appointments.length }));
   }
 
   return (
-    <div className="min-h-screen w-full pb-24 bg-[#f5f7f9]">
-      <div className="mx-auto max-w-[1500px] px-4 sm:px-6 lg:px-10 space-y-6 pt-8">
-        
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <div className="h-2 w-2 rounded-full bg-teal-500 animate-pulse" />
-              <span className="text-xs font-semibold uppercase tracking-widest text-slate-400">{t("pages.appointments.deskKicker")}</span>
-            </div>
-            <h1 className="page-header-title">
-              {t("pages.appointments.heroTitle")}<span className="text-teal-500">.</span>
-            </h1>
-            <p className="page-header-sub">{t("pages.appointments.subtitle")}</p>
-          </div>
-
-          <div className="flex items-center gap-3">
+    <div className="page-container space-y-6">
+      <PageHeader 
+        title={t("pages.appointments.heroTitle", { defaultValue: "Calendar" })}
+        subtitle={t("pages.appointments.subtitle", { defaultValue: "Manage schedule and appointments." })}
+        actions={
+          <>
             <button
               type="button"
               disabled={!appointments.length}
               onClick={onExportCsv}
-              className="btn-secondary flex items-center gap-2 disabled:opacity-40"
+              className="btn-secondary hidden sm:flex items-center gap-2 disabled:opacity-40"
             >
               <Download size={16} />
-              <span className="text-xs font-semibold uppercase tracking-widest">{t("pages.appointments.exportCsv")}</span>
+              <span>{t("pages.appointments.exportCsv", { defaultValue: "Export" })}</span>
             </button>
             <button 
               onClick={() => openNew()}
               className="btn-primary flex items-center gap-2"
             >
                <Plus size={18} />
-               <span className="text-xs font-semibold uppercase tracking-widest">{t("pages.appointments.new")}</span>
+               <span>{t("pages.appointments.new", { defaultValue: "New Appointment" })}</span>
             </button>
-          </div>
-        </div>
+          </>
+        }
+      />
 
-        {/* Calendar Controls Strip */}
-        <div className="grid gap-4 grid-cols-1 lg:grid-cols-12">
-           
-           {/* View Selection & Filters */}
-           <div className="lg:col-span-8 flex flex-wrap items-center gap-4 bg-white p-4 rounded-2xl shadow-sm ring-1 ring-slate-100">
-              <div className="flex gap-1 p-1 bg-slate-50 rounded-xl">
-                {[
-                  { key: "timeGridDay", label: t("pages.appointments.viewDay"), icon: List },
-                  { key: "timeGridWeek", label: t("pages.appointments.viewWeek"), icon: LayoutGrid },
-                  { key: "dayGridMonth", label: t("pages.appointments.viewMonth"), icon: CalendarDays }
-                ].map((v) => (
-                   <button
-                     key={v.key}
-                     onClick={() => changeView(v.key as CalView)}
-                     className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all ${fcView === v.key ? 'bg-white text-teal-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
-                   >
-                     <v.icon size={14} />
-                     {v.label}
-                   </button>
-                ))}
-              </div>
+      {/* Calendar Controls Strip */}
+      <div className="card p-2 sm:p-3 flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 border-brand-border-strong">
+         {/* View Selection */}
+         <div className="flex items-center gap-1 p-1 bg-brand-surface-soft rounded-[var(--radius-md)] border border-brand-border self-start lg:self-auto">
+           {[
+             { key: "timeGridDay", label: "Day", icon: List },
+             { key: "timeGridWeek", label: "Week", icon: LayoutGrid },
+             { key: "dayGridMonth", label: "Month", icon: CalendarDays }
+           ].map((v) => (
+              <button
+                key={v.key}
+                onClick={() => changeView(v.key as CalView)}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-[var(--radius-sm)] text-xs font-bold uppercase tracking-wider transition-all ${fcView === v.key ? 'bg-brand-surface border border-brand-border text-brand-primary shadow-sm' : 'text-brand-muted hover:text-brand-text'}`}
+              >
+                <v.icon size={14} />
+                <span className="hidden sm:inline">{v.label}</span>
+              </button>
+           ))}
+         </div>
 
-              <div className="h-8 w-px bg-slate-100 mx-1 hidden md:block" />
+         {/* Navigation */}
+         <div className="flex-1 flex items-center justify-center gap-2">
+            <button onClick={goPrev} className="h-10 w-10 flex items-center justify-center rounded-[var(--radius-md)] bg-brand-surface text-brand-muted hover:bg-brand-primary hover:text-white transition-colors border border-brand-border shadow-sm"><ChevronLeft size={16} /></button>
+            <button onClick={goToday} className="h-10 px-4 rounded-[var(--radius-md)] bg-brand-surface text-xs font-bold uppercase tracking-wider text-brand-text hover:bg-brand-primary hover:text-white transition-colors border border-brand-border shadow-sm">{t("pages.appointments.today", { defaultValue: "Today" })}</button>
+            <button onClick={goNext} className="h-10 w-10 flex items-center justify-center rounded-[var(--radius-md)] bg-brand-surface text-brand-muted hover:bg-brand-primary hover:text-white transition-colors border border-brand-border shadow-sm"><ChevronRight size={16} /></button>
+            <div className="h-8 w-px bg-brand-border mx-2 hidden sm:block" />
+            <div className="relative hidden sm:flex max-w-[160px]">
+               <CalendarIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-brand-muted" size={14} />
+               <input 
+                 type="date" 
+                 value={range.from}
+                 onChange={(e) => {
+                   const v = e.target.value;
+                   if (v) calendarRef.current?.getApi().gotoDate(`${v}T12:00:00+08:00`);
+                 }}
+                 className="h-10 w-full pl-9 pr-3 rounded-[var(--radius-md)] bg-brand-surface text-xs font-bold text-brand-text border border-brand-border shadow-sm outline-none focus:ring-2 focus:ring-brand-primary transition-shadow"
+               />
+            </div>
+         </div>
 
-              <div className="flex-1 flex items-center gap-3">
-                 <div className="flex items-center gap-1">
-                    <button onClick={goPrev} className="h-10 w-10 flex items-center justify-center rounded-xl bg-slate-50 text-slate-400 hover:bg-teal-500 hover:text-white transition-all"><ChevronLeft size={16} /></button>
-                    <button onClick={goToday} className="h-10 px-4 rounded-xl bg-slate-50 text-xs font-semibold uppercase tracking-wider text-slate-600 hover:bg-teal-500 hover:text-white transition-all">{t("pages.appointments.today")}</button>
-                    <button onClick={goNext} className="h-10 w-10 flex items-center justify-center rounded-xl bg-slate-50 text-slate-400 hover:bg-teal-500 hover:text-white transition-all"><ChevronRight size={16} /></button>
-                 </div>
-                 
-                 <div className="relative flex-1">
-                    <CalendarIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-300" size={14} />
-                    <input 
-                      type="date" 
-                      value={range.from}
-                      onChange={(e) => {
-                        const v = e.target.value;
-                        if (v) calendarRef.current?.getApi().gotoDate(`${v}T12:00:00+08:00`);
-                      }}
-                      className="h-10 w-full pl-10 pr-3 rounded-xl bg-slate-50 text-xs font-medium outline-none focus:ring-2 focus:ring-teal-500 transition-all"
-                    />
-                 </div>
-              </div>
-           </div>
-
-           {/* Metrics & Provider Selection */}
-           <div className="lg:col-span-4 flex items-center justify-between bg-white p-4 rounded-2xl shadow-sm ring-1 ring-slate-100">
-              <div className="flex-1 px-3">
-                 <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">{t("pages.appointments.countsTotalLabel")}</p>
-                 <div className="flex items-baseline gap-2">
-                    <span className="text-2xl font-bold text-slate-800 tabular-nums">{counts.total}</span>
-                    <span className="text-xs font-semibold text-teal-500">+{counts.confirmed} OK</span>
-                 </div>
-              </div>
-              <div className="h-8 w-px bg-slate-100 mx-3" />
-              <div className="flex-1">
-                 <DentistSelect
-                   dentists={dentists}
-                   value={dentistFilter}
-                   onChange={setDentistFilter}
-                   includeAll
-                 />
-              </div>
-           </div>
-        </div>
-
-        {/* Live Queue Strip (Conditional) */}
-        <AnimatePresence>
-          {queueItems.length > 0 && (
-            <motion.div 
-               initial={{ opacity: 0, y: 20 }}
-               animate={{ opacity: 1, y: 0 }}
-               className="rounded-2xl bg-teal-50 border border-teal-100 p-5"
-            >
-               <div className="flex items-center gap-3 mb-3">
-                  <div className="h-2 w-2 rounded-full bg-teal-500 animate-pulse" />
-                  <p className="text-xs font-semibold uppercase tracking-wider text-teal-600">{t("pages.appointments.queueStripTitle")}</p>
-               </div>
-               <div className="flex flex-wrap gap-2">
-                  {queueItems.map((a) => (
-                    <button
-                      key={a.id}
-                      type="button"
-                      aria-label={a.patient.fullName}
-                      onClick={() => setSelected(a)}
-                      className="group flex items-center gap-3 bg-white pl-3 pr-5 py-2.5 rounded-xl shadow-sm ring-1 ring-teal-100 hover:ring-teal-400 transition-all active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500"
-                    >
-                      <div className={`h-7 px-2.5 rounded-lg flex items-center justify-center text-[9px] font-bold uppercase tracking-wide ${a.status === "IN_PROGRESS" ? "bg-teal-50 text-teal-600" : "bg-sky-50 text-sky-600"}`}>
-                         {a.status === "IN_PROGRESS"
-                           ? t("pages.appointments.queueBadgeChair")
-                           : t("pages.appointments.queueBadgeLobby")}
-                      </div>
-                      <div className="text-left">
-                         <p className="text-xs font-bold text-slate-800 uppercase leading-none">{a.patient.fullName}</p>
-                         <p className="text-[10px] font-medium text-slate-400 mt-0.5">
-                            {new Date(a.scheduledAt).toLocaleTimeString("en-PH", { hour: 'numeric', minute: '2-digit' })}
-                         </p>
-                      </div>
-                    </button>
-                  ))}
-               </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Main Calendar Workspace */}
-        <div className="relative">
-           <div className="relative rounded-2xl bg-white shadow-sm p-6 lg:p-8 ring-1 ring-slate-100">
-              <div className={`calendar-diagnostic-hub ${fcView === "dayGridMonth" ? "min-h-[600px]" : "h-[70vh] min-h-[600px]"}`}>
-                 <FullCalendar
-                   ref={calendarRef}
-                   plugins={[timeGridPlugin, dayGridPlugin, interactionPlugin]}
-                   initialView="timeGridDay"
-                   initialDate={`${range.from}T12:00:00+08:00`}
-                   timeZone="Asia/Manila"
-                   headerToolbar={false}
-                   firstDay={1}
-                   allDaySlot={false}
-                   slotMinTime="07:00:00"
-                   slotMaxTime="19:00:00"
-                   slotDuration="00:15:00"
-                   slotLabelInterval="01:00"
-                   businessHours={{
-                     daysOfWeek: [1, 2, 3, 4, 5, 6],
-                     startTime: "08:00",
-                     endTime: "18:00",
-                   }}
-                   height="100%"
-                   selectable={fcView === "timeGridDay" || fcView === "timeGridWeek"}
-                   selectMirror
-                   nowIndicator
-                   dayMaxEventRows={3}
-                   events={events}
-                   datesSet={onDatesSet}
-                   eventClick={onEventClick}
-                   select={(arg) => openNew(arg)}
-                   eventContent={(arg) => <CalendarEventContent arg={arg} />}
-                 />
-              </div>
-              {isFetched && !isFetching && appointments.length === 0 ? (
-                <div className="pointer-events-none absolute inset-6 flex items-center justify-center rounded-2xl bg-white/80 backdrop-blur-sm">
-                  <div className="pointer-events-auto">
-                    <ListEmptyState
-                      icon="chart"
-                      title={t("pages.appointments.emptyRangeTitle")}
-                      description={t("pages.appointments.emptyRangeDescription", { range: rangeLabel })}
-                      primary={{ kind: "button", onClick: () => openNew(), label: t("pages.appointments.new") }}
-                    />
-                  </div>
-                </div>
-              ) : null}
-           </div>
-        </div>
+         {/* Provider Selection */}
+         <div className="flex-shrink-0 w-full lg:w-64">
+            <DentistSelect
+              dentists={dentists}
+              value={dentistFilter}
+              onChange={setDentistFilter}
+              includeAll
+            />
+         </div>
       </div>
 
-      {selected && (
-        <AppointmentDetailSidebar
-          appointment={selected}
-          onClose={() => setSelected(null)}
-          onChanged={onStatusChanged}
-          onEdit={(a) => {
-            setEditing(a);
-            setModalOpen(true);
-          }}
-          onDeleted={onDeleted}
-        />
-      )}
+      {/* Live Queue Strip (Conditional) */}
+      <AnimatePresence>
+        {queueItems.length > 0 && (
+          <motion.div 
+             initial={{ opacity: 0, y: 20 }}
+             animate={{ opacity: 1, y: 0 }}
+             exit={{ opacity: 0, height: 0 }}
+             className="card bg-brand-primary-soft border border-brand-primary/20"
+          >
+             <div className="flex items-center gap-2 mb-3">
+                <div className="h-2 w-2 rounded-full bg-brand-primary animate-pulse" />
+                <p className="text-xs font-bold uppercase tracking-wider text-brand-primary">{t("pages.appointments.queueStripTitle", { defaultValue: "In Clinic Now" })}</p>
+             </div>
+             <div className="flex flex-wrap gap-2">
+                {queueItems.map((a) => (
+                  <button
+                    key={a.id}
+                    type="button"
+                    aria-label={a.patient.fullName}
+                    onClick={() => setSelected(a)}
+                    className="group flex items-center gap-3 bg-brand-surface pl-3 pr-4 py-2 rounded-[var(--radius-md)] shadow-sm border border-brand-primary/10 hover:border-brand-primary hover:shadow-md transition-all active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+                  >
+                    <div className={`h-6 px-2 rounded-[var(--radius-sm)] flex items-center justify-center text-[10px] font-bold uppercase tracking-wide ${a.status === "IN_PROGRESS" ? "bg-brand-primary text-white" : "bg-brand-surface-soft text-brand-text"}`}>
+                       {a.status.replace("_", " ")}
+                    </div>
+                    <div className="text-left leading-tight">
+                       <p className="text-xs font-bold text-brand-text truncate max-w-[120px]">{a.patient.fullName}</p>
+                       <p className="text-[10px] font-semibold text-brand-muted mt-0.5">
+                          {new Date(a.scheduledAt).toLocaleTimeString("en-PH", { hour: 'numeric', minute: '2-digit' })}
+                       </p>
+                    </div>
+                  </button>
+                ))}
+             </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Main Calendar Workspace */}
+      <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
+         {/* Calendar Column */}
+         <div className={`relative card p-0 overflow-hidden ${selected ? 'xl:col-span-8' : 'xl:col-span-12'}`}>
+            <div className={`calendar-diagnostic-hub bg-brand-surface p-4 ${fcView === "dayGridMonth" ? "min-h-[600px]" : "h-[70vh] min-h-[600px]"}`}>
+               <FullCalendar
+                 ref={calendarRef}
+                 plugins={[timeGridPlugin, dayGridPlugin, interactionPlugin]}
+                 initialView="timeGridDay"
+                 initialDate={`${range.from}T12:00:00+08:00`}
+                 timeZone="Asia/Manila"
+                 headerToolbar={false}
+                 firstDay={1}
+                 allDaySlot={false}
+                 slotMinTime="07:00:00"
+                 slotMaxTime="19:00:00"
+                 slotDuration="00:15:00"
+                 slotLabelInterval="01:00"
+                 businessHours={{
+                   daysOfWeek: [1, 2, 3, 4, 5, 6],
+                   startTime: "08:00",
+                   endTime: "18:00",
+                 }}
+                 height="100%"
+                 selectable={fcView === "timeGridDay" || fcView === "timeGridWeek"}
+                 selectMirror
+                 nowIndicator
+                 dayMaxEventRows={3}
+                 events={events}
+                 datesSet={onDatesSet}
+                 eventClick={onEventClick}
+                 select={(arg) => openNew(arg)}
+                 eventContent={(arg) => <CalendarEventContent arg={arg} />}
+               />
+            </div>
+            {isFetched && !isFetching && appointments.length === 0 ? (
+              <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-brand-surface/60 backdrop-blur-[2px] z-10">
+                <div className="pointer-events-auto bg-brand-surface p-8 rounded-2xl shadow-popover border border-brand-border">
+                  <EmptyState
+                    icon={CalendarDays}
+                    title={t("pages.appointments.emptyRangeTitle", { defaultValue: "No appointments" })}
+                    description={t("pages.appointments.emptyRangeDescription", { range: rangeLabel, defaultValue: "No appointments scheduled for this date range." })}
+                    action={<button className="btn-primary mt-2" onClick={() => openNew()}>{t("pages.appointments.new", { defaultValue: "New Appointment" })}</button>}
+                  />
+                </div>
+              </div>
+            ) : null}
+         </div>
+
+         {/* Selected Appointment Details Drawer embedded in right col */}
+         {selected && (
+           <div className="xl:col-span-4 hidden xl:block sticky top-24">
+             <div className="card h-full p-0 overflow-hidden shadow-sm border-brand-border-strong">
+                <AppointmentDetailSidebar
+                  appointment={selected}
+                  onClose={() => setSelected(null)}
+                  onChanged={onStatusChanged}
+                  onEdit={(a) => {
+                    setEditing(a);
+                    setModalOpen(true);
+                  }}
+                  onDeleted={onDeleted}
+                />
+             </div>
+           </div>
+         )}
+      </div>
+
+      {/* Mobile Selected Drawer */}
+      <AnimatePresence>
+        {selected && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="xl:hidden fixed inset-0 z-50 flex flex-col justify-end bg-brand-text/40 backdrop-blur-sm sm:p-4 sm:justify-center"
+          >
+             <motion.div 
+               initial={{ y: "100%" }}
+               animate={{ y: 0 }}
+               exit={{ y: "100%" }}
+               transition={{ type: "spring", damping: 25, stiffness: 200 }}
+               className="w-full sm:max-w-md max-h-[90vh] overflow-hidden bg-brand-surface sm:rounded-2xl shadow-popover flex flex-col rounded-t-2xl"
+             >
+                <div className="overflow-y-auto flex-1 p-0">
+                  <AppointmentDetailSidebar
+                    appointment={selected}
+                    onClose={() => setSelected(null)}
+                    onChanged={onStatusChanged}
+                    onEdit={(a) => {
+                      setEditing(a);
+                      setModalOpen(true);
+                    }}
+                    onDeleted={onDeleted}
+                  />
+                </div>
+             </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <NewAppointmentModal
         open={modalOpen}

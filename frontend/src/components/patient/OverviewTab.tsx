@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { VoiceNoteWidget } from "./VoiceNoteWidget";
+import { Plus, ClipboardList, Stethoscope, FileText, Activity } from "lucide-react";
 
 interface OverviewTabProps {
   data: {
@@ -28,74 +29,113 @@ interface OverviewTabProps {
   dateLocale: string;
 }
 
+function ReadOnlyField({ label, value }: { label: string; value: string | null | undefined }) {
+  const { t } = useTranslation();
+  return (
+    <div className="flex flex-col sm:flex-row sm:items-center py-2.5 border-b border-brand-border/50 last:border-0">
+      <span className="w-40 shrink-0 text-xs font-bold text-brand-muted uppercase tracking-wider">{label}</span>
+      <span className={`text-sm font-medium ${value ? "text-brand-text" : "text-brand-muted italic opacity-60"}`}>
+        {value || t("pages.patientDetail.overview.notProvided", { defaultValue: "Not provided" })}
+      </span>
+    </div>
+  );
+}
+
 export function OverviewTab({ data, dateLocale }: OverviewTabProps): JSX.Element {
   const { t } = useTranslation();
-  const dash = t("pages.common.empty");
 
-  const formatDate = (iso: string | null | undefined, empty: string, locale: string): string => {
-    if (!iso) return empty;
-    return new Date(iso).toLocaleDateString(locale, { timeZone: "Asia/Manila" });
+  const formatDate = (iso: string | null | undefined): string | null => {
+    if (!iso) return null;
+    return new Date(iso).toLocaleDateString(dateLocale, { timeZone: "Asia/Manila", dateStyle: "long" });
   };
 
-  const rows: Array<{ label: string; value: string }> = [
-    { label: t("pages.patientDetail.overview.nickname"), value: data.nickname ?? "" },
-    { label: t("pages.patientDetail.overview.email"), value: data.email ?? "" },
-    { label: t("pages.patientDetail.overview.civilStatus"), value: data.civilStatus ?? "" },
-    { label: t("pages.patientDetail.overview.occupation"), value: data.occupation ?? "" },
-    { label: t("pages.patientDetail.overview.religion"), value: data.religion ?? "" },
-    { label: t("pages.patientDetail.overview.nationality"), value: data.nationality ?? "" },
-    { label: t("pages.patientDetail.overview.philhealth"), value: data.philhealthNo ?? "" },
-    { label: t("pages.patientDetail.overview.bloodType"), value: data.bloodType ?? "" },
-    { label: t("pages.patientDetail.overview.address"), value: [data.address, data.city, data.province].filter(Boolean).join(", ") },
-    {
-      label: t("pages.patientDetail.overview.bloodPressure"),
-      value:
-        data.bloodPressureSystolic && data.bloodPressureDiastolic
-          ? t("pages.patientDetail.overview.bpFormatted", {
-              sys: data.bloodPressureSystolic,
-              dia: data.bloodPressureDiastolic,
-            })
-          : "",
-    },
-    {
-      label: t("pages.patientDetail.overview.pulseRate"),
-      value: data.pulseRate ? t("pages.patientDetail.overview.pulseFormatted", { rate: data.pulseRate }) : "",
-    },
-    {
-      label: t("pages.patientDetail.overview.emergencyContact"),
-      value: [data.emergencyContactName, data.emergencyContactPhone].filter(Boolean).join(" · "),
-    },
-    { label: t("pages.patientDetail.overview.referredBy"), value: data.referralSource ?? "" },
-    { label: t("pages.patientDetail.overview.previousDentist"), value: data.previousDentist ?? "" },
-    {
-      label: t("pages.patientDetail.overview.lastDentalVisit"),
-      value: formatDate(data.lastDentalVisit, dash, dateLocale),
-    },
-    { label: t("pages.patientDetail.overview.reasonForVisit"), value: data.reasonForVisit ?? "" },
-  ];
+  const addressString = [data.address, data.city, data.province].filter(Boolean).join(", ");
+  const bpString = data.bloodPressureSystolic && data.bloodPressureDiastolic 
+    ? `${data.bloodPressureSystolic} / ${data.bloodPressureDiastolic} mmHg` 
+    : null;
+  const pulseString = data.pulseRate ? `${data.pulseRate} bpm` : null;
+  const emergencyString = [data.emergencyContactName, data.emergencyContactPhone].filter(Boolean).join(" · ");
 
   return (
-    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-      {rows.map((row) => (
-        <div key={row.label} className="rounded-lg border border-slate-100 bg-slate-50/50 p-3">
-          <p className="text-xs font-medium uppercase tracking-wide text-slate-500">{row.label}</p>
-          <p className="mt-1 text-sm text-slate-800">{row.value || dash}</p>
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      
+      {/* LEFT COLUMN */}
+      <div className="space-y-6">
+        <div className="card">
+          <h2 className="text-sm font-black text-brand-text uppercase tracking-widest mb-4">Patient Identity</h2>
+          <div className="flex flex-col">
+            <ReadOnlyField label="Nickname" value={data.nickname} />
+            <ReadOnlyField label="Nationality" value={data.nationality} />
+            <ReadOnlyField label="Civil Status" value={data.civilStatus} />
+            <ReadOnlyField label="Occupation" value={data.occupation} />
+            <ReadOnlyField label="Religion" value={data.religion} />
+            <ReadOnlyField label="Address" value={addressString} />
+          </div>
         </div>
-      ))}
+
+        <div className="card">
+          <h2 className="text-sm font-black text-brand-text uppercase tracking-widest mb-4">Contact & Emergency</h2>
+          <div className="flex flex-col">
+            <ReadOnlyField label="Emergency Contact" value={emergencyString} />
+            <ReadOnlyField label="Previous Dentist" value={data.previousDentist} />
+            <ReadOnlyField label="Referred By" value={data.referralSource} />
+          </div>
+        </div>
+      </div>
+
+      {/* RIGHT COLUMN */}
+      <div className="space-y-6">
+        <div className="card">
+          <h2 className="text-sm font-black text-brand-text uppercase tracking-widest mb-4">Visit Summary</h2>
+          <div className="flex flex-col">
+            <ReadOnlyField label="Reason for Visit" value={data.reasonForVisit} />
+            <ReadOnlyField label="Last Visit" value={formatDate(data.lastDentalVisit)} />
+            <ReadOnlyField label="PhilHealth" value={data.philhealthNo} />
+          </div>
+        </div>
+
+        <div className="card">
+          <h2 className="text-sm font-black text-brand-text uppercase tracking-widest mb-4">Clinical Snapshot</h2>
+          <div className="flex flex-col">
+            <ReadOnlyField label="Blood Type" value={data.bloodType} />
+            <ReadOnlyField label="Blood Pressure" value={bpString} />
+            <ReadOnlyField label="Pulse Rate" value={pulseString} />
+          </div>
+        </div>
+
+        <div className="card bg-brand-surface-soft border-brand-border">
+          <h2 className="text-sm font-black text-brand-text uppercase tracking-widest mb-4">Next Best Actions</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <button className="flex items-center gap-2 p-3 rounded-lg bg-white border border-brand-border text-sm font-bold text-brand-text hover:bg-brand-surface transition-colors shadow-sm">
+              <Plus size={16} className="text-brand-primary" /> Book Follow-up
+            </button>
+            <button className="flex items-center gap-2 p-3 rounded-lg bg-white border border-brand-border text-sm font-bold text-brand-text hover:bg-brand-surface transition-colors shadow-sm">
+              <ClipboardList size={16} className="text-brand-primary" /> Add SOAP Note
+            </button>
+            <button className="flex items-center gap-2 p-3 rounded-lg bg-white border border-brand-border text-sm font-bold text-brand-text hover:bg-brand-surface transition-colors shadow-sm">
+              <Stethoscope size={16} className="text-brand-primary" /> Open Dental Chart
+            </button>
+            <button className="flex items-center gap-2 p-3 rounded-lg bg-white border border-brand-border text-sm font-bold text-brand-text hover:bg-brand-surface transition-colors shadow-sm">
+              <FileText size={16} className="text-brand-primary" /> Create Invoice
+            </button>
+            <button className="flex items-center gap-2 p-3 rounded-lg bg-white border border-brand-border text-sm font-bold text-brand-text hover:bg-brand-surface transition-colors shadow-sm">
+              <Activity size={16} className="text-brand-primary" /> Update Medical History
+            </button>
+          </div>
+        </div>
+      </div>
+
       {data.medicalHistoryText ? (
-        <div className="md:col-span-2 rounded-lg border border-slate-100 bg-slate-50/50 p-3">
-          <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
-            {t("pages.patientDetail.overview.legacyNotes")}
-          </p>
-          <p className="mt-1 whitespace-pre-wrap text-sm text-slate-800">{data.medicalHistoryText}</p>
+        <div className="lg:col-span-2 card bg-amber-50/50 border-amber-200">
+          <h2 className="text-sm font-black text-amber-900 uppercase tracking-widest mb-2">Legacy Notes</h2>
+          <p className="whitespace-pre-wrap text-sm font-medium text-amber-800">{data.medicalHistoryText}</p>
         </div>
       ) : null}
       
-      <div className="md:col-span-2 pt-6 border-t border-slate-100 mt-4">
+      <div className="lg:col-span-2 pt-6 border-t border-brand-border mt-4">
         <VoiceNoteWidget 
           onTranscriptionComplete={(text) => {
             console.log("Transcript to save:", text);
-            // In a real app, this would update the patient record via API
             alert(t("pages.patientDetail.overview.voiceNoteCaptured"));
           }} 
         />

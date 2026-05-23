@@ -142,15 +142,15 @@ export function MedicalHistoryForm({ patientId, patientGender, canEdit }: Props)
     setLoading(true);
     setLoadError(null);
     api.get<{ data: MedicalHistory | null }>(`/patients/${patientId}/medical-history`)
-      .then((res) => {
+      .then((res: any) => {
         if (cancelled) return;
-        if (res.data.data) {
-          setState({ ...empty(), ...res.data.data });
-          setVersion(res.data.data.version ?? null);
-          if (res.data.data.recordedBy) {
-            setRecordedBy(`Dr. ${res.data.data.recordedBy.firstName} ${res.data.data.recordedBy.lastName}`);
+        if (res.data) {
+          setState({ ...empty(), ...res.data });
+          setVersion(res.data.version ?? null);
+          if (res.data.recordedBy) {
+            setRecordedBy(`Dr. ${res.data.recordedBy.firstName} ${res.data.recordedBy.lastName}`);
           }
-          setRecordedAt(res.data.data.recordedAt ?? null);
+          setRecordedAt(res.data.recordedAt ?? null);
         } else {
           setState(empty());
           setVersion(null);
@@ -254,28 +254,28 @@ export function MedicalHistoryForm({ patientId, patientGender, canEdit }: Props)
   const disabled = !canEdit;
 
   return (
-    <div className="mx-auto max-w-5xl space-y-10 pb-20">
+    <div className="mx-auto max-w-5xl space-y-8 pb-20">
       {/* Form Header Area */}
-      <header className="flex flex-col sm:flex-row items-start justify-between gap-6 rounded-[2.5rem] bg-white p-8 text-white shadow-2xl">
+      <header className="flex flex-col sm:flex-row items-start justify-between gap-6 card">
         <div className="flex items-center gap-5">
-           <div className="flex h-16 w-16 items-center justify-center rounded-[1.5rem] bg-teal-500 text-white shadow-lg shadow-teal-500/20">
-              <Stethoscope size={32} />
+           <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-primary-soft text-brand-primary border border-brand-primary/20">
+              <Stethoscope size={24} />
            </div>
            <div>
-              <h2 className="text-2xl font-black tracking-tight uppercase tracking-wider">{t("medicalHistory.title")}</h2>
-              <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-bold text-slate-400">
-                 <span className="flex items-center gap-1.5 rounded-full bg-slate-800 px-3 py-1">
-                    <CheckCircle2 size={12} className="text-teal-400" />
+              <h2 className="text-xl font-bold tracking-tight text-brand-text">{t("medicalHistory.title")}</h2>
+              <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-medium text-brand-muted">
+                 <span className="flex items-center gap-1.5 rounded-md bg-brand-surface-soft px-2 py-1 border border-brand-border">
+                    <CheckCircle2 size={12} className="text-brand-primary" />
                     v{version ?? 1}
                  </span>
                  {recordedBy && (
-                   <span className="flex items-center gap-1.5 rounded-full bg-slate-800 px-3 py-1">
+                   <span className="flex items-center gap-1.5 rounded-md bg-brand-surface-soft px-2 py-1 border border-brand-border">
                       <User size={12} />
                       {recordedBy}
                    </span>
                  )}
                  {recordedAt && (
-                   <span className="flex items-center gap-1.5 rounded-full bg-slate-800 px-3 py-1">
+                   <span className="flex items-center gap-1.5 rounded-md bg-brand-surface-soft px-2 py-1 border border-brand-border">
                       <Calendar size={12} />
                       {new Date(recordedAt).toLocaleDateString()}
                    </span>
@@ -287,12 +287,12 @@ export function MedicalHistoryForm({ patientId, patientGender, canEdit }: Props)
           <button
             onClick={() => void submit()}
             disabled={saving}
-            className="group inline-flex h-14 items-center gap-3 rounded-[1.5rem] bg-teal-500 px-8 text-sm font-black uppercase tracking-widest text-white shadow-xl shadow-teal-500/20 transition-all hover:bg-teal-600 hover:shadow-teal-500/40 active:scale-95 disabled:opacity-50"
+            className="btn-primary"
           >
             {saving ? (
-              <div className="h-5 w-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
             ) : (
-              <Save size={18} className="transition-transform group-hover:scale-110" />
+              <Save size={16} />
             )}
             {saving ? t("medicalHistory.saving") : t("medicalHistory.save")}
           </button>
@@ -358,29 +358,29 @@ export function MedicalHistoryForm({ patientId, patientGender, canEdit }: Props)
       </section>
 
       {/* Conditions Checklist */}
-      <section className="space-y-6">
-        <div className="flex items-center gap-3 px-4">
-           <ShieldAlert className="text-amber-500" size={20} />
-           <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-400">{t("medicalHistory.sections.conditions")}</h3>
+      <section className="space-y-4">
+        <div className="flex items-center gap-2 px-1">
+           <ShieldAlert className="text-brand-warning" size={16} />
+           <h3 className="text-xs font-bold uppercase tracking-wider text-brand-muted">{t("medicalHistory.sections.conditions")}</h3>
         </div>
-        <div className="rounded-[2.5rem] border border-slate-100 bg-white p-8 shadow-sm">
-           <div className="grid grid-cols-1 gap-x-12 gap-y-3 sm:grid-cols-2">
+        <div className="card">
+           <div className="grid grid-cols-1 gap-x-8 gap-y-2 sm:grid-cols-2">
              {MEDICAL_CONDITION_CODES.map((code) => (
                <label
                  key={code}
-                 className={`group flex cursor-pointer items-center justify-between rounded-xl px-4 py-3 transition-colors ${ state.conditions.includes(code) ? "bg-teal-50/50 " : "hover:bg-slate-50 " }`}
+                 className={`group flex cursor-pointer items-center justify-between rounded-xl px-3 py-2 transition-colors ${ state.conditions.includes(code) ? "bg-brand-primary-soft border border-brand-primary/20 " : "hover:bg-brand-surface-soft border border-transparent" }`}
                >
                  <div className="flex items-center gap-3">
-                   <div className={`flex h-6 w-6 items-center justify-center rounded-lg border transition-all ${ state.conditions.includes(code) ? "bg-teal-500 border-teal-500 text-white" : "border-slate-200 bg-white " }`}>
+                   <div className={`flex h-5 w-5 items-center justify-center rounded-[6px] border transition-all ${ state.conditions.includes(code) ? "bg-brand-primary border-brand-primary text-white" : "border-brand-border bg-brand-surface " }`}>
                      <AnimatePresence>
                         {state.conditions.includes(code) && (
                           <motion.div initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}>
-                             <CheckCircle2 size={14} />
+                             <CheckCircle2 size={12} />
                           </motion.div>
                         )}
                      </AnimatePresence>
                    </div>
-                   <span className={`text-xs font-bold transition-colors ${ state.conditions.includes(code) ? "text-slate-900 " : "text-slate-500" }`}>
+                   <span className={`text-xs font-medium transition-colors ${ state.conditions.includes(code) ? "text-brand-text " : "text-brand-muted" }`}>
                      {t(`medicalHistory.conditions.${code}`) || code.replace(/_/g, ' ')}
                    </span>
                  </div>
@@ -394,17 +394,17 @@ export function MedicalHistoryForm({ patientId, patientGender, canEdit }: Props)
                </label>
              ))}
            </div>
-           <div className="mt-10">
-             <div className="flex items-center gap-2 mb-3">
-                <Info size={14} className="text-slate-400" />
-                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">{t("medicalHistory.fields.otherConditions")}</label>
+           <div className="mt-8 border-t border-brand-border pt-6">
+             <div className="flex items-center gap-2 mb-2">
+                <Info size={14} className="text-brand-muted" />
+                <label className="text-xs font-medium text-brand-muted">{t("medicalHistory.fields.otherConditions")}</label>
              </div>
              <textarea
                disabled={disabled}
                rows={3}
                value={state.conditionsOther ?? ""}
                onChange={(e) => setField("conditionsOther", e.target.value)}
-               className="w-full rounded-[1.5rem] border-none bg-slate-50 p-4 text-sm font-bold text-slate-900 ring-1 ring-slate-100 transition-all focus:ring-4 focus:ring-sky-500/10"
+               className="w-full rounded-xl border border-brand-border bg-brand-surface-soft p-3 text-sm text-brand-text focus:border-brand-primary focus:ring-1 focus:ring-brand-primary"
              />
            </div>
         </div>

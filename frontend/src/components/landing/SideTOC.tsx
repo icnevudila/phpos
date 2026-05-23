@@ -51,17 +51,17 @@ export function SideTOC(): JSX.Element {
       transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
       className="pointer-events-none fixed right-4 top-1/2 z-40 hidden -translate-y-1/2 xl:block"
     >
-      <ul className="pointer-events-auto flex flex-col gap-1.5 rounded-full border border-slate-200 bg-white/80 px-1.5 py-3 shadow-lg backdrop-blur">
+      <ul className="pointer-events-auto flex flex-col gap-1.5 rounded-full border border-brand-border bg-brand-surface/80 px-1.5 py-3 shadow-lg backdrop-blur">
         {SECTIONS.map((s) => {
           const isActive = active === s.id;
           return (
             <li key={s.id}>
               <a
                 href={`#${s.id}`}
-                className={`group relative flex items-center gap-2 rounded-full px-2 py-1.5 transition ${ isActive ? "bg-white text-white" : "text-slate-500 hover:text-slate-900" }`}
+                className={`group relative flex items-center gap-2 rounded-full px-2 py-1.5 transition ${ isActive ? "bg-brand-surface text-white" : "text-brand-muted hover:text-brand-text" }`}
               >
                 <span
-                  className={`h-1.5 w-1.5 rounded-full transition ${ isActive ? "bg-teal-400" : "bg-slate-300 group-hover:bg-slate-500" }`}
+                  className={`h-1.5 w-1.5 rounded-full transition ${ isActive ? "bg-teal-400" : "bg-brand-border group-hover:bg-brand-surface-soft0" }`}
                 />
                 <span
                   className={`overflow-hidden whitespace-nowrap text-[10px] font-bold uppercase tracking-widest transition-all duration-300 ${ isActive ? "max-w-[80px] pr-1 opacity-100" : "max-w-0 opacity-0 group-hover:max-w-[80px] group-hover:pr-1 group-hover:opacity-100" }`}

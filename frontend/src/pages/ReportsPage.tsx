@@ -1,26 +1,30 @@
 import { useState } from "react";
-import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import { 
-  BarChart3, 
-  PieChart, 
   TrendingUp, 
   ShieldCheck, 
-  ChevronRight, 
-  Activity,
-  Zap,
   Layout,
   AlertTriangle,
-  CheckCircle2
+  CheckCircle2,
+  Download,
+  Clock,
+  FileText,
+  Settings,
+  RefreshCw,
+  Search,
+  Calendar,
+  Box,
+  Users,
+  Zap
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
+import { format } from "date-fns";
 
 import { ReportBuilder } from "../components/reports/ReportBuilder";
 import { downloadBirJournalCsv, fetchOrGapAudit, type OrGapAuditResult } from "../services/reports";
 
 export function ReportsPage(): JSX.Element {
-  const { t } = useTranslation();
   const now = new Date();
 
   const [auditResult, setAuditResult] = useState<OrGapAuditResult | null>(null);
@@ -30,9 +34,9 @@ export function ReportsPage(): JSX.Element {
   async function onBirExport(): Promise<void> {
     try {
       await downloadBirJournalCsv(now.getFullYear(), now.getMonth() + 1);
-      toast.success(t("pages.reports.birDownloaded"));
+      toast.success("BIR Sales Journal exported successfully.");
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : t("pages.reports.birFailed"));
+      toast.error(e instanceof Error ? e.message : "Failed to export BIR journal.");
     }
   }
 
@@ -49,278 +53,297 @@ export function ReportsPage(): JSX.Element {
     }
   }
 
-  return (
-    <div className="min-h-screen w-full pb-24 bg-[#fafbfc]">
-      <div className="mx-auto max-w-[1500px] px-6 lg:px-10 space-y-12 pt-10">
-        
-        {/* Cinematic Header */}
-        <header className="flex flex-col gap-10 lg:flex-row lg:items-end lg:justify-between">
-           <div className="space-y-4">
-            <div className="flex items-center gap-3">
-               <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-100 text-indigo-600">
-                  <BarChart3 size={18} />
-               </span>
-               <span className="text-xs font-black uppercase tracking-[0.3em] text-slate-400">
-                  Clinical Intelligence Hub
-               </span>
-            </div>
-            <h1 className="text-5xl font-black tracking-tight text-slate-900 lg:text-7xl">
-              Insight <span className="text-indigo-500 italic">Portal</span>
-            </h1>
-            <p className="max-w-2xl text-lg font-medium text-slate-400 leading-relaxed">
-              {t("pages.reports.subtitle")}
-            </p>
-          </div>
+  const reportCategories = [
+    {
+      title: "Finance & Accounting",
+      icon: TrendingUp,
+      reports: [
+        { name: "Aged Receivables", desc: "Track overdue patient and HMO balances by aging buckets.", path: "/reports/aged-receivables", lastRun: "Today, 08:00 AM", status: "ready" },
+        { name: "BIR Sales Journal", desc: "Official format export for BIR tax compliance and filing.", action: onBirExport, lastRun: "Yesterday", status: "ready" },
+        { name: "HMO Revenue Share", desc: "Breakdown of revenue collected via HMOs vs out-of-pocket.", path: "#", lastRun: "Not generated", status: "pending" },
+        { name: "Outstanding Balances", desc: "List of all patients with non-zero ledger balances.", path: "#", lastRun: "Today, 09:15 AM", status: "ready" }
+      ]
+    },
+    {
+      title: "Claims Management",
+      icon: ShieldCheck,
+      reports: [
+        { name: "HMO Claims Status", desc: "Track pending, approved, and rejected claims by provider.", path: "/hmo-claims", lastRun: "Live", status: "active" },
+        { name: "PhilHealth Transmittals", desc: "Generate electronic transmittal files for PHIC portal.", path: "/philhealth-claims", lastRun: "Live", status: "active" },
+        { name: "Claim Turnaround Time", desc: "Analyze average days from submission to payout.", path: "#", lastRun: "Not generated", status: "pending" },
+        { name: "Rejected Claims Analysis", desc: "Identify common reasons for HMO claim rejections.", path: "#", lastRun: "Last week", status: "ready" }
+      ]
+    },
+    {
+      title: "Clinical Operations",
+      icon: Layout,
+      reports: [
+        { name: "Dashboard KPIs", desc: "Real-time clinical metrics, chair loads, and waiting room stats.", path: "/dashboard", lastRun: "Live", status: "active" },
+        { name: "Appointment Utilization", desc: "Chair capacity utilization and no-show rate analysis.", path: "#", lastRun: "Yesterday", status: "ready" },
+        { name: "Inventory Velocity", desc: "Track fast-moving consumables and supply burn rates.", path: "#", lastRun: "Not generated", status: "pending" },
+        { name: "Low Stock & Expiry", desc: "Identify supplies needing reorder or nearing expiration.", path: "#", lastRun: "Today, 07:00 AM", status: "ready" }
+      ]
+    },
+    {
+      title: "Compliance & Audit",
+      icon: FileText,
+      reports: [
+        { name: "OR Serial Gap Audit", desc: "Detect missing/skipped OR numbers for tax compliance.", action: onRunAudit, lastRun: auditResult ? "Just now" : "Not generated", status: "action", loading: auditLoading },
+        { name: "Sterilization Logs", desc: "Audit trail of autoclave cycles and instrument sterilization.", path: "#", lastRun: "Yesterday", status: "ready" },
+        { name: "Staff Activity Audit", desc: "System access logs and record modification history.", path: "#", lastRun: "Not generated", status: "pending" }
+      ]
+    }
+  ];
 
-          <div className="flex items-center gap-4">
-             <div className="flex items-center gap-6 rounded-[2rem] bg-white p-2 pl-8 shadow-xl ring-1 ring-slate-100">
-                <div>
-                   <p className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400">System Integrity</p>
-                   <p className="text-lg font-black text-teal-500 mt-0.5 uppercase tracking-widest">Verfied</p>
-                </div>
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-teal-500 text-white shadow-lg shadow-teal-500/20">
-                   <ShieldCheck size={20} />
+  return (
+    <div className="mx-auto max-w-[1400px] px-4 pb-24 sm:px-6 lg:px-8 space-y-6 pt-6">
+      
+      {/* Workbench Header */}
+      <header className="flex flex-col gap-4 sm:flex-row sm:items-end justify-between border-b border-brand-border pb-6">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-black uppercase tracking-widest text-brand-primary">
+              System Reports
+            </span>
+          </div>
+          <h1 className="text-2xl font-bold tracking-tight text-brand-text">
+            Reports Workbench
+          </h1>
+          <p className="text-sm font-medium text-brand-muted">
+            Financial, clinical, and operational reports for daily clinic decisions.
+          </p>
+        </div>
+
+        <div className="flex flex-col sm:items-end gap-3">
+          <div className="flex items-center gap-2 text-xs font-bold text-brand-muted uppercase tracking-widest">
+            <RefreshCw size={12} className="opacity-50" />
+            Last synced: {format(now, "MMM d, yyyy HH:mm")}
+          </div>
+          <div className="flex items-center gap-2">
+            <button className="btn-secondary text-xs px-3 py-1.5 h-8">
+              <Download size={14} /> Export All (CSV)
+            </button>
+            <button className="btn-primary text-xs px-3 py-1.5 h-8">
+              <Zap size={14} /> Quick Generate
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Grid Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        
+        {/* Left/Main Column: Builder & Library */}
+        <div className="lg:col-span-8 space-y-6">
+          
+          {/* Report Builder Tool */}
+          <section>
+             <div className="mb-3 flex items-center justify-between">
+                <h2 className="text-sm font-bold text-brand-text uppercase tracking-widest">Report Builder</h2>
+             </div>
+             <ReportBuilder />
+          </section>
+
+          {/* Report Library */}
+          <section>
+             <div className="mb-3 flex items-center justify-between mt-8">
+                <h2 className="text-sm font-bold text-brand-text uppercase tracking-widest">Standard Reports Library</h2>
+                <div className="relative">
+                   <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-brand-muted" />
+                   <input 
+                     type="text" 
+                     placeholder="Search reports..." 
+                     className="h-8 w-64 rounded bg-white border border-brand-border pl-8 pr-3 text-xs font-medium text-brand-text outline-none focus:border-brand-primary"
+                   />
                 </div>
              </div>
-          </div>
-        </header>
 
-        {/* Intelligence Grid */}
-        <div className="grid gap-10 lg:grid-cols-12">
-           
-           {/* Visual Report Builder Section */}
-           <div className="lg:col-span-12">
-              <motion.section 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="space-y-8"
-              >
-                 <div className="flex items-center justify-between px-4">
-                    <h2 className="text-xs font-black uppercase tracking-[0.3em] text-slate-400">Dynamic Visualization</h2>
-                    <div className="flex items-center gap-2">
-                       <Zap size={14} className="text-amber-500" />
-                       <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Architect Engine v2.0</span>
-                    </div>
-                 </div>
-                 <ReportBuilder />
-              </motion.section>
-           </div>
-
-           {/* Financial Modules */}
-           <div className="lg:col-span-8 space-y-8">
-              <h2 className="px-4 text-xs font-black uppercase tracking-[0.3em] text-slate-400">{t("pages.reports.sectionFinancial")}</h2>
-              <div className="grid gap-8 md:grid-cols-2">
-                 <ReportCard 
-                    to="/reports/aged-receivables"
-                    title={t("pages.reports.cardArTitle")}
-                    desc={t("pages.reports.cardArDesc")}
-                    icon={TrendingUp}
-                    kicker={t("pages.reports.cardArKicker")}
-                    tone="sky"
-                    bullets={[t("pages.reports.cardArBullet1"), t("pages.reports.cardArBullet2")]}
-                 />
-                 <button
-                    type="button"
-                    onClick={() => void onBirExport()}
-                    className="group flex flex-col justify-between rounded-[2.5rem] border border-amber-200 bg-amber-50/50 p-8 text-left transition hover:shadow-xl"
-                 >
-                    <div>
-                       <p className="text-[10px] font-black uppercase tracking-[0.3em] text-amber-600">{t("pages.reports.birKicker")}</p>
-                       <h3 className="mt-2 text-xl font-black text-slate-900">{t("pages.reports.birTitle")}</h3>
-                       <p className="mt-2 text-sm text-slate-600">{t("pages.reports.birDesc")}</p>
-                    </div>
-                    <span className="mt-6 text-xs font-black uppercase tracking-widest text-amber-700">{t("pages.reports.birCta")}</span>
-                 </button>
-                  <button
-                     type="button"
-                     disabled={auditLoading}
-                     onClick={() => void onRunAudit()}
-                     className="group flex flex-col justify-between rounded-[2.5rem] border border-rose-200 bg-rose-50/50 p-8 text-left transition hover:shadow-xl"
-                  >
-                     <div>
-                        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-rose-600">BIR COMPLIANCE</p>
-                        <h3 className="mt-2 text-xl font-black text-slate-900">OR Serial Gap Audit</h3>
-                        <p className="mt-2 text-sm text-slate-600">Scan sequential Official Receipt (OR) numbers to detect any missing/skipped IDs to prevent tax audit issues.</p>
-                     </div>
-                     <span className="mt-6 text-xs font-black uppercase tracking-widest text-rose-700">Run Serial Audit</span>
-                  </button>
-                 <ReportCard
-                    to="/philhealth-claims"
-                    title={t("pages.reports.cardPhicTitle")}
-                    desc={t("pages.reports.cardPhicDesc")}
-                    icon={ShieldCheck}
-                    kicker={t("pages.reports.cardPhicKicker")}
-                    tone="emerald"
-                    bullets={[t("pages.reports.cardPhicBullet1"), t("pages.reports.cardPhicBullet2")]}
-                 />
-                 <ReportCard
-                    to="/hmo-claims"
-                    title={t("pages.reports.cardHmoTitle")}
-                    desc={t("pages.reports.cardHmoDesc")}
-                    icon={PieChart}
-                    kicker={t("pages.reports.cardHmoKicker")}
-                    tone="indigo"
-                    bullets={[t("pages.reports.cardHmoBullet1"), t("pages.reports.cardHmoBullet2")]}
-                 />
-                 <ReportCard 
-                    to="/dashboard"
-                    title={t("pages.reports.cardDashTitle")}
-                    desc={t("pages.reports.cardDashDesc")}
-                    icon={Layout}
-                    kicker={t("pages.reports.cardDashKicker")}
-                    tone="emerald"
-                    bullets={[t("pages.reports.cardDashBullet1"), t("pages.reports.cardDashBullet2")]}
-                 />
-              </div>
-           </div>
-
-           {/* Quick Stats & Meta */}
-           <div className="lg:col-span-4 space-y-10">
-              <section className="rounded-[3rem] bg-white p-10 shadow-2xl relative overflow-hidden group">
-                 <div className="absolute -top-20 -right-20 h-64 w-64 bg-indigo-500/10 rounded-full blur-[80px] group-hover:scale-150 transition-all duration-1000" />
-                 <h3 className="text-xs font-black uppercase tracking-[0.3em] text-indigo-400 mb-8 flex items-center gap-3">
-                    <Activity size={16} /> Operational Meta
-                 </h3>
-                 <div className="space-y-6 relative z-10">
-                    <MetaRow label={t("pages.reports.statScopeTitle")} value={t("pages.reports.statScopeBody")} />
-                    <MetaRow label={t("pages.reports.statTzTitle")} value={t("pages.reports.statTzBody")} />
-                    <MetaRow label={t("pages.reports.statAccessTitle")} value={t("pages.reports.statAccessBody")} />
-                 </div>
-                 <div className="mt-10 pt-8 border-t border-white/5 relative z-10">
-                    <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-relaxed">
-                       {t("pages.reports.footerLead")}
-                    </p>
-                 </div>
-              </section>
-
-              <section className="rounded-[3rem] bg-white p-10 shadow-xl ring-1 ring-slate-100 space-y-8">
-                 <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600">
-                       <PieChart size={20} />
-                    </div>
-                    <h3 className="text-sm font-black text-slate-900 uppercase tracking-tight">{t("pages.reports.pipelineTitle")}</h3>
-                 </div>
-                 <div className="space-y-4">
-                    {[1, 2, 3].map(i => (
-                      <div key={i} className="flex items-center gap-4 group cursor-help">
-                         <div className="h-2 w-2 rounded-full bg-amber-500" />
-                         <span className="text-xs font-bold text-slate-500 uppercase tracking-widest group-hover:text-slate-900 transition-colors">
-                            {t(`pages.reports.pipelineLi${i}` as any)}
-                         </span>
+             <div className="space-y-6">
+                {reportCategories.map((category) => (
+                   <div key={category.title} className="card border border-brand-border overflow-hidden">
+                      <div className="px-4 py-3 border-b border-brand-border bg-brand-surface-soft flex items-center gap-2">
+                         <category.icon size={16} className="text-brand-muted" />
+                         <h3 className="text-xs font-black uppercase tracking-widest text-brand-text">{category.title}</h3>
                       </div>
-                    ))}
+                      <div className="divide-y divide-brand-border/50">
+                         {category.reports.map((report) => (
+                            <div key={report.name} className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-brand-surface-soft/50 transition-colors">
+                               <div className="space-y-1">
+                                  <div className="flex items-center gap-2">
+                                     <h4 className="text-sm font-bold text-brand-text">{report.name}</h4>
+                                     {report.status === 'active' && <span className="flex h-1.5 w-1.5 rounded-full bg-teal-500" />}
+                                     {report.status === 'pending' && <span className="flex h-1.5 w-1.5 rounded-full bg-slate-300" />}
+                                  </div>
+                                  <p className="text-xs text-brand-muted">{report.desc}</p>
+                                  <div className="flex items-center gap-1.5 mt-1 text-[10px] font-bold text-brand-muted uppercase tracking-widest">
+                                     <Clock size={10} /> {report.lastRun}
+                                  </div>
+                               </div>
+                               <div className="shrink-0 flex items-center gap-2">
+                                  {report.action ? (
+                                    <button 
+                                      onClick={report.action}
+                                      disabled={(report as any).loading}
+                                      className="btn-secondary text-[10px] px-3 py-1.5 h-7 bg-white"
+                                    >
+                                       {(report as any).loading ? <RefreshCw size={12} className="animate-spin" /> : (report.status === 'action' ? 'Run Audit' : 'Export')}
+                                    </button>
+                                  ) : (
+                                    <Link 
+                                      to={report.path}
+                                      className="btn-secondary text-[10px] px-3 py-1.5 h-7 bg-white"
+                                    >
+                                       Open
+                                    </Link>
+                                  )}
+                               </div>
+                            </div>
+                         ))}
+                      </div>
+                   </div>
+                ))}
+             </div>
+          </section>
+        </div>
+
+        {/* Right Sidebar: Operations */}
+        <div className="lg:col-span-4 space-y-6">
+           <div className="card border border-brand-border overflow-hidden sticky top-6">
+              <div className="px-4 py-3 border-b border-brand-border bg-brand-surface-soft flex items-center gap-2">
+                 <Settings size={16} className="text-brand-muted" />
+                 <h2 className="text-xs font-black uppercase tracking-widest text-brand-text">Report Operations</h2>
+              </div>
+              
+              <div className="p-4 border-b border-brand-border bg-white">
+                 <h3 className="text-[10px] font-black text-brand-muted uppercase tracking-widest mb-3">Scheduled Exports</h3>
+                 <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                       <div className="flex items-center gap-2">
+                          <Calendar size={14} className="text-brand-primary" />
+                          <span className="text-xs font-bold text-brand-text">Daily End-of-Day Sales</span>
+                       </div>
+                       <span className="text-[10px] font-bold bg-brand-surface px-2 py-0.5 rounded text-brand-muted">8:00 PM</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                       <div className="flex items-center gap-2">
+                          <Users size={14} className="text-brand-info" />
+                          <span className="text-xs font-bold text-brand-text">Weekly Provider Payouts</span>
+                       </div>
+                       <span className="text-[10px] font-bold bg-brand-surface px-2 py-0.5 rounded text-brand-muted">Mon 9:00 AM</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                       <div className="flex items-center gap-2">
+                          <Box size={14} className="text-brand-warning" />
+                          <span className="text-xs font-bold text-brand-text">Monthly Inventory Check</span>
+                       </div>
+                       <span className="text-[10px] font-bold bg-brand-surface px-2 py-0.5 rounded text-brand-muted">1st of Month</span>
+                    </div>
                  </div>
-                 <div className="pt-6 flex flex-wrap gap-2">
-                    {["CSV", "PDF", "XLSX"].map(tag => (
-                      <span key={tag} className="px-3 py-1.5 rounded-lg bg-slate-50 text-[10px] font-black text-slate-400 uppercase tracking-widest">{tag}</span>
-                    ))}
+                 <button className="mt-4 w-full text-[10px] font-bold text-brand-primary uppercase tracking-widest hover:underline">
+                    Manage Schedules
+                 </button>
+              </div>
+
+              <div className="p-4 border-b border-brand-border bg-white">
+                 <h3 className="text-[10px] font-black text-brand-muted uppercase tracking-widest mb-3">Recent Activity</h3>
+                 <div className="space-y-4 relative before:absolute before:inset-0 before:ml-2.5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-brand-border">
+                    <div className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
+                       <div className="flex items-center justify-center w-5 h-5 rounded-full border border-white bg-teal-100 text-teal-600 shadow-sm shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10">
+                          <CheckCircle2 size={10} />
+                       </div>
+                       <div className="w-[calc(100%-2rem)] md:w-[calc(50%-1.5rem)] text-xs text-brand-text font-medium ml-2 md:ml-0 md:group-even:text-right md:group-even:pr-2 md:group-odd:pl-2">
+                          <span className="block font-bold">Outstanding Balances</span>
+                          <span className="text-[10px] text-brand-muted">Generated by Dr. Smith (10 mins ago)</span>
+                       </div>
+                    </div>
+                    <div className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group">
+                       <div className="flex items-center justify-center w-5 h-5 rounded-full border border-white bg-rose-100 text-rose-600 shadow-sm shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10">
+                          <AlertTriangle size={10} />
+                       </div>
+                       <div className="w-[calc(100%-2rem)] md:w-[calc(50%-1.5rem)] text-xs text-brand-text font-medium ml-2 md:ml-0 md:group-even:text-right md:group-even:pr-2 md:group-odd:pl-2">
+                          <span className="block font-bold text-rose-700">Daily Ledger (Failed)</span>
+                          <span className="text-[10px] text-brand-muted">Database timeout (1 hr ago)</span>
+                       </div>
+                    </div>
                  </div>
-              </section>
+              </div>
+
+              <div className="p-4 bg-brand-surface-soft">
+                 <h3 className="text-[10px] font-black text-brand-muted uppercase tracking-widest mb-2">Access Notice</h3>
+                 <p className="text-[10px] text-brand-text-soft leading-relaxed">
+                    You are viewing this workbench with <strong className="text-brand-text font-bold">Administrator</strong> permissions. Financial and compliance reports are restricted to authorized roles only.
+                 </p>
+                 <div className="flex gap-2 mt-3">
+                    <span className="px-2 py-1 rounded bg-white border border-brand-border text-[9px] font-black text-brand-muted uppercase">CSV</span>
+                    <span className="px-2 py-1 rounded bg-white border border-brand-border text-[9px] font-black text-brand-muted uppercase">PDF</span>
+                    <span className="px-2 py-1 rounded bg-white border border-brand-border text-[9px] font-black text-brand-muted uppercase">XLSX</span>
+                 </div>
+              </div>
            </div>
         </div>
       </div>
 
       {/* OR Audit Modal */}
       {auditModalOpen && auditResult && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#f5f7f9]/40 backdrop-blur-sm p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="w-full max-w-lg rounded-[2.5rem] bg-white p-8 shadow-2xl ring-1 ring-slate-100 space-y-6"
+            className="w-full max-w-lg card bg-white overflow-hidden shadow-2xl"
           >
-            <div className="flex items-center justify-between border-b border-slate-50 pb-4">
-              <div className="flex items-center gap-3">
-                <ShieldCheck className="text-indigo-500" size={24} />
-                <h3 className="text-lg font-black text-slate-900 uppercase tracking-tight">OR Serial Audit — {auditResult.year}</h3>
+            <div className="flex items-center justify-between border-b border-brand-border p-4 bg-brand-surface-soft">
+              <div className="flex items-center gap-2">
+                <FileText className="text-brand-text" size={18} />
+                <h3 className="text-sm font-bold text-brand-text uppercase tracking-widest">OR Serial Audit — {auditResult.year}</h3>
               </div>
               <button
                 onClick={() => setAuditModalOpen(false)}
-                className="text-xs font-black text-slate-400 hover:text-slate-600 uppercase tracking-widest"
+                className="text-[10px] font-black text-brand-muted hover:text-brand-text uppercase tracking-widest"
               >
                 Close
               </button>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="p-5 rounded-2xl bg-slate-50">
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Issued</p>
-                <p className="text-2xl font-mono font-black text-slate-900 mt-1">{auditResult.totalIssued}</p>
-              </div>
-              <div className="p-5 rounded-2xl bg-slate-50">
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Max Sequence ID</p>
-                <p className="text-2xl font-mono font-black text-slate-900 mt-1">{auditResult.expectedCount}</p>
-              </div>
-            </div>
+            <div className="p-6 space-y-6">
+               <div className="grid grid-cols-2 gap-4">
+                 <div className="p-4 rounded-[var(--radius-sm)] bg-brand-surface border border-brand-border text-center">
+                   <p className="text-[10px] font-black text-brand-muted uppercase tracking-widest">Total Issued</p>
+                   <p className="text-xl font-mono font-black text-brand-text mt-1">{auditResult.totalIssued}</p>
+                 </div>
+                 <div className="p-4 rounded-[var(--radius-sm)] bg-brand-surface border border-brand-border text-center">
+                   <p className="text-[10px] font-black text-brand-muted uppercase tracking-widest">Max Sequence</p>
+                   <p className="text-xl font-mono font-black text-brand-text mt-1">{auditResult.expectedCount}</p>
+                 </div>
+               </div>
 
-            {auditResult.missingCount > 0 ? (
-              <div className="p-6 rounded-[2rem] bg-rose-50 border border-rose-100 space-y-4">
-                <div className="flex items-center gap-3 text-rose-600">
-                  <AlertTriangle size={20} />
-                  <p className="text-xs font-black uppercase tracking-widest">{auditResult.missingCount} Missing Sequence Numbers</p>
-                </div>
-                <div className="max-h-48 overflow-y-auto divide-y divide-rose-100/50 pr-2">
-                  {auditResult.missingSequences.map((seq) => (
-                    <div key={seq} className="py-2.5 flex items-center justify-between text-xs font-mono font-bold text-rose-700">
-                      <span>{seq}</span>
-                      <span className="text-[9px] uppercase font-black bg-rose-100 px-2 py-0.5 rounded">Gap</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ) : (
-              <div className="p-6 rounded-[2rem] bg-teal-50 border border-teal-100 flex items-center gap-4">
-                <CheckCircle2 size={32} className="text-teal-500 shrink-0" />
-                <div>
-                  <p className="text-xs font-black text-teal-800 uppercase tracking-widest">Audit Passed Successfully</p>
-                  <p className="text-xs text-teal-600 mt-1 font-bold">No missing sequence gaps detected in issued Official Receipts for this year.</p>
-                </div>
-              </div>
-            )}
+               {auditResult.missingCount > 0 ? (
+                 <div className="p-4 rounded-[var(--radius-md)] bg-rose-50 border border-rose-200 space-y-4">
+                   <div className="flex items-center gap-2 text-rose-700">
+                     <AlertTriangle size={16} />
+                     <p className="text-xs font-bold uppercase tracking-widest">{auditResult.missingCount} Missing Sequence Gaps</p>
+                   </div>
+                   <div className="max-h-48 overflow-y-auto divide-y divide-rose-100 pr-2">
+                     {auditResult.missingSequences.map((seq) => (
+                       <div key={seq} className="py-2 flex items-center justify-between text-xs font-mono font-bold text-rose-700">
+                         <span>{seq}</span>
+                         <span className="text-[9px] uppercase font-black bg-rose-200 px-1.5 py-0.5 rounded text-rose-800">Gap Detected</span>
+                       </div>
+                     ))}
+                   </div>
+                 </div>
+               ) : (
+                 <div className="p-4 rounded-[var(--radius-md)] bg-teal-50 border border-teal-200 flex items-center gap-3">
+                   <CheckCircle2 size={24} className="text-teal-600 shrink-0" />
+                   <div>
+                     <p className="text-xs font-bold text-teal-800 uppercase tracking-widest">Audit Passed</p>
+                     <p className="text-xs text-teal-700 mt-1">No missing sequence gaps detected in issued Official Receipts for this year.</p>
+                   </div>
+                 </div>
+               )}
+            </div>
           </motion.div>
         </div>
       )}
-    </div>
-  );
-}
-
-function ReportCard({ to, title, desc, icon: Icon, kicker, tone, bullets }: any) {
-  const tones: any = {
-    sky: "bg-sky-500 shadow-sky-500/20 text-sky-500 bg-sky-50",
-    emerald: "bg-teal-500 shadow-teal-500/20 text-teal-500 bg-teal-50",
-    indigo: "bg-indigo-500 shadow-indigo-500/20 text-indigo-500 bg-indigo-50"
-  };
-
-  return (
-    <Link to={to} className="group relative block rounded-[3rem] bg-white p-10 shadow-xl shadow-slate-200/50 ring-1 ring-slate-100 transition-all hover:shadow-2xl hover:-translate-y-1">
-       <div className="flex items-center justify-between mb-8">
-          <div className={`h-16 w-16 rounded-[1.5rem] flex items-center justify-center text-white shadow-xl ${tones[tone].split(' ')[0]} ${tones[tone].split(' ')[1]}`}>
-             <Icon size={32} />
-          </div>
-          <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest ${tones[tone].split(' ').slice(2).join(' ')}`}>
-             {kicker}
-          </span>
-       </div>
-       <div className="space-y-3 mb-8">
-          <h3 className="text-2xl font-black text-slate-900 uppercase tracking-tight group-hover:text-indigo-500 transition-colors">{title}</h3>
-          <p className="text-sm font-medium text-slate-400 leading-relaxed">{desc}</p>
-       </div>
-       <div className="space-y-3 pt-6 border-t border-slate-50">
-          {bullets.map((b: string) => (
-            <div key={b} className="flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-slate-500">
-               <ChevronRight size={14} className="text-slate-300" />
-               {b}
-            </div>
-          ))}
-       </div>
-    </Link>
-  );
-}
-
-function MetaRow({ label, value }: { label: string, value: string }) {
-  return (
-    <div className="space-y-1.5">
-       <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">{label}</p>
-       <p className="text-sm font-bold text-white">{value}</p>
     </div>
   );
 }

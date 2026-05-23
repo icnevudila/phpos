@@ -46,8 +46,8 @@ export function QueuePage() {
   const fetchQueueData = async (silent = false) => {
     try {
       if (!silent) setLoading(true);
-      const res = await api.get<{ data: QueueItem[] }>("/analytics/queue");
-      setQueue(res.data.data);
+      const res = await api.get<any, { data: QueueItem[] }>("/analytics/queue");
+      setQueue(res.data);
     } catch (err: any) {
       console.error("Queue fetch error:", err);
       toast.error(err.response?.data?.message || t("pages.queue.syncFailed"));

@@ -165,7 +165,7 @@ export function WaitlistPage(): JSX.Element {
   }
 
   return (
-    <div className="page-wrapper">
+    <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -203,17 +203,17 @@ export function WaitlistPage(): JSX.Element {
       {/* Add Entry Panel */}
       <section id="add-waitlist-section" className="card overflow-hidden">
         <div className="flex items-center gap-3 mb-6">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-teal-50 text-teal-600">
+          <div className="flex h-10 w-10 items-center justify-center rounded-[var(--radius-md)] bg-brand-primary-soft text-brand-primary">
             <UserPlus size={20} />
           </div>
-          <h2 className="text-base font-bold text-slate-800">
+          <h2 className="text-base font-bold text-brand-text">
             {t("pages.waitlist.addToWaitlist")}
           </h2>
         </div>
 
         <div className="grid gap-4 lg:grid-cols-12 items-end">
           <div className="lg:col-span-4 space-y-1.5">
-            <label className="text-xs font-semibold uppercase tracking-widest text-slate-400">
+            <label className="text-xs font-semibold uppercase tracking-widest text-brand-muted">
               {t("pages.waitlist.patientLabel")}
             </label>
             <PatientAutocomplete
@@ -223,13 +223,13 @@ export function WaitlistPage(): JSX.Element {
             />
           </div>
           <div className="lg:col-span-6 space-y-1.5">
-            <label className="text-xs font-semibold uppercase tracking-widest text-slate-400">
+            <label className="text-xs font-semibold uppercase tracking-widest text-brand-muted">
               {t("pages.waitlist.notesLabel")}
             </label>
             <div className="relative">
-              <StickyNote className="absolute left-4 top-3.5 text-slate-300" size={16} />
+              <StickyNote className="absolute left-4 top-3.5 text-brand-muted opacity-60" size={16} />
               <textarea
-                className="h-14 w-full rounded-xl bg-slate-50 pl-11 pr-4 py-3 text-sm font-medium outline-none ring-1 ring-slate-100 focus:ring-2 focus:ring-teal-500 transition-all resize-none"
+                className="h-14 w-full rounded-[var(--radius-md)] bg-brand-surface-soft pl-11 pr-4 py-3 text-sm font-medium outline-none border border-brand-border focus:ring-2 focus:ring-brand-primary transition-all resize-none"
                 placeholder={t("pages.waitlist.notesPlaceholder")}
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
@@ -253,16 +253,16 @@ export function WaitlistPage(): JSX.Element {
 
       {/* Scope + Search Controls */}
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center justify-between">
-        <div className="flex items-center gap-1 bg-white p-1.5 rounded-xl shadow-sm ring-1 ring-slate-100">
+        <div className="flex items-center gap-1 bg-brand-surface-soft p-1.5 rounded-[var(--radius-md)] border border-brand-border">
           <button
             onClick={() => setScope("active")}
-            className={`flex h-9 px-4 items-center gap-2 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all ${ scope === "active" ? "bg-slate-800 text-white shadow-sm" : "text-slate-400 hover:text-slate-600" }`}
+            className={`flex h-9 px-4 items-center gap-2 rounded-[var(--radius-sm)] text-xs font-semibold uppercase tracking-wider transition-colors ${ scope === "active" ? "bg-brand-surface text-brand-primary shadow-sm border border-brand-border" : "text-brand-muted hover:text-brand-text-soft" }`}
           >
             <Activity size={13} /> {t("pages.waitlist.scopeActive")}
           </button>
           <button
             onClick={() => setScope("all")}
-            className={`flex h-9 px-4 items-center gap-2 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all ${ scope === "all" ? "bg-slate-800 text-white shadow-sm" : "text-slate-400 hover:text-slate-600" }`}
+            className={`flex h-9 px-4 items-center gap-2 rounded-[var(--radius-sm)] text-xs font-semibold uppercase tracking-wider transition-colors ${ scope === "all" ? "bg-brand-surface text-brand-primary shadow-sm border border-brand-border" : "text-brand-muted hover:text-brand-text-soft" }`}
           >
             <Filter size={13} /> {t("pages.waitlist.scopeAll")}
           </button>
@@ -270,19 +270,19 @@ export function WaitlistPage(): JSX.Element {
 
         <div className="flex items-center gap-3">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={15} />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-brand-muted" size={15} />
             <input
               type="text"
               value={tableQInput}
               onChange={(e) => setTableQInput(e.target.value)}
               placeholder={t("pages.waitlist.tableSearchPlaceholder")}
-              className="h-10 w-[260px] rounded-xl bg-white pl-10 pr-4 text-sm font-medium shadow-sm ring-1 ring-slate-100 focus:ring-2 focus:ring-teal-500 transition-all outline-none"
+              className="h-10 w-[260px] rounded-[var(--radius-md)] bg-brand-surface border border-brand-border pl-10 pr-4 text-sm font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-brand-primary transition-all"
             />
           </div>
-          <div className="h-8 w-px bg-slate-200 mx-1 hidden lg:block" />
+          <div className="h-8 w-px bg-brand-border mx-1 hidden lg:block" />
           <div className="flex items-center gap-2">
-            <div className="h-2.5 w-2.5 rounded-full bg-teal-500 animate-pulse" />
-            <span className="text-xs font-medium text-slate-400">Live Syncing</span>
+            <div className="h-2.5 w-2.5 rounded-full bg-brand-primary animate-pulse" />
+            <span className="text-xs font-medium text-brand-muted">Live Syncing</span>
           </div>
         </div>
       </div>
@@ -307,8 +307,8 @@ export function WaitlistPage(): JSX.Element {
                   <motion.tr initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                     <td colSpan={6} className="py-20 text-center">
                       <div className="flex items-center justify-center">
-                        <div className="h-8 w-8 rounded-xl bg-teal-50 flex items-center justify-center">
-                          <RefreshCw className="h-4 w-4 animate-spin text-teal-500" />
+                        <div className="h-8 w-8 rounded-[var(--radius-md)] bg-brand-primary-soft flex items-center justify-center">
+                          <RefreshCw className="h-4 w-4 animate-spin text-brand-primary" />
                         </div>
                       </div>
                     </td>
@@ -334,32 +334,32 @@ export function WaitlistPage(): JSX.Element {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: idx * 0.02 }}
-                        className="group cursor-pointer hover:bg-teal-50/30 transition-colors"
+                        className="group cursor-pointer hover:bg-brand-surface-soft transition-colors"
                       >
                         <td>
                           <div className="flex items-center gap-3">
-                            <div className="h-10 w-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-400 group-hover:bg-teal-500 group-hover:text-white transition-all">
+                            <div className="h-10 w-10 rounded-[var(--radius-md)] bg-brand-surface-muted border border-brand-border flex items-center justify-center text-brand-muted group-hover:bg-brand-primary group-hover:text-white transition-all">
                               <Users size={18} />
                             </div>
-                            <Link to={`/patients/${r.patient.id}`} className="text-sm font-semibold text-slate-800 hover:text-teal-600 transition-colors">
+                            <Link to={`/patients/${r.patient.id}`} className="text-sm font-semibold text-brand-text hover:text-brand-primary transition-colors">
                               {r.patient.fullName}
                             </Link>
                           </div>
                         </td>
                         <td>
-                          <div className="flex items-center gap-1.5 text-sm font-medium text-slate-500">
+                          <div className="flex items-center gap-1.5 text-sm font-medium text-brand-text-soft">
                             <Phone size={13} className="opacity-40" />
                             {r.patient.phone}
                           </div>
                         </td>
                         <td>
-                          <div className="flex items-center gap-2 text-sm font-medium text-slate-400 max-w-[180px] truncate" title={r.notes ?? ""}>
+                          <div className="flex items-center gap-2 text-sm font-medium text-brand-muted max-w-[180px] truncate" title={r.notes ?? ""}>
                             <StickyNote size={13} className="opacity-40 flex-shrink-0" />
                             {r.notes ?? "—"}
                           </div>
                         </td>
                         <td>
-                          <div className="flex items-center gap-1.5 text-xs font-medium text-slate-400">
+                          <div className="flex items-center gap-1.5 text-xs font-medium text-brand-muted">
                             <Clock size={11} className="opacity-40" />
                             {fmtWhen(r.createdAt)}
                           </div>
@@ -376,13 +376,13 @@ export function WaitlistPage(): JSX.Element {
                               <div className="flex gap-1.5 mr-4 opacity-0 group-hover:opacity-100 transition-all translate-x-3 group-hover:translate-x-0">
                                 <button
                                   onClick={() => void onPatch(r.id, "FULFILLED")}
-                                  className="h-8 px-3 rounded-lg bg-teal-50 text-teal-600 text-xs font-semibold uppercase tracking-widest hover:bg-teal-500 hover:text-white transition-all"
+                                  className="h-8 px-3 rounded-[var(--radius-sm)] bg-brand-primary-soft text-brand-primary text-xs font-semibold uppercase tracking-widest hover:bg-brand-primary hover:text-white transition-colors"
                                 >
                                   {t("pages.waitlist.actionFulfilled")}
                                 </button>
                                 <button
                                   onClick={() => void onPatch(r.id, "CANCELLED")}
-                                  className="h-8 px-3 rounded-lg bg-slate-50 text-slate-400 text-xs font-semibold uppercase tracking-widest hover:bg-rose-500 hover:text-white transition-all"
+                                  className="h-8 px-3 rounded-[var(--radius-sm)] bg-brand-surface-muted text-brand-muted text-xs font-semibold uppercase tracking-widest hover:bg-brand-danger hover:text-white transition-colors"
                                 >
                                   {t("pages.waitlist.actionCancel")}
                                 </button>
@@ -390,7 +390,7 @@ export function WaitlistPage(): JSX.Element {
                             )}
                             <Link
                               to={`/patients/${r.patient.id}`}
-                              className="h-9 w-9 flex items-center justify-center rounded-lg bg-slate-50 text-slate-400 hover:bg-teal-500 hover:text-white transition-all"
+                              className="h-9 w-9 flex items-center justify-center rounded-[var(--radius-sm)] bg-brand-surface-muted text-brand-muted hover:bg-brand-primary hover:text-white transition-colors"
                             >
                               <ChevronRight size={18} />
                             </Link>
@@ -410,42 +410,42 @@ export function WaitlistPage(): JSX.Element {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="stat-card">
           <div className="flex items-center gap-2 mb-4">
-            <div className="h-9 w-9 rounded-xl bg-sky-50 flex items-center justify-center text-sky-600">
+            <div className="h-9 w-9 rounded-[var(--radius-md)] bg-brand-info-soft flex items-center justify-center text-brand-info">
               <Users size={18} />
             </div>
             <span className="stat-card-label">Queue Depth</span>
           </div>
           <div className="flex items-baseline gap-2">
-            <p className="text-3xl font-bold text-slate-800 tabular-nums">{rows.filter(r => r.status === 'WAITING').length}</p>
-            <span className="text-xs font-semibold text-slate-400 uppercase tracking-widest">ACTIVE</span>
+            <p className="stat-card-value">{rows.filter(r => r.status === 'WAITING').length}</p>
+            <span className="text-xs font-semibold text-brand-muted uppercase tracking-widest">ACTIVE</span>
           </div>
         </div>
 
         <div className="stat-card">
           <div className="flex items-center gap-2 mb-4">
-            <div className="h-9 w-9 rounded-xl bg-teal-50 flex items-center justify-center text-teal-600">
+            <div className="h-9 w-9 rounded-[var(--radius-md)] bg-brand-success-soft flex items-center justify-center text-brand-success">
               <CheckCircle2 size={18} />
             </div>
             <span className="stat-card-label">Conversion Rate</span>
           </div>
           <div className="flex items-baseline gap-2">
-            <p className="text-3xl font-bold text-slate-800 tabular-nums">84%</p>
-            <span className="text-xs font-semibold text-teal-500 uppercase tracking-widest">SUCCESS</span>
+            <p className="stat-card-value">84%</p>
+            <span className="text-xs font-semibold text-brand-success uppercase tracking-widest">SUCCESS</span>
           </div>
         </div>
 
-        <div className="stat-card bg-slate-800 ring-0 text-white">
+        <div className="stat-card bg-brand-navy border-0 text-white shadow-popover">
           <div className="flex items-center gap-2 mb-4">
-            <div className="h-9 w-9 rounded-xl bg-sky-500/20 flex items-center justify-center text-sky-400">
+            <div className="h-9 w-9 rounded-[var(--radius-md)] bg-white/10 flex items-center justify-center text-brand-info">
               <Clock size={18} />
             </div>
-            <span className="text-[10px] font-semibold uppercase tracking-widest text-slate-400">
+            <span className="text-[10px] font-semibold uppercase tracking-widest text-brand-muted">
               {t("pages.waitlist.avgDwellTime")}
             </span>
           </div>
           <div className="flex items-baseline gap-2">
-            <p className="text-3xl font-bold text-white tabular-nums">22</p>
-            <span className="text-xs font-semibold text-sky-400 uppercase tracking-widest">
+            <p className="text-3xl font-bold tabular-nums">22</p>
+            <span className="text-xs font-semibold text-brand-info uppercase tracking-widest">
               {t("pages.common.minutesUnit")}
             </span>
           </div>

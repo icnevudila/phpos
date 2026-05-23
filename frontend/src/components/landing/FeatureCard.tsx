@@ -62,7 +62,7 @@ export function FeatureCard({
       whileTap={{ scale: 0.98 }}
       transition={{ type: "spring", stiffness: 300, damping: 24 }}
       style={reduce ? undefined : { rotateX: rx, rotateY: ry, transformPerspective: 1000 }}
-      className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 text-left shadow-sm transition hover:shadow-xl [transform-style:preserve-3d]"
+      className="group relative overflow-hidden rounded-2xl border border-brand-border bg-brand-surface p-6 text-left shadow-sm transition hover:shadow-xl [transform-style:preserve-3d]"
     >
       {!reduce && (
         <motion.div
@@ -93,17 +93,17 @@ export function FeatureCard({
       </motion.div>
       <motion.h3
         layoutId={`feature-title-${id}`}
-        className="relative mt-4 text-lg font-semibold text-slate-900"
+        className="relative mt-4 text-lg font-semibold text-brand-text"
       >
         {title}
       </motion.h3>
       <motion.p
         layoutId={`feature-desc-${id}`}
-        className="relative mt-2 text-sm leading-relaxed text-slate-600"
+        className="relative mt-2 text-sm leading-relaxed text-brand-muted"
       >
         {desc}
       </motion.p>
-      <div className="relative mt-4 flex items-center gap-1.5 text-xs font-medium text-slate-400 transition group-hover:translate-x-1 group-hover:text-slate-700">
+      <div className="relative mt-4 flex items-center gap-1.5 text-xs font-medium text-brand-muted transition group-hover:translate-x-1 group-hover:text-brand-text">
         {t("landing.featurePreview")}
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="h-3.5 w-3.5">
           <path d="m9 18 6-6-6-6" strokeLinecap="round" strokeLinejoin="round" />

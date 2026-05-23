@@ -47,7 +47,7 @@ export function StickyNav(): JSX.Element {
 
   return (
     <header
-      className={`sticky top-0 z-40 transition-all duration-300 ${ scrolled ? "bg-white/85 shadow-[0_4px_20px_rgba(15,23,42,0.08)] backdrop-blur-md [0_4px_20px_rgba(0,0,0,0.4)]" : "bg-transparent" }`}
+      className={`sticky top-0 z-40 transition-all duration-300 ${ scrolled ? "bg-brand-surface/85 shadow-[0_4px_20px_rgba(15,23,42,0.08)] backdrop-blur-md [0_4px_20px_rgba(0,0,0,0.4)]" : "bg-transparent" }`}
     >
       <nav className="mx-auto flex max-w-7xl items-center justify-between gap-2 px-2.5 py-2 sm:px-6 sm:py-4">
         <Link to="/" className="flex items-center">
@@ -58,7 +58,7 @@ export function StickyNav(): JSX.Element {
             <a
               key={l.id}
               href={l.href}
-              className="relative min-h-10 shrink-0 rounded-lg px-2.5 py-2 text-xs font-medium text-slate-700 transition hover:text-slate-900 xl:px-3 xl:text-sm"
+              className="relative min-h-10 shrink-0 rounded-lg px-2.5 py-2 text-xs font-medium text-brand-text transition hover:text-brand-text xl:px-3 xl:text-sm"
             >
               {l.label}
               {active === l.id && (

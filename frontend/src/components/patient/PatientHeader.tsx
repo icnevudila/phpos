@@ -171,17 +171,15 @@ export function PatientHeader({
 
   return (
     <>
-    <div className="relative overflow-hidden rounded-[3.5rem] bg-white p-10 shadow-2xl shadow-slate-200/50 ring-1 ring-slate-100">
-      <motion.div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-sky-500/5 blur-3xl" />
-
-      <div className="relative flex flex-col lg:flex-row lg:items-center justify-between gap-10">
-        <div className="flex items-start gap-8">
-          <div className="relative group">
-            <div className="h-24 w-24 overflow-hidden rounded-[2rem] bg-gradient-to-br from-sky-500 to-indigo-600 flex items-center justify-center text-white shadow-2xl shadow-sky-500/20">
+    <div className="card p-6 relative overflow-hidden group">
+      <div className="relative flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+        <div className="flex items-start gap-5">
+          <div className="relative">
+            <div className="h-16 w-16 overflow-hidden rounded-xl bg-brand-surface-soft border border-brand-border flex items-center justify-center text-brand-muted">
               {avatarUrl ? (
                 <img src={avatarUrl} alt="" className="h-full w-full object-cover" />
               ) : (
-                <User size={40} />
+                <User size={24} />
               )}
             </div>
             {canEditAvatar ? (
@@ -190,10 +188,10 @@ export function PatientHeader({
                   type="button"
                   disabled={avatarBusy}
                   onClick={() => avatarInputRef.current?.click()}
-                  className="absolute inset-0 flex items-center justify-center rounded-[2rem] bg-black/40 text-[9px] font-black uppercase tracking-widest text-white opacity-0 transition-opacity group-hover:opacity-100 disabled:cursor-wait"
+                  className="absolute inset-0 flex items-center justify-center rounded-xl bg-black/40 text-[10px] font-bold uppercase tracking-widest text-white opacity-0 transition-opacity group-hover:opacity-100 disabled:cursor-wait"
                   aria-label={t("pages.patientDetail.avatarUpload")}
                 >
-                  <Camera size={20} />
+                  <Camera size={16} />
                 </button>
                 <input
                   ref={avatarInputRef}
@@ -204,51 +202,51 @@ export function PatientHeader({
                 />
               </>
             ) : null}
-            <div className="absolute -bottom-2 -right-2 h-8 w-8 rounded-xl bg-teal-500 border-4 border-white flex items-center justify-center text-white">
-              <Heart size={14} fill="currentColor" />
+            <div className="absolute -bottom-1 -right-1 h-5 w-5 rounded-md bg-brand-primary border-2 border-brand-surface flex items-center justify-center text-white">
+              <Heart size={10} fill="currentColor" />
             </div>
           </div>
 
-          <div className="space-y-4">
-            <div className="flex items-center gap-3">
-              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">
-                {t("pages.patientDetail.headerBadgeProfile")}
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-bold uppercase tracking-widest text-brand-muted">
+                Clinical Patient Profile
               </span>
-              <div className="h-1.5 w-1.5 rounded-full bg-teal-500" />
-              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-teal-500">
-                {t("pages.patientDetail.headerBadgeActive")}
+              <div className="h-1.5 w-1.5 rounded-full bg-brand-primary" />
+              <span className="text-xs font-bold uppercase tracking-widest text-brand-primary">
+                Active record
               </span>
             </div>
-            <h1 className="text-4xl lg:text-5xl font-black tracking-tighter text-slate-900 leading-none">
+            <h1 className="text-2xl font-black tracking-tight text-brand-text leading-none">
               {fullName}
             </h1>
 
-            <div className="flex flex-wrap items-center gap-6">
-              <div className="flex items-center gap-2 text-sm font-bold text-slate-500 uppercase tracking-tight">
-                <Phone size={14} className="text-sky-500" />
+            <div className="flex flex-wrap items-center gap-4">
+              <div className="flex items-center gap-1.5 text-sm font-medium text-brand-muted">
+                <Phone size={14} />
                 {data.phone}
               </div>
-              <div className="flex items-center gap-2 text-sm font-bold text-slate-500 uppercase tracking-tight">
-                <Calendar size={14} className="text-teal-500" />
+              <div className="flex items-center gap-1.5 text-sm font-medium text-brand-muted">
+                <Calendar size={14} />
                 {formatDate(data.birthDate, dash, dateLocale)}
                 {age !== null && (
-                  <span className="ml-1 text-slate-300">({t("pages.patientDetail.yrs", { age })})</span>
+                  <span className="ml-1 opacity-70">({t("pages.patientDetail.yrs", { age })})</span>
                 )}
               </div>
               {data.gender && (
-                <div className="px-3 py-1 rounded-lg bg-slate-100 text-[10px] font-black uppercase tracking-widest text-slate-600">
+                <div className="px-2 py-0.5 rounded-md bg-brand-surface-soft border border-brand-border text-xs font-medium text-brand-muted uppercase">
                   {data.gender}
                 </div>
               )}
               {data.philhealthType && (
-                <div className="flex items-center gap-2 px-3 py-1 rounded-lg bg-teal-50 border border-teal-100 text-[10px] font-black uppercase tracking-widest text-teal-700">
-                  <ShieldAlert size={12} className="text-teal-500" />
+                <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-brand-primary-soft border border-brand-primary/20 text-xs font-medium text-brand-primary uppercase">
+                  <ShieldAlert size={12} />
                   {t("pages.patientDetail.phicLabel", { type: data.philhealthType.replace("_", " ") })}
                 </div>
               )}
               {data.loyaltyPoints !== undefined && (
-                <div className="flex items-center gap-2 px-3 py-1 rounded-lg bg-amber-50 border border-amber-100 text-[10px] font-black uppercase tracking-widest text-amber-700">
-                  <Star size={12} className="text-amber-500 fill-amber-500" />
+                <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-amber-50 border border-amber-200/50 text-xs font-medium text-amber-700 uppercase">
+                  <Star size={12} className="fill-amber-500 text-amber-500" />
                   {t("pages.patientDetail.loyaltyPts", { points: data.loyaltyPoints })}
                 </div>
               )}
@@ -259,10 +257,10 @@ export function PatientHeader({
                 {data.allergies.map((a) => (
                   <div
                     key={a}
-                    className="flex items-center gap-2 rounded-xl bg-rose-50 px-4 py-2 border border-rose-100"
+                    className="flex items-center gap-1.5 rounded-md bg-rose-50 border border-rose-200/50 px-2 py-1"
                   >
-                    <ShieldAlert size={14} className="text-rose-500" />
-                    <span className="text-[10px] font-black uppercase tracking-widest text-rose-700">
+                    <ShieldAlert size={12} className="text-rose-500" />
+                    <span className="text-xs font-bold text-rose-700 uppercase">
                       {a}
                     </span>
                   </div>
@@ -272,50 +270,61 @@ export function PatientHeader({
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-4">
+        <div className="flex flex-wrap items-center gap-2">
           {canExportDpa ? (
-            <>
-              <button
-                type="button"
-                onClick={() => void onDpaExport()}
-                className="h-16 px-8 flex items-center gap-3 rounded-2xl bg-white text-[10px] font-black uppercase tracking-widest text-slate-900 shadow-xl ring-1 ring-slate-100 hover:bg-slate-50 transition-all active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500"
-              >
-                <Download size={18} aria-hidden />
-                {t("pages.patientDetail.dpaExport")}
-              </button>
-              <button
-                type="button"
-                onClick={() => setErasureOpen(true)}
-                className="h-16 px-8 flex items-center gap-3 rounded-2xl bg-rose-50 text-[10px] font-black uppercase tracking-widest text-rose-700 shadow-xl ring-1 ring-rose-100 hover:bg-rose-100 transition-all active:scale-95"
-              >
-                <Trash2 size={18} aria-hidden />
-                {t("pages.patientDetail.dpaErasure")}
-              </button>
-            </>
+            <button
+              type="button"
+              onClick={() => void onDpaExport()}
+              className="btn-secondary text-xs px-3 py-1.5 h-8"
+            >
+              <Download size={14} aria-hidden />
+              Export Data
+            </button>
           ) : null}
           <button
             type="button"
             onClick={() => void handlePrintLabel()}
-            className="h-16 px-8 flex items-center gap-3 rounded-2xl bg-white text-[10px] font-black uppercase tracking-widest text-slate-900 shadow-xl ring-1 ring-slate-100 hover:bg-slate-50 transition-all active:scale-95"
+            className="btn-secondary text-xs px-3 py-1.5 h-8"
           >
-            <Printer size={18} aria-hidden />
-            {t("pages.patientDetail.printLabel")}
+            <Printer size={14} aria-hidden />
+            Print Label
           </button>
           <Link
             to={`/patients/${data.id}/presentation`}
-            className="h-16 px-8 flex items-center gap-3 rounded-2xl bg-indigo-500 text-[10px] font-black uppercase tracking-widest text-white shadow-xl hover:bg-indigo-600 transition-all active:scale-95"
+            className="btn-secondary text-xs px-3 py-1.5 h-8"
           >
-            <Monitor size={18} />
-            {t("pages.patientDetail.presentation")}
+            <Monitor size={14} />
+            Patient Portal
           </Link>
           <button
             type="button"
             onClick={onEdit}
-            className="h-16 px-8 flex items-center gap-3 rounded-2xl bg-white text-[10px] font-black uppercase tracking-widest text-white shadow-2xl transition-all hover:scale-105 active:scale-95"
+            className="btn-secondary text-xs px-3 py-1.5 h-8"
           >
-            <Edit3 size={18} />
-            {t("pages.patientDetail.edit")}
+            <Edit3 size={14} />
+            Edit
           </button>
+          
+          <div className="h-6 w-px bg-brand-border mx-1 hidden sm:block"></div>
+          
+          <button
+            type="button"
+            className="btn-primary text-xs px-4 py-1.5 h-8"
+          >
+            <Calendar size={14} />
+            New Appointment
+          </button>
+
+          {canExportDpa ? (
+            <button
+              type="button"
+              onClick={() => setErasureOpen(true)}
+              className="text-brand-muted hover:text-brand-danger p-1 transition-colors ml-1"
+              title="DPA Erasure"
+            >
+              <Trash2 size={14} aria-hidden />
+            </button>
+          ) : null}
         </div>
       </div>
     </div>

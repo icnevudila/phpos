@@ -13,7 +13,7 @@ export function TrustStrip(): JSX.Element {
       {items.map((item) => (
         <span 
           key={item}
-          className="rounded-full border border-slate-200 bg-white px-4 py-2 text-[11px] font-black uppercase tracking-wider text-slate-500 shadow-sm transition-all hover:border-blue-200 hover:text-blue-600"
+          className="rounded-full border border-brand-border bg-brand-surface px-4 py-2 text-[11px] font-black uppercase tracking-wider text-brand-muted shadow-sm transition-all hover:border-blue-200 hover:text-blue-600"
         >
           {item}
         </span>

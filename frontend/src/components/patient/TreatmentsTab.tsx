@@ -1,8 +1,7 @@
 import { useMemo, useState } from "react";
-import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { Receipt } from "lucide-react";
+import { Receipt, FileText, Plus } from "lucide-react";
 import { openAuthedPdf } from "../../services/api";
 import { createInvoiceFromAppointment } from "../../services/invoices";
 import { createAppointmentTreatment } from "../../services/treatments";
@@ -37,14 +36,19 @@ interface TreatmentsTabProps {
 }
 
 const money = (v: string | number | null | undefined): string => {
-  if (v === null || v === undefined || v === "") return "₱ 0.00";
+  if (v === null || v === undefined || v === "") return "₱0.00";
   const num = typeof v === "string" ? Number(v) : v;
-  return `₱ ${num.toLocaleString("en-PH", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  return `₱${num.toLocaleString("en-PH", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 };
 
 const formatDate = (iso: string | null | undefined, empty: string, locale: string): string => {
   if (!iso) return empty;
-  return new Date(iso).toLocaleDateString(locale, { timeZone: "Asia/Manila" });
+  return new Date(iso).toLocaleDateString(locale, { 
+    timeZone: "Asia/Manila",
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric'
+  });
 };
 
 export function TreatmentsTab({
@@ -55,7 +59,6 @@ export function TreatmentsTab({
   dateLocale,
   onAdded,
 }: TreatmentsTabProps): JSX.Element {
-  const { t } = useTranslation();
   const navigate = useNavigate();
   const [invoiceBusy, setInvoiceBusy] = useState(false);
   const billingAppointment = useMemo(() => {
@@ -74,20 +77,20 @@ export function TreatmentsTab({
 
   async function onCreateInvoiceFromTreatments(): Promise<void> {
     if (!billingAppointment) {
-      toast.error(t("pages.patientDetail.createInvoiceNoAppointment"));
+      toast.error("No active appointment found to link the invoice.");
       return;
     }
     if (!items?.length) {
-      toast.error(t("pages.patientDetail.treatmentsEmpty"));
+      toast.error("No treatments available to invoice.");
       return;
     }
     setInvoiceBusy(true);
     try {
       const invoice = await createInvoiceFromAppointment(billingAppointment.id);
-      toast.success(t("pages.patientDetail.createInvoiceSuccess"));
+      toast.success("Invoice generated successfully.");
       navigate(`/invoices/${invoice.id}`);
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : t("pages.patientDetail.createInvoiceFailed"));
+      toast.error(e instanceof Error ? e.message : "Failed to generate invoice.");
     } finally {
       setInvoiceBusy(false);
     }
@@ -99,89 +102,105 @@ export function TreatmentsTab({
   );
 
   if (items === null) {
-    return <p className="text-sm text-slate-500">{t("pages.patientDetail.treatmentsLoading")}</p>;
+    return (
+      <div className="card p-8 flex flex-col items-center justify-center text-center bg-brand-surface border border-brand-border">
+        <p className="text-[10px] font-bold text-brand-muted uppercase tracking-widest animate-pulse">Loading treatments...</p>
+      </div>
+    );
   }
 
   return (
-    <div className="space-y-4">
-      <div className="flex flex-col gap-2 rounded-xl border border-teal-100 bg-teal-50/40 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+    <div className="space-y-6">
+      
+      {/* Summary Header */}
+      <div className="card bg-brand-surface-soft border border-brand-border p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <p className="text-[10px] font-bold uppercase tracking-wider text-teal-800">
-            {t("pages.patientDetail.treatmentSummaryTitle")}
+          <p className="text-[10px] font-black uppercase tracking-widest text-brand-muted mb-0.5">
+            Total Treatment Value
           </p>
-          <p className="mt-1 text-sm text-teal-950">
-            <span className="font-bold">{items.length}</span> {t("pages.patientDetail.treatmentLineCount")} ·{" "}
-            <span className="font-bold">{money(totalPhp)}</span> {t("pages.patientDetail.treatmentTotal")}
-          </p>
+          <div className="flex items-end gap-3">
+             <p className="text-2xl font-black text-brand-text tabular-nums leading-none">
+               {money(totalPhp)}
+             </p>
+             <p className="text-xs font-bold text-brand-muted mb-0.5">
+               across {items.length} procedures
+             </p>
+          </div>
         </div>
         <div className="flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={() =>
+              void openAuthedPdf(`/patients/${patientId}/forms/treatment-record.pdf`).catch(() =>
+                toast.error("Failed to generate PDF."),
+              )
+            }
+            className="btn-secondary h-9 px-4 text-xs gap-2"
+          >
+            <FileText size={14} /> PDF Record
+          </button>
           {canWrite && items.length > 0 ? (
             <button
               type="button"
               disabled={invoiceBusy || !billingAppointment}
               onClick={() => void onCreateInvoiceFromTreatments()}
-              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-teal-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-teal-800 disabled:opacity-50"
+              className="btn-primary h-9 px-4 text-xs gap-2 disabled:opacity-50"
             >
-              <Receipt size={16} />
-              {invoiceBusy ? t("pages.patientDetail.createInvoiceBusy") : t("pages.patientDetail.createInvoiceFromTreatments")}
+              <Receipt size={14} />
+              {invoiceBusy ? "Generating Invoice..." : "Create Invoice"}
             </button>
           ) : null}
-          <button
-            type="button"
-            onClick={() =>
-              void openAuthedPdf(`/patients/${patientId}/forms/treatment-record.pdf`).catch(() =>
-                toast.error(t("pages.patientDetail.treatmentPdfFailed")),
-              )
-            }
-            className="inline-flex min-h-11 items-center justify-center rounded-lg border border-teal-300 bg-white px-4 py-2 text-sm font-semibold text-teal-900 shadow-sm hover:bg-teal-50"
-          >
-            {t("pages.patientDetail.treatmentPdf")}
-          </button>
         </div>
       </div>
+
       {canWrite ? (
         <QuickTreatmentEntry appointments={appointments} dateLocale={dateLocale} onAdded={onAdded} />
       ) : null}
+
       {items.length === 0 ? (
-        <p className="text-sm text-slate-500">{t("pages.patientDetail.treatmentsEmpty")}</p>
+        <div className="card p-8 flex flex-col items-center justify-center text-center bg-brand-surface-soft border border-brand-border mt-4">
+          <p className="text-sm font-bold text-brand-muted uppercase tracking-widest">No Treatments Logged</p>
+        </div>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="min-w-[860px] w-full text-sm">
-            <thead>
-              <tr className="border-b border-slate-200 text-left text-xs font-medium uppercase tracking-wide text-slate-500">
-                <th className="px-2 py-2">{t("pages.patientDetail.treatments.colDate")}</th>
-                <th className="px-2 py-2">{t("pages.patientDetail.treatments.colProcedure")}</th>
-                <th className="px-2 py-2">Phase</th>
-                <th className="px-2 py-2">{t("pages.patientDetail.treatments.colTooth")}</th>
-                <th className="px-2 py-2">{t("pages.patientDetail.treatments.colQty")}</th>
-                <th className="px-2 py-2">{t("pages.patientDetail.treatments.colUnit")}</th>
-                <th className="px-2 py-2">{t("pages.patientDetail.treatments.colTotal")}</th>
-                <th className="px-2 py-2">{t("pages.patientDetail.treatments.colDentist")}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {items.map((row) => (
-                <tr key={row.id} className="border-b border-slate-100">
-                  <td className="px-2 py-2 text-slate-800">{formatDate(row.createdAt, t("pages.common.empty"), dateLocale)}</td>
-                  <td className="px-2 py-2 text-slate-800">{row.procedure.replace(/_/g, " ")}</td>
-                  <td className="px-2 py-2">
-                    <span className="inline-flex items-center rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-medium text-slate-600">
-                      {row.phase || "Unphased"}
-                    </span>
-                  </td>
-                  <td className="px-2 py-2 text-slate-600">{row.toothIds.join(", ") || t("pages.common.empty")}</td>
-                  <td className="px-2 py-2 text-slate-600">{row.quantity}</td>
-                  <td className="px-2 py-2 text-slate-600">{money(row.unitPrice)}</td>
-                  <td className="px-2 py-2 font-medium text-slate-900">
-                    {money(Number(row.unitPrice) * row.quantity)}
-                  </td>
-                  <td className="px-2 py-2 text-slate-600">
-                    {t("pages.common.drPrefix")} {row.dentist.firstName} {row.dentist.lastName}
-                  </td>
+        <div className="card border border-brand-border overflow-hidden mt-4">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead className="bg-brand-surface-muted border-b border-brand-border">
+                <tr>
+                  <th className="py-3 px-4 text-[10px] font-black uppercase tracking-widest text-brand-muted">Date</th>
+                  <th className="py-3 px-4 text-[10px] font-black uppercase tracking-widest text-brand-muted">Procedure</th>
+                  <th className="py-3 px-4 text-[10px] font-black uppercase tracking-widest text-brand-muted">Phase</th>
+                  <th className="py-3 px-4 text-[10px] font-black uppercase tracking-widest text-brand-muted">Tooth</th>
+                  <th className="py-3 px-4 text-[10px] font-black uppercase tracking-widest text-brand-muted text-right">Qty</th>
+                  <th className="py-3 px-4 text-[10px] font-black uppercase tracking-widest text-brand-muted text-right">Unit Price</th>
+                  <th className="py-3 px-4 text-[10px] font-black uppercase tracking-widest text-brand-muted text-right">Total</th>
+                  <th className="py-3 px-4 text-[10px] font-black uppercase tracking-widest text-brand-muted">Provider</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-brand-border/50 bg-white">
+                {items.map((row) => (
+                  <tr key={row.id} className="hover:bg-brand-surface-soft transition-colors">
+                    <td className="py-3 px-4 text-xs font-bold text-brand-text whitespace-nowrap">{formatDate(row.createdAt, "--", dateLocale)}</td>
+                    <td className="py-3 px-4 text-xs font-bold text-brand-text">{row.procedure.replace(/_/g, " ")}</td>
+                    <td className="py-3 px-4">
+                      <span className="inline-flex items-center px-1.5 py-0.5 rounded-[var(--radius-sm)] border border-brand-border bg-white text-[9px] font-black uppercase tracking-widest text-brand-muted">
+                        {row.phase || "Unphased"}
+                      </span>
+                    </td>
+                    <td className="py-3 px-4 text-xs font-medium text-brand-muted">{row.toothIds.join(", ") || "--"}</td>
+                    <td className="py-3 px-4 text-xs font-medium text-brand-muted tabular-nums text-right">{row.quantity}</td>
+                    <td className="py-3 px-4 text-xs font-medium text-brand-muted tabular-nums text-right">{money(row.unitPrice)}</td>
+                    <td className="py-3 px-4 text-sm font-black text-brand-text tabular-nums text-right tracking-tight">
+                      {money(Number(row.unitPrice) * row.quantity)}
+                    </td>
+                    <td className="py-3 px-4 text-xs font-bold text-brand-muted whitespace-nowrap">
+                      Dr. {row.dentist.firstName} {row.dentist.lastName}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </div>
@@ -197,12 +216,11 @@ function QuickTreatmentEntry({
   dateLocale: string;
   onAdded: () => void;
 }): JSX.Element {
-  const { t } = useTranslation();
   const validAppointments = appointments.filter((a) =>
     ["PENDING", "CONFIRMED", "CHECKED_IN", "IN_PROGRESS"].includes(a.status),
   );
   const [appointmentId, setAppointmentId] = useState(validAppointments[0]?.id ?? "");
-  const [procedure, setProcedure] = useState(() => t("pages.common.consultationDefault"));
+  const [procedure, setProcedure] = useState("General Consultation");
   const [quantity, setQuantity] = useState(1);
   const [unitPrice, setUnitPrice] = useState(500);
   const [toothIds, setToothIds] = useState("");
@@ -212,7 +230,7 @@ function QuickTreatmentEntry({
 
   async function save(): Promise<void> {
     if (!appointmentId) {
-      toast.error(t("pages.patientDetail.treatments.toastSelectAppt"));
+      toast.error("Please select an appointment.");
       return;
     }
     setBusy(true);
@@ -232,84 +250,105 @@ function QuickTreatmentEntry({
       setPhase("");
       setToothIds("");
       onAdded();
-      toast.success(t("pages.patientDetail.treatments.toastAdded"));
+      toast.success("Treatment logged.");
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : t("pages.patientDetail.treatments.toastAddFailed"));
+      toast.error(e instanceof Error ? e.message : "Failed to log treatment.");
     } finally {
       setBusy(false);
     }
   }
 
   return (
-    <section className="rounded-xl border border-slate-200 bg-slate-50/60 p-3">
-      <p className="text-xs font-bold uppercase tracking-wider text-slate-700">
-        {t("pages.patientDetail.treatments.quickTitle")}
-      </p>
-      <div className="mt-2 grid grid-cols-1 gap-2 md:grid-cols-3">
-        <select
-          value={appointmentId}
-          onChange={(e) => setAppointmentId(e.target.value)}
-          className="rounded border border-slate-300 px-2 py-1.5 text-sm"
-        >
-          <option value="">{t("pages.patientDetail.treatments.selectAppt")}</option>
-          {validAppointments.map((a) => (
-            <option key={a.id} value={a.id}>
-              {new Date(a.scheduledAt).toLocaleDateString(dateLocale, { timeZone: "Asia/Manila" })} ·{" "}
-              {a.type ?? t("pages.patientDetail.appointments.apptTypeGeneral")} ·{" "}
-              {t(`pages.dashboard.queueStatus.${a.status}`, { defaultValue: a.status })}
-            </option>
-          ))}
-        </select>
-        <input
-          value={procedure}
-          onChange={(e) => setProcedure(e.target.value)}
-          placeholder={t("pages.patientDetail.treatments.placeholderProcedure")}
-          className="rounded border border-slate-300 px-2 py-1.5 text-sm"
-        />
-        <input
-          value={toothIds}
-          onChange={(e) => setToothIds(e.target.value)}
-          placeholder={t("pages.patientDetail.treatments.placeholderToothIds")}
-          className="rounded border border-slate-300 px-2 py-1.5 text-sm"
-        />
-        <input
-          value={phase}
-          onChange={(e) => setPhase(e.target.value)}
-          placeholder="Phase (e.g. Phase 1)"
-          className="rounded border border-slate-300 px-2 py-1.5 text-sm"
-        />
-        <input
-          type="number"
-          min={1}
-          value={quantity}
-          onChange={(e) => setQuantity(Number(e.target.value) || 1)}
-          className="rounded border border-slate-300 px-2 py-1.5 text-sm"
-        />
-        <input
-          type="number"
-          min={0}
-          step="0.01"
-          value={unitPrice}
-          onChange={(e) => setUnitPrice(Number(e.target.value) || 0)}
-          className="rounded border border-slate-300 px-2 py-1.5 text-sm"
-        />
-        <input
-          value={notes}
-          onChange={(e) => setNotes(e.target.value)}
-          placeholder={t("pages.patientDetail.treatments.placeholderNotes")}
-          className="rounded border border-slate-300 px-2 py-1.5 text-sm"
-        />
+    <div className="card p-4 bg-white border border-brand-border">
+      <div className="flex items-center gap-2 mb-4">
+         <Plus className="text-brand-primary" size={16} />
+         <p className="text-xs font-black uppercase tracking-widest text-brand-text">
+           Quick Log Treatment
+         </p>
       </div>
-      <div className="mt-2 flex justify-end">
-        <button
-          type="button"
-          disabled={busy}
-          onClick={() => void save()}
-          className="rounded bg-teal-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-teal-700 disabled:opacity-60"
-        >
-          {t("pages.patientDetail.treatments.addTreatment")}
-        </button>
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-3">
+        <div className="md:col-span-3 space-y-1">
+           <label className="text-[9px] font-black uppercase tracking-widest text-brand-muted ml-1">Visit</label>
+           <select
+             value={appointmentId}
+             onChange={(e) => setAppointmentId(e.target.value)}
+             className="w-full h-9 rounded-[var(--radius-sm)] bg-white px-3 text-xs font-medium border border-brand-border outline-none focus:ring-1 focus:ring-brand-primary transition-all"
+           >
+             <option value="">Select Appointment...</option>
+             {validAppointments.map((a) => (
+               <option key={a.id} value={a.id}>
+                 {new Date(a.scheduledAt).toLocaleDateString()} · {a.type ?? "General"}
+               </option>
+             ))}
+           </select>
+        </div>
+        <div className="md:col-span-3 space-y-1">
+           <label className="text-[9px] font-black uppercase tracking-widest text-brand-muted ml-1">Procedure</label>
+           <input
+             value={procedure}
+             onChange={(e) => setProcedure(e.target.value)}
+             placeholder="e.g. Prophylaxis"
+             className="w-full h-9 rounded-[var(--radius-sm)] bg-white px-3 text-xs font-medium border border-brand-border outline-none focus:ring-1 focus:ring-brand-primary transition-all"
+           />
+        </div>
+        <div className="md:col-span-2 space-y-1">
+           <label className="text-[9px] font-black uppercase tracking-widest text-brand-muted ml-1">Teeth (Optional)</label>
+           <input
+             value={toothIds}
+             onChange={(e) => setToothIds(e.target.value)}
+             placeholder="e.g. 14, 15"
+             className="w-full h-9 rounded-[var(--radius-sm)] bg-white px-3 text-xs font-medium border border-brand-border outline-none focus:ring-1 focus:ring-brand-primary transition-all"
+           />
+        </div>
+        <div className="md:col-span-2 space-y-1">
+           <label className="text-[9px] font-black uppercase tracking-widest text-brand-muted ml-1">Phase (Optional)</label>
+           <input
+             value={phase}
+             onChange={(e) => setPhase(e.target.value)}
+             placeholder="e.g. Phase 1"
+             className="w-full h-9 rounded-[var(--radius-sm)] bg-white px-3 text-xs font-medium border border-brand-border outline-none focus:ring-1 focus:ring-brand-primary transition-all"
+           />
+        </div>
+        <div className="md:col-span-1 space-y-1">
+           <label className="text-[9px] font-black uppercase tracking-widest text-brand-muted ml-1">Qty</label>
+           <input
+             type="number"
+             min={1}
+             value={quantity}
+             onChange={(e) => setQuantity(Number(e.target.value) || 1)}
+             className="w-full h-9 rounded-[var(--radius-sm)] bg-white px-3 text-xs font-medium border border-brand-border outline-none focus:ring-1 focus:ring-brand-primary transition-all tabular-nums"
+           />
+        </div>
+        <div className="md:col-span-1 space-y-1">
+           <label className="text-[9px] font-black uppercase tracking-widest text-brand-muted ml-1">Price</label>
+           <input
+             type="number"
+             min={0}
+             step="0.01"
+             value={unitPrice}
+             onChange={(e) => setUnitPrice(Number(e.target.value) || 0)}
+             className="w-full h-9 rounded-[var(--radius-sm)] bg-white px-3 text-xs font-medium border border-brand-border outline-none focus:ring-1 focus:ring-brand-primary transition-all tabular-nums"
+           />
+        </div>
+        <div className="md:col-span-10 space-y-1">
+           <input
+             value={notes}
+             onChange={(e) => setNotes(e.target.value)}
+             placeholder="Additional clinical notes..."
+             className="w-full h-9 rounded-[var(--radius-sm)] bg-white px-3 text-xs font-medium border border-brand-border outline-none focus:ring-1 focus:ring-brand-primary transition-all"
+           />
+        </div>
+        <div className="md:col-span-2 flex items-end">
+          <button
+            type="button"
+            disabled={busy}
+            onClick={() => void save()}
+            className="btn-primary w-full h-9 text-xs flex justify-center items-center disabled:opacity-50"
+          >
+            {busy ? "Saving..." : "Log Treatment"}
+          </button>
+        </div>
       </div>
-    </section>
+    </div>
   );
 }

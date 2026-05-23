@@ -53,8 +53,8 @@ const ACCENTS: Record<
   slate: {
     iconBg: "from-slate-700 to-slate-900",
     iconText: "text-white",
-    ring: "ring-slate-200 ",
-    dotBg: "bg-slate-500/80",
+    ring: "ring-brand-border ",
+    dotBg: "bg-brand-surface-soft0/80",
   },
   indigo: {
     iconBg: "from-indigo-500 to-teal-500",
@@ -73,14 +73,14 @@ export function SectionEyebrow({
   const a = ACCENTS[accent];
   return (
     <div
-      className={`inline-flex items-center gap-2 rounded-full border border-slate-200/70 bg-white/80 py-1 pl-1 pr-3 shadow-[0_1px_2px_rgba(15,23,42,0.04)] backdrop-blur-md ${ align === "center" ? "mx-auto" : "" }`}
+      className={`inline-flex items-center gap-2 rounded-full border border-brand-border/70 bg-brand-surface/80 py-1 pl-1 pr-3 shadow-[0_1px_2px_rgba(15,23,42,0.04)] backdrop-blur-md ${ align === "center" ? "mx-auto" : "" }`}
     >
       <span
         className={`inline-flex h-5 w-5 items-center justify-center rounded-full bg-gradient-to-br ${a.iconBg} ${a.iconText} ring-1 ${a.ring} shadow-sm`}
       >
         <Icon className="h-3 w-3" />
       </span>
-      <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-700">
+      <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-brand-text">
         {label}
       </span>
     </div>

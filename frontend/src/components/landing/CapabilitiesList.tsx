@@ -73,11 +73,11 @@ export function CapabilitiesList(): JSX.Element {
     <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
       <div>
         <SectionEyebrow label={t("landing.capEyebrow")} icon={IconGrid} accent="emerald" />
-        <h2 className="mt-3 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+        <h2 className="mt-3 text-3xl font-bold tracking-tight text-brand-text sm:text-4xl">
           {t("landing.capTitle")}
         </h2>
-        <p className="mt-4 text-slate-600">{t("landing.capSubtitle")}</p>
-        <div className="mt-6 inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-xs font-semibold text-white">
+        <p className="mt-4 text-brand-muted">{t("landing.capSubtitle")}</p>
+        <div className="mt-6 inline-flex items-center gap-2 rounded-full bg-brand-surface px-4 py-2 text-xs font-semibold text-white">
           <span className="flex h-2 w-2 items-center justify-center">
             <span className="h-2 w-2 animate-ping rounded-full bg-teal-400 opacity-70" />
             <span className="absolute h-1.5 w-1.5 rounded-full bg-teal-400" />
@@ -88,7 +88,7 @@ export function CapabilitiesList(): JSX.Element {
 
       <div className="relative">
         <div className="absolute -inset-4 rounded-3xl bg-gradient-to-br from-teal-100/40 to-sky-100/40 blur-2xl" />
-        <div className="relative rounded-3xl border border-slate-200 bg-white/90 p-6 shadow-sm backdrop-blur sm:p-8">
+        <div className="relative rounded-3xl border border-brand-border bg-brand-surface/90 p-6 shadow-sm backdrop-blur sm:p-8">
           <ul className="divide-y divide-slate-100">
             {rows.map((r, i) => (
               <motion.li
@@ -103,8 +103,8 @@ export function CapabilitiesList(): JSX.Element {
                   {r.icon}
                 </span>
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm font-bold text-slate-900">{r.title}</p>
-                  <p className="mt-0.5 text-sm leading-relaxed text-slate-600">{r.desc}</p>
+                  <p className="text-sm font-bold text-brand-text">{r.title}</p>
+                  <p className="mt-0.5 text-sm leading-relaxed text-brand-muted">{r.desc}</p>
                 </div>
               </motion.li>
             ))}

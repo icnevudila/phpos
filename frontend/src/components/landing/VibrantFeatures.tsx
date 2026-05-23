@@ -16,24 +16,24 @@ export function VibrantFeatures(): JSX.Element {
   ];
 
   return (
-    <section className="py-24 bg-slate-50/50">
+    <section className="py-24 bg-brand-surface-soft/50">
       <div className="mx-auto max-w-7xl px-6">
         <div className="grid lg:grid-cols-2 gap-20 items-center">
           {/* Phone Mockup Left */}
           <div className="relative order-2 lg:order-1 flex justify-center">
-             <div className="relative w-[300px] h-[600px] bg-white rounded-[3rem] p-4 shadow-2xl ring-1 ring-slate-100">
-                <div className="h-full w-full bg-white rounded-[2.2rem] overflow-hidden">
+             <div className="relative w-[300px] h-[600px] bg-brand-surface rounded-[3rem] p-4 shadow-2xl ring-1 ring-brand-border">
+                <div className="h-full w-full bg-brand-surface rounded-[2.2rem] overflow-hidden">
                    <img src="https://img.freepik.com/premium-photo/modern-responsive-web-design-multiple-devices-isolated-white-background_1020495-23425.jpg" className="w-full h-full object-cover" alt="App Mockup" />
                 </div>
-                <div className="absolute left-1/2 top-4 w-20 h-4 -translate-x-1/2 bg-white rounded-full" />
+                <div className="absolute left-1/2 top-4 w-20 h-4 -translate-x-1/2 bg-brand-surface rounded-full" />
              </div>
           </div>
 
           {/* Features List Right */}
           <div className="order-1 lg:order-2 space-y-12">
              <div className="space-y-6">
-                <h2 className="text-4xl font-black text-slate-900 leading-tight">POWERFUL FEATURES FOR MODERN CLINICS</h2>
-                <p className="text-lg text-slate-500 font-medium">Everything you need to manage your patients and operations in one place.</p>
+                <h2 className="text-4xl font-black text-brand-text leading-tight">POWERFUL FEATURES FOR MODERN CLINICS</h2>
+                <p className="text-lg text-brand-muted font-medium">Everything you need to manage your patients and operations in one place.</p>
              </div>
 
              <div className="grid sm:grid-cols-2 gap-8">
@@ -48,7 +48,7 @@ export function VibrantFeatures(): JSX.Element {
                      <div className="h-12 w-12 shrink-0 rounded-full bg-blue-600 flex items-center justify-center text-xl text-white shadow-lg shadow-blue-500/20">
                         {f.icon}
                      </div>
-                     <span className="font-bold text-slate-900 uppercase tracking-tight">{f.title}</span>
+                     <span className="font-bold text-brand-text uppercase tracking-tight">{f.title}</span>
                   </motion.div>
                 ))}
              </div>

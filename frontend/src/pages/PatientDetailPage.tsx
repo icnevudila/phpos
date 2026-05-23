@@ -211,8 +211,8 @@ export function PatientDetailPage(): JSX.Element {
   const { data, isLoading: loading } = useQuery({
     queryKey: ["patient", id],
     queryFn: async () => {
-      const res = await api.get<{ data: PatientFull }>(`/patients/${id}`);
-      return res.data.data;
+      const res = await api.get<any, { data: PatientFull }>(`/patients/${id}`);
+      return res.data;
     },
     enabled: !!id,
   });
@@ -232,8 +232,8 @@ export function PatientDetailPage(): JSX.Element {
   const { data: teeth = [], isLoading: teethLoading } = useQuery({
     queryKey: ["patientTeeth", id],
     queryFn: async () => {
-      const res = await api.get<{ data: Tooth[] }>(`/patients/${id}/teeth`);
-      return res.data.data;
+      const res = await api.get<any, { data: Tooth[] }>(`/patients/${id}/teeth`);
+      return res.data;
     },
     enabled: !!id && tab === "chart",
   });
@@ -241,8 +241,8 @@ export function PatientDetailPage(): JSX.Element {
   const { data: treatments = [] } = useQuery({
     queryKey: ["patientTreatments", id],
     queryFn: async () => {
-      const res = await api.get<{ data: PatientTreatmentRow[] }>(`/patients/${id}/treatments`);
-      return res.data.data;
+      const res = await api.get<any, { data: PatientTreatmentRow[] }>(`/patients/${id}/treatments`);
+      return res.data;
     },
     enabled: !!id && tab === "treatments",
   });
@@ -273,6 +273,14 @@ export function PatientDetailPage(): JSX.Element {
     [t]
   );
 
+  const navGroups = useMemo(() => [
+    { title: "Overview", items: ["overview"] },
+    { title: "Clinical", items: ["medical", "soap", "chart", "perio", "advanced-perio", "tmj", "xray", "intraoral", "prescriptions", "lab"] },
+    { title: "Treatment", items: ["treatments", "appointments"] },
+    { title: "Money", items: ["invoices", "hmo"] },
+    { title: "History", items: ["treatment-timeline", "documents", "before-after", "referral", "family", "consents"] }
+  ], []);
+
   if (!id) {
     return (
       <div className="flex h-[50vh] flex-col items-center justify-center space-y-4">
@@ -285,7 +293,7 @@ export function PatientDetailPage(): JSX.Element {
   }
 
   return (
-    <div className="mx-auto max-w-[1600px] space-y-6 px-4 pb-20 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-[1360px] space-y-6 px-4 pb-20 sm:px-6 lg:px-8">
       {/* Navigation Header */}
       <div className="flex items-center justify-between">
         <Link 
@@ -341,38 +349,55 @@ export function PatientDetailPage(): JSX.Element {
           />
 
           {/* Main Workspace Area */}
-          <div className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
-            {/* Tab Navigation */}
-            <div className="flex items-center overflow-x-auto border-b border-slate-100 bg-slate-50/50 px-4">
-              <div className="flex gap-1 py-2">
-                {tabDefs.map((def) => {
-                  const isActive = tab === def.key;
-                  return (
-                    <button
-                      key={def.key}
-                      type="button"
-                      role="tab"
-                      data-testid={`patient-tab-${def.key}`}
-                      aria-selected={isActive}
-                      onClick={() => selectTab(def.key)}
-                      className={`relative flex items-center gap-2 whitespace-nowrap rounded-xl px-4 py-2 text-xs font-semibold uppercase tracking-wide transition-all ${isActive ? "bg-white text-teal-600 shadow-sm" : "text-slate-400 hover:bg-white/70 hover:text-slate-600"}`}
-                    >
-                      <span className={isActive ? "text-teal-500" : "text-slate-300"}>{def.icon}</span>
-                      {def.label}
-                      {isActive && (
-                        <motion.div 
-                          layoutId="activeTab"
-                          className="absolute -bottom-[9px] left-1/2 h-1 w-6 -translate-x-1/2 rounded-t-full bg-teal-500"
-                        />
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
+          <div className="grid grid-cols-1 md:grid-cols-[240px_1fr] gap-6 items-start">
+            
+            {/* Mobile Navigation */}
+            <div className="block md:hidden card p-2">
+              <select 
+                className="w-full bg-brand-surface text-brand-text text-sm font-bold p-3 rounded-lg border border-brand-border outline-none focus:ring-2 focus:ring-brand-primary"
+                value={tab}
+                onChange={(e) => selectTab(e.target.value as TabKey)}
+              >
+                {navGroups.map((group) => (
+                  <optgroup key={group.title} label={group.title}>
+                    {group.items.map((key) => {
+                      const def = tabDefs.find(t => t.key === key);
+                      if (!def) return null;
+                      return <option key={key} value={key}>{def.label}</option>;
+                    })}
+                  </optgroup>
+                ))}
+              </select>
             </div>
 
+            {/* Desktop Vertical Navigation */}
+            <nav className="hidden md:flex flex-col gap-6 sticky top-24">
+              {navGroups.map((group) => (
+                <div key={group.title} className="flex flex-col gap-1">
+                  <h3 className="px-3 text-[10px] font-black uppercase tracking-widest text-brand-muted mb-1">
+                    {group.title}
+                  </h3>
+                  {group.items.map((key) => {
+                    const def = tabDefs.find(t => t.key === key);
+                    if (!def) return null;
+                    const isActive = tab === key;
+                    return (
+                      <button
+                        key={key}
+                        onClick={() => selectTab(key as TabKey)}
+                        className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-bold transition-all ${isActive ? "bg-brand-surface text-brand-primary shadow-sm border border-brand-border" : "text-brand-muted hover:bg-brand-surface hover:text-brand-text border border-transparent"}`}
+                      >
+                        <span className={isActive ? "text-brand-primary" : "opacity-70"}>{def.icon}</span>
+                        {def.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              ))}
+            </nav>
+
             {/* Tab Content Area */}
-            <div className="min-h-[600px] p-4 sm:p-6 lg:p-8">
+            <div className="card min-h-[600px] p-6 lg:p-10">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={tab}

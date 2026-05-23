@@ -20,16 +20,16 @@ function BentoCard({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ delay, duration: 0.5 }}
-      className={`group relative overflow-hidden rounded-[2.5rem] border border-teal-50 bg-white p-10 shadow-[0_32px_64px_-16px_rgba(16,185,129,0.06)] transition-all hover:scale-[1.02] hover:shadow-[0_48px_80px_-20px_rgba(16,185,129,0.12)] ${className}`}
+      className={`group relative overflow-hidden rounded-[2.5rem] border border-teal-50 bg-brand-surface p-10 shadow-[0_32px_64px_-16px_rgba(16,185,129,0.06)] transition-all hover:scale-[1.02] hover:shadow-[0_48px_80px_-20px_rgba(16,185,129,0.12)] ${className}`}
     >
       <div className="relative z-10">
         <div className="mb-8 flex h-16 w-16 items-center justify-center rounded-2xl bg-teal-50 text-4xl shadow-inner group-hover:scale-110 transition-transform duration-500">
           {icon}
         </div>
-        <h3 className="text-2xl font-black tracking-tighter text-slate-900 uppercase leading-none">
+        <h3 className="text-2xl font-black tracking-tighter text-brand-text uppercase leading-none">
           {title}
         </h3>
-        <p className="mt-4 text-base font-semibold leading-relaxed text-slate-500">
+        <p className="mt-4 text-base font-semibold leading-relaxed text-brand-muted">
           {desc}
         </p>
       </div>
@@ -45,13 +45,13 @@ export function WallOfLove(): JSX.Element {
   const { t } = useTranslation();
 
   return (
-    <section className="py-32 bg-white">
+    <section className="py-32 bg-brand-surface">
       <div className="mx-auto max-w-7xl px-6">
         <div className="mb-20 text-center lg:text-left">
            <div className="inline-flex items-center gap-2 rounded-full bg-teal-50 px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-teal-600 ring-1 ring-teal-100">
               {t("landing.featurePreviewBadge")}
            </div>
-           <h2 className="mt-6 text-5xl font-black tracking-tighter text-slate-900 sm:text-6xl uppercase leading-[1.05]">
+           <h2 className="mt-6 text-5xl font-black tracking-tighter text-brand-text sm:text-6xl uppercase leading-[1.05]">
               {t("landing.capTitle", { defaultValue: "One platform, every workflow." })}
            </h2>
         </div>

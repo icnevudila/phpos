@@ -160,33 +160,37 @@ export function SettingsPage(): JSX.Element {
         </div>
       </div>
 
-      {/* Tab Nav */}
-      <div
-        className="flex items-center gap-1 overflow-x-auto border-b border-slate-200 pb-0 [-webkit-overflow-scrolling:touch]"
-        role="tablist"
-        aria-label={t("pages.settings.title")}
-      >
-        {tabs.filter((tabItem) => tabItem.show).map((tabItem) => {
-          const Icon = tabItem.icon;
-          const active = tab === tabItem.id;
-          return (
-            <button
-              key={tabItem.id}
-              type="button"
-              role="tab"
-              aria-selected={active}
-              aria-label={t("pages.settings.tabAria", { label: tabItem.label })}
-              onClick={() => setTab(tabItem.id as Tab)}
-              className={`flex shrink-0 items-center gap-2 px-4 py-2.5 text-sm font-semibold border-b-2 -mb-px transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 ${ active ? "border-teal-500 text-teal-600" : "border-transparent text-slate-500 hover:text-slate-700" }`}
-            >
-              <Icon size={16} aria-hidden />
-              <span className={active ? "block" : "hidden sm:block"}>{tabItem.label}</span>
-            </button>
-          );
-        })}
-      </div>
+      <div className="flex flex-col md:flex-row gap-8 mt-6">
+        {/* Left Sidebar Nav */}
+        <aside className="w-full md:w-64 shrink-0">
+          <nav
+            className="flex md:flex-col gap-2 overflow-x-auto md:overflow-visible pb-4 md:pb-0"
+            role="tablist"
+            aria-label={t("pages.settings.title")}
+          >
+            {tabs.filter((tabItem) => tabItem.show).map((tabItem) => {
+              const Icon = tabItem.icon;
+              const active = tab === tabItem.id;
+              return (
+                <button
+                  key={tabItem.id}
+                  type="button"
+                  role="tab"
+                  aria-selected={active}
+                  aria-label={t("pages.settings.tabAria", { label: tabItem.label })}
+                  onClick={() => setTab(tabItem.id as Tab)}
+                  className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 whitespace-nowrap ${ active ? "bg-teal-50 text-teal-700 shadow-sm border border-teal-100" : "text-slate-600 hover:bg-slate-50 hover:text-slate-900 border border-transparent" }`}
+                >
+                  <Icon size={18} className={active ? "text-teal-600" : "text-slate-400"} aria-hidden />
+                  <span>{tabItem.label}</span>
+                </button>
+              );
+            })}
+          </nav>
+        </aside>
 
-      <main className="min-w-0">
+        {/* Right Content */}
+        <main className="flex-1 min-w-0">
         <AnimatePresence mode="wait">
           <motion.div
             key={tab}
@@ -410,6 +414,7 @@ export function SettingsPage(): JSX.Element {
           </motion.div>
         </AnimatePresence>
       </main>
+      </div>
     </div>
   );
 }

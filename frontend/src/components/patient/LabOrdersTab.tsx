@@ -1,5 +1,4 @@
 import { useState, type ReactNode } from "react";
-import { useTranslation } from "react-i18next";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   FlaskConical,
@@ -12,21 +11,9 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
-import { ListEmptyState } from "../ListEmptyState";
 import { listLabOrders, createLabOrder, updateLabOrder } from "../../services/labOrder";
 
-const LAB_NS = "pages.patientDetail.labOrders";
-
-const STATUS_I18N: Record<string, string> = {
-  ORDERED: `${LAB_NS}.statusOrdered`,
-  SENT_TO_LAB: `${LAB_NS}.statusSentToLab`,
-  RECEIVED: `${LAB_NS}.statusReceivedFull`,
-  COMPLETED: `${LAB_NS}.statusCompleted`,
-  CANCELLED: `${LAB_NS}.statusCancelled`,
-};
-
 export function LabOrdersTab({ patientId, canWrite }: { patientId: string; canWrite: boolean }) {
-  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [isAdding, setIsAdding] = useState(false);
 
@@ -39,39 +26,35 @@ export function LabOrdersTab({ patientId, canWrite }: { patientId: string; canWr
     mutationFn: ({ id, status }: { id: string; status: string }) => updateLabOrder(id, { status }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["labOrders", patientId] });
-      toast.success(t(`${LAB_NS}.statusUpdated`));
+      toast.success("Lab order status updated.");
     },
-    onError: () => toast.error(t(`${LAB_NS}.statusUpdateFailed`)),
+    onError: () => toast.error("Failed to update status."),
   });
 
   if (isLoading) {
     return (
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="py-20 text-center text-slate-400 font-black uppercase tracking-widest animate-pulse"
-      >
-        {t(`${LAB_NS}.loading`)}
-      </motion.div>
+      <div className="card p-8 flex flex-col items-center justify-center text-center bg-brand-surface border border-brand-border">
+        <p className="text-[10px] font-bold text-brand-muted uppercase tracking-widest animate-pulse">Loading orders...</p>
+      </div>
     );
   }
 
   return (
-    <motion.div className="space-y-10" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+    <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} className="space-y-1">
-          <h3 className="text-xl font-black text-slate-900 uppercase tracking-tight">
-            {t(`${LAB_NS}.title`)}
+        <div className="space-y-1">
+          <h3 className="text-sm font-bold text-brand-text uppercase tracking-widest">
+            Laboratory Orders
           </h3>
-          <p className="text-xs font-bold text-slate-400">{t(`${LAB_NS}.subtitle`)}</p>
-        </motion.div>
+          <p className="text-xs text-brand-muted">Track external lab cases, prosthetics, and appliances.</p>
+        </div>
         {canWrite && (
           <button
             type="button"
             onClick={() => setIsAdding(true)}
-            className="flex h-12 items-center gap-2 rounded-2xl bg-indigo-600 px-6 text-xs font-black uppercase tracking-widest text-white shadow-lg shadow-indigo-600/20 transition-all hover:scale-105 active:scale-95"
+            className="btn-primary flex items-center gap-2 h-8 px-3 text-xs"
           >
-            <Plus size={18} /> {t(`${LAB_NS}.newCase`)}
+            <Plus size={14} /> New Case
           </button>
         )}
       </div>
@@ -97,20 +80,11 @@ export function LabOrdersTab({ patientId, canWrite }: { patientId: string; canWr
       </AnimatePresence>
 
       {orders.length === 0 ? (
-        <div className="rounded-[3rem] border-2 border-dashed border-slate-200 bg-white/50">
-          <ListEmptyState
-            icon="box"
-            title={t(`${LAB_NS}.empty`)}
-            description={t(`${LAB_NS}.emptyHint`)}
-            primary={
-              canWrite
-                ? { kind: "button", onClick: () => setIsAdding(true), label: t(`${LAB_NS}.newCase`) }
-                : undefined
-            }
-          />
+        <div className="card p-8 flex flex-col items-center justify-center text-center bg-brand-surface-soft border border-brand-border">
+          <p className="text-sm font-bold text-brand-muted uppercase tracking-widest">No Lab Orders Found</p>
         </div>
       ) : (
-        <motion.div className="grid gap-6" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+        <div className="space-y-4">
           {orders.map((order) => (
             <LabOrderCard
               key={order.id}
@@ -118,9 +92,9 @@ export function LabOrdersTab({ patientId, canWrite }: { patientId: string; canWr
               onStatusUpdate={(status) => updateStatusMutation.mutate({ id: order.id, status })}
             />
           ))}
-        </motion.div>
+        </div>
       )}
-    </motion.div>
+    </div>
   );
 }
 
@@ -142,93 +116,90 @@ function LabOrderCard({
   };
   onStatusUpdate: (s: string) => void;
 }) {
-  const { t, i18n } = useTranslation();
   const statusStyles: Record<string, string> = {
-    ORDERED: "bg-slate-100 text-slate-600 border-slate-200",
-    SENT_TO_LAB: "bg-amber-100 text-amber-600 border-amber-200",
-    RECEIVED: "bg-sky-100 text-sky-600 border-sky-200",
-    COMPLETED: "bg-teal-100 text-teal-600 border-teal-200",
-    CANCELLED: "bg-rose-100 text-rose-600 border-rose-200",
+    ORDERED: "bg-brand-surface text-brand-muted border-brand-border",
+    SENT_TO_LAB: "bg-amber-50 text-amber-700 border-amber-200",
+    RECEIVED: "bg-sky-50 text-sky-700 border-sky-200",
+    COMPLETED: "bg-teal-50 text-teal-800 border-teal-200",
+    CANCELLED: "bg-rose-50 text-rose-700 border-rose-200",
   };
-  const statusKey = STATUS_I18N[order.status];
-  const statusLabel = statusKey ? t(statusKey) : order.status.replace(/_/g, " ");
-  const locale = i18n.language?.startsWith("tr") ? "tr-PH" : "en-PH";
-  const orderDateStr = new Date(order.orderDate).toLocaleDateString(locale);
+  
+  const statusLabel = order.status.replace(/_/g, " ");
+  const orderDateStr = new Date(order.orderDate).toLocaleDateString();
 
   return (
-    <div className="group relative flex flex-col md:flex-row gap-8 rounded-[2.5rem] bg-white p-8 shadow-xl shadow-slate-200/40 ring-1 ring-slate-100 transition-all hover:shadow-2xl">
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex-1 space-y-6">
-        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="flex items-start justify-between">
-          <div className="space-y-1">
+    <div className="card border border-brand-border bg-white flex flex-col lg:flex-row overflow-hidden hover:bg-brand-surface-soft transition-colors">
+      <div className="flex-1 p-5 space-y-4">
+        <div className="flex items-start justify-between">
+          <div className="space-y-2">
             <span
-              className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border ${statusStyles[order.status] ?? statusStyles.ORDERED}`}
+              className={`inline-flex px-2 py-0.5 rounded-[var(--radius-sm)] border text-[10px] font-black uppercase tracking-widest ${statusStyles[order.status] ?? statusStyles.ORDERED}`}
             >
               {statusLabel}
             </span>
-            <h4 className="text-2xl font-black text-slate-900 tracking-tight pt-2">
+            <h4 className="text-base font-bold text-brand-text">
               {order.itemDescription}
             </h4>
-            <div className="flex items-center gap-4 text-[10px] font-black uppercase tracking-widest text-slate-400">
-              <span className="flex items-center gap-1">
-                <User size={12} /> {order.dentist.firstName} {order.dentist.lastName}
+            <div className="flex items-center gap-3 text-[10px] font-bold uppercase tracking-widest text-brand-muted">
+              <span className="flex items-center gap-1.5">
+                <User size={12} /> Dr. {order.dentist.firstName} {order.dentist.lastName}
               </span>
-              <span className="h-1 w-1 rounded-full bg-slate-200" />
-              <span className="flex items-center gap-1">
-                <Clock size={12} /> {t(`${LAB_NS}.orderedOn`, { date: orderDateStr })}
+              <span className="flex items-center gap-1.5">
+                <Clock size={12} /> Ordered: {orderDateStr}
               </span>
             </div>
           </div>
 
           {order.dueDate && (
-            <div className="text-right">
-              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
-                {t(`${LAB_NS}.targetDelivery`)}
+            <div className="text-right bg-brand-surface-soft border border-brand-border px-3 py-1.5 rounded-[var(--radius-sm)]">
+              <p className="text-[10px] font-black uppercase tracking-widest text-brand-muted mb-0.5">
+                Target Delivery
               </p>
-              <p className="text-sm font-black text-indigo-600">
-                {new Date(order.dueDate).toLocaleDateString(locale)}
+              <p className="text-xs font-bold text-brand-text">
+                {new Date(order.dueDate).toLocaleDateString()}
               </p>
             </div>
           )}
-        </motion.div>
+        </div>
 
-        <div className="flex flex-wrap gap-3">
-          {order.labName && <MetaTag label={t(`${LAB_NS}.metaLab`)} value={order.labName} icon={<FlaskConical size={12} />} />}
-          {order.shade && <MetaTag label={t(`${LAB_NS}.metaShade`)} value={order.shade} />}
-          {order.mould && <MetaTag label={t(`${LAB_NS}.metaMould`)} value={order.mould} />}
+        <div className="flex flex-wrap gap-2">
+          {order.labName && <MetaTag label="Lab" value={order.labName} icon={<FlaskConical size={12} />} />}
+          {order.shade && <MetaTag label="Shade" value={order.shade} />}
+          {order.mould && <MetaTag label="Mould" value={order.mould} />}
         </div>
 
         {order.notes && (
-          <div className="p-4 bg-slate-50 rounded-2xl text-xs font-medium text-slate-500 italic">
-            &ldquo;{order.notes}&rdquo;
+          <div className="p-3 bg-brand-surface-soft border border-brand-border/50 rounded-[var(--radius-sm)] text-xs text-brand-text font-medium leading-relaxed">
+            "{order.notes}"
           </div>
         )}
-      </motion.div>
+      </div>
 
-      <div className="md:w-48 flex md:flex-col justify-center gap-2 border-t md:border-t-0 md:border-l border-slate-50 pt-6 md:pt-0 md:pl-8">
+      <div className="lg:w-48 flex lg:flex-col gap-1 p-3 border-t lg:border-t-0 lg:border-l border-brand-border bg-brand-surface-soft">
         <StatusButton
           active={order.status === "SENT_TO_LAB"}
           onClick={() => onStatusUpdate("SENT_TO_LAB")}
           icon={<Truck size={14} />}
-          label={t(`${LAB_NS}.statusSent`)}
+          label="Sent to Lab"
         />
         <StatusButton
           active={order.status === "RECEIVED"}
           onClick={() => onStatusUpdate("RECEIVED")}
           icon={<Clock size={14} />}
-          label={t(`${LAB_NS}.statusReceived`)}
+          label="Received"
         />
         <StatusButton
           active={order.status === "COMPLETED"}
           onClick={() => onStatusUpdate("COMPLETED")}
           icon={<CheckCircle2 size={14} />}
-          label={t(`${LAB_NS}.statusDone`)}
+          label="Completed"
           tone="emerald"
         />
         <StatusButton
           active={order.status === "CANCELLED"}
           onClick={() => onStatusUpdate("CANCELLED")}
           icon={<XCircle size={14} />}
-          label={t(`${LAB_NS}.statusVoid`)}
+          label="Cancelled"
           tone="rose"
         />
       </div>
@@ -238,15 +209,11 @@ function LabOrderCard({
 
 function MetaTag({ label, value, icon }: { label: string; value: string; icon?: ReactNode }) {
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-50 ring-1 ring-slate-100"
-    >
-      {icon && <span className="text-slate-400">{icon}</span>}
-      <span className="text-[10px] font-black uppercase text-slate-400">{label}:</span>
-      <span className="text-[10px] font-black text-slate-900 uppercase tracking-widest">{value}</span>
-    </motion.div>
+    <div className="flex items-center gap-1.5 px-2 py-1 rounded-[var(--radius-sm)] bg-brand-surface border border-brand-border">
+      {icon && <span className="text-brand-muted">{icon}</span>}
+      <span className="text-[10px] font-black uppercase text-brand-muted">{label}:</span>
+      <span className="text-[10px] font-bold text-brand-text uppercase tracking-widest">{value}</span>
+    </div>
   );
 }
 
@@ -264,21 +231,21 @@ function StatusButton({
   tone?: "indigo" | "emerald" | "rose";
 }) {
   const tones: Record<string, string> = {
-    indigo: "bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white",
-    emerald: "bg-teal-50 text-teal-600 hover:bg-teal-600 hover:text-white",
-    rose: "bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white",
+    indigo: "bg-white text-brand-muted hover:bg-brand-surface hover:text-brand-text border-transparent",
+    emerald: "bg-white text-brand-muted hover:bg-teal-50 hover:text-teal-700 border-transparent",
+    rose: "bg-white text-brand-muted hover:bg-rose-50 hover:text-rose-700 border-transparent",
   };
   const actives: Record<string, string> = {
-    indigo: "bg-indigo-600 text-white shadow-lg shadow-indigo-600/20",
-    emerald: "bg-teal-600 text-white shadow-lg shadow-teal-600/20",
-    rose: "bg-rose-600 text-white shadow-lg shadow-rose-600/20",
+    indigo: "bg-white text-brand-primary border-brand-primary shadow-sm",
+    emerald: "bg-teal-500 text-white border-teal-600 shadow-sm",
+    rose: "bg-rose-500 text-white border-rose-600 shadow-sm",
   };
 
   return (
     <button
       type="button"
       onClick={onClick}
-      className={`flex h-10 w-full items-center gap-2 px-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${active ? actives[tone] : tones[tone]}`}
+      className={`flex h-9 w-full items-center gap-2 px-3 rounded-[var(--radius-sm)] border text-[10px] font-black uppercase tracking-widest transition-all ${active ? actives[tone] : tones[tone]}`}
     >
       {icon} {label}
     </button>
@@ -294,7 +261,6 @@ function AddLabOrderForm({
   onClose: () => void;
   onSuccess: () => void;
 }) {
-  const { t } = useTranslation();
   const [formData, setFormData] = useState({
     itemDescription: "",
     labName: "",
@@ -307,7 +273,7 @@ function AddLabOrderForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.itemDescription) return toast.error(t(`${LAB_NS}.itemRequired`));
+    if (!formData.itemDescription) return toast.error("Item description is required.");
 
     setBusy(true);
     try {
@@ -316,10 +282,10 @@ function AddLabOrderForm({
         ...formData,
         dueDate: formData.dueDate ? new Date(formData.dueDate).toISOString() : null,
       });
-      toast.success(t(`${LAB_NS}.created`));
+      toast.success("Lab order created.");
       onSuccess();
     } catch {
-      toast.error(t(`${LAB_NS}.createFailed`));
+      toast.error("Failed to create lab order.");
     } finally {
       setBusy(false);
     }
@@ -328,91 +294,95 @@ function AddLabOrderForm({
   return (
     <form
       onSubmit={handleSubmit}
-      className="p-8 rounded-[2.5rem] bg-slate-50 ring-1 ring-slate-200 mb-10 space-y-6"
+      className="card p-5 bg-brand-surface-soft border border-brand-border space-y-4 mb-6"
     >
-      <div className="grid md:grid-cols-2 gap-6">
-        <div className="space-y-2">
-          <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">
-            {t(`${LAB_NS}.formItem`)}
+      <div className="flex items-center gap-2 mb-2">
+         <FlaskConical className="text-brand-primary" size={16} />
+         <h4 className="text-xs font-black uppercase tracking-widest text-brand-text">New Lab Case</h4>
+      </div>
+      <div className="grid md:grid-cols-2 gap-4">
+        <div className="space-y-1.5">
+          <label className="text-[10px] font-black uppercase tracking-widest text-brand-muted ml-1">
+            Item Description
           </label>
           <input
             value={formData.itemDescription}
             onChange={(e) => setFormData({ ...formData, itemDescription: e.target.value })}
-            placeholder={t(`${LAB_NS}.formItemPlaceholder`)}
-            className="h-12 w-full rounded-xl bg-white px-4 text-sm font-bold outline-none ring-1 ring-slate-100 focus:ring-2 focus:ring-indigo-500 transition-all"
+            placeholder="e.g. PFM Crown #14"
+            className="h-9 w-full rounded-[var(--radius-sm)] bg-white px-3 text-xs font-medium text-brand-text outline-none border border-brand-border focus:border-brand-primary focus:ring-1 focus:ring-brand-primary transition-all"
           />
         </div>
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-2">
-          <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">
-            {t(`${LAB_NS}.formLab`)}
+        <div className="space-y-1.5">
+          <label className="text-[10px] font-black uppercase tracking-widest text-brand-muted ml-1">
+            Laboratory Name
           </label>
           <input
             value={formData.labName}
             onChange={(e) => setFormData({ ...formData, labName: e.target.value })}
-            placeholder={t(`${LAB_NS}.formLabPlaceholder`)}
-            className="h-12 w-full rounded-xl bg-white px-4 text-sm font-bold outline-none ring-1 ring-slate-100 focus:ring-2 focus:ring-indigo-500 transition-all"
+            placeholder="e.g. Apex Dental Lab"
+            className="h-9 w-full rounded-[var(--radius-sm)] bg-white px-3 text-xs font-medium text-brand-text outline-none border border-brand-border focus:border-brand-primary focus:ring-1 focus:ring-brand-primary transition-all"
           />
-        </motion.div>
+        </div>
         <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">
-              {t(`${LAB_NS}.formShade`)}
+          <div className="space-y-1.5">
+            <label className="text-[10px] font-black uppercase tracking-widest text-brand-muted ml-1">
+              Shade
             </label>
             <input
               value={formData.shade}
               onChange={(e) => setFormData({ ...formData, shade: e.target.value })}
-              placeholder={t(`${LAB_NS}.formShadePlaceholder`)}
-              className="h-12 w-full rounded-xl bg-white px-4 text-sm font-bold outline-none ring-1 ring-slate-100 focus:ring-2 focus:ring-indigo-500 transition-all"
+              placeholder="e.g. A2"
+              className="h-9 w-full rounded-[var(--radius-sm)] bg-white px-3 text-xs font-medium text-brand-text outline-none border border-brand-border focus:border-brand-primary focus:ring-1 focus:ring-brand-primary transition-all"
             />
           </div>
-          <div className="space-y-2">
-            <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">
-              {t(`${LAB_NS}.formMould`)}
+          <div className="space-y-1.5">
+            <label className="text-[10px] font-black uppercase tracking-widest text-brand-muted ml-1">
+              Mould
             </label>
             <input
               value={formData.mould}
               onChange={(e) => setFormData({ ...formData, mould: e.target.value })}
-              placeholder={t(`${LAB_NS}.formMouldPlaceholder`)}
-              className="h-12 w-full rounded-xl bg-white px-4 text-sm font-bold outline-none ring-1 ring-slate-100 focus:ring-2 focus:ring-indigo-500 transition-all"
+              placeholder="e.g. Ovoid"
+              className="h-9 w-full rounded-[var(--radius-sm)] bg-white px-3 text-xs font-medium text-brand-text outline-none border border-brand-border focus:border-brand-primary focus:ring-1 focus:ring-brand-primary transition-all"
             />
           </div>
         </div>
-        <div className="space-y-2">
-          <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">
-            {t(`${LAB_NS}.formDue`)}
+        <div className="space-y-1.5">
+          <label className="text-[10px] font-black uppercase tracking-widest text-brand-muted ml-1">
+            Due Date
           </label>
           <input
             type="date"
             value={formData.dueDate}
             onChange={(e) => setFormData({ ...formData, dueDate: e.target.value })}
-            className="h-12 w-full rounded-xl bg-white px-4 text-sm font-bold outline-none ring-1 ring-slate-100 focus:ring-2 focus:ring-indigo-500 transition-all"
+            className="h-9 w-full rounded-[var(--radius-sm)] bg-white px-3 text-xs font-medium text-brand-text outline-none border border-brand-border focus:border-brand-primary focus:ring-1 focus:ring-brand-primary transition-all"
           />
         </div>
       </div>
-      <motion.div className="space-y-2" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-        <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">
-          {t(`${LAB_NS}.formNotes`)}
+      <div className="space-y-1.5">
+        <label className="text-[10px] font-black uppercase tracking-widest text-brand-muted ml-1">
+          Clinical Notes
         </label>
         <textarea
           value={formData.notes}
           onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-          className="w-full h-24 rounded-xl bg-white p-4 text-sm font-bold outline-none ring-1 ring-slate-100 focus:ring-2 focus:ring-indigo-500 transition-all resize-none"
+          className="w-full h-20 rounded-[var(--radius-sm)] bg-white p-3 text-xs font-medium text-brand-text outline-none border border-brand-border focus:border-brand-primary focus:ring-1 focus:ring-brand-primary transition-all resize-none"
         />
-      </motion.div>
-      <div className="flex justify-end gap-3 pt-4">
+      </div>
+      <div className="flex justify-end gap-3 pt-2">
         <button
           type="button"
           onClick={onClose}
-          className="px-6 h-12 rounded-xl text-xs font-black uppercase tracking-widest text-slate-400 hover:text-slate-900 transition-colors"
+          className="btn-secondary h-9 px-4 text-xs"
         >
-          {t(`${LAB_NS}.cancel`)}
+          Cancel
         </button>
         <button
           disabled={busy}
           type="submit"
-          className="px-10 h-12 rounded-xl bg-indigo-600 text-white text-xs font-black uppercase tracking-widest shadow-lg shadow-indigo-600/20 transition-all hover:scale-105 active:scale-95 disabled:opacity-50"
+          className="btn-primary h-9 px-6 text-xs disabled:opacity-50"
         >
-          {busy ? t(`${LAB_NS}.saving`) : t(`${LAB_NS}.createCase`)}
+          {busy ? "Saving..." : "Create Case"}
         </button>
       </div>
     </form>

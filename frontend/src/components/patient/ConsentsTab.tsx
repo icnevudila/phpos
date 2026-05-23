@@ -1,5 +1,4 @@
 import { useMemo, useState, useRef } from "react";
-import { useTranslation } from "react-i18next";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { 
   ShieldCheck, 
@@ -17,10 +16,7 @@ import { toast } from "sonner";
 import { Stage, Layer, Line } from "react-konva";
 import { listConsentForms, createConsentForm, signConsentForm } from "../../services/consent";
 
-const CONSENT_NS = "pages.patientDetail.consentsTab";
-
 export function ConsentsTab({ patientId, canWrite }: { patientId: string; canWrite: boolean }) {
-  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [selectedFormId, setSelectedFormId] = useState<string | null>(null);
   const [isCreating, setIsCreating] = useState(false);
@@ -30,28 +26,32 @@ export function ConsentsTab({ patientId, canWrite }: { patientId: string; canWri
     queryFn: () => listConsentForms(patientId),
   });
 
-  if (isLoading) return <motion.div className="py-20 text-center text-slate-400 font-black uppercase tracking-widest animate-pulse">{t(`${CONSENT_NS}.loading`)}</motion.div>;
+  if (isLoading) return (
+    <div className="card p-8 flex flex-col items-center justify-center text-center bg-brand-surface border border-brand-border">
+      <p className="text-[10px] font-bold text-brand-muted uppercase tracking-widest animate-pulse">Loading forms...</p>
+    </div>
+  );
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-6">
       <div className="flex items-center justify-between">
          <div className="space-y-1">
-            <h3 className="text-xl font-black text-slate-900 uppercase tracking-tight">{t(`${CONSENT_NS}.title`)}</h3>
-            <p className="text-xs font-bold text-slate-400">{t(`${CONSENT_NS}.subtitle`)}</p>
+            <h3 className="text-sm font-bold text-brand-text uppercase tracking-widest">Consent & Legal Forms</h3>
+            <p className="text-xs text-brand-muted">Manage patient waivers, treatment consents, and signatures.</p>
          </div>
          {canWrite && (
            <button 
              onClick={() => setIsCreating(true)}
-             className="flex h-12 items-center gap-2 rounded-2xl bg-white text-white px-6 text-xs font-black uppercase tracking-widest shadow-lg transition-all hover:scale-105 active:scale-95"
+             className="btn-primary flex items-center gap-2 h-8 px-3 text-xs"
            >
-             <Plus size={18} /> {t(`${CONSENT_NS}.newDocument`)}
+             <Plus size={14} /> New Document
            </button>
          )}
       </div>
 
       <AnimatePresence>
         {isCreating && (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }}>
+          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="overflow-hidden">
             <AddConsentForm patientId={patientId} onCancel={() => setIsCreating(false)} onSuccess={() => {
               queryClient.invalidateQueries({ queryKey: ["consentForms", patientId] });
               setIsCreating(false);
@@ -60,38 +60,42 @@ export function ConsentsTab({ patientId, canWrite }: { patientId: string; canWri
         )}
       </AnimatePresence>
 
-      <div className="grid gap-6">
-        {forms.map((form) => (
-          <div key={form.id} className="group flex items-center justify-between p-8 rounded-[2.5rem] bg-white shadow-xl shadow-slate-200/40 ring-1 ring-slate-100 transition-all hover:shadow-2xl">
-             <div className="flex items-center gap-6">
-                <div className={`flex h-14 w-14 items-center justify-center rounded-2xl ${form.signedAt ? 'bg-teal-50 text-teal-600' : 'bg-slate-50 text-slate-400'}`}>
-                   {form.signedAt ? <FileCheck size={28} /> : <Clock size={28} />}
+      <div className="space-y-4">
+        {forms.length === 0 ? (
+          <div className="card p-8 flex flex-col items-center justify-center text-center bg-brand-surface-soft border border-brand-border">
+            <p className="text-sm font-bold text-brand-muted uppercase tracking-widest">No Legal Forms Found</p>
+          </div>
+        ) : forms.map((form) => (
+          <div key={form.id} className="card group flex items-center justify-between p-4 bg-white border border-brand-border hover:bg-brand-surface-soft transition-colors">
+             <div className="flex items-center gap-4">
+                <div className={`flex h-10 w-10 items-center justify-center rounded-[var(--radius-sm)] border ${form.signedAt ? 'bg-teal-50 text-teal-600 border-teal-200' : 'bg-brand-surface text-brand-muted border-brand-border'}`}>
+                   {form.signedAt ? <FileCheck size={20} /> : <Clock size={20} />}
                 </div>
                 <div>
-                   <h4 className="text-lg font-black text-slate-900">{form.title}</h4>
-                   <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                   <h4 className="text-sm font-bold text-brand-text">{form.title}</h4>
+                   <p className="text-[10px] font-bold uppercase tracking-widest text-brand-muted mt-0.5">
                       {form.signedAt
-                        ? t(`${CONSENT_NS}.signedOn`, { date: new Date(form.signedAt).toLocaleDateString() })
-                        : t(`${CONSENT_NS}.createdOn`, { date: new Date(form.createdAt).toLocaleDateString() })}
+                        ? `Signed on ${new Date(form.signedAt).toLocaleDateString()}`
+                        : `Drafted on ${new Date(form.createdAt).toLocaleDateString()}`}
                    </p>
                 </div>
              </div>
-             <div className="flex items-center gap-3">
+             <div className="flex items-center gap-2">
                 {!form.signedAt && (
                   <button 
                     onClick={() => setSelectedFormId(form.id)}
-                    className="flex h-12 items-center gap-2 rounded-2xl bg-amber-500 text-white px-6 text-xs font-black uppercase tracking-widest shadow-lg shadow-amber-500/20 transition-all hover:scale-105"
+                    className="btn-primary text-xs h-8 px-3 gap-1.5"
                   >
-                    <PenTool size={18} /> {t(`${CONSENT_NS}.signNow`)}
+                    <PenTool size={14} /> Sign Document
                   </button>
                 )}
                 {form.signedAt && (
-                   <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-teal-500 text-white shadow-lg shadow-teal-500/20">
-                      <ShieldCheck size={24} />
+                   <div className="flex items-center gap-1.5 px-2.5 h-8 rounded-[var(--radius-sm)] bg-teal-50 border border-teal-200 text-[10px] font-black uppercase tracking-widest text-teal-700">
+                      <ShieldCheck size={14} /> Signed
                    </div>
                 )}
-                <button className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-50 text-slate-400 hover:bg-white hover:text-white transition-all">
-                   <Eye size={20} />
+                <button className="btn-secondary h-8 px-2">
+                   <Eye size={14} />
                 </button>
              </div>
           </div>
@@ -115,14 +119,13 @@ export function ConsentsTab({ patientId, canWrite }: { patientId: string; canWri
 }
 
 function AddConsentForm({ patientId, onCancel, onSuccess }: any) {
-  const { t } = useTranslation();
   const [busy, setBusy] = useState(false);
   const initial = useMemo(
     () => ({
-      title: t(`${CONSENT_NS}.defaultTitle`),
-      content: t(`${CONSENT_NS}.defaultContent`),
+      title: "Standard Treatment Consent",
+      content: "I hereby authorize the clinical provider to perform the proposed dental treatment...",
     }),
-    [t],
+    [],
   );
   const [data, setData] = useState(initial);
 
@@ -131,41 +134,45 @@ function AddConsentForm({ patientId, onCancel, onSuccess }: any) {
     setBusy(true);
     try {
       await createConsentForm({ patientId, ...data });
-      toast.success(t(`${CONSENT_NS}.formCreated`));
+      toast.success("Consent form drafted successfully.");
       onSuccess();
     } catch {
-      toast.error(t(`${CONSENT_NS}.formCreateFailed`));
+      toast.error("Failed to draft consent form.");
     } finally {
       setBusy(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="p-10 rounded-[3rem] bg-white text-white shadow-2xl mb-12 space-y-8">
-       <div className="space-y-2">
-          <label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 ml-4">
-            {t(`${CONSENT_NS}.documentTitle`)}
+    <form onSubmit={handleSubmit} className="card p-6 bg-brand-surface-soft border border-brand-border space-y-4 mb-2">
+       <div className="flex items-center gap-2 mb-2">
+          <ShieldCheck className="text-brand-primary" size={16} />
+          <h4 className="text-xs font-black uppercase tracking-widest text-brand-text">Draft New Document</h4>
+       </div>
+       <div className="space-y-1.5">
+          <label className="text-[10px] font-black uppercase tracking-widest text-brand-muted ml-1">
+            Document Title
           </label>
           <input 
             value={data.title}
             onChange={e => setData({...data, title: e.target.value})}
-            className="h-16 w-full rounded-2xl bg-white/5 border border-white/10 px-8 text-lg font-black outline-none focus:bg-white/10 focus:ring-2 focus:ring-indigo-500 transition-all"
+            className="h-10 w-full rounded-[var(--radius-sm)] bg-white border border-brand-border px-3 text-sm font-bold text-brand-text outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary transition-all"
           />
        </div>
-       <div className="space-y-2">
-          <label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 ml-4">
-            {t(`${CONSENT_NS}.legalContent`)}
+       <div className="space-y-1.5">
+          <label className="text-[10px] font-black uppercase tracking-widest text-brand-muted ml-1">
+            Legal Content / Waiver
           </label>
           <textarea 
             value={data.content}
             onChange={e => setData({...data, content: e.target.value})}
-            className="w-full h-48 rounded-2xl bg-white/5 border border-white/10 p-8 text-sm font-medium leading-relaxed outline-none focus:bg-white/10 focus:ring-2 focus:ring-indigo-500 transition-all resize-none"
+            className="w-full h-32 rounded-[var(--radius-sm)] bg-white border border-brand-border p-3 text-xs font-medium text-brand-text leading-relaxed outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary transition-all resize-none"
           />
        </div>
-       <div className="flex justify-end gap-4">
-          <button type="button" onClick={onCancel} className="px-8 h-14 rounded-2xl text-xs font-black uppercase tracking-widest text-slate-500 hover:text-white transition-colors">{t(`${CONSENT_NS}.dismiss`)}</button>
-          <button disabled={busy} type="submit" className="px-12 h-14 rounded-2xl bg-indigo-600 text-white text-xs font-black uppercase tracking-widest shadow-xl transition-all hover:scale-105 active:scale-95 disabled:opacity-50">
-             {busy ? t(`${CONSENT_NS}.generating`) : t(`${CONSENT_NS}.generateDocument`)}
+       <div className="flex justify-end gap-3 pt-2">
+          <button type="button" onClick={onCancel} className="btn-secondary h-9 px-4 text-xs">Cancel</button>
+          <button disabled={busy} type="submit" className="btn-primary h-9 px-6 text-xs disabled:opacity-50">
+             {busy ? "Drafting..." : "Draft Document"}
           </button>
        </div>
     </form>
@@ -173,7 +180,6 @@ function AddConsentForm({ patientId, onCancel, onSuccess }: any) {
 }
 
 function SignatureModal({ formId, onClose, onSuccess }: any) {
-  const { t } = useTranslation();
   const [lines, setLines] = useState<any[]>([]);
   const isDrawing = useRef(false);
   const stageRef = useRef<any>(null);
@@ -202,40 +208,47 @@ function SignatureModal({ formId, onClose, onSuccess }: any) {
   const clear = () => setLines([]);
 
   const handleSign = async () => {
-    if (lines.length === 0) return toast.error(t(`${CONSENT_NS}.signFirst`));
+    if (lines.length === 0) return toast.error("Please draw a signature first.");
     
     setBusy(true);
     try {
       const dataUrl = stageRef.current.toDataURL();
       await signConsentForm(formId, dataUrl);
-      toast.success(t(`${CONSENT_NS}.signSuccess`));
+      toast.success("Document successfully signed.");
       onSuccess();
     } catch {
-      toast.error(t(`${CONSENT_NS}.signFailed`));
+      toast.error("Failed to apply signature.");
     } finally {
       setBusy(false);
     }
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-[#f5f7f9]/80 backdrop-blur-md">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
        <motion.div 
-         initial={{ opacity: 0, scale: 0.9 }}
+         initial={{ opacity: 0, scale: 0.95 }}
          animate={{ opacity: 1, scale: 1 }}
-         className="w-full max-w-2xl bg-white rounded-[3rem] overflow-hidden shadow-2xl"
+         className="w-full max-w-xl card bg-white overflow-hidden shadow-2xl"
        >
-          <div className="p-10 border-b border-slate-100 flex justify-between items-center">
-             <div>
-                <h3 className="text-2xl font-black text-slate-900 uppercase tracking-tight">{t(`${CONSENT_NS}.eSignatureTitle`)}</h3>
-                <p className="text-xs font-bold text-slate-400 mt-1">{t(`${CONSENT_NS}.eSignatureHint`)}</p>
+          <div className="p-4 border-b border-brand-border bg-brand-surface-soft flex justify-between items-center">
+             <div className="flex items-center gap-2">
+                <PenTool className="text-brand-text" size={16} />
+                <h3 className="text-xs font-bold text-brand-text uppercase tracking-widest">E-Signature Capture</h3>
              </div>
-             <button onClick={onClose} className="h-12 w-12 flex items-center justify-center rounded-2xl bg-slate-50 text-slate-400 hover:text-rose-500 transition-colors">
-                <X size={24} />
+             <button onClick={onClose} className="h-8 w-8 flex items-center justify-center rounded-[var(--radius-sm)] text-brand-muted hover:text-brand-text hover:bg-brand-surface transition-colors">
+                <X size={16} />
              </button>
           </div>
 
-          <div className="p-10 space-y-8">
-             <div className="relative aspect-[2/1] w-full rounded-[2rem] bg-slate-50 border-2 border-dashed border-slate-200 cursor-crosshair overflow-hidden">
+          <div className="p-6 space-y-6">
+             <div className="flex items-center gap-3 p-4 bg-amber-50 rounded-[var(--radius-sm)] border border-amber-200">
+                <AlertCircle className="text-amber-600 shrink-0" size={16} />
+                <p className="text-xs font-bold text-amber-900 leading-relaxed">
+                   By signing this document, you acknowledge and agree to the terms specified within the legal waiver.
+                </p>
+             </div>
+
+             <div className="relative aspect-[2/1] w-full rounded-[var(--radius-md)] bg-brand-surface-muted border border-dashed border-brand-muted/30 cursor-crosshair overflow-hidden">
                 <Stage
                   width={600}
                   height={300}
@@ -249,8 +262,8 @@ function SignatureModal({ formId, onClose, onSuccess }: any) {
                       <Line
                         key={i}
                         points={line.points}
-                        stroke="#0f172a"
-                        strokeWidth={3}
+                        stroke="var(--color-brand-text)"
+                        strokeWidth={2.5}
                         tension={0.5}
                         lineCap="round"
                         globalCompositeOperation="source-over"
@@ -260,33 +273,26 @@ function SignatureModal({ formId, onClose, onSuccess }: any) {
                 </Stage>
                 <button 
                   onClick={clear}
-                  className="absolute bottom-6 right-6 px-4 py-2 rounded-xl bg-white text-[10px] font-black uppercase tracking-widest text-rose-500 shadow-sm border border-slate-100 hover:bg-rose-500 hover:text-white transition-all"
+                  className="absolute bottom-4 right-4 btn-secondary text-[10px] px-3 h-7 bg-white/80 backdrop-blur"
                 >
-                  {t(`${CONSENT_NS}.clearSignature`)}
+                  Clear Pad
                 </button>
              </div>
 
-             <div className="flex items-center gap-4 p-6 bg-amber-50 rounded-2xl border border-amber-100">
-                <AlertCircle className="text-amber-600 shrink-0" size={20} />
-                <p className="text-xs font-bold text-amber-900 leading-relaxed">
-                   {t(`${CONSENT_NS}.signLegalNotice`)}
-                </p>
-             </div>
-
-             <div className="flex gap-4">
+             <div className="flex gap-3 justify-end pt-2 border-t border-brand-border/50">
                 <button 
                   disabled={busy}
                   onClick={onClose}
-                  className="flex-1 h-16 rounded-2xl text-xs font-black uppercase tracking-widest text-slate-400 hover:text-slate-900 transition-colors"
+                  className="btn-secondary h-9 px-4 text-xs"
                 >
-                   {t(`${CONSENT_NS}.cancel`)}
+                   Cancel
                 </button>
                 <button 
                   disabled={busy}
                   onClick={handleSign}
-                  className="flex-[2] h-16 rounded-2xl bg-teal-500 text-white text-xs font-black uppercase tracking-widest shadow-xl shadow-teal-500/20 transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-50"
+                  className="btn-primary h-9 px-6 gap-2 text-xs disabled:opacity-50"
                 >
-                   {busy ? t(`${CONSENT_NS}.applyingSignature`) : t(`${CONSENT_NS}.applySignature`)}
+                   {busy ? "Applying..." : "Apply Signature"}
                 </button>
              </div>
           </div>

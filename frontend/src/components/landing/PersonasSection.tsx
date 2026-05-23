@@ -60,10 +60,10 @@ export function PersonasSection(): JSX.Element {
     <div>
       <div className="mx-auto max-w-2xl text-center">
         <SectionEyebrow label={t("landing.personasEyebrow")} icon={IconUsers} accent="sky" align="center" />
-        <h2 className="mt-3 text-4xl font-black tracking-tight text-slate-900 sm:text-5xl">
+        <h2 className="mt-3 text-4xl font-black tracking-tight text-brand-text sm:text-5xl">
           {t("landing.personasTitle")}
         </h2>
-        <p className="mt-4 text-lg font-medium text-slate-600">{t("landing.personasSubtitle")}</p>
+        <p className="mt-4 text-lg font-medium text-brand-muted">{t("landing.personasSubtitle")}</p>
       </div>
 
       <div className="mt-12 grid gap-10 lg:grid-cols-[1fr_1.5fr]">
@@ -72,7 +72,7 @@ export function PersonasSection(): JSX.Element {
             <button
               key={p.key}
               onClick={() => setActive(p.key)}
-              className={`group relative w-full overflow-hidden rounded-[2rem] border p-4 text-left transition-all duration-300 ${ active === p.key ? "border-teal-200 bg-white shadow-xl " : "border-transparent bg-slate-50/50 hover:bg-white " }`}
+              className={`group relative w-full overflow-hidden rounded-[2rem] border p-4 text-left transition-all duration-300 ${ active === p.key ? "border-teal-200 bg-brand-surface shadow-xl " : "border-transparent bg-brand-surface-soft/50 hover:bg-brand-surface " }`}
             >
               <div className="flex items-center gap-4">
                 <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-2xl shadow-inner">
@@ -80,10 +80,10 @@ export function PersonasSection(): JSX.Element {
                   <div className={`absolute inset-0 bg-gradient-to-br ${p.gradient} opacity-20`} />
                 </div>
                 <div className="min-w-0">
-                  <p className={`text-lg font-black transition-colors ${active === p.key ? "text-teal-600" : "text-slate-900 "}`}>
+                  <p className={`text-lg font-black transition-colors ${active === p.key ? "text-teal-600" : "text-brand-text "}`}>
                     {p.title}
                   </p>
-                  <p className="truncate text-xs font-medium text-slate-500">{p.desc}</p>
+                  <p className="truncate text-xs font-medium text-brand-muted">{p.desc}</p>
                 </div>
               </div>
               {active === p.key && (
@@ -99,7 +99,7 @@ export function PersonasSection(): JSX.Element {
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 1.05 }}
           transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-          className="relative overflow-hidden rounded-[3rem] border border-slate-200 bg-white p-8 shadow-2xl"
+          className="relative overflow-hidden rounded-[3rem] border border-brand-border bg-brand-surface p-8 shadow-2xl"
         >
           <div className="grid gap-8 md:grid-cols-[1fr_1.2fr]">
             <div className="relative aspect-[4/5] overflow-hidden rounded-[2rem] shadow-lg">
@@ -111,10 +111,10 @@ export function PersonasSection(): JSX.Element {
                 <IconUsers className="h-3 w-3" />
                 {current.key}
               </div>
-              <h3 className="text-3xl font-black tracking-tight text-slate-900">
+              <h3 className="text-3xl font-black tracking-tight text-brand-text">
                 {current.title}
               </h3>
-              <p className="mt-4 text-lg font-medium text-slate-600">
+              <p className="mt-4 text-lg font-medium text-brand-muted">
                 {current.desc}
               </p>
               <ul className="mt-8 space-y-4">
@@ -126,12 +126,12 @@ export function PersonasSection(): JSX.Element {
                     transition={{ delay: 0.1 + i * 0.07 }}
                     className="flex items-start gap-3"
                   >
-                    <span className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gradient-to-br ${current.gradient} text-white shadow-sm ring-2 ring-white/20`}>
+                    <span className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gradient-to-br ${current.gradient} text-white shadow-sm ring-2 ring-brand-border/10/20`}>
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3} className="h-3.5 w-3.5">
                         <path d="M20 6 9 17l-5-5" strokeLinecap="round" strokeLinejoin="round" />
                       </svg>
                     </span>
-                    <span className="text-sm font-semibold text-slate-700">{b}</span>
+                    <span className="text-sm font-semibold text-brand-text">{b}</span>
                   </motion.li>
                 ))}
               </ul>

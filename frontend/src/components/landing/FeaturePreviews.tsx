@@ -19,8 +19,8 @@ function Field({
 }): JSX.Element {
   return (
     <div>
-      <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">{label}</p>
-      <p className={`mt-0.5 text-sm text-slate-800 ${mono ? "font-mono" : "font-medium"}`}>{value}</p>
+      <p className="text-[10px] font-semibold uppercase tracking-wider text-brand-muted">{label}</p>
+      <p className={`mt-0.5 text-sm text-brand-text ${mono ? "font-mono" : "font-medium"}`}>{value}</p>
     </div>
   );
 }
@@ -51,38 +51,38 @@ export function AppointmentsPreview(): JSX.Element {
   }));
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-      <div className="flex items-center justify-between border-b border-slate-100 px-5 py-3">
+    <div className="overflow-hidden rounded-2xl border border-brand-border bg-brand-surface shadow-sm">
+      <div className="flex items-center justify-between border-b border-brand-border px-5 py-3">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+          <p className="text-xs font-semibold uppercase tracking-wider text-brand-muted">
             {t("landingPreview.appointments.calendarLabel")}
           </p>
-          <p className="text-sm font-bold text-slate-900">{t("landingPreview.appointments.headerSub")}</p>
+          <p className="text-sm font-bold text-brand-text">{t("landingPreview.appointments.headerSub")}</p>
         </div>
         <div className="flex items-center gap-2">
           <span className="inline-flex items-center gap-1 rounded-full bg-teal-50 px-2 py-0.5 text-[10px] font-bold text-teal-700 ring-1 ring-teal-200">
             <span className="h-1.5 w-1.5 rounded-full bg-teal-500" /> {t("landingPreview.appointments.badge")}
           </span>
           <div className="flex gap-1">
-            <div className="h-7 w-7 rounded-lg bg-slate-100" />
-            <div className="h-7 w-7 rounded-lg bg-slate-100" />
+            <div className="h-7 w-7 rounded-lg bg-brand-surface-muted" />
+            <div className="h-7 w-7 rounded-lg bg-brand-surface-muted" />
           </div>
         </div>
       </div>
 
       <div className="overflow-x-auto">
-        <div className="grid min-w-[560px] grid-cols-[60px_repeat(5,1fr)] gap-px bg-slate-100">
-        <div className="bg-white" />
+        <div className="grid min-w-[560px] grid-cols-[60px_repeat(5,1fr)] gap-px bg-brand-surface-muted">
+        <div className="bg-brand-surface" />
         {dayLabels.map((d, i) => (
-          <div key={i} className="bg-white px-2 py-2 text-center">
-            <p className="text-[10px] font-semibold uppercase text-slate-400">{d}</p>
-            <p className="text-sm font-bold text-slate-800">{13 + i}</p>
+          <div key={i} className="bg-brand-surface px-2 py-2 text-center">
+            <p className="text-[10px] font-semibold uppercase text-brand-muted">{d}</p>
+            <p className="text-sm font-bold text-brand-text">{13 + i}</p>
           </div>
         ))}
 
         {HOURS.map((h, rowIdx) => (
           <div key={h} className="contents">
-            <div className="bg-white px-2 py-2 text-right text-[10px] font-semibold text-slate-400">
+            <div className="bg-brand-surface px-2 py-2 text-right text-[10px] font-semibold text-brand-muted">
               {h}
             </div>
             {Array.from({ length: 5 }).map((_, colIdx) => {
@@ -91,7 +91,7 @@ export function AppointmentsPreview(): JSX.Element {
                 return (
                   <div
                     key={colIdx}
-                    className="relative bg-white p-1"
+                    className="relative bg-brand-surface p-1"
                     style={{ gridRow: `span ${apt.span}` }}
                   >
                     <div
@@ -107,7 +107,7 @@ export function AppointmentsPreview(): JSX.Element {
                 (a) => a.day === colIdx && a.start < rowIdx && a.start + a.span > rowIdx,
               );
               if (covered) return null;
-              return <div key={colIdx} className="bg-white" />;
+              return <div key={colIdx} className="bg-brand-surface" />;
             })}
           </div>
         ))}
@@ -132,7 +132,7 @@ const TOOTH_STATES: Record<number, ToothStatus> = {
 };
 
 const STATUS_VISUAL: Record<ToothStatus, { fill: string; dot: string }> = {
-  healthy: { fill: "fill-white stroke-slate-300", dot: "bg-slate-200" },
+  healthy: { fill: "fill-white stroke-slate-300", dot: "bg-brand-border" },
   decay: { fill: "fill-rose-200 stroke-rose-500", dot: "bg-rose-400" },
   filled: { fill: "fill-sky-200 stroke-sky-500", dot: "bg-sky-400" },
   rct: { fill: "fill-teal-200 stroke-teal-500", dot: "bg-teal-400" },
@@ -150,7 +150,7 @@ function Tooth({ n, label }: { n: number; label: string }): JSX.Element {
       <svg viewBox="0 0 24 28" className={`h-7 w-5 ${style.fill}`} strokeWidth={1.2}>
         <path d="M12 2c-4 0-7 2.5-7 6 0 2 .5 3.5 1 5 .5 1.5 1 3 1 5.5 0 3 1 6 2.5 7.5 1 1 2 1 2.5 0 .4-.8 1.5-.8 2 0 .5 1 1.5 1 2.5 0C17 24.5 18 21.5 18 18.5c0-2.5.5-4 1-5.5s1-3 1-5c0-3.5-3-6-8-6Z" />
       </svg>
-      <span className="text-[8px] font-semibold text-slate-400">{n}</span>
+      <span className="text-[8px] font-semibold text-brand-muted">{n}</span>
       <span className="sr-only">{label}</span>
     </div>
   );
@@ -162,17 +162,17 @@ export function OdontogramPreview(): JSX.Element {
   const statusLabel = (k: ToothStatus) => t(`landingPreview.odontogram.status.${k}`);
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+    <div className="rounded-2xl border border-brand-border bg-brand-surface p-5 shadow-sm">
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+          <p className="text-xs font-semibold uppercase tracking-wider text-brand-muted">
             {t("landingPreview.odontogram.chartTitle")}
           </p>
-          <p className="text-sm font-bold text-slate-900">{t("landingPreview.odontogram.subtitle")}</p>
+          <p className="text-sm font-bold text-brand-text">{t("landingPreview.odontogram.subtitle")}</p>
         </div>
         <div className="hidden flex-wrap items-center gap-3 sm:flex">
           {statusKeys.map((k) => (
-            <span key={k} className="inline-flex items-center gap-1.5 text-[10px] font-semibold text-slate-600">
+            <span key={k} className="inline-flex items-center gap-1.5 text-[10px] font-semibold text-brand-muted">
               <span className={`h-2 w-2 rounded-full ${STATUS_VISUAL[k].dot}`} />
               {statusLabel(k)}
             </span>
@@ -186,7 +186,7 @@ export function OdontogramPreview(): JSX.Element {
             <Tooth key={n} n={n} label={statusLabel(TOOTH_STATES[n] ?? "healthy")} />
           ))}
         </div>
-        <div className="border-t border-dashed border-slate-200" />
+        <div className="border-t border-dashed border-brand-border" />
         <div className="flex justify-center gap-1">
           {FDI_LOWER.map((n) => (
             <Tooth key={n} n={n} label={statusLabel(TOOTH_STATES[n] ?? "healthy")} />
@@ -194,7 +194,7 @@ export function OdontogramPreview(): JSX.Element {
         </div>
       </div>
 
-      <div className="mt-5 grid gap-2 rounded-xl bg-slate-50 p-3 text-xs sm:grid-cols-3">
+      <div className="mt-5 grid gap-2 rounded-xl bg-brand-surface-soft p-3 text-xs sm:grid-cols-3">
         <Field label={t("landingPreview.odontogram.fieldLastUpdate")} value={t("landingPreview.odontogram.fieldLastUpdateValue")} />
         <Field label={t("landingPreview.odontogram.fieldDoctor")} value={t("landingPreview.odontogram.fieldDoctorValue")} />
         <Field label={t("landingPreview.odontogram.fieldCompleted")} value={t("landingPreview.odontogram.fieldCompletedValue")} />
@@ -210,16 +210,16 @@ export function PatientRecordPreview(): JSX.Element {
   const tabs = t("landingPreview.patient.tabs", { returnObjects: true }) as string[];
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-      <div className="flex items-center gap-4 border-b border-slate-100 bg-gradient-to-br from-indigo-50 to-sky-50 px-5 py-4">
+    <div className="overflow-hidden rounded-2xl border border-brand-border bg-brand-surface shadow-sm">
+      <div className="flex items-center gap-4 border-b border-brand-border bg-gradient-to-br from-indigo-50 to-sky-50 px-5 py-4">
         <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-sky-500 text-lg font-bold text-white shadow-md">
           MS
         </div>
         <div className="min-w-0 flex-1">
-          <p className="truncate text-base font-bold text-slate-900">Maria Santos</p>
-          <p className="text-xs text-slate-600">{t("landingPreview.patient.metaLine")}</p>
+          <p className="truncate text-base font-bold text-brand-text">Maria Santos</p>
+          <p className="text-xs text-brand-muted">{t("landingPreview.patient.metaLine")}</p>
           <div className="mt-1 flex flex-wrap gap-1">
-            <span className="inline-flex items-center gap-1 rounded-full bg-white px-2 py-0.5 text-[10px] font-semibold text-slate-700 ring-1 ring-slate-200">
+            <span className="inline-flex items-center gap-1 rounded-full bg-brand-surface px-2 py-0.5 text-[10px] font-semibold text-brand-text ring-1 ring-brand-border">
               {t("landingPreview.patient.philhealthBadge")}
             </span>
             <span className="inline-flex items-center gap-1 rounded-full bg-rose-50 px-2 py-0.5 text-[10px] font-semibold text-rose-700 ring-1 ring-rose-200">
@@ -229,11 +229,11 @@ export function PatientRecordPreview(): JSX.Element {
         </div>
       </div>
 
-      <div className="flex gap-1 border-b border-slate-100 px-4 pt-3">
+      <div className="flex gap-1 border-b border-brand-border px-4 pt-3">
         {tabs.map((tab, i) => (
           <div
             key={tab}
-            className={`rounded-t-lg px-3 py-2 text-xs font-semibold ${ i === 0 ? "border-b-2 border-indigo-500 text-indigo-700" : "text-slate-500" }`}
+            className={`rounded-t-lg px-3 py-2 text-xs font-semibold ${ i === 0 ? "border-b-2 border-indigo-500 text-indigo-700" : "text-brand-muted" }`}
           >
             {tab}
           </div>
@@ -241,19 +241,19 @@ export function PatientRecordPreview(): JSX.Element {
       </div>
 
       <div className="grid gap-4 p-5 sm:grid-cols-2">
-        <div className="rounded-xl bg-slate-50 p-4">
-          <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">{t("landingPreview.patient.visitLabel")}</p>
-          <p className="mt-1 text-sm font-bold text-slate-900">{t("landingPreview.patient.visitLine")}</p>
-          <p className="mt-1 text-xs text-slate-600">{t("landingPreview.patient.visitDr")}</p>
+        <div className="rounded-xl bg-brand-surface-soft p-4">
+          <p className="text-[10px] font-bold uppercase tracking-wider text-brand-muted">{t("landingPreview.patient.visitLabel")}</p>
+          <p className="mt-1 text-sm font-bold text-brand-text">{t("landingPreview.patient.visitLine")}</p>
+          <p className="mt-1 text-xs text-brand-muted">{t("landingPreview.patient.visitDr")}</p>
         </div>
-        <div className="rounded-xl bg-slate-50 p-4">
-          <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">{t("landingPreview.patient.nextLabel")}</p>
-          <p className="mt-1 text-sm font-bold text-slate-900">{t("landingPreview.patient.nextLine")}</p>
-          <p className="mt-1 text-xs text-slate-600">{t("landingPreview.patient.nextTime")}</p>
+        <div className="rounded-xl bg-brand-surface-soft p-4">
+          <p className="text-[10px] font-bold uppercase tracking-wider text-brand-muted">{t("landingPreview.patient.nextLabel")}</p>
+          <p className="mt-1 text-sm font-bold text-brand-text">{t("landingPreview.patient.nextLine")}</p>
+          <p className="mt-1 text-xs text-brand-muted">{t("landingPreview.patient.nextTime")}</p>
         </div>
-        <div className="rounded-xl bg-slate-50 p-4 sm:col-span-2">
-          <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">{t("landingPreview.patient.notesLabel")}</p>
-          <p className="mt-1 text-sm leading-relaxed text-slate-700">{t("landingPreview.patient.notesBody")}</p>
+        <div className="rounded-xl bg-brand-surface-soft p-4 sm:col-span-2">
+          <p className="text-[10px] font-bold uppercase tracking-wider text-brand-muted">{t("landingPreview.patient.notesLabel")}</p>
+          <p className="mt-1 text-sm leading-relaxed text-brand-text">{t("landingPreview.patient.notesBody")}</p>
         </div>
       </div>
     </div>
@@ -279,11 +279,11 @@ export function BillingPreview(): JSX.Element {
   const payMethods = t("landingPreview.billing.payMethods", { returnObjects: true }) as string[];
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-      <div className="flex items-center justify-between border-b border-slate-100 px-5 py-3">
+    <div className="overflow-hidden rounded-2xl border border-brand-border bg-brand-surface shadow-sm">
+      <div className="flex items-center justify-between border-b border-brand-border px-5 py-3">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">{t("landingPreview.billing.title")}</p>
-          <p className="text-sm font-bold text-slate-900">{t("landingPreview.billing.invLine")}</p>
+          <p className="text-xs font-semibold uppercase tracking-wider text-brand-muted">{t("landingPreview.billing.title")}</p>
+          <p className="text-sm font-bold text-brand-text">{t("landingPreview.billing.invLine")}</p>
         </div>
         <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-bold text-amber-700 ring-1 ring-amber-200">
           {t("landingPreview.billing.hmoPill")}
@@ -294,16 +294,16 @@ export function BillingPreview(): JSX.Element {
         {items.map((it) => (
           <div key={it.name} className="flex items-center justify-between px-5 py-3 text-sm">
             <div>
-              <p className="font-semibold text-slate-800">{it.name}</p>
-              <p className="text-xs text-slate-500">{t("landingPreview.billing.qty", { n: it.qty })}</p>
+              <p className="font-semibold text-brand-text">{it.name}</p>
+              <p className="text-xs text-brand-muted">{t("landingPreview.billing.qty", { n: it.qty })}</p>
             </div>
-            <p className="font-mono text-slate-900">₱ {it.price.toLocaleString()}</p>
+            <p className="font-mono text-brand-text">₱ {it.price.toLocaleString()}</p>
           </div>
         ))}
       </div>
 
-      <div className="space-y-1 border-t border-slate-100 bg-slate-50 px-5 py-4 text-sm">
-        <div className="flex items-center justify-between text-slate-600">
+      <div className="space-y-1 border-t border-brand-border bg-brand-surface-soft px-5 py-4 text-sm">
+        <div className="flex items-center justify-between text-brand-muted">
           <span>{t("landingPreview.billing.subtotal")}</span>
           <span className="font-mono">₱ {subtotal.toLocaleString()}</span>
         </div>
@@ -311,18 +311,18 @@ export function BillingPreview(): JSX.Element {
           <span>{t("landingPreview.billing.hmoLine")}</span>
           <span className="font-mono">− ₱ {hmo.toLocaleString()}</span>
         </div>
-        <div className="flex items-center justify-between border-t border-slate-200 pt-2 text-base font-bold text-slate-900">
+        <div className="flex items-center justify-between border-t border-brand-border pt-2 text-base font-bold text-brand-text">
           <span>{t("landingPreview.billing.net")}</span>
           <span className="font-mono">₱ {net.toLocaleString()}</span>
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-2 border-t border-slate-100 px-5 py-3">
+      <div className="flex flex-wrap gap-2 border-t border-brand-border px-5 py-3">
         {[
           { label: payMethods[0] ?? "GCash", color: "bg-sky-50 text-sky-700 ring-sky-200" },
           { label: payMethods[1] ?? "Maya", color: "bg-teal-50 text-teal-700 ring-teal-200" },
           { label: payMethods[2] ?? "PayMongo", color: "bg-teal-50 text-teal-700 ring-teal-200" },
-          { label: payMethods[3] ?? "Cash", color: "bg-slate-50 text-slate-700 ring-slate-200" },
+          { label: payMethods[3] ?? "Cash", color: "bg-brand-surface-soft text-brand-text ring-brand-border" },
         ].map((m) => (
           <span
             key={m.label}
@@ -368,11 +368,11 @@ export function InventoryPreview(): JSX.Element {
   };
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-      <div className="flex items-center justify-between border-b border-slate-100 px-5 py-3">
+    <div className="overflow-hidden rounded-2xl border border-brand-border bg-brand-surface shadow-sm">
+      <div className="flex items-center justify-between border-b border-brand-border px-5 py-3">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">{t("landingPreview.inventory.title")}</p>
-          <p className="text-sm font-bold text-slate-900">{t("landingPreview.inventory.subtitle")}</p>
+          <p className="text-xs font-semibold uppercase tracking-wider text-brand-muted">{t("landingPreview.inventory.title")}</p>
+          <p className="text-sm font-bold text-brand-text">{t("landingPreview.inventory.subtitle")}</p>
         </div>
         <span className="hidden items-center gap-1 rounded-full bg-rose-50 px-2 py-0.5 text-[10px] font-bold text-rose-700 ring-1 ring-rose-200 sm:inline-flex">
           <IconAlert className="h-2.5 w-2.5" /> {t("landingPreview.inventory.reorderBadge")}
@@ -389,19 +389,19 @@ export function InventoryPreview(): JSX.Element {
           return (
             <div key={s.sku} className="grid grid-cols-[1.5fr_1fr_auto] items-center gap-4 px-5 py-3 text-sm">
               <div className="min-w-0">
-                <p className="truncate font-semibold text-slate-900">{name}</p>
-                <p className="truncate text-[11px] font-mono text-slate-400">{s.sku}</p>
+                <p className="truncate font-semibold text-brand-text">{name}</p>
+                <p className="truncate text-[11px] font-mono text-brand-muted">{s.sku}</p>
               </div>
               <div>
-                <div className="flex items-center justify-between text-[11px] text-slate-500">
-                  <span className="font-semibold text-slate-700">
+                <div className="flex items-center justify-between text-[11px] text-brand-muted">
+                  <span className="font-semibold text-brand-text">
                     {s.level} {unit}
                   </span>
                   <span>
                     {t("landingPreview.inventory.minPrefix")} {s.min}
                   </span>
                 </div>
-                <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-slate-100">
+                <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-brand-surface-muted">
                   <div className={`h-full rounded-full ${sty.bar}`} style={{ width: `${pct}%` }} />
                 </div>
               </div>
@@ -424,15 +424,15 @@ export function RevenuePreview(): JSX.Element {
   const { t } = useTranslation();
   
   return (
-    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-      <div className="flex items-center justify-between border-b border-slate-100 px-5 py-3">
+    <div className="overflow-hidden rounded-2xl border border-brand-border bg-brand-surface shadow-sm">
+      <div className="flex items-center justify-between border-b border-brand-border px-5 py-3">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">{t("landingPreview.devices.deskRevenue")}</p>
-          <p className="text-sm font-bold text-slate-900">↑ ₱ 42,500 <span className="text-[10px] font-medium text-teal-600 ml-1">avg +12%</span></p>
+          <p className="text-xs font-semibold uppercase tracking-wider text-brand-muted">{t("landingPreview.devices.deskRevenue")}</p>
+          <p className="text-sm font-bold text-brand-text">↑ ₱ 42,500 <span className="text-[10px] font-medium text-teal-600 ml-1">avg +12%</span></p>
         </div>
         <div className="flex gap-1">
-          <div className="h-6 w-12 rounded bg-slate-100" />
-          <div className="h-6 w-12 rounded bg-slate-100" />
+          <div className="h-6 w-12 rounded bg-brand-surface-muted" />
+          <div className="h-6 w-12 rounded bg-brand-surface-muted" />
         </div>
       </div>
 
@@ -444,7 +444,7 @@ export function RevenuePreview(): JSX.Element {
             </div>
           ))}
         </div>
-        <div className="flex justify-between mt-3 px-1 text-[10px] font-bold text-slate-400">
+        <div className="flex justify-between mt-3 px-1 text-[10px] font-bold text-brand-muted">
           <span>MON</span>
           <span>TUE</span>
           <span>WED</span>
@@ -455,14 +455,14 @@ export function RevenuePreview(): JSX.Element {
         </div>
 
         <div className="mt-6 grid grid-cols-2 gap-4">
-          <div className="rounded-xl border border-slate-100 bg-slate-50/50 p-3">
-             <p className="text-[10px] font-bold uppercase text-slate-500">Top Procedure</p>
-             <p className="mt-1 text-sm font-bold text-slate-900">Root Canal</p>
+          <div className="rounded-xl border border-brand-border bg-brand-surface-soft/50 p-3">
+             <p className="text-[10px] font-bold uppercase text-brand-muted">Top Procedure</p>
+             <p className="mt-1 text-sm font-bold text-brand-text">Root Canal</p>
              <p className="text-xs text-teal-600 font-semibold">₱ 12.4k this week</p>
           </div>
-          <div className="rounded-xl border border-slate-100 bg-slate-50/50 p-3">
-             <p className="text-[10px] font-bold uppercase text-slate-500">New Patients</p>
-             <p className="mt-1 text-sm font-bold text-slate-900">+14</p>
+          <div className="rounded-xl border border-brand-border bg-brand-surface-soft/50 p-3">
+             <p className="text-[10px] font-bold uppercase text-brand-muted">New Patients</p>
+             <p className="mt-1 text-sm font-bold text-brand-text">+14</p>
              <p className="text-xs text-sky-600 font-semibold">↑ 30% from last</p>
           </div>
         </div>

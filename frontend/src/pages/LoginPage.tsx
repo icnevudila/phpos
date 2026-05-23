@@ -145,7 +145,7 @@ export function LoginPage(): JSX.Element {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="mt-1.5 rounded-xl border border-slate-200 px-4 py-3 text-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-400 outline-none w-full transition"
-                    placeholder="admin@firefly.com"
+                    placeholder="admin@dentease.ph"
                   />
                 </div>
                 <div>

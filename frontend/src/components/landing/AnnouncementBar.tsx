@@ -47,7 +47,7 @@ export function AnnouncementBar(): JSX.Element | null {
             />
           </div>
           <div className="mx-auto flex max-w-7xl items-center gap-2 px-3 py-2 text-xs sm:gap-3 sm:px-5 sm:text-sm">
-            <span className="inline-flex items-center gap-1 rounded-full bg-white/15 px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest ring-1 ring-white/25 sm:gap-1.5 sm:px-2.5 sm:text-[10px]">
+            <span className="inline-flex items-center gap-1 rounded-full bg-brand-surface/15 px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest ring-1 ring-brand-border/10/25 sm:gap-1.5 sm:px-2.5 sm:text-[10px]">
               <span className="relative flex h-1.5 w-1.5">
                 <span className="absolute inset-0 animate-ping rounded-full bg-teal-300 opacity-70" />
                 <span className="relative h-1.5 w-1.5 rounded-full bg-teal-300" />
@@ -61,7 +61,7 @@ export function AnnouncementBar(): JSX.Element | null {
             </p>
             <a
               href="#cta"
-              className="group hidden items-center gap-1 rounded-full bg-white/15 px-3 py-1 text-xs font-bold ring-1 ring-white/30 transition hover:bg-white/25 sm:inline-flex"
+              className="group hidden items-center gap-1 rounded-full bg-brand-surface/15 px-3 py-1 text-xs font-bold ring-1 ring-brand-border/10/30 transition hover:bg-brand-surface/25 sm:inline-flex"
             >
               {t("landing.announceCta")}
               <svg
@@ -77,7 +77,7 @@ export function AnnouncementBar(): JSX.Element | null {
             <button
               onClick={dismiss}
               aria-label={t("common.dismiss")}
-              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-white/70 transition hover:bg-white/15 hover:text-white"
+              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-white/70 transition hover:bg-brand-surface/15 hover:text-white"
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="h-4 w-4">
                 <path d="M18 6 6 18M6 6l12 12" strokeLinecap="round" strokeLinejoin="round" />

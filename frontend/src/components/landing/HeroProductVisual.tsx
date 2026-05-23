@@ -23,12 +23,12 @@ export function HeroProductVisual(): JSX.Element {
           alt={t("landing.heroMockupAlt")}
           width={1200}
           height={900}
-          className="relative w-full rounded-2xl object-contain drop-shadow-2xl ring-1 ring-slate-200/60"
+          className="relative w-full rounded-2xl object-contain drop-shadow-2xl ring-1 ring-brand-border/60"
           loading="eager"
           fetchPriority="high"
         />
       </motion.div>
-      <p className="mt-4 text-center text-[11px] font-medium text-slate-500">
+      <p className="mt-4 text-center text-[11px] font-medium text-brand-muted">
         {t("landing.heroMockupCaption")}
       </p>
     </div>

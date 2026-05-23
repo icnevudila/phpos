@@ -75,15 +75,15 @@ export function SecurityBlock(): JSX.Element {
       <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
         <div className="lg:sticky lg:top-28">
           <SectionEyebrow label={t("landing.secEyebrow")} icon={IconShield} accent="emerald" />
-          <h2 className="mt-3 text-3xl font-black tracking-tight text-slate-900 sm:text-4xl">
+          <h2 className="mt-3 text-3xl font-black tracking-tight text-brand-text sm:text-4xl">
             {t("landing.secTitle")}
           </h2>
-          <p className="mt-4 text-lg font-medium text-slate-600">{t("landing.secSubtitle")}</p>
-          <div className="mt-8 rounded-[2.5rem] border border-slate-200 bg-gradient-to-br from-slate-50 to-white p-8 shadow-sm">
+          <p className="mt-4 text-lg font-medium text-brand-muted">{t("landing.secSubtitle")}</p>
+          <div className="mt-8 rounded-[2.5rem] border border-brand-border bg-gradient-to-br from-slate-50 to-white p-8 shadow-sm">
             <p className="text-xs font-black uppercase tracking-[0.2em] text-teal-700">
               {t("landing.secPromiseLabel")}
             </p>
-            <p className="mt-4 text-base leading-relaxed text-slate-700">
+            <p className="mt-4 text-base leading-relaxed text-brand-text">
               {t("landing.secPromise")}
             </p>
           </div>
@@ -101,15 +101,15 @@ export function SecurityBlock(): JSX.Element {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.3 }}
                 transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-                className={`group relative cursor-pointer overflow-hidden rounded-3xl border transition-all duration-500 p-6 ${ isExpanded ? "border-teal-500 bg-teal-50/10 shadow-xl ring-1 ring-teal-500 " : "border-slate-200 bg-white shadow-sm hover:-translate-y-1 hover:shadow-lg " }`}
+                className={`group relative cursor-pointer overflow-hidden rounded-3xl border transition-all duration-500 p-6 ${ isExpanded ? "border-teal-500 bg-teal-50/10 shadow-xl ring-1 ring-teal-500 " : "border-brand-border bg-brand-surface shadow-sm hover:-translate-y-1 hover:shadow-lg " }`}
               >
                 <div
                   className={`relative inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br ${it.accent} text-white shadow-lg transition-transform duration-500 group-hover:scale-110`}
                 >
                   {it.icon}
                 </div>
-                <h3 className="mt-5 text-lg font-black text-slate-900 leading-tight">{it.title}</h3>
-                <p className="mt-2 text-sm font-medium leading-relaxed text-slate-600">{it.desc}</p>
+                <h3 className="mt-5 text-lg font-black text-brand-text leading-tight">{it.title}</h3>
+                <p className="mt-2 text-sm font-medium leading-relaxed text-brand-muted">{it.desc}</p>
                 
                 {isExpanded && (
                   <motion.div
@@ -117,7 +117,7 @@ export function SecurityBlock(): JSX.Element {
                     animate={{ opacity: 1, height: "auto" }}
                     className="mt-6 border-t border-teal-500/20 pt-4"
                   >
-                    <p className="text-sm font-medium leading-relaxed text-slate-700">
+                    <p className="text-sm font-medium leading-relaxed text-brand-text">
                       {it.long}
                     </p>
                     <div className="mt-4 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-teal-600">
@@ -128,7 +128,7 @@ export function SecurityBlock(): JSX.Element {
                 )}
                 
                 <div className="absolute bottom-4 right-4 opacity-0 transition-opacity group-hover:opacity-100">
-                  <span className="text-[10px] font-bold text-slate-400">{isExpanded ? "Click to close" : "Click to learn more"}</span>
+                  <span className="text-[10px] font-bold text-brand-muted">{isExpanded ? "Click to close" : "Click to learn more"}</span>
                 </div>
               </motion.div>
             );

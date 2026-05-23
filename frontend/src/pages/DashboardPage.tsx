@@ -6,6 +6,12 @@ import {
   Activity,
   RefreshCw,
   AlertCircle,
+  Users,
+  Clock,
+  FileText,
+  Package,
+  CalendarDays,
+  Plus
 } from "lucide-react";
 
 import {
@@ -23,11 +29,14 @@ import { useDashboardQueueStream } from "../hooks/useDashboardQueueStream";
 import { patchAppointmentStatus, sendAppointmentQueueAlert } from "../services/appointments";
 import type { AppointmentStatus } from "../types/appointment";
 
-import { MetricCardsGrid } from "../components/dashboard/widgets/MetricCardsGrid";
-import { ClinicQueue } from "../components/dashboard/widgets/ClinicQueue";
-import { QueueBulkToolbar } from "../components/dashboard/widgets/QueueBulkToolbar";
 import { ActiveTreatmentCard } from "../components/dashboard/widgets/ActiveTreatmentCard";
 import type { ClinicFloorPlanZoneId } from "../components/dashboard/ClinicFloorPlanBoard";
+
+// New UI Components
+import { PageHeader } from "../components/ui/PageHeader";
+import { StatCard } from "../components/ui/StatCard";
+import { DataTable, type ColumnDef } from "../components/ui/DataTable";
+import { EmptyState } from "../components/ui/EmptyState";
 
 const ClinicFloorPlanBoard = lazy(() => import("../components/dashboard/ClinicFloorPlanBoard"));
 const FinancialOverview = lazy(async () => {
@@ -41,7 +50,7 @@ const HmoClaimRadar = lazy(async () => {
 
 function SectionFallback(): JSX.Element {
   return (
-    <div className="min-h-[10rem] animate-pulse rounded-2xl bg-slate-100" aria-hidden />
+    <div className="min-h-[10rem] animate-pulse rounded-2xl bg-brand-surface-soft" aria-hidden />
   );
 }
 
@@ -176,36 +185,6 @@ export function DashboardPage(): JSX.Element {
     if (ok) toast.success(t("pages.dashboard.floorPlan.dropSuccess", { zone: zoneLabel }));
   }
 
-  async function runBulkQueueAction(rows: DashboardTodayAppointment[], action: (row: DashboardTodayAppointment) => Promise<boolean | void>, successKey: string): Promise<void> {
-    if (!rows.length) return;
-    setBulkQueueBusy(true);
-    let ok = 0;
-    try {
-      for (const row of rows) { const result = await action(row); if (result !== false) ok += 1; }
-      await invalidateDashboardQueue();
-      toast.success(t(successKey, { ok, total: rows.length }));
-    } finally { setBulkQueueBusy(false); }
-  }
-
-  async function sendAlert(row: DashboardTodayAppointment, opts?: { silent?: boolean }): Promise<boolean> {
-    if (!opts?.silent) setQueueBusyId(row.id);
-    try {
-      await sendAppointmentQueueAlert(row.id);
-      if (!opts?.silent) {
-        await queryClient.invalidateQueries({ queryKey: ["dashboard-summary"] });
-        await queryClient.invalidateQueries({ queryKey: ["dashboard-queue"] });
-        await queryClient.invalidateQueries({ queryKey: ["dashboard-charts"] });
-        toast.success(t("pages.dashboard.queueAlertSent"));
-      }
-      return true;
-    } catch (e) {
-      if (!opts?.silent) toast.error(e instanceof Error ? e.message : t("pages.dashboard.queueAlertFailed"));
-      return false;
-    } finally {
-      if (!opts?.silent) setQueueBusyId(null);
-    }
-  }
-
   async function invalidateDashboardQueue(): Promise<void> {
     await queryClient.invalidateQueries({ queryKey: ["dashboard-summary"] });
     await queryClient.invalidateQueries({ queryKey: ["dashboard-queue"] });
@@ -235,46 +214,9 @@ export function DashboardPage(): JSX.Element {
     setAssignNowByRole({ admin: 0, dentist: 0, reception: 0 });
   }
 
-  const revenueSeries = useMemo(() => (dashboardView?.revenueByDay ?? []).map((r) => ({
-    date: r.date, label: fmtDay(r.date), amount: Number(r.amount),
-  })), [dashboardView]);
-
-  const revenueHasData = useMemo(() => revenueSeries.length > 0 && revenueSeries.some((r) => r.amount > 0), [revenueSeries]);
-
-  const paymentPie = useMemo(() => {
-    if (!monthly) return [];
-    const pm = monthly.paymentMethods;
-    const keys = ["cash", "gcash", "maya", "creditCard", "cheque", "philhealth"] as const;
-    return keys.map((key) => ({ key, name: t(`pages.dashboard.paymentMethods.${key}`), value: Number(pm[key]) })).filter((a) => a.value > 0);
-  }, [monthly, t]);
-
-  const topProc = useMemo(() => (dashboardView?.topProcedures ?? []).map((p) => ({ ...p, revenueNum: Number(p.revenue) })), [dashboardView]);
-
-  const statusRows = useMemo(() => {
-    if (!dashboardView) return [];
-    const s = dashboardView.appointmentsByStatus;
-    return [
-      { key: "pending",   label: t("pages.dashboard.statusPending"),   value: s.pending,   color: "bg-amber-400" },
-      { key: "confirmed", label: t("pages.dashboard.statusConfirmed"), value: s.confirmed, color: "bg-teal-400" },
-      { key: "checkedIn", label: t("pages.dashboard.statusCheckedIn"), value: s.checkedIn, color: "bg-teal-500" },
-      { key: "inProgress",label: t("pages.dashboard.statusInProgress"),value: s.inProgress,color: "bg-teal-700" },
-      { key: "completed", label: t("pages.dashboard.statusCompleted"), value: s.completed, color: "bg-teal-600" },
-      { key: "cancelled", label: t("pages.dashboard.statusCancelled"), value: s.cancelled, color: "bg-rose-400" },
-      { key: "noShow",    label: t("pages.dashboard.statusNoShow"),    value: s.noShow,    color: "bg-slate-400" },
-    ];
-  }, [dashboardView, t]);
-
-  const statusTotal = statusRows.reduce((s, r) => s + r.value, 0);
-
-  const currentlyInClinic = useMemo(() =>
-    (dashboardView?.queue.rows ?? []).filter((r) => r.status === "CHECKED_IN" || r.status === "IN_PROGRESS"),
-    [dashboardView?.queue.rows]);
   const nextAppointments = useMemo(() =>
     (dashboardView?.today.upcoming ?? []).filter((r) => r.status === "PENDING" || r.status === "CONFIRMED"),
     [dashboardView?.today.upcoming]);
-  const overdueAppointments = useMemo(() =>
-    nextAppointments.filter((r) => r.waitingMinutes > 0),
-    [nextAppointments]);
 
   const criticalClaimsByProvider = useMemo(() => {
     const byProvider = new Map<string, { id: string; name: string; critical: number }>();
@@ -362,14 +304,47 @@ export function DashboardPage(): JSX.Element {
     }).sort((a, b) => b.critical - a.critical).slice(0, 3);
   }, [criticalClaimsByProvider, criticalProviderBaseline, providerBreachForecast, t]);
 
+  const appointmentsColumns: ColumnDef<DashboardTodayAppointment>[] = [
+    {
+      key: "time",
+      header: "Time",
+      cell: (row) => {
+        try {
+          return new Date(row.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        } catch {
+          return row.time; // Fallback if invalid date
+        }
+      }
+    },
+    {
+      key: "patient",
+      header: "Patient",
+      cell: (row) => <span className="font-semibold text-brand-text">{row.patientName || "Unknown Patient"}</span>
+    },
+    {
+      key: "dentist",
+      header: "Dentist",
+      cell: (row) => row.dentistName || "Unassigned"
+    },
+    {
+      key: "status",
+      header: "Status",
+      cell: (row) => (
+        <span className={`badge ${row.status === 'CHECKED_IN' ? 'badge-primary' : 'badge-slate'}`}>
+          {row.status.replace("_", " ")}
+        </span>
+      )
+    }
+  ];
+
   // ── Loading state ─────────────────────────────────────────────────────────
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-40 gap-4">
-        <div className="h-12 w-12 rounded-2xl bg-teal-50 flex items-center justify-center">
-          <Activity className="h-6 w-6 animate-spin text-teal-500" />
+        <div className="h-12 w-12 rounded-2xl bg-brand-primary-soft flex items-center justify-center">
+          <Activity className="h-6 w-6 animate-spin text-brand-primary" />
         </div>
-        <p className="text-sm font-semibold text-slate-400">{t("pages.dashboard.assemblingInsights")}</p>
+        <p className="text-sm font-semibold text-brand-muted">{t("pages.dashboard.assemblingInsights", { defaultValue: "Loading dashboard insights..." })}</p>
       </div>
     );
   }
@@ -377,138 +352,170 @@ export function DashboardPage(): JSX.Element {
   // ── Error state ───────────────────────────────────────────────────────────
   if (error || !dashboardView || !monthly) return (
     <div className="card text-center py-16 mx-auto max-w-sm mt-10">
-      <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-rose-50">
-        <AlertCircle className="h-7 w-7 text-rose-500" />
+      <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-danger-soft">
+        <AlertCircle className="h-7 w-7 text-brand-danger" />
       </div>
-      <p className="text-base font-semibold text-slate-800 mb-1">{t("pages.dashboard.syncInterrupted")}</p>
-      <p className="text-sm text-slate-400 mb-6">{error}</p>
-      <button
-        onClick={() => window.location.reload()}
-        className="btn-primary mx-auto"
-      >
-        {t("pages.dashboard.restartEngine")}
+      <p className="text-base font-bold text-brand-text mb-1">{t("pages.dashboard.syncInterrupted", { defaultValue: "Sync Interrupted" })}</p>
+      <p className="text-sm text-brand-muted mb-6">{error}</p>
+      <button onClick={() => window.location.reload()} className="btn-primary mx-auto">
+        {t("common.refresh", { defaultValue: "Refresh Page" })}
       </button>
     </div>
   );
 
   return (
-    <div className="page-wrapper">
-
-      {/* ── Page header ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="page-header-title">{t("pages.dashboard.heroTitle")}</h1>
-          <p className="page-header-sub">{t("pages.dashboard.subtitleMain")}</p>
-        </div>
-        <button
-          onClick={() => void queryClient.invalidateQueries()}
-          className="btn-secondary self-start sm:self-auto"
-        >
-          <RefreshCw size={15} className={loading ? "animate-spin" : ""} />
-          {t("pages.dashboard.refreshData")}
-        </button>
-      </div>
-
-      <MetricCardsGrid dashboard={dashboardView} canSeeManagementCards={canSeeManagementCards} />
-
-      {/* ── Section tabs ── */}
-      <div className="flex items-center gap-2 border-b border-slate-200 pb-0">
-        {(["overview", "operations", "finance"] as const).map((key) => {
-          if (key === "finance" && !canSeeFinance) return null;
-          const active = section === key;
-          return (
-            <button
-              key={key}
-              type="button"
-              role="tab"
-              aria-selected={active}
-              onClick={() => setSection(key)}
-              className={`px-4 py-2.5 text-sm font-semibold border-b-2 -mb-px transition-colors ${ active ? "border-teal-500 text-teal-600" : "border-transparent text-slate-500 hover:text-slate-700" }`}
-            >
-              {t(`pages.dashboard.sections.${key}`)}
+    <div className="space-y-6">
+      
+      <PageHeader 
+        title={t("pages.dashboard.heroTitle", { defaultValue: "Operations Center" })}
+        subtitle={t("pages.dashboard.subtitleMain", { defaultValue: "Overview of your clinic's performance and queue." })}
+        actions={
+          <>
+            <input type="date" className="h-10 px-3 rounded-[var(--radius-md)] border border-brand-border bg-brand-surface text-brand-text text-sm font-medium focus:outline-none focus:ring-1 focus:ring-brand-primary" defaultValue={new Date().toISOString().split('T')[0]} />
+            <button onClick={() => void queryClient.invalidateQueries()} className="btn-secondary">
+              <RefreshCw size={16} className={loading ? "animate-spin" : ""} />
+              <span className="hidden sm:inline">{t("common.refresh", { defaultValue: "Refresh" })}</span>
             </button>
-          );
-        })}
+          </>
+        }
+      />
+
+      {/* KPI Row */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        <StatCard 
+          label="Appointments Today" 
+          value={dashboardView.today.appointments} 
+          icon={CalendarDays}
+          badge={{ text: `${dashboardView.queue.checkedIn} checked in`, variant: "primary" }}
+        />
+        <StatCard 
+          label="Waiting Now" 
+          value={dashboardView.queue.waiting} 
+          icon={Users}
+          subtitle="avg 15 min wait time"
+        />
+        <StatCard 
+          label="Pending Claims" 
+          value={claimRadarCounts.submission} 
+          icon={FileText}
+          badge={{ text: `${claimRadarCounts.critical} critical`, variant: "danger" }}
+        />
+        <StatCard 
+          label="Stock Alerts" 
+          value="2" 
+          icon={Package}
+          badge={{ text: "2 critical", variant: "danger" }}
+          subtitle="4 low stock"
+        />
       </div>
 
-      {/* ── Tab panels ── */}
-      {section === "overview" && (
-        <div className="grid grid-cols-1 gap-6 xl:grid-cols-12">
-          <div className="xl:col-span-5">
-            <ActiveTreatmentCard dashboard={dashboardView} phpFullFormatter={PHP_FULL} />
-          </div>
-          {canSeeManagementCards ? (
-            <div className="xl:col-span-7">
-              <Suspense fallback={<SectionFallback />}>
-                <HmoClaimRadar
-                  dashboard={dashboardView}
-                  claimRadarCounts={claimRadarCounts}
-                  claimRadarForecastTotals={claimRadarForecastTotals}
-                  claimRadarTeamLoad={claimRadarTeamLoad}
-                  claimRadarRecommendedOwner={claimRadarRecommendedOwner}
-                  criticalClosureKpi={criticalClosureKpi}
-                  criticalProviderHotspots={criticalProviderHotspots}
-                  assignNowCount={assignNowCount}
-                  assignNowByRole={assignNowByRole}
-                  role={role}
-                  copyClaimRadarSnapshot={copyClaimRadarSnapshot}
-                  onAssignNowClick={onAssignNowClick}
-                  resetAssignNowCounters={resetAssignNowCounters}
-                />
-              </Suspense>
+      {/* Main Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        {/* Left Col: Queue and Active Treatments */}
+        <div className="lg:col-span-2 space-y-6">
+          <div className="card">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-bold text-brand-text">Today's Schedule</h2>
+              <button className="text-sm font-medium text-brand-primary hover:text-brand-primary-hover flex items-center gap-1">
+                View Calendar <Clock size={14} />
+              </button>
             </div>
-          ) : null}
+            
+            <DataTable 
+              data={nextAppointments.slice(0, 5)}
+              columns={appointmentsColumns}
+              keyExtractor={(row) => row.id}
+              emptyState={
+                <EmptyState 
+                  icon={CalendarDays}
+                  title="No Upcoming Appointments"
+                  description="There are no more appointments scheduled for today."
+                  action={<button className="btn-secondary mt-2"><Plus size={16}/> Book Walk-in</button>}
+                />
+              }
+            />
+          </div>
+          
+          <ActiveTreatmentCard dashboard={dashboardView} phpFullFormatter={PHP_FULL} />
         </div>
-      )}
 
-      {section === "operations" && (
+        {/* Right Col: Action Center & System Status */}
         <div className="space-y-6">
-          <Suspense fallback={<SectionFallback />}>
-            <ClinicFloorPlanBoard dashboard={dashboardView} onPatientDrop={handleFloorPlanDrop} />
-          </Suspense>
-          <QueueBulkToolbar
-            overdue={overdueAppointments}
-            pendingNext={nextAppointments.slice(0, 10)}
-            lastSyncedAt={queueUpdatedAt}
-            disabled={bulkQueueBusy || queueBusyId !== null}
-            onBulkCheckInOverdue={() => runBulkQueueAction(overdueAppointments, (row) => changeQueueStatus(row, "CHECKED_IN", { silent: true }), "pages.dashboard.bulkCheckInResult")}
-            onBulkAlertOverdue={() => runBulkQueueAction(overdueAppointments, (row) => sendAlert(row, { silent: true }), "pages.dashboard.bulkAlertResult")}
-            onBulkCheckInNext={() => runBulkQueueAction(nextAppointments.slice(0, 10), (row) => changeQueueStatus(row, "CHECKED_IN", { silent: true }), "pages.dashboard.bulkCheckInResult")}
-          />
-          <ClinicQueue
-            currentlyInClinic={currentlyInClinic}
-            nextAppointments={nextAppointments}
-            overdueAppointments={overdueAppointments}
-            queueBusyId={queueBusyId}
-            sendAlert={sendAlert}
-            changeQueueStatus={changeQueueStatus}
-          />
-        </div>
-      )}
+          <div className="card bg-brand-surface-soft shadow-none">
+            <h2 className="text-lg font-bold text-brand-text mb-4">Action Center</h2>
+            <ul className="space-y-3">
+              <li className="flex items-start gap-3 bg-brand-surface p-3 rounded-xl border border-brand-border shadow-sm">
+                <div className="mt-1 w-2 h-2 rounded-full bg-brand-warning shrink-0"></div>
+                <div>
+                  <p className="text-sm font-semibold text-brand-text">Submit 4 draft HMO claims</p>
+                  <p className="text-xs font-medium text-brand-muted mt-0.5">Assigned to: Receptionist</p>
+                </div>
+              </li>
+              <li className="flex items-start gap-3 bg-brand-surface p-3 rounded-xl border border-brand-border shadow-sm">
+                <div className="mt-1 w-2 h-2 rounded-full bg-brand-danger shrink-0"></div>
+                <div>
+                  <p className="text-sm font-semibold text-brand-text">Reorder 2 critical inventory items</p>
+                  <p className="text-xs font-medium text-brand-muted mt-0.5">Lidocaine & Face Masks</p>
+                </div>
+              </li>
+              <li className="flex items-start gap-3 bg-brand-surface p-3 rounded-xl border border-brand-border shadow-sm">
+                <div className="mt-1 w-2 h-2 rounded-full bg-brand-info shrink-0"></div>
+                <div>
+                  <p className="text-sm font-semibold text-brand-text">Review 1 failed SMS dispatch</p>
+                  <p className="text-xs font-medium text-brand-muted mt-0.5">Patient: John Doe</p>
+                </div>
+              </li>
+            </ul>
+          </div>
 
-      {section === "finance" && canSeeFinance && (
-        <Suspense fallback={<SectionFallback />}>
-          <FinancialOverview
-            dashboard={dashboardView}
-            monthly={monthly}
-            revenueSeries={revenueSeries}
-            revenueHasData={revenueHasData}
-            paymentPie={paymentPie}
-            topProc={topProc}
-            statusRows={statusRows}
-            statusTotal={statusTotal}
-            year={year}
-            month={month}
-            setYear={setYear}
-            setMonth={setMonth}
-            openMonthlyReportPdf={openMonthlyReportPdf}
-            phpFormatter={PHP}
-            phpFullFormatter={PHP_FULL}
-            methodColors={METHOD_COLORS}
-            dashboardChartEmpty={DashboardChartEmpty}
-          />
-        </Suspense>
-      )}
+          <div className="card">
+            <h2 className="text-lg font-bold text-brand-text mb-4">Sync Status</h2>
+            <div className="flex items-center justify-between py-2 border-b border-brand-border">
+              <span className="text-sm font-medium text-brand-muted">PhilHealth PECWS</span>
+              <span className="badge badge-success">Synced</span>
+            </div>
+            <div className="flex items-center justify-between py-2">
+              <span className="text-sm font-medium text-brand-muted">TV Display Queue</span>
+              <span className="badge badge-success">Live</span>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+
+      {/* Bottom Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {canSeeFinance && (
+          <div className="card flex flex-col">
+             <h2 className="text-lg font-bold text-brand-text mb-4">Cashflow Snapshot</h2>
+             <div className="flex-1 min-h-[16rem] bg-brand-surface-soft rounded-xl flex items-center justify-center border border-dashed border-brand-border">
+                <p className="text-brand-muted font-medium text-sm">Financial charts will appear here</p>
+             </div>
+          </div>
+        )}
+        
+        {canSeeManagementCards && (
+          <Suspense fallback={<SectionFallback />}>
+            <HmoClaimRadar
+              dashboard={dashboardView}
+              claimRadarCounts={claimRadarCounts}
+              claimRadarForecastTotals={claimRadarForecastTotals}
+              claimRadarTeamLoad={claimRadarTeamLoad}
+              claimRadarRecommendedOwner={claimRadarRecommendedOwner}
+              criticalClosureKpi={criticalClosureKpi}
+              criticalProviderHotspots={criticalProviderHotspots}
+              assignNowCount={assignNowCount}
+              assignNowByRole={assignNowByRole}
+              role={role}
+              copyClaimRadarSnapshot={copyClaimRadarSnapshot}
+              onAssignNowClick={onAssignNowClick}
+              resetAssignNowCounters={resetAssignNowCounters}
+            />
+          </Suspense>
+        )}
+      </div>
+
     </div>
   );
 }

@@ -43,7 +43,7 @@ const CHIPS: { key: string; Icon: IconComp; accent: string }[] = [
   { key: "drag", Icon: IconDragHandle, accent: "bg-sky-50 text-sky-700 ring-sky-200   " },
   { key: "audit", Icon: IconAudit, accent: "bg-teal-50 text-teal-700 ring-teal-200   " },
   { key: "roles", Icon: IconRoles, accent: "bg-amber-50 text-amber-700 ring-amber-200   " },
-  { key: "dark", Icon: IconDark, accent: "bg-slate-100 text-slate-800 ring-slate-200   " },
+  { key: "dark", Icon: IconDark, accent: "bg-brand-surface-muted text-brand-text ring-brand-border   " },
   { key: "lang", Icon: IconLang, accent: "bg-indigo-50 text-indigo-700 ring-indigo-200   " },
   { key: "gcash", Icon: IconPeso, accent: "bg-sky-50 text-sky-700 ring-sky-200   " },
   { key: "maya", Icon: IconPeso, accent: "bg-teal-50 text-teal-700 ring-teal-200   " },
@@ -55,7 +55,7 @@ const CHIPS: { key: string; Icon: IconComp; accent: string }[] = [
   { key: "selfbook", Icon: IconSelfBook, accent: "bg-teal-50 text-teal-700 ring-teal-200   " },
   { key: "conflict", Icon: IconClockAlert, accent: "bg-indigo-50 text-indigo-700 ring-indigo-200   " },
   { key: "waitlist", Icon: IconHourglass, accent: "bg-teal-50 text-teal-700 ring-teal-200   " },
-  { key: "xray", Icon: IconXray, accent: "bg-slate-100 text-slate-700 ring-slate-200   " },
+  { key: "xray", Icon: IconXray, accent: "bg-brand-surface-muted text-brand-text ring-brand-border   " },
   { key: "allergy", Icon: IconAllergy, accent: "bg-rose-50 text-rose-700 ring-rose-200   " },
   { key: "plan", Icon: IconTreatmentPlan, accent: "bg-sky-50 text-sky-700 ring-sky-200   " },
   { key: "multi", Icon: IconMultiBranch, accent: "bg-teal-50 text-teal-700 ring-teal-200   " },
@@ -64,7 +64,7 @@ const CHIPS: { key: string; Icon: IconComp; accent: string }[] = [
   { key: "php", Icon: IconPesoMono, accent: "bg-teal-50 text-teal-700 ring-teal-200   " },
   { key: "cal", Icon: IconCalendar, accent: "bg-sky-50 text-sky-700 ring-sky-200   " },
   { key: "register", Icon: IconRegister, accent: "bg-teal-50 text-teal-700 ring-teal-200   " },
-  { key: "kbd", Icon: IconKeyboard, accent: "bg-slate-100 text-slate-700 ring-slate-200   " },
+  { key: "kbd", Icon: IconKeyboard, accent: "bg-brand-surface-muted text-brand-text ring-brand-border   " },
   { key: "history", Icon: IconHistory, accent: "bg-rose-50 text-rose-700 ring-rose-200   " },
   { key: "autologout", Icon: IconPower, accent: "bg-amber-50 text-amber-700 ring-amber-200   " },
 ];
@@ -102,10 +102,10 @@ export function EverythingInside(): JSX.Element {
     <div className="space-y-12">
       <div className="mx-auto max-w-2xl text-center">
         <SectionEyebrow label={t("landing.chipEyebrow")} icon={IconSparkle} accent="indigo" align="center" />
-        <h2 className="mt-3 text-4xl font-black tracking-tight text-slate-900 sm:text-5xl">
+        <h2 className="mt-3 text-4xl font-black tracking-tight text-brand-text sm:text-5xl">
           {t("landing.chipTitle")}
         </h2>
-        <p className="mt-4 text-lg font-medium text-slate-600">{t("landing.chipSubtitle")}</p>
+        <p className="mt-4 text-lg font-medium text-brand-muted">{t("landing.chipSubtitle")}</p>
       </div>
 
       <div className="grid gap-8 lg:grid-cols-[1fr_350px]">
@@ -117,9 +117,9 @@ export function EverythingInside(): JSX.Element {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: idx * 0.1 }}
-              className="rounded-[2.5rem] border border-slate-200 bg-white p-6 shadow-sm"
+              className="rounded-[2.5rem] border border-brand-border bg-brand-surface p-6 shadow-sm"
             >
-              <h3 className="mb-4 text-[10px] font-black uppercase tracking-[0.25em] text-slate-400">
+              <h3 className="mb-4 text-[10px] font-black uppercase tracking-[0.25em] text-brand-muted">
                 {cat.title}
               </h3>
               <div className="flex flex-wrap gap-2">
@@ -134,7 +134,7 @@ export function EverythingInside(): JSX.Element {
                       className={`inline-flex items-center gap-1.5 rounded-full px-3.5 py-2 text-xs font-bold ring-1 transition-all hover:scale-105 active:scale-95 ${
                         isActive 
                           ? `${chip.accent} ring-current shadow-md` 
-                          : "bg-white/80 text-slate-600 ring-slate-200 hover:bg-white   "
+                          : "bg-brand-surface/80 text-brand-muted ring-brand-border hover:bg-brand-surface   "
                       }`}
                     >
                       <chip.Icon className="h-3.5 w-3.5" />
@@ -160,15 +160,15 @@ export function EverythingInside(): JSX.Element {
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
-                className="sticky top-24 rounded-[2.5rem] border border-slate-200 bg-white p-8 shadow-2xl"
+                className="sticky top-24 rounded-[2.5rem] border border-brand-border bg-brand-surface p-8 shadow-2xl"
               >
                 <div className={`mb-6 inline-flex h-14 w-14 items-center justify-center rounded-2xl ${activeChip.accent} ring-4 ring-current/10`}>
                   <activeChip.Icon className="h-7 w-7" />
                 </div>
-                <h4 className="text-2xl font-black text-slate-900">
+                <h4 className="text-2xl font-black text-brand-text">
                   {t(`landing.chip_${activeKey}`)}
                 </h4>
-                <p className="mt-4 text-base leading-relaxed text-slate-600">
+                <p className="mt-4 text-base leading-relaxed text-brand-muted">
                   {/* Descriptions could be in i18n, adding fallback/placeholder logic for now */}
                   {t(`landing.chip_${activeKey}_desc`) || "Professional-grade tool designed specifically for high-volume dental practices, ensuring data integrity and clinical precision across all branches."}
                 </p>
@@ -188,7 +188,7 @@ export function EverythingInside(): JSX.Element {
         </div>
       </div>
 
-      <p className="text-center text-[10px] font-black uppercase tracking-[0.4em] text-slate-400">
+      <p className="text-center text-[10px] font-black uppercase tracking-[0.4em] text-brand-muted">
         {t("landing.chipFoot")}
       </p>
     </div>

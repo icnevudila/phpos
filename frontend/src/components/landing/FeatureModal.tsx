@@ -48,7 +48,7 @@ export function FeatureModal({ feature, onClose }: FeatureModalProps): JSX.Eleme
           aria-labelledby={`feature-modal-title-${feature.id}`}
         >
           <motion.div
-            className="fixed inset-0 bg-white/60 backdrop-blur-sm"
+            className="fixed inset-0 bg-brand-surface/60 backdrop-blur-sm"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -58,7 +58,7 @@ export function FeatureModal({ feature, onClose }: FeatureModalProps): JSX.Eleme
             <motion.div
               ref={panelRef}
               layoutId={`feature-card-${feature.id}`}
-              className="relative z-10 w-full max-w-4xl max-h-[min(92vh,calc(100dvh-2rem))] overflow-y-auto overflow-x-hidden rounded-t-3xl bg-white p-6 shadow-2xl ring-1 ring-slate-200 sm:max-h-[min(92vh,calc(100dvh-5rem))] sm:rounded-3xl sm:p-8"
+              className="relative z-10 w-full max-w-4xl max-h-[min(92vh,calc(100dvh-2rem))] overflow-y-auto overflow-x-hidden rounded-t-3xl bg-brand-surface p-6 shadow-2xl ring-1 ring-brand-border sm:max-h-[min(92vh,calc(100dvh-5rem))] sm:rounded-3xl sm:p-8"
               transition={{ type: "spring", stiffness: 260, damping: 28 }}
             >
             <div className="flex items-start gap-4">
@@ -82,13 +82,13 @@ export function FeatureModal({ feature, onClose }: FeatureModalProps): JSX.Eleme
                 <motion.h2
                   id={`feature-modal-title-${feature.id}`}
                   layoutId={`feature-title-${feature.id}`}
-                  className="text-2xl font-extrabold text-slate-900 sm:text-3xl"
+                  className="text-2xl font-extrabold text-brand-text sm:text-3xl"
                 >
                   {feature.title}
                 </motion.h2>
                 <motion.p
                   layoutId={`feature-desc-${feature.id}`}
-                  className="mt-2 text-sm leading-relaxed text-slate-600 sm:text-base"
+                  className="mt-2 text-sm leading-relaxed text-brand-muted sm:text-base"
                 >
                   {feature.longDesc ?? feature.desc}
                 </motion.p>
@@ -97,7 +97,7 @@ export function FeatureModal({ feature, onClose }: FeatureModalProps): JSX.Eleme
                 ref={closeRef}
                 onClick={onClose}
                 aria-label={t("common.close")}
-                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-600 transition hover:bg-slate-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2"
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-surface-muted text-brand-muted transition hover:bg-brand-border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2"
               >
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="h-5 w-5">
                   <path d="M18 6 6 18M6 6l12 12" strokeLinecap="round" strokeLinejoin="round" />
@@ -115,7 +115,7 @@ export function FeatureModal({ feature, onClose }: FeatureModalProps): JSX.Eleme
             </motion.div>
 
             {feature.tryInAppPath ? (
-              <div className="mt-6 border-t border-slate-200 pt-6">
+              <div className="mt-6 border-t border-brand-border pt-6">
                 <Link
                   to={feature.tryInAppPath}
                   onClick={onClose}
@@ -123,7 +123,7 @@ export function FeatureModal({ feature, onClose }: FeatureModalProps): JSX.Eleme
                 >
                   {t("landing.featureOpenInApp")}
                 </Link>
-                <p className="mt-2 text-center text-[11px] text-slate-500 sm:text-left">
+                <p className="mt-2 text-center text-[11px] text-brand-muted sm:text-left">
                   {t("landing.featureOpenInAppHint")}
                 </p>
               </div>

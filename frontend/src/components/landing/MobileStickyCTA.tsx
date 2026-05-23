@@ -32,14 +32,14 @@ export function MobileStickyCTA(): JSX.Element {
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 80, opacity: 0 }}
           transition={{ type: "spring", stiffness: 240, damping: 24 }}
-          className="fixed inset-x-3 z-[55] flex items-stretch gap-2 rounded-2xl border border-teal-200 bg-white/95 p-2 shadow-2xl backdrop-blur md:hidden"
+          className="fixed inset-x-3 z-[55] flex items-stretch gap-2 rounded-2xl border border-teal-200 bg-brand-surface/95 p-2 shadow-2xl backdrop-blur md:hidden"
           style={{ bottom: "max(0.75rem, env(safe-area-inset-bottom))" }}
         >
           <div className="flex flex-1 flex-col justify-center pl-2">
             <p className="text-[10px] font-bold uppercase tracking-widest text-teal-700">
               {t("landing.announceBadge")}
             </p>
-            <p className="text-xs font-semibold text-slate-900">
+            <p className="text-xs font-semibold text-brand-text">
               {t("landing.announceTitle")}
             </p>
           </div>

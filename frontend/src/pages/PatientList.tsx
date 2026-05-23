@@ -133,7 +133,7 @@ export function PatientList(): JSX.Element {
       }>("/patients/import/csv", fd, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      const { created, skipped, errors } = res.data.data;
+      const { created, skipped, errors } = (res as any).data;
       await queryClient.invalidateQueries({ queryKey: ["patients"] });
       toast.success(
         t("pages.patients.importResult", { created, skipped, defaultValue: `Imported ${created}, skipped ${skipped}` }),
@@ -153,8 +153,8 @@ export function PatientList(): JSX.Element {
     queryFn: async () => {
       const params = new URLSearchParams({ page: String(page), limit: String(limit) });
       if (q.trim()) params.set("q", q.trim());
-      const res = await api.get<{ data: ListPayload }>(`/patients?${params.toString()}`);
-      return res.data.data;
+      const res = await api.get<any, { data: ListPayload }>(`/patients?${params.toString()}`);
+      return res.data;
     },
   });
 
