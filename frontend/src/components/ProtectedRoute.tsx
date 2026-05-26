@@ -1,5 +1,7 @@
+import { useEffect, useState } from "react";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
+import { supabase } from "../lib/supabase";
 import type { UserRole } from "../types/user";
 
 export function RoleGuard({
@@ -9,11 +11,35 @@ export function RoleGuard({
   roles: UserRole[];
   children: JSX.Element;
 }): JSX.Element {
-  const { user, loading } = useAuth();
-  
-  if (loading) return <div>Loading...</div>;
+  const { user, loading: authLoading } = useAuth();
+  const [userRole, setUserRole] = useState<UserRole | undefined>(undefined);
+  const [loading, setLoading] = useState(true);
 
-  const userRole = user?.user_metadata?.role as UserRole | undefined;
+  useEffect(() => {
+    if (authLoading) return;
+    if (!user) {
+      setLoading(false);
+      return;
+    }
+    if (user.user_metadata?.role) {
+      setUserRole(user.user_metadata.role as UserRole);
+      setLoading(false);
+      return;
+    }
+    // Fetch from profiles
+    supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .single()
+      .then(({ data }) => {
+        if (data?.role) setUserRole(data.role as UserRole);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, [user, authLoading]);
+  
+  if (authLoading || loading) return <div className="flex h-screen items-center justify-center">Loading...</div>;
 
   if (!user || !userRole || !roles.includes(userRole)) {
     return <Navigate to="/unauthorized" replace />;
@@ -27,16 +53,41 @@ export interface ProtectedRouteProps {
 
 export function ProtectedRoute({ roles }: ProtectedRouteProps): JSX.Element {
   const location = useLocation();
-  const { user, isAuthenticated, loading } = useAuth();
+  const { user, isAuthenticated, loading: authLoading } = useAuth();
+  const [userRole, setUserRole] = useState<UserRole | undefined>(undefined);
+  const [loading, setLoading] = useState(true);
 
-  if (loading) return <div className="flex h-screen items-center justify-center">Loading...</div>;
+  useEffect(() => {
+    if (authLoading) return;
+    if (!user) {
+      setLoading(false);
+      return;
+    }
+    if (user.user_metadata?.role) {
+      setUserRole(user.user_metadata.role as UserRole);
+      setLoading(false);
+      return;
+    }
+    // Fetch from profiles
+    supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .single()
+      .then(({ data }) => {
+        if (data?.role) setUserRole(data.role as UserRole);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, [user, authLoading]);
+
+  if (authLoading || loading) return <div className="flex h-screen items-center justify-center">Loading...</div>;
 
   if (!isAuthenticated) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
   if (roles !== undefined && roles.length > 0) {
-    const userRole = user?.user_metadata?.role as UserRole | undefined;
     if (!userRole || !roles.includes(userRole)) {
       return <Navigate to="/unauthorized" replace />;
     }

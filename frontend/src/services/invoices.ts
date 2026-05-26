@@ -13,7 +13,7 @@ export interface ListInvoicesParams {
 export async function fetchInvoices(params: ListInvoicesParams = {}): Promise<InvoiceDto[]> {
   let query = supabase
     .from("invoices")
-    .select("*, patients(name)");
+    .select("*, patients(*)");
 
   if (params.patientId) {
     query = query.eq("patient_id", params.patientId);
@@ -42,7 +42,31 @@ export async function fetchInvoices(params: ListInvoicesParams = {}): Promise<In
       id: row.patient_id,
       firstName: row.patients.name?.split(" ")[0] || "",
       lastName: row.patients.name?.split(" ").slice(1).join(" ") || "",
-    } : undefined,
+      fullName: row.patients.name || "Unknown Patient",
+      phone: row.patients.phone || "",
+      email: row.patients.email || null,
+      address: row.patients.address || null,
+      city: row.patients.city || null,
+      philhealthNo: row.patients.philhealth_no || null,
+      isSeniorCitizen: row.patients.is_senior_citizen || false,
+      oscaIdNo: row.patients.osca_id_no || null,
+      pwdIdNo: row.patients.pwd_id_no || null,
+      tinNumber: row.patients.tin_number || null,
+    } : {
+      id: row.patient_id,
+      firstName: "Unknown",
+      lastName: "Patient",
+      fullName: "Unknown Patient",
+      phone: "",
+      email: null,
+      address: null,
+      city: null,
+      philhealthNo: null,
+      isSeniorCitizen: false,
+      oscaIdNo: null,
+      pwdIdNo: null,
+      tinNumber: null,
+    },
     items: [],
     payments: [],
     hmoClaim: undefined
@@ -52,7 +76,7 @@ export async function fetchInvoices(params: ListInvoicesParams = {}): Promise<In
 export async function fetchInvoice(id: string): Promise<InvoiceDto> {
   const { data, error } = await supabase
     .from("invoices")
-    .select("*, patients(name), invoice_items(*), payments(*)")
+    .select("*, patients(*), invoice_items(*), payments(*)")
     .eq("id", id)
     .single();
 
@@ -75,7 +99,31 @@ export async function fetchInvoice(id: string): Promise<InvoiceDto> {
       id: data.patient_id,
       firstName: data.patients.name?.split(" ")[0] || "",
       lastName: data.patients.name?.split(" ").slice(1).join(" ") || "",
-    } : undefined,
+      fullName: data.patients.name || "Unknown Patient",
+      phone: data.patients.phone || "",
+      email: data.patients.email || null,
+      address: data.patients.address || null,
+      city: data.patients.city || null,
+      philhealthNo: data.patients.philhealth_no || null,
+      isSeniorCitizen: data.patients.is_senior_citizen || false,
+      oscaIdNo: data.patients.osca_id_no || null,
+      pwdIdNo: data.patients.pwd_id_no || null,
+      tinNumber: data.patients.tin_number || null,
+    } : {
+      id: data.patient_id,
+      firstName: "Unknown",
+      lastName: "Patient",
+      fullName: "Unknown Patient",
+      phone: "",
+      email: null,
+      address: null,
+      city: null,
+      philhealthNo: null,
+      isSeniorCitizen: false,
+      oscaIdNo: null,
+      pwdIdNo: null,
+      tinNumber: null,
+    },
     items: (data.invoice_items || []).map((item: any) => ({
       id: item.id,
       invoiceId: data.id,
