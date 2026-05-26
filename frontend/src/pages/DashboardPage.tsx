@@ -24,7 +24,7 @@ import {
   type DashboardTodayAppointment,
 } from "../services/reports";
 import { fetchHmoClaims } from "../services/hmo";
-import { getUser } from "../hooks/authTokens";
+import { useAuth } from "../hooks/useAuth";
 import { useDashboardQueueStream } from "../hooks/useDashboardQueueStream";
 import { patchAppointmentStatus, sendAppointmentQueueAlert } from "../services/appointments";
 import type { AppointmentStatus } from "../types/appointment";
@@ -85,7 +85,8 @@ function claimAgeDays(iso: string): number {
 export function DashboardPage(): JSX.Element {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
-  const role = getUser()?.role ?? "RECEPTIONIST";
+  const { user } = useAuth();
+  const role = user?.user_metadata?.role ?? "RECEPTIONIST";
   const canSeeFinance = role === "ADMIN";
   const canSeeManagementCards = role === "ADMIN" || role === "DENTIST";
 

@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Plus, AlertCircle, Save, Trash2, Calendar, User, Phone, MapPin, CreditCard, ShieldAlert } from "lucide-react";
 
-import api from "../services/api";
+import { createPatient, getPatient, updatePatient } from "../services/patients";
 import { patientFormSchema, type PatientFormValues } from "../validation/patientForm";
 
 interface PatientDetailApi {
@@ -122,9 +122,8 @@ export function PatientForm({ open, onClose, onSaved, patientId }: PatientFormPr
     setLoadingPatient(true);
     void (async () => {
       try {
-        const res = await api.get<{ data: PatientDetailApi }>(`/patients/${patientId}`);
+        const p = await getPatient(patientId);
         if (cancelled) return;
-        const p = res.data.data;
         const dateOnly = (iso: string | null): string =>
           iso && iso.length >= 10 ? iso.slice(0, 10) : "";
         reset({
@@ -244,10 +243,10 @@ export function PatientForm({ open, onClose, onSaved, patientId }: PatientFormPr
 
     try {
       if (patientId) {
-        await api.put(`/patients/${patientId}`, body);
+        await updatePatient(patientId, body);
         toast.success(t("patientForm.toastUpdated", { defaultValue: "Toast Updated" }));
       } else {
-        await api.post(`/patients`, body);
+        await createPatient(body);
         toast.success(t("patientForm.toastCreated", { defaultValue: "Toast Created" }));
       }
       onSaved();

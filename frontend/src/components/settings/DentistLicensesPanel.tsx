@@ -12,12 +12,13 @@ import {
   UserCheck
 } from "lucide-react";
 
-import { getAuthProfile } from "../../hooks/authTokens";
+import { useAuth } from "../../hooks/useAuth";
 import api from "../../services/api";
 
 export function DentistLicensesPanel() {
   const { t } = useTranslation();
-  const profile = getAuthProfile();
+  const { user } = useAuth();
+  const profile = user;
   const [draft, setDraft] = useState({ prcNumber: "", ptrNumber: "", s2License: "", tinNumber: "" });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);

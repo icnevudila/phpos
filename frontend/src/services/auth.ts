@@ -29,17 +29,17 @@ export interface RegisterSuccessBody {
 }
 
 export async function login(email: string, password: string): Promise<LoginSuccessBody> {
-  return api.post<LoginSuccessBody>("/auth/login", { email, password }) as any;
+  throw new Error("Use useAuth().signIn instead");
 }
 
 export async function registerClinic(payload: any): Promise<RegisterSuccessBody> {
-  return api.post<RegisterSuccessBody>("/auth/register-clinic", payload) as any;
+  throw new Error("Demo Mode: Clinic registration requires backend trigger or RPC which is not yet deployed.");
 }
 
 export async function requestPasswordReset(email: string): Promise<void> {
-  await api.post("/auth/forgot-password", { email });
+  throw new Error("Demo Mode: Password reset not configured.");
 }
 
 export async function resetPasswordWithToken(token: string, password: string): Promise<void> {
-  await api.post("/auth/reset-password", { token, password });
+  throw new Error("Demo Mode: Password reset not configured.");
 }

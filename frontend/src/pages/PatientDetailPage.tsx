@@ -47,7 +47,7 @@ import { AppointmentsTab } from "../components/patient/AppointmentsTab";
 import { TreatmentsTab, type PatientTreatmentRow } from "../components/patient/TreatmentsTab";
 import { InvoicesTab } from "../components/patient/InvoicesTab";
 
-import { getUser } from "../hooks/authTokens";
+import { useAuth } from "../hooks/useAuth";
 import api from "../services/api";
 import { listPerioExams, getPerioExam } from "../services/perio";
 import type { Tooth } from "../types/dentalChart";
@@ -204,9 +204,10 @@ export function PatientDetailPage(): JSX.Element {
     [setSearchParams],
   );
 
-  const user = getUser();
-  const canWriteDental = user?.role === "ADMIN" || user?.role === "DENTIST";
-  const canExportDpa = user?.role === "ADMIN";
+  const { user } = useAuth();
+  const role = user?.user_metadata?.role;
+  const canWriteDental = role === "ADMIN" || role === "DENTIST";
+  const canExportDpa = role === "ADMIN";
 
   const { data, isLoading: loading } = useQuery({
     queryKey: ["patient", id],
@@ -457,6 +458,7 @@ export function PatientDetailPage(): JSX.Element {
                       dateLocale={dateLocale}
                       canWrite={canWriteDental}
                       appointments={data.appointments}
+                      patientName={`${data.firstName ?? ""} ${data.lastName ?? ""}`.trim()}
                     />
                   )}
                   {tab === "xray" && <LazyXrayWorkspace patientId={id} />}

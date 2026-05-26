@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Outlet, useLocation } from "react-router-dom";
 
-import { getAuthProfile, setAuthProfile, type AuthProfile } from "../../hooks/authTokens";
+import { useAuth } from "../../hooks/useAuth";
 import { fetchAuthMeProfile } from "../../services/api";
 import { AppShellLoading } from "./AppShellLoading";
 import { AppSidebar } from "./AppSidebar";
@@ -24,7 +24,17 @@ export function AppLayout(): JSX.Element {
   const { t } = useTranslation();
   const [collapsed, setCollapsed] = useState<boolean>(readCollapsed);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [profile, setProfile] = useState<AuthProfile | null>(() => getAuthProfile());
+  
+  const { user } = useAuth();
+  const rawProfile = user?.user_metadata ? {
+    id: user.id,
+    firstName: user.user_metadata.firstName || "",
+    lastName: user.user_metadata.lastName || "",
+    role: user.user_metadata.role || "STAFF",
+    email: user.email || ""
+  } : null;
+
+  const [profile, setProfile] = useState<any | null>(rawProfile);
   const [meReady, setMeReady] = useState(false);
   const { pathname } = useLocation();
 
@@ -43,9 +53,7 @@ export function AppLayout(): JSX.Element {
 
   // Keep profile in sync if login happens inside this layout (defensive)
   useEffect(() => {
-    const onStorage = (): void => setProfile(getAuthProfile());
-    window.addEventListener("storage", onStorage);
-    return () => window.removeEventListener("storage", onStorage);
+    // Handled by useAuth internally via Supabase onAuthStateChange
   }, []);
 
   /** `GET /auth/me` — JWT ile kullanıcıyı doğrula ve profili güncelle. */
@@ -56,7 +64,6 @@ export function AppLayout(): JSX.Element {
         const next = await fetchAuthMeProfile();
         if (cancelled) return;
         if (next) {
-          setAuthProfile(next);
           setProfile(next);
         }
       } finally {

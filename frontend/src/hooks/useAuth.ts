@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { supabase } from '../services/supabase'
+import { supabase } from '../lib/supabase'
 import type { User } from '@supabase/supabase-js'
 
 export function useAuth() {

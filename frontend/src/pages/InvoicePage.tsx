@@ -78,6 +78,7 @@ export function InvoicePage(): JSX.Element {
   const [claimSelectedLineIds, setClaimSelectedLineIds] = useState<string[]>([]);
   const [claimCopay, setClaimCopay] = useState(0);
   const [claimNotes] = useState("");
+  const [claimDiagnosisCode, setClaimDiagnosisCode] = useState("");
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -191,6 +192,10 @@ export function InvoicePage(): JSX.Element {
       toast.error(t("pages.invoice.toastSelectLine", { defaultValue: "Toast Select Line" }));
       return;
     }
+    if (!claimDiagnosisCode) {
+      toast.error(t("pages.invoice.toastSelectDiagnosisCode", { defaultValue: "Please select an ICD-10 diagnosis code." }));
+      return;
+    }
     setClaimBusy(true);
     try {
       const lineDesc = invoice!.treatments
@@ -209,7 +214,7 @@ export function InvoicePage(): JSX.Element {
         requestedAmount: claimRequested,
         patientCopay: claimCopay,
         status: "SUBMITTED",
-        notes: claimNotes || t("pages.invoice.claimNotesAuto", { lines: lineDesc }),
+        notes: `ICD-10: ${claimDiagnosisCode} | ` + (claimNotes || t("pages.invoice.claimNotesAuto", { lines: lineDesc })),
       });
       toast.success(t("pages.invoice.toastClaimSubmitted", { defaultValue: "Demo mode: claim transmission simulated." }));
       setClaimOpen(false);
@@ -597,7 +602,23 @@ export function InvoicePage(): JSX.Element {
                             </div>
                          </div>
 
-                         <div className="grid grid-cols-2 gap-2">
+                          <div className="space-y-1.5">
+                             <label className="text-[10px] font-black uppercase tracking-widest text-brand-muted">ICD-10 Diagnosis Code</label>
+                             <select
+                               value={claimDiagnosisCode}
+                               onChange={(e) => setClaimDiagnosisCode(e.target.value)}
+                               className="h-9 w-full rounded bg-brand-surface border border-brand-border px-2 text-xs font-bold text-brand-text outline-none focus:border-brand-primary"
+                             >
+                                <option value="">Select ICD-10 Code...</option>
+                                <option value="K02.9">K02.9 - Dental caries, unspecified</option>
+                                <option value="K05.3">K05.3 - Chronic periodontitis</option>
+                                <option value="K04.0">K04.0 - Pulpitis</option>
+                                <option value="K08.8">K08.8 - Other specified disorders of teeth and supporting structures</option>
+                                <option value="K03.6">K03.6 - Deposits [accretions] on teeth</option>
+                             </select>
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-2">
                             <div className="space-y-1.5">
                                <label className="text-[10px] font-black uppercase tracking-widest text-brand-muted">Patient Copay</label>
                                <input

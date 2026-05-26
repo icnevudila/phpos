@@ -1,10 +1,11 @@
 import api from "./api";
 import { apiBaseUrl } from "./index";
-import { getAccessToken } from "../hooks/authTokens";
+import { supabase } from "../lib/supabase";
 
 /** DPA veri taşınabilirliği — JSON indir (ADMIN). */
 export async function downloadPatientDpaExport(patientId: string): Promise<void> {
-  const token = getAccessToken();
+  const { data: { session } } = await supabase.auth.getSession();
+  const token = session?.access_token;
   const res = await fetch(`${apiBaseUrl}/patients/${encodeURIComponent(patientId)}/dpa-export`, {
     headers: token ? { Authorization: `Bearer ${token}` } : {},
   });

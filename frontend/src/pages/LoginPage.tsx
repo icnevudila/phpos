@@ -4,8 +4,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import { LanguageSwitcher } from "../components/LanguageSwitcher";
 import { REMEMBER_EMAIL_KEY } from "../constants/auth";
-import { setAuthProfile, setTokens } from "../hooks/authTokens";
-import { login } from "../services/auth";
+import { useAuth } from "../hooks/useAuth";
 
 import { DentQLLogo } from "../components/ui/DentQLLogo";
 
@@ -13,6 +12,8 @@ export function LoginPage(): JSX.Element {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
+  const { signIn } = useAuth();
+  
   const locationState = location.state as { from?: { pathname: string }; message?: string } | null;
   const from = locationState?.from?.pathname;
   const registerBanner = locationState?.message ?? null;
@@ -42,33 +43,20 @@ export function LoginPage(): JSX.Element {
     setError(null);
     setLoading(true);
     try {
-      const json = await login(email.trim(), password);
-
       if (remember) {
         localStorage.setItem(REMEMBER_EMAIL_KEY, email.trim());
       } else {
         localStorage.removeItem(REMEMBER_EMAIL_KEY);
       }
-      setTokens(json.data.accessToken, json.data.refreshToken);
-      setAuthProfile({
-        id: json.data.user.id,
-        clinicId: json.data.user.clinicId,
-        email: json.data.user.email,
-        firstName: json.data.user.firstName,
-        lastName: json.data.user.lastName,
-        phone: json.data.user.phone,
-        role: json.data.user.role,
-      });
-      const role = json.data.user.role;
+      
+      await signIn(email.trim(), password);
+      
       if (from && from !== "/login") {
         void navigate(from, { replace: true });
         return;
       }
-      if (role === "ADMIN") {
-        void navigate("/dashboard", { replace: true });
-      } else {
-        void navigate("/appointments", { replace: true });
-      }
+      
+      void navigate("/appointments", { replace: true });
     } catch (e) {
       setError((e as Error).message || t("errors.loginNetwork", { defaultValue: "Login Network" }));
     } finally {

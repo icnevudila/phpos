@@ -123,6 +123,19 @@ export function TreatmentEditorPanel({ appointmentId, disabled = false }: Props)
   }
 
   async function submit(): Promise<void> {
+    if (!form.procedure) {
+      setError(t("pages.appointments.treatmentEditor.errors.procedureRequired", { defaultValue: "Please select a procedure." }));
+      return;
+    }
+    if (form.quantity < 1) {
+      setError(t("pages.appointments.treatmentEditor.errors.quantityInvalid", { defaultValue: "Quantity must be at least 1." }));
+      return;
+    }
+    if (form.unitPrice < 0) {
+      setError(t("pages.appointments.treatmentEditor.errors.priceInvalid", { defaultValue: "Price cannot be negative." }));
+      return;
+    }
+    
     setBusy(true);
     setError(null);
     try {

@@ -2,14 +2,14 @@ import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
-import { clearTokens, type AuthProfile } from "../../hooks/authTokens";
+import { useAuth } from "../../hooks/useAuth";
 import { ChevronDownIcon, LogOutIcon } from "./icons";
 
 interface UserMenuProps {
-  profile: AuthProfile | null;
+  profile: any | null;
 }
 
-function initials(profile: AuthProfile | null): string {
+function initials(profile: any | null): string {
   if (!profile) return "?";
   const a = profile.firstName?.[0] ?? "";
   const b = profile.lastName?.[0] ?? "";
@@ -39,8 +39,10 @@ export function UserMenu({ profile }: UserMenuProps): JSX.Element {
     };
   }, []);
 
-  function handleLogout(): void {
-    clearTokens();
+  const { signOut } = useAuth();
+
+  async function handleLogout() {
+    await signOut();
     setOpen(false);
     void navigate("/login", { replace: true });
   }

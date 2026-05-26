@@ -1,5 +1,3 @@
-import api from "./api";
-
 export interface SterilizationLog {
   id: string;
   clinicId: string;
@@ -22,12 +20,11 @@ export interface SterilizationLog {
   };
 }
 
-export async function getSterilizationLogs() {
-  const { data } = await api.get<{ data: SterilizationLog[] }>("/sterilization");
-  return data.data;
+export async function getSterilizationLogs(): Promise<SterilizationLog[]> {
+  // Demo Mode: Not Configured
+  return [];
 }
 
-export async function createSterilizationLog(body: any) {
-  const { data } = await api.post<{ data: SterilizationLog }>("/sterilization", body);
-  return data.data;
+export async function createSterilizationLog(body: any): Promise<SterilizationLog> {
+  throw new Error("Demo Mode: Sterilization logging is not yet configured for this clinic.");
 }

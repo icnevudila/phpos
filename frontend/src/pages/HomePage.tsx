@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Check, CalendarDays, Users, FileText, Package, Activity, MonitorPlay, ShieldCheck } from "lucide-react";
 import { DentQLLogo } from "../components/ui/DentQLLogo";
+import { toast } from "sonner";
+
 
 // --- REUSABLE PREVIEW COMPONENTS (Mocking real UI) ---
 function TodayBoardPreview() {
@@ -196,6 +198,11 @@ function ReportsPreview() {
 // --- MAIN PAGE ---
 
 export function HomePage() {
+  const handleRequestDemo = (e: React.MouseEvent) => {
+    e.preventDefault();
+    toast.info("Request Demo is disabled in Demo Mode. Please check our Patient Booking or Staff Login features.");
+  };
+
   return (
     <div className="min-h-screen bg-brand-bg text-brand-text font-sans selection:bg-brand-primary-soft selection:text-brand-primary overflow-x-hidden">
       
@@ -217,12 +224,12 @@ export function HomePage() {
             </div>
             <div className="hidden md:flex items-center space-x-4">
               <Link to="/login" className="text-sm font-bold text-brand-text hover:text-brand-primary">Sign in</Link>
-              <a href="#demo" className="btn-primary">Request Demo</a>
+              <button onClick={handleRequestDemo} className="btn-primary">Request Demo</button>
             </div>
           </div>
         </div>
       </nav>
-
+ 
       <main>
         {/* 2. HERO SECTION */}
         <section className="relative pt-20 pb-32 overflow-hidden border-b border-brand-border bg-brand-surface">
@@ -234,7 +241,7 @@ export function HomePage() {
               Manage chair schedules, waiting room flow, patient records, payments, claims, inventory, sterilization, and online booking without jumping between tools.
             </p>
             <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
-              <a href="#demo" className="btn-primary h-[48px] px-8 text-base">Request a demo</a>
+              <button onClick={handleRequestDemo} className="btn-primary h-[48px] px-8 text-base">Request a demo</button>
               <Link to="/booking" className="btn-secondary h-[48px] px-8 text-base">See patient booking</Link>
             </div>
             
@@ -465,7 +472,7 @@ export function HomePage() {
             <h2 className="text-4xl font-black text-brand-text mb-6 tracking-tight">Ready to run your clinic day from one workbench?</h2>
             <p className="text-lg text-brand-muted mb-10 font-medium">Pricing depends on clinic size, number of users, and modules. Request a demo to see how DentQL fits your operation.</p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
-               <button className="btn-primary h-[48px] px-8 text-base shadow-lg">Request Demo</button>
+               <button onClick={handleRequestDemo} className="btn-primary h-[48px] px-8 text-base shadow-lg">Request Demo</button>
                <Link to="/booking" className="btn-secondary h-[48px] px-8 text-base">Open Patient Booking</Link>
             </div>
           </div>

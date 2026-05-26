@@ -13,7 +13,7 @@ import {
   Search
 } from "lucide-react";
 
-import { getAuthProfile } from "../../hooks/authTokens";
+import { useAuth } from "../../hooks/useAuth";
 import { createStaffUser, fetchStaffUsers, patchStaffUser, type StaffUserDto } from "../../services/staffUsers";
 import type { UserRole } from "../../types/user";
 
@@ -33,7 +33,8 @@ const selectSm =
 
 export function StaffTeamPanel(): JSX.Element {
   const { t } = useTranslation();
-  const profile = getAuthProfile();
+  const { user } = useAuth();
+  const profile = user;
   const queryClient = useQueryClient();
 
   const [createOpen, setCreateOpen] = useState(false);
@@ -58,6 +59,11 @@ export function StaffTeamPanel(): JSX.Element {
   );
 
   async function submitCreate(): Promise<void> {
+    if (!createForm.email.trim() || !createForm.password || !createForm.firstName.trim() || !createForm.lastName.trim()) {
+      toast.error(t("pages.settings.errors.fillRequired", { defaultValue: "Please fill all required fields." }));
+      return;
+    }
+
     setCreateBusy(true);
     try {
       await createStaffUser({

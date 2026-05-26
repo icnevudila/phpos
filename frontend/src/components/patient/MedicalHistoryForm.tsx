@@ -193,6 +193,25 @@ export function MedicalHistoryForm({ patientId, patientGender, canEdit }: Props)
 
   const submit = async (): Promise<void> => {
     if (!canEdit) return;
+    
+    // Validations
+    if (state.underPhysicianCare && !state.underPhysicianCareReason?.trim()) {
+      toast.error(t("medicalHistory.errors.physicianCareReasonRequired", { defaultValue: "Please provide a reason for physician care." }));
+      return;
+    }
+    if (state.hospitalized && !state.hospitalizedReason?.trim()) {
+      toast.error(t("medicalHistory.errors.hospitalizedReasonRequired", { defaultValue: "Please provide a reason for hospitalization." }));
+      return;
+    }
+    if (state.takingMedications && !state.medicationsList?.trim()) {
+      toast.error(t("medicalHistory.errors.medicationsRequired", { defaultValue: "Please list the medications you are taking." }));
+      return;
+    }
+    if (state.seriousIllness && !state.seriousIllnessDetails?.trim()) {
+      toast.error(t("medicalHistory.errors.seriousIllnessRequired", { defaultValue: "Please provide details of your serious illness." }));
+      return;
+    }
+
     setSaving(true);
     try {
       const body = {

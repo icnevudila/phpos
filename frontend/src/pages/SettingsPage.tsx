@@ -25,7 +25,7 @@ import { DentistLicensesPanel } from "../components/settings/DentistLicensesPane
 import { NotificationSettingsPanel } from "../components/settings/NotificationSettingsPanel";
 import { SecuritySettingsPanel } from "../components/settings/SecuritySettingsPanel";
 import { IntegrationsPanel } from "../components/settings/IntegrationsPanel";
-import { getAuthProfile } from "../hooks/authTokens";
+import { useAuth } from "../hooks/useAuth";
 import { fetchClinic, patchClinic, type ClinicDto } from "../services/clinic";
 import { buildQueueDisplayUrl } from "../utils/queueDisplayUrl";
 
@@ -36,7 +36,14 @@ const settingsField =
 
 export function SettingsPage(): JSX.Element {
   const { t } = useTranslation();
-  const profile = getAuthProfile();
+  const { user } = useAuth();
+  const profile = user?.user_metadata ? {
+    id: user.id,
+    firstName: user.user_metadata.firstName || "",
+    lastName: user.user_metadata.lastName || "",
+    role: user.user_metadata.role || "STAFF",
+    email: user.email || ""
+  } : null;
   const isAdmin = profile?.role === "ADMIN";
   const isDentist = profile?.role === "DENTIST";
   const [tab, setTab] = useState<Tab>("clinic");

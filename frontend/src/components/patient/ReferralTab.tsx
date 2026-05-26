@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
-import { Save, Share2, RefreshCw } from "lucide-react";
+import { Save, Share2, RefreshCw, Printer } from "lucide-react";
 import { toast } from "sonner";
+import { generateReferralPdf } from "../../utils/referralPdf";
 
 import {
   createPatientReferral,
@@ -135,17 +136,27 @@ export function ReferralTab({ patientId }: { patientId: string }): JSX.Element {
           {items.map((r) => (
             <li
               key={r.id}
-              className="rounded-2xl border border-slate-100 bg-slate-50 p-4"
+              className="flex justify-between items-start rounded-2xl border border-slate-100 bg-slate-50 p-4"
             >
-              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
-                {new Date(r.createdAt).toLocaleString()} · Dr. {r.author.lastName}
-              </p>
-              <p className="mt-2 font-bold text-slate-900">
-                {r.referredTo || t(`${NS}.unknownClinic`)}
-              </p>
-              {r.specialty.trim() ? <p className="text-xs text-slate-500">{r.specialty}</p> : null}
-              {r.reason.trim() ? <p className="mt-2 text-sm text-slate-600">{r.reason}</p> : null}
-              {r.notes.trim() ? <p className="mt-1 text-xs text-slate-500">{r.notes}</p> : null}
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                  {new Date(r.createdAt).toLocaleString()} · Dr. {r.author.lastName}
+                </p>
+                <p className="mt-2 font-bold text-slate-900">
+                  {r.referredTo || t(`${NS}.unknownClinic`)}
+                </p>
+                {r.specialty.trim() ? <p className="text-xs text-slate-500">{r.specialty}</p> : null}
+                {r.reason.trim() ? <p className="mt-2 text-sm text-slate-600">{r.reason}</p> : null}
+                {r.notes.trim() ? <p className="mt-1 text-xs text-slate-500">{r.notes}</p> : null}
+              </div>
+              <button
+                type="button"
+                onClick={() => void generateReferralPdf(r, patientId).catch(() => toast.error("Failed to generate PDF."))}
+                className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-bold text-slate-600 shadow-sm hover:bg-slate-50 active:scale-95 transition-all"
+              >
+                <Printer size={13} />
+                {t("common.print", { defaultValue: "Print" })}
+              </button>
             </li>
           ))}
         </ul>

@@ -15,7 +15,8 @@ import {
   RefreshCw,
   Save,
   X,
-  Stethoscope
+  Stethoscope,
+  Printer
 } from "lucide-react";
 
 import api, { openAuthedPdf } from "../../services/api";
@@ -35,11 +36,22 @@ interface Prescription {
   }>;
 }
 
+async function printPrescription(rx: Prescription, patientName: string) {
+  try {
+    const { generatePrescriptionPdf } = await import("../../utils/prescriptionPdf");
+    await generatePrescriptionPdf(rx, patientName);
+  } catch (err) {
+    console.error("Failed to generate Prescription PDF:", err);
+    toast.error("Failed to generate PDF.");
+  }
+}
+
 export function PrescriptionsTab({
   patientId,
   dateLocale,
   canWrite,
   appointments,
+  patientName,
 }: {
   patientId: string;
   dateLocale: string;
@@ -50,6 +62,7 @@ export function PrescriptionsTab({
     type: string | null;
     status: string;
   }>;
+  patientName: string;
 }): JSX.Element {
   const [prescriptions, setPrescriptions] = useState<Prescription[] | null>(null);
   const [loading, setLoading] = useState(true);
@@ -129,11 +142,11 @@ export function PrescriptionsTab({
                    </div>
                 </div>
                 <button
-                  onClick={() => openAuthedPdf(`/prescriptions/${rx.id}/pdf`).catch(() => toast.error("Failed to open PDF"))}
+                  onClick={() => printPrescription(rx, patientName)}
                   className="btn-secondary h-8 px-2"
-                  title="Download PDF"
+                  title="Print Rx"
                 >
-                  <Download size={14} />
+                  <Printer size={14} />
                 </button>
               </div>
 

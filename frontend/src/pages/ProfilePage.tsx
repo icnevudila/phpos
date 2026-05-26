@@ -21,7 +21,7 @@ import {
 } from "lucide-react";
 
 import api from "../services/api";
-import { getUser } from "../hooks/authTokens";
+import { useAuth } from "../hooks/useAuth";
 
 const WEEKDAY_I18N: Record<string, string> = {
   Mon: "pages.profile.dayMon",
@@ -35,7 +35,15 @@ const WEEKDAY_I18N: Record<string, string> = {
 
 export function ProfilePage(): JSX.Element {
   const { t } = useTranslation();
-  const profile = getUser();
+  const { user } = useAuth();
+  
+  const profile = user?.user_metadata ? {
+    id: user.id,
+    firstName: user.user_metadata.firstName || "",
+    lastName: user.user_metadata.lastName || "",
+    role: user.user_metadata.role || "STAFF",
+    email: user.email || ""
+  } : null;
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
   const [draft, setDraft] = useState({

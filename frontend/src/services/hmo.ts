@@ -1,9 +1,4 @@
-import api, { downloadAuthedFile } from "./api";
-
-interface ApiEnvelope<T> {
-  success: true;
-  data: T;
-}
+import { downloadAuthedFile } from "./api";
 
 export type HmoClaimStatus =
   | "DRAFT"
@@ -52,7 +47,6 @@ export interface HmoClaimAttachment {
   createdAt: string;
 }
 
-/** Liste API yanıtı — satır sayısı dahil */
 export interface HmoClaim {
   id: string;
   clinicId: string;
@@ -78,7 +72,6 @@ export interface HmoClaim {
   lineCount: number;
 }
 
-/** GET /hmo/claims/:id — tedavi satırları dahil */
 export interface HmoClaimDetail extends HmoClaim {
   lines: HmoClaimLine[];
   attachments: HmoClaimAttachment[];
@@ -99,143 +92,53 @@ export interface PatientHmoMembership {
 }
 
 export async function fetchHmoProviders(): Promise<HmoProvider[]> {
-  const res = await api.get<ApiEnvelope<HmoProvider[]>>("/hmo/providers") as any;
-  return res.data;
+  return []; // Demo Mode
 }
 
-export async function createHmoProvider(payload: {
-  name: string;
-  code: string;
-  contactPhone?: string;
-  contactEmail?: string;
-  notes?: string;
-  isActive?: boolean;
-}): Promise<HmoProvider> {
-  const res = await api.post<ApiEnvelope<HmoProvider>>("/hmo/providers", payload) as any;
-  return res.data;
+export async function createHmoProvider(payload: any): Promise<HmoProvider> {
+  throw new Error("Demo Mode: HMO Providers not configured yet.");
 }
 
-export async function updateHmoProvider(
-  id: string,
-  payload: Partial<{
-    name: string;
-    code: string;
-    contactPhone: string | null;
-    contactEmail: string | null;
-    notes: string | null;
-    isActive: boolean;
-  }>,
-): Promise<HmoProvider> {
-  const res = await api.put<ApiEnvelope<HmoProvider>>(`/hmo/providers/${id}`, payload) as any;
-  return res.data;
+export async function updateHmoProvider(id: string, payload: any): Promise<HmoProvider> {
+  throw new Error("Demo Mode: HMO Providers not configured yet.");
 }
 
-export async function fetchHmoClaims(params?: {
-  status?: HmoClaimStatus;
-  providerId?: string;
-  patientId?: string;
-  limit?: number;
-}): Promise<HmoClaim[]> {
-  const res = await api.get<ApiEnvelope<HmoClaim[]>>(`/hmo/claims`, { params }) as any;
-  return res.data;
+export async function fetchHmoClaims(params?: any): Promise<HmoClaim[]> {
+  return []; // Demo Mode
 }
 
-export async function downloadHmoClaimsReconciliationCsv(params: {
-  year: number;
-  month: number;
-  providerId?: string;
-}): Promise<void> {
-  const q = new URLSearchParams({
-    year: String(params.year),
-    month: String(params.month),
-  });
-  if (params.providerId) q.set("providerId", params.providerId);
-  const mm = String(params.month).padStart(2, "0");
-  await downloadAuthedFile(
-    `/hmo/claims/reconciliation.csv?${q.toString()}`,
-    `hmo-reconciliation-${params.year}-${mm}.csv`,
-  );
+export async function downloadHmoClaimsReconciliationCsv(params: any): Promise<void> {
+  throw new Error("Demo Mode: HMO CSV Export not configured yet.");
 }
 
 export async function fetchHmoClaim(id: string): Promise<HmoClaimDetail> {
-  const res = await api.get<ApiEnvelope<HmoClaimDetail>>(`/hmo/claims/${id}`) as any;
-  return res.data;
+  throw new Error("Demo Mode: Claim " + id + " not found or not configured.");
 }
 
-export async function updateHmoClaim(
-  id: string,
-  payload: Partial<{
-    status: HmoClaimStatus;
-    requestedAmount: number;
-    approvedAmount: number | null;
-    patientCopay: number;
-    externalRef: string | null;
-    notes: string | null;
-  }>,
-): Promise<HmoClaimDetail> {
-  const res = await api.put<ApiEnvelope<HmoClaimDetail>>(`/hmo/claims/${id}`, payload) as any;
-  return res.data;
+export async function updateHmoClaim(id: string, payload: any): Promise<HmoClaimDetail> {
+  throw new Error("Demo Mode: HMO Claims not configured yet.");
 }
 
-/** @deprecated use updateHmoClaim */
 export async function updateHmoClaimStatus(id: string, status: HmoClaimStatus): Promise<HmoClaimDetail> {
   return updateHmoClaim(id, { status });
 }
 
-export async function uploadHmoClaimAttachment(
-  claimId: string,
-  file: File,
-  kind: HmoClaimAttachmentKind,
-): Promise<HmoClaimAttachment> {
-  const fd = new FormData();
-  fd.append("file", file);
-  fd.append("kind", kind);
-  const res = await api.post<ApiEnvelope<HmoClaimAttachment>>(
-    `/hmo/claims/${claimId}/attachments`,
-    fd,
-    { headers: { "Content-Type": "multipart/form-data" } }
-  ) as any;
-  return res.data;
+export async function uploadHmoClaimAttachment(claimId: string, file: File, kind: HmoClaimAttachmentKind): Promise<HmoClaimAttachment> {
+  throw new Error("Demo Mode: HMO Attachment upload not configured yet.");
 }
 
 export async function deleteHmoClaimAttachment(claimId: string, attachmentId: string): Promise<void> {
-  await api.delete(`/hmo/claims/${claimId}/attachments/${attachmentId}`);
+  throw new Error("Demo Mode: HMO Attachment delete not configured yet.");
 }
 
-export async function createHmoClaim(payload: {
-  patientId: string;
-  invoiceId: string;
-  providerId: string;
-  patientHmoId?: string;
-  treatmentIds?: string[];
-  requestedAmount: number;
-  approvedAmount?: number;
-  patientCopay?: number;
-  status?: HmoClaimStatus;
-  externalRef?: string;
-  notes?: string;
-}): Promise<HmoClaimDetail> {
-  const res = await api.post<ApiEnvelope<HmoClaimDetail>>("/hmo/claims", payload) as any;
-  return res.data;
+export async function createHmoClaim(payload: any): Promise<HmoClaimDetail> {
+  throw new Error("Demo Mode: HMO Claims not configured yet.");
 }
 
 export async function fetchPatientHmoMemberships(patientId: string): Promise<PatientHmoMembership[]> {
-  const res = await api.get<ApiEnvelope<PatientHmoMembership[]>>(`/hmo/patients/${patientId}/memberships`) as any;
-  return res.data;
+  return []; // Demo Mode
 }
 
-export async function createPatientHmoMembership(
-  patientId: string,
-  payload: {
-    providerId: string;
-    memberNumber: string;
-    cardholderName?: string;
-    sponsor?: string;
-    validFrom?: string;
-    validUntil?: string;
-    isPrimary?: boolean;
-  },
-): Promise<PatientHmoMembership> {
-  const res = await api.post<ApiEnvelope<PatientHmoMembership>>(`/hmo/patients/${patientId}/memberships`, payload) as any;
-  return res.data;
+export async function createPatientHmoMembership(patientId: string, payload: any): Promise<PatientHmoMembership> {
+  throw new Error("Demo Mode: Patient HMO membership not configured yet.");
 }
