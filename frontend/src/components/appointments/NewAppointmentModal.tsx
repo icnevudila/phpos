@@ -59,13 +59,13 @@ export function NewAppointmentModal({
     if (!open) return;
     setError(null);
     if (editing) {
-      setPatient({
+      setPatient(editing.patient ? {
         id: editing.patient.id,
         firstName: editing.patient.firstName,
         lastName: editing.patient.lastName,
         phone: editing.patient.phone,
-      });
-      setDentistId(editing.dentist.id);
+      } : null);
+      setDentistId(editing.dentist?.id || "");
       setScheduledAt(toLocalInputValue(editing.scheduledAt));
       setDuration(editing.duration);
       setType((editing.type as AppointmentType) ?? "CHECKUP");

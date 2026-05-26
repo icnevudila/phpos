@@ -71,16 +71,19 @@ function formatRangeLabel(from: string, to: string): string {
 
 function CalendarEventContent({ arg }: { arg: EventContentArg }): JSX.Element {
   const { t } = useTranslation();
-  const a = arg.event.extendedProps.appointment as AppointmentDto;
+  const a = arg.event.extendedProps.appointment as AppointmentDto | undefined;
+  if (!a) {
+    return <div className="p-1 text-[10px]">{arg.timeText}</div>;
+  }
   return (
     <div className="flex flex-col gap-0.5 overflow-hidden px-2 py-1.5 text-[10px] leading-tight group h-full">
       <div className="flex items-center justify-between gap-1">
          <span className="truncate font-bold uppercase tracking-tight opacity-90">{arg.timeText}</span>
          <div className="h-1.5 w-1.5 rounded-full bg-white opacity-40 group-hover:opacity-100 transition-opacity" />
       </div>
-      <span className="truncate font-black text-xs uppercase tracking-tight leading-none my-0.5">{a.patient.fullName}</span>
+      <span className="truncate font-black text-xs uppercase tracking-tight leading-none my-0.5">{a.patient?.fullName || "Unknown"}</span>
       <span className="truncate font-semibold opacity-75 uppercase tracking-wide text-[9px]">
-        Dr. {a.dentist.lastName}
+        Dr. {a.dentist?.lastName || "Unknown"}
       </span>
     </div>
   );
@@ -136,7 +139,7 @@ export function AppointmentsPage(): JSX.Element {
         const style = APPOINTMENT_STATUS_STYLES[a.status];
         return {
           id: a.id,
-          title: a.patient.fullName,
+          title: a.patient?.fullName || "Unknown",
           start: a.scheduledAt,
           end: a.endsAt,
           extendedProps: { appointment: a, styleClasses: style },
@@ -213,9 +216,9 @@ export function AppointmentsPage(): JSX.Element {
       t("pages.appointments.csvHeaders.status", { defaultValue: "Status" }),
     ];
     const rows = appointments.map((a) => [
-      a.patient.fullName,
-      a.patient.phone,
-      `Dr. ${a.dentist.lastName}`,
+      a.patient?.fullName || "Unknown",
+      a.patient?.phone || "",
+      a.dentist ? `Dr. ${a.dentist.lastName || a.dentist.name || ""}` : "Unknown",
       new Date(a.scheduledAt).toLocaleString(),
       a.status,
     ]);
@@ -320,7 +323,7 @@ export function AppointmentsPage(): JSX.Element {
                   <button
                     key={a.id}
                     type="button"
-                    aria-label={a.patient.fullName}
+                    aria-label={a.patient?.fullName || "Patient"}
                     onClick={() => setSelected(a)}
                     className="group flex items-center gap-3 bg-brand-surface pl-3 pr-4 py-2 rounded-[var(--radius-md)] shadow-sm border border-brand-primary/10 hover:border-brand-primary hover:shadow-md transition-all active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
                   >
@@ -328,7 +331,7 @@ export function AppointmentsPage(): JSX.Element {
                        {a.status.replace("_", " ")}
                     </div>
                     <div className="text-left leading-tight">
-                       <p className="text-xs font-bold text-brand-text truncate max-w-[120px]">{a.patient.fullName}</p>
+                       <p className="text-xs font-bold text-brand-text truncate max-w-[120px]">{a.patient?.fullName || "Unknown"}</p>
                        <p className="text-[10px] font-semibold text-brand-muted mt-0.5">
                           {new Date(a.scheduledAt).toLocaleTimeString("en-PH", { hour: 'numeric', minute: '2-digit' })}
                        </p>

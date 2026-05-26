@@ -139,13 +139,13 @@ export function AppointmentDetailSidebar({
 
         <div>
           <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">{t(`${SB}.patient`)}</p>
-          <p className="mt-1 text-base font-bold text-slate-900">{appointment.patient.fullName}</p>
-          <p className="text-xs text-slate-500">{appointment.patient.phone}</p>
+          <p className="mt-1 text-base font-bold text-slate-900">{appointment.patient?.fullName || "Unknown"}</p>
+          <p className="text-xs text-slate-500">{appointment.patient?.phone || ""}</p>
         </div>
 
         <div>
           <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">{t(`${SB}.dentist`)}</p>
-          <p className="mt-1 text-sm font-semibold text-slate-800">Dr. {appointment.dentist.fullName}</p>
+          <p className="mt-1 text-sm font-semibold text-slate-800">Dr. {appointment.dentist?.fullName || appointment.dentist?.lastName || "Unknown"}</p>
         </div>
 
         <div>
