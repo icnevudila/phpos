@@ -66,9 +66,9 @@ async function takeScreenshot(page: Page, path: string, label: string) {
       const hasLoaders = document.querySelectorAll('.animate-pulse, .animate-spin, [class*="skeleton"], [class*="spinner"], .lucide-loader').length > 0;
       const hasLoadingText = document.body.innerText.includes('Loading...');
       return !hasLoaders && !hasLoadingText;
-    }, { timeout: 60_000 }).catch(() => {});
+    }, { timeout: 8_000 }).catch(() => {});
 
-    await page.waitForTimeout(4000); // extra wait to ensure data is fully populated
+    await page.waitForTimeout(2000); // extra wait to ensure data is fully populated
 
     const safeLabel = label.replace(/[^a-z0-9]/gi, "_").toLowerCase();
     await page.screenshot({ path: `${DEST_DIR}/${safeLabel}.png`, fullPage: true });
@@ -79,7 +79,6 @@ async function takeScreenshot(page: Page, path: string, label: string) {
 
 test.describe("Screenshots - public", () => {
   test.use({ storageState: { cookies: [], origins: [] } });
-  test.describe.configure({ mode: "serial" });
 
   for (const { path, label } of PUBLIC_PAGES) {
     test(label, async ({ page }) => {
@@ -90,7 +89,6 @@ test.describe("Screenshots - public", () => {
 });
 
 test.describe("Screenshots - staff (admin)", () => {
-  test.describe.configure({ mode: "serial" });
   test.setTimeout(180_000);
 
   for (const { path, label } of STAFF_PAGES) {
