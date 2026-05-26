@@ -22,7 +22,7 @@ export function RoleGuard({
       return;
     }
     if (user.user_metadata?.role) {
-      setUserRole(user.user_metadata.role as UserRole);
+      setUserRole((user.user_metadata.role as string).toUpperCase() as UserRole);
       setLoading(false);
       return;
     }
@@ -33,7 +33,7 @@ export function RoleGuard({
       .eq("id", user.id)
       .single()
       .then(({ data }) => {
-        if (data?.role) setUserRole(data.role as UserRole);
+        if (data?.role) setUserRole((data.role as string).toUpperCase() as UserRole);
         setLoading(false);
       })
       .catch(() => setLoading(false));
@@ -64,7 +64,7 @@ export function ProtectedRoute({ roles }: ProtectedRouteProps): JSX.Element {
       return;
     }
     if (user.user_metadata?.role) {
-      setUserRole(user.user_metadata.role as UserRole);
+      setUserRole((user.user_metadata.role as string).toUpperCase() as UserRole);
       setLoading(false);
       return;
     }
@@ -75,7 +75,7 @@ export function ProtectedRoute({ roles }: ProtectedRouteProps): JSX.Element {
       .eq("id", user.id)
       .single()
       .then(({ data }) => {
-        if (data?.role) setUserRole(data.role as UserRole);
+        if (data?.role) setUserRole((data.role as string).toUpperCase() as UserRole);
         setLoading(false);
       })
       .catch(() => setLoading(false));
