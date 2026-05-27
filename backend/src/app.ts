@@ -75,7 +75,7 @@ export function createApp(): Express {
   );
   app.use(morgan(process.env.NODE_ENV === "production" ? "combined" : "dev"));
 
-  const apiPrefix = process.env.API_PREFIX ?? "/api";
+  const apiPrefix = (process.env.API_PREFIX ?? "/api").trim();
   const globalWindowMs = Number(process.env.RATE_LIMIT_WINDOW_MS ?? 15 * 60 * 1000);
   const globalMax = Number(process.env.RATE_LIMIT_MAX ?? (process.env.NODE_ENV === "production" ? 500 : 5000));
   app.use(

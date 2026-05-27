@@ -21,6 +21,7 @@ import {
   type AgedReceivablesResponse,
 } from "../services/reports";
 import { formatPHP } from "../types/invoice";
+import { exportToExcel, exportToWord, exportToPdf } from "../utils/exportHelpers";
 
 export function AgedReceivablesPage(): JSX.Element {
   const { t } = useTranslation();
@@ -33,6 +34,29 @@ export function AgedReceivablesPage(): JSX.Element {
     (key: AgedBucketKey) => t(`pages.agedReceivables.bucket.${key}`),
     [t],
   );
+
+  const handleExport = (type: 'pdf' | 'excel' | 'word') => {
+    if (!data || filteredRows.length === 0) return;
+    const title = `Aged Receivables Report (As of ${data.asOf})`;
+    const headers = ["Patient", "OR Number", "Days Outstanding", "Bucket", "Balance"];
+    const rows = filteredRows.map(r => [
+      r.patientName,
+      r.orNumber || "N/A",
+      `${r.daysOutstanding} Days`,
+      bucketLabel(r.bucket),
+      `PHP ${r.balance.toLocaleString()}`
+    ]);
+    const fileName = `aged_receivables_${data.asOf.replace(/[^a-zA-Z0-9]/g, "_")}`;
+
+    if (type === 'excel') {
+      exportToExcel(headers, rows, fileName);
+    } else if (type === 'word') {
+      exportToWord(title, headers, rows, fileName);
+    } else if (type === 'pdf') {
+      exportToPdf(title, headers, rows, fileName);
+    }
+  };
+
 
   const load = useCallback(async (silent = false) => {
     if (!silent) setLoading(true);
@@ -111,6 +135,28 @@ export function AgedReceivablesPage(): JSX.Element {
             className="btn-secondary flex items-center gap-2"
           >
             <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
+          </button>
+
+          <button
+            onClick={() => handleExport('pdf')}
+            disabled={filteredRows.length === 0}
+            className="btn-secondary flex items-center gap-1 text-xs h-10 px-3 bg-white hover:bg-teal-50"
+          >
+            PDF
+          </button>
+          <button
+            onClick={() => handleExport('excel')}
+            disabled={filteredRows.length === 0}
+            className="btn-secondary flex items-center gap-1 text-xs h-10 px-3 bg-white hover:bg-teal-50"
+          >
+            Excel
+          </button>
+          <button
+            onClick={() => handleExport('word')}
+            disabled={filteredRows.length === 0}
+            className="btn-secondary flex items-center gap-1 text-xs h-10 px-3 bg-white hover:bg-teal-50"
+          >
+            Word
           </button>
         </div>
       </div>

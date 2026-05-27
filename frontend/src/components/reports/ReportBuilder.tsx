@@ -29,6 +29,7 @@ import {
 } from 'recharts';
 
 import { fetchCustomReport } from '../../services/reports';
+import { exportToExcel, exportToWord, exportToPdf } from '../../utils/exportHelpers';
 
 type ReportDimension = 'date' | 'doctor' | 'category' | 'status';
 type ReportMetric = 'revenue' | 'count' | 'patientGrowth';
@@ -68,6 +69,26 @@ export function ReportBuilder() {
     count: 'Appointment Volume',
     patientGrowth: 'Patient Acquisition'
   };
+
+  const handleExport = (type: 'pdf' | 'excel' | 'word') => {
+    if (!data || chartData.length === 0) return;
+    const title = `Custom Report: ${metricLabels[metric]} by ${dimensionLabels[dimension]}`;
+    const headers = [dimensionLabels[dimension], metricLabels[metric]];
+    const rows = chartData.map(item => [
+      item.name,
+      metric === 'revenue' ? `PHP ${item.value.toLocaleString()}` : item.value.toString()
+    ]);
+    const fileName = `custom_report_${dimension}_${metric}`;
+
+    if (type === 'excel') {
+      exportToExcel(headers, rows, fileName);
+    } else if (type === 'word') {
+      exportToWord(title, headers, rows, fileName);
+    } else if (type === 'pdf') {
+      exportToPdf(title, headers, rows, fileName);
+    }
+  };
+
 
   return (
     <div className="card border border-brand-border bg-white overflow-hidden">
@@ -149,11 +170,29 @@ export function ReportBuilder() {
                      </p>
                   </div>
                </div>
-               <div className="flex items-center gap-2">
-                  <button className="btn-secondary h-7 px-2.5 text-[10px] gap-1.5 bg-white">
-                     <Download size={12} /> Export CSV
-                  </button>
-               </div>
+                <div className="flex items-center gap-1.5">
+                   <button 
+                     onClick={() => handleExport('pdf')}
+                     disabled={!data || chartData.length === 0}
+                     className="btn-secondary h-7 px-2.5 text-[10px] gap-1 bg-white hover:bg-teal-50"
+                   >
+                      <Download size={12} /> PDF
+                   </button>
+                   <button 
+                     onClick={() => handleExport('excel')}
+                     disabled={!data || chartData.length === 0}
+                     className="btn-secondary h-7 px-2.5 text-[10px] gap-1 bg-white hover:bg-teal-50"
+                   >
+                      <Download size={12} /> Excel
+                   </button>
+                   <button 
+                     onClick={() => handleExport('word')}
+                     disabled={!data || chartData.length === 0}
+                     className="btn-secondary h-7 px-2.5 text-[10px] gap-1 bg-white hover:bg-teal-50"
+                   >
+                      <Download size={12} /> Word
+                   </button>
+                </div>
             </div>
 
             <div className="flex-1 p-6 relative min-h-[400px]">

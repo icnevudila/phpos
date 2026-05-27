@@ -3,5 +3,6 @@ export function assertEnv(name: string): string {
   if (!v) {
     throw new Error(`Missing required environment variable: ${name}`);
   }
-  return v;
+  return v.trim();
 }
+
