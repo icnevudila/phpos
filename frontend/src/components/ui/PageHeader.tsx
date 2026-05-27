@@ -16,7 +16,7 @@ export function PageHeader({ title, subtitle, actions, breadcrumbs }: PageHeader
         {subtitle && <p className="mt-1 text-sm font-medium text-brand-muted">{subtitle}</p>}
       </div>
       {actions && (
-        <div className="flex shrink-0 items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           {actions}
         </div>
       )}

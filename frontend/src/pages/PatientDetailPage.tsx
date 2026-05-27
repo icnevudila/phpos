@@ -398,7 +398,7 @@ export function PatientDetailPage(): JSX.Element {
             </nav>
 
             {/* Tab Content Area */}
-            <div className="card min-h-[600px] p-6 lg:p-10">
+            <div className="card min-h-[600px] p-4 sm:p-6 lg:p-10">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={tab}

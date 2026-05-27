@@ -275,12 +275,14 @@ export function AppointmentsPage(): JSX.Element {
          </div>
 
          {/* Navigation */}
-         <div className="flex-1 flex items-center justify-center gap-2">
-            <button onClick={goPrev} className="h-10 w-10 flex items-center justify-center rounded-[var(--radius-md)] bg-brand-surface text-brand-muted hover:bg-brand-primary hover:text-white transition-colors border border-brand-border shadow-sm"><ChevronLeft size={16} /></button>
-            <button onClick={goToday} className="h-10 px-4 rounded-[var(--radius-md)] bg-brand-surface text-xs font-bold uppercase tracking-wider text-brand-text hover:bg-brand-primary hover:text-white transition-colors border border-brand-border shadow-sm">{t("pages.appointments.today", { defaultValue: "Today" })}</button>
-            <button onClick={goNext} className="h-10 w-10 flex items-center justify-center rounded-[var(--radius-md)] bg-brand-surface text-brand-muted hover:bg-brand-primary hover:text-white transition-colors border border-brand-border shadow-sm"><ChevronRight size={16} /></button>
-            <div className="h-8 w-px bg-brand-border mx-2 hidden sm:block" />
-            <div className="relative hidden sm:flex max-w-[160px]">
+         <div className="flex-1 flex flex-wrap items-center justify-center gap-2">
+            <div className="flex items-center gap-1.5">
+               <button onClick={goPrev} className="h-10 w-10 flex items-center justify-center rounded-[var(--radius-md)] bg-brand-surface text-brand-muted hover:bg-brand-primary hover:text-white transition-colors border border-brand-border shadow-sm"><ChevronLeft size={16} /></button>
+               <button onClick={goToday} className="h-10 px-4 rounded-[var(--radius-md)] bg-brand-surface text-xs font-bold uppercase tracking-wider text-brand-text hover:bg-brand-primary hover:text-white transition-colors border border-brand-border shadow-sm">{t("pages.appointments.today", { defaultValue: "Today" })}</button>
+               <button onClick={goNext} className="h-10 w-10 flex items-center justify-center rounded-[var(--radius-md)] bg-brand-surface text-brand-muted hover:bg-brand-primary hover:text-white transition-colors border border-brand-border shadow-sm"><ChevronRight size={16} /></button>
+            </div>
+            <div className="h-8 w-px bg-brand-border mx-2 hidden md:block" />
+            <div className="relative flex w-full max-w-[180px] sm:max-w-[160px]">
                <CalendarIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-brand-muted" size={14} />
                <input 
                  type="date" 

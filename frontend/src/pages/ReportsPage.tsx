@@ -145,15 +145,14 @@ export function ReportsPage(): JSX.Element {
           </section>
 
           {/* Report Library */}
-          <section>
-             <div className="mb-3 flex items-center justify-between mt-8">
+             <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between mt-8">
                 <h2 className="text-sm font-bold text-brand-text uppercase tracking-widest">Standard Reports Library</h2>
-                <div className="relative">
+                <div className="relative w-full sm:w-auto">
                    <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-brand-muted" />
                    <input 
                      type="text" 
                      placeholder="Search reports..." 
-                     className="h-8 w-64 rounded bg-white border border-brand-border pl-8 pr-3 text-xs font-medium text-brand-text outline-none focus:border-brand-primary"
+                     className="h-8 w-full sm:w-64 rounded bg-white border border-brand-border pl-8 pr-3 text-xs font-medium text-brand-text outline-none focus:border-brand-primary"
                    />
                 </div>
              </div>

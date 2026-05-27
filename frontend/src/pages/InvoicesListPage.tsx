@@ -157,11 +157,11 @@ export function InvoicesListPage(): JSX.Element {
           </select>
         </div>
 
-        <div className="flex items-center gap-2 bg-brand-surface-soft rounded-[var(--radius-md)] px-4 h-11 border border-brand-border">
+        <div className="flex flex-wrap items-center gap-2 bg-brand-surface-soft rounded-[var(--radius-md)] p-2 sm:px-4 sm:h-11 border border-brand-border w-full sm:w-auto">
           <Calendar size={14} className="text-brand-muted" />
-          <input type="date" value={from} onChange={e => setFrom(e.target.value)} className="bg-transparent text-xs font-medium text-brand-text-soft outline-none" />
+          <input type="date" value={from} onChange={e => setFrom(e.target.value)} className="bg-transparent text-xs font-medium text-brand-text-soft outline-none flex-1 min-w-[100px]" />
           <span className="text-brand-muted">—</span>
-          <input type="date" value={to} onChange={e => setTo(e.target.value)} className="bg-transparent text-xs font-medium text-brand-text-soft outline-none" />
+          <input type="date" value={to} onChange={e => setTo(e.target.value)} className="bg-transparent text-xs font-medium text-brand-text-soft outline-none flex-1 min-w-[100px]" />
         </div>
 
         <button

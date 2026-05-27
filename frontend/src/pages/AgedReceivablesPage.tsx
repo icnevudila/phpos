@@ -114,50 +114,52 @@ export function AgedReceivablesPage(): JSX.Element {
   return (
     <div className="page-wrapper">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div>
           <h1 className="page-header-title">{t("pages.agedReceivables.title", { defaultValue: "Title" })}</h1>
           <p className="page-header-sub">{t("pages.agedReceivables.subtitle", { asOf: data.asOf })}</p>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="relative">
+        <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto">
+          <div className="relative w-full sm:flex-1 lg:w-[260px]">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
             <input
               type="text"
               placeholder={t("pages.invoicesList.searchPlaceholder", { defaultValue: "Search Placeholder" })}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="h-10 w-[260px] rounded-xl bg-white pl-10 pr-4 text-sm font-medium shadow-sm ring-1 ring-slate-100 focus:ring-2 focus:ring-teal-500 outline-none transition-all"
+              className="h-10 w-full rounded-xl bg-white pl-10 pr-4 text-sm font-medium shadow-sm ring-1 ring-slate-100 focus:ring-2 focus:ring-teal-500 outline-none transition-all"
             />
           </div>
-          <button
-            onClick={() => void load()}
-            className="btn-secondary flex items-center gap-2"
-          >
-            <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
-          </button>
+          <div className="flex items-center gap-2 w-full sm:w-auto justify-end sm:justify-start">
+            <button
+              onClick={() => void load()}
+              className="btn-secondary flex items-center gap-2"
+            >
+              <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
+            </button>
 
-          <button
-            onClick={() => handleExport('pdf')}
-            disabled={filteredRows.length === 0}
-            className="btn-secondary flex items-center gap-1 text-xs h-10 px-3 bg-white hover:bg-teal-50"
-          >
-            PDF
-          </button>
-          <button
-            onClick={() => handleExport('excel')}
-            disabled={filteredRows.length === 0}
-            className="btn-secondary flex items-center gap-1 text-xs h-10 px-3 bg-white hover:bg-teal-50"
-          >
-            Excel
-          </button>
-          <button
-            onClick={() => handleExport('word')}
-            disabled={filteredRows.length === 0}
-            className="btn-secondary flex items-center gap-1 text-xs h-10 px-3 bg-white hover:bg-teal-50"
-          >
-            Word
-          </button>
+            <button
+              onClick={() => handleExport('pdf')}
+              disabled={filteredRows.length === 0}
+              className="btn-secondary flex items-center gap-1 text-xs h-10 px-3 bg-white hover:bg-teal-50"
+            >
+              PDF
+            </button>
+            <button
+              onClick={() => handleExport('excel')}
+              disabled={filteredRows.length === 0}
+              className="btn-secondary flex items-center gap-1 text-xs h-10 px-3 bg-white hover:bg-teal-50"
+            >
+              Excel
+            </button>
+            <button
+              onClick={() => handleExport('word')}
+              disabled={filteredRows.length === 0}
+              className="btn-secondary flex items-center gap-1 text-xs h-10 px-3 bg-white hover:bg-teal-50"
+            >
+              Word
+            </button>
+          </div>
         </div>
       </div>
 
