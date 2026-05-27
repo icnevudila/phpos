@@ -137,12 +137,6 @@ export function AppLayout(): JSX.Element {
       <div className="flex min-h-0 min-w-0 flex-1 flex-col">
         <AppTopbar profile={profile} onOpenDrawer={() => setDrawerOpen(true)} />
         
-        {/* Persistent Demo Mode Banner */}
-        <div className="bg-brand-warning/10 border-b border-brand-warning/20 px-4 py-2 flex items-center justify-center gap-2 text-xs font-semibold text-brand-warning shadow-sm z-10 shrink-0 relative">
-          <Activity size={14} className="animate-pulse" />
-          <span>Demo Mode: Data is local. External services (SMS, Payments, Claims, X-Ray) are simulated.</span>
-        </div>
-
         <main
           id="main"
           tabIndex={-1}

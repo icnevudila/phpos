@@ -14,9 +14,18 @@ const prisma = new PrismaClient();
 async function main(): Promise<void> {
   console.log("Seeding DentEase PH demo data…");
 
+  await prisma.organization.upsert({
+    where: { id: "demo-org-id" },
+    update: {},
+    create: {
+      id: "demo-org-id",
+      name: "DentEase PH Enterprise",
+    },
+  });
+
   const clinic = await prisma.clinic.upsert({
     where: { id: "demo-clinic" },
-    update: { slug: "iloilo-demo" },
+    update: { slug: "iloilo-demo", organizationId: "demo-org-id" },
     create: {
       id: "demo-clinic",
       slug: "iloilo-demo",
@@ -24,6 +33,7 @@ async function main(): Promise<void> {
       address: "123 Rizal Street",
       city: "Iloilo City",
       phone: "+639171234567",
+      organizationId: "demo-org-id",
       // tin: "123-456-789-000",
       // birPtuNo: "PTU-2024-001",
       // birAccreditationNo: "BIR-ACC-2024-001",

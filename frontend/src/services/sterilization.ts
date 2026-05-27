@@ -20,11 +20,14 @@ export interface SterilizationLog {
   };
 }
 
+import api from "./api";
+
 export async function getSterilizationLogs(): Promise<SterilizationLog[]> {
-  // Demo Mode: Not Configured
-  return [];
+  const res = await api.get<any, { data: SterilizationLog[] }>("/sterilization");
+  return res.data;
 }
 
 export async function createSterilizationLog(body: any): Promise<SterilizationLog> {
-  throw new Error("Demo Mode: Sterilization logging is not yet configured for this clinic.");
+  const res = await api.post<any, { data: SterilizationLog }>("/sterilization", body);
+  return res.data;
 }
