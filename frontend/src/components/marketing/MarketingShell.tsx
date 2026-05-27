@@ -76,9 +76,9 @@ export function MarketingShell({
 
   useEffect(() => {
     if (documentTitleKey) {
-      document.title = `${t(documentTitleKey)} · ${t("common.appName", { defaultValue: "App Name" })}`;
+      document.title = `${t(documentTitleKey)} · ${t("common.appName", { defaultValue: "DentQL" })}`;
     } else if (documentTitleDefault) {
-      document.title = `${documentTitleDefault} · ${t("common.appName", { defaultValue: "App Name" })}`;
+      document.title = `${documentTitleDefault} · ${t("common.appName", { defaultValue: "DentQL" })}`;
     }
   }, [documentTitleKey, documentTitleDefault, t]);
 
@@ -200,7 +200,7 @@ export function MarketingShell({
         <div className="mx-auto max-w-6xl space-y-8 px-4 sm:px-6">
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
             <div className="sm:col-span-2 lg:col-span-2">
-              <p className="text-sm font-semibold text-slate-900">{t("common.appName", { defaultValue: "App Name" })}</p>
+              <p className="text-sm font-semibold text-slate-900">{t("common.appName", { defaultValue: "DentQL" })}</p>
               <p className="mt-2 max-w-md text-xs leading-relaxed text-slate-500">
                 {t("pages.marketingShell.footerTagline", { defaultValue: "Footer Tagline" })}
               </p>

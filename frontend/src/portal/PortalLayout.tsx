@@ -118,7 +118,7 @@ export function PortalLayout(): JSX.Element {
             </div>
             <div className="min-w-0">
               <p className="text-[10px] font-bold uppercase tracking-widest text-teal-600">
-                {t("common.appName", { defaultValue: "App Name" })}
+                {t("common.appName", { defaultValue: "DentQL" })}
               </p>
               <p className="truncate text-sm font-bold text-slate-800">{clinic.name}</p>
             </div>
