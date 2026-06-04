@@ -202,7 +202,6 @@ export function ReportsPage(): JSX.Element {
                    </div>
                 ))}
              </div>
-          </section>
         </div>
 
         {/* Right Sidebar: Operations */}
