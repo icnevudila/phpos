@@ -13,6 +13,7 @@ import {
 } from "../services/invoice.service.js";
 import { generateInvoicePdf } from "../services/invoicePdf.js";
 import { generatePhilhealthWorksheetPdf } from "../services/philhealthWorksheetPdf.js";
+import { generatePhilhealthCf1Pdf } from "../services/philhealthCf1Pdf.js";
 import { generateBir2307Pdf } from "../services/bir2307Pdf.js";
 import type { ApiSuccess } from "../types/auth.js";
 import { AppError } from "../utils/errors.js";
@@ -107,6 +108,14 @@ export async function philhealthWorksheetPdfHandler(req: Request, res: Response)
   const buffer = await generatePhilhealthWorksheetPdf(clinicId(req), id);
   res.setHeader("Content-Type", "application/pdf");
   res.setHeader("Content-Disposition", `inline; filename="philhealth-worksheet-${id}.pdf"`);
+  res.end(buffer);
+}
+
+export async function philhealthCf1PdfHandler(req: Request, res: Response): Promise<void> {
+  const id = z.string().min(1).parse(req.params.id);
+  const buffer = await generatePhilhealthCf1Pdf(clinicId(req), id);
+  res.setHeader("Content-Type", "application/pdf");
+  res.setHeader("Content-Disposition", `inline; filename="philhealth-cf1-${id}.pdf"`);
   res.end(buffer);
 }
 

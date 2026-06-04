@@ -78,6 +78,20 @@ export function PhilHealthClaimsPage(): JSX.Element {
     ],
     [t],
   );
+  const [lookupQ, setLookupQ] = useState("");
+  const caseRates = useMemo(() => [
+    { code: "K02.9", description: "Dental caries, unspecified (Restorations / Fillings)", amount: "₱9,000.00", type: "ICD-10" },
+    { code: "K05.3", description: "Chronic periodontitis (Root Planing / Scaling)", amount: "₱12,000.00", type: "ICD-10" },
+    { code: "K04.0", description: "Pulpitis (Root Canal Therapy / Pulpectomy)", amount: "₱7,500.00", type: "ICD-10" },
+    { code: "K08.8", description: "Other specified disorders of teeth (Surgical Extraction)", amount: "₱6,000.00", type: "ICD-10" },
+    { code: "K03.6", description: "Deposits [accretions] on teeth (Prophylaxis / Cleaning)", amount: "₱3,500.00", type: "ICD-10" },
+  ], []);
+
+  const filteredRates = useMemo(() => {
+    const q = lookupQ.trim().toLowerCase();
+    if (!q) return caseRates;
+    return caseRates.filter(r => r.code.toLowerCase().includes(q) || r.description.toLowerCase().includes(q));
+  }, [lookupQ, caseRates]);
 
   return (
     <div className="page-wrapper">
@@ -89,11 +103,11 @@ export function PhilHealthClaimsPage(): JSX.Element {
               <ShieldCheck size={16} aria-hidden />
             </span>
             <span className="text-xs font-semibold uppercase tracking-widest text-slate-400">
-              {t("pages.philHealth.kicker", { defaultValue: "Kicker" })}
+              {t("pages.philHealth.kicker", { defaultValue: "Claims Desk" })}
             </span>
           </div>
-          <h1 className="page-header-title">{t("pages.philHealth.title", { defaultValue: "Title" })}</h1>
-          <p className="page-header-sub">{t("pages.philHealth.subtitle", { defaultValue: "Subtitle" })}</p>
+          <h1 className="page-header-title">{t("pages.philHealth.title", { defaultValue: "PhilHealth Claims" })}</h1>
+          <p className="page-header-sub">{t("pages.philHealth.subtitle", { defaultValue: "Manage PhilHealth claims, PECWS worksheets, and transmissions." })}</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <button
@@ -108,7 +122,7 @@ export function PhilHealthClaimsPage(): JSX.Element {
             className="btn-primary flex items-center gap-2"
           >
             <UploadCloud size={16} aria-hidden />
-            {t("pages.philHealth.syncPecws", { defaultValue: "Sync Pecws" })}
+            {t("pages.philHealth.syncPecws", { defaultValue: "Sync PECWS" })}
           </button>
         </div>
       </div>
@@ -125,6 +139,48 @@ export function PhilHealthClaimsPage(): JSX.Element {
           </div>
         ))}
       </div>
+
+      {/* Case Rate Lookup */}
+      <section className="card border border-brand-border bg-white">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+          <div>
+            <h2 className="text-base font-bold text-brand-text">
+              {t("pages.philHealth.lookupTitle", { defaultValue: "Case Rate Lookup Directory" })}
+            </h2>
+            <p className="text-xs text-brand-muted mt-1">
+              {t("pages.philHealth.lookupSubtitle", { defaultValue: "Quick lookup for PhilHealth ICD-10 diagnosis codes and claim amounts." })}
+            </p>
+          </div>
+          <div className="relative w-full md:w-72">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={14} />
+            <input
+              type="text"
+              placeholder={t("pages.philHealth.lookupPlaceholder", { defaultValue: "Search code or procedure..." })}
+              value={lookupQ}
+              onChange={(e) => setLookupQ(e.target.value)}
+              className="w-full h-9 rounded-lg border border-slate-200 bg-white pl-9 pr-4 text-xs font-medium outline-none focus:ring-2 focus:ring-teal-500 transition-all"
+            />
+          </div>
+        </div>
+
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {filteredRates.map((rate) => (
+            <div key={rate.code} className="p-3.5 rounded-xl border border-slate-100 bg-slate-50/50 hover:bg-teal-50/10 hover:border-teal-100 transition-all flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between">
+                  <span className="font-mono text-xs font-bold text-teal-600">{rate.code}</span>
+                  <span className="px-1.5 py-0.5 rounded bg-slate-100 text-[9px] font-black text-slate-400 uppercase tracking-widest">{rate.type}</span>
+                </div>
+                <p className="text-xs font-semibold text-slate-700 mt-2 leading-relaxed">{rate.description}</p>
+              </div>
+              <div className="mt-4 pt-2 border-t border-slate-100 flex items-center justify-between">
+                <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Reimbursement</span>
+                <span className="text-xs font-black text-teal-600 font-mono">{rate.amount}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
 
       {/* Table Card */}
       <div className="card p-0 overflow-hidden">

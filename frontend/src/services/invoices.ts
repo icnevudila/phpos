@@ -285,6 +285,17 @@ export async function openPhilhealthWorksheetPdf(id: string): Promise<void> {
   }
 }
 
+export async function openPhilhealthCf1Pdf(id: string): Promise<void> {
+  try {
+    const { generatePhilhealthCf1Pdf } = await import("../utils/philhealthCf1Pdf");
+    const invoice = await fetchInvoice(id);
+    await generatePhilhealthCf1Pdf(invoice);
+  } catch (err) {
+    console.error("Failed to generate PhilHealth CF1 PDF:", err);
+    throw err;
+  }
+}
+
 export async function openBir2307Pdf(id: string): Promise<void> {
   try {
     const { generateBir2307Pdf } = await import("../utils/bir2307Pdf");

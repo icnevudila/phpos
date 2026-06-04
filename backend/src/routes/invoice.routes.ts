@@ -8,6 +8,7 @@ import {
   getInvoiceHandler,
   invoicePdfHandler,
   philhealthWorksheetPdfHandler,
+  philhealthCf1PdfHandler,
   bir2307PdfHandler,
   listInvoicesHandler,
   paymongoCheckoutHandler,
@@ -35,6 +36,7 @@ invoiceRouter.get("/", asyncHandler(listInvoicesHandler));
 invoiceRouter.post("/", roleGuard(writeRoles), asyncHandler(createInvoiceHandler));
 invoiceRouter.get("/:id/pdf", asyncHandler(invoicePdfHandler));
 invoiceRouter.get("/:id/philhealth-worksheet", asyncHandler(philhealthWorksheetPdfHandler));
+invoiceRouter.get("/:id/philhealth-cf1", asyncHandler(philhealthCf1PdfHandler));
 invoiceRouter.get("/:id/bir-2307", asyncHandler(bir2307PdfHandler));
 invoiceRouter.get("/:id", asyncHandler(getInvoiceHandler));
 invoiceRouter.put("/:id", roleGuard(writeRoles), asyncHandler(updateInvoiceHandler));

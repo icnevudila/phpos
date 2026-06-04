@@ -34,6 +34,7 @@ import {
   fetchInvoice,
   openInvoicePdf,
   openPhilhealthWorksheetPdf,
+  openPhilhealthCf1Pdf,
   openBir2307Pdf,
   simulatePaymongoPaid,
   updateInvoice,
@@ -254,13 +255,22 @@ export function InvoicePage(): JSX.Element {
               PDF
             </button>
             {invoice.patient.philhealthNo && (
-              <button
-                onClick={() => openPhilhealthWorksheetPdf(invoice.id).catch(() => toast.error(t("pages.invoice.philhealthWorksheetPdfFailed", { defaultValue: "Philhealth Worksheet Pdf Failed" })))}
-                className="btn-secondary text-xs px-3 py-1.5 h-8 text-brand-warning border-brand-warning/30 hover:bg-brand-warning-soft"
-              >
-                <FileText size={14} />
-                PHIC Form
-              </button>
+              <>
+                <button
+                  onClick={() => openPhilhealthWorksheetPdf(invoice.id).catch(() => toast.error(t("pages.invoice.philhealthWorksheetPdfFailed", { defaultValue: "Philhealth Worksheet Pdf Failed" })))}
+                  className="btn-secondary text-xs px-3 py-1.5 h-8 text-brand-warning border-brand-warning/30 hover:bg-brand-warning-soft"
+                >
+                  <FileText size={14} />
+                  PHIC Worksheet
+                </button>
+                <button
+                  onClick={() => openPhilhealthCf1Pdf(invoice.id).catch(() => toast.error(t("pages.invoice.philhealthCf1PdfFailed", { defaultValue: "Failed to generate PhilHealth CF1 PDF" })))}
+                  className="btn-secondary text-xs px-3 py-1.5 h-8 text-brand-teal border-brand-teal/30 hover:bg-brand-teal-soft"
+                >
+                  <FileText size={14} />
+                  PHIC CF1
+                </button>
+              </>
             )}
             <button
               onClick={() => openBir2307Pdf(invoice.id).catch(() => toast.error(t("pages.invoice.bir2307Failed", { defaultValue: "Bir2307 Failed" })))}
