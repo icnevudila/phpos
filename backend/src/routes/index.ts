@@ -21,8 +21,10 @@ import {
   appointmentTreatmentRouter,
   treatmentRouter,
 } from "./treatment.routes.js";
+import { treatmentPlanRouter } from "./treatmentPlan.routes.js";
 import { staffUserRouter } from "./staffUser.routes.js";
 import { waitlistRouter } from "./waitlist.routes.js";
+import { recallRouter } from "./recall.routes.js";
 import { prescriptionRouter } from "./prescription.routes.js";
 import { analyticsRouter } from "./analytics.routes.js";
 import { eodRouter } from "./eod.routes.js";
@@ -47,6 +49,8 @@ apiRouter.use("/staff/users", staffUserRouter);
 apiRouter.use("/patients", patientRouter);
 apiRouter.use("/appointments", appointmentRouter);
 apiRouter.use("/waitlist", waitlistRouter);
+apiRouter.use("/recalls", recallRouter);
+apiRouter.use("/treatment-plans", treatmentPlanRouter);
 apiRouter.use("/appointments", appointmentInvoiceRouter);
 apiRouter.use("/appointments/:appointmentId/treatments", appointmentTreatmentRouter);
 apiRouter.use("/treatments", treatmentRouter);

@@ -21,6 +21,7 @@ export const HmoClaimDetailPage = lazy(() =>
 export const SettingsPage = lazy(() => import("../pages/SettingsPage").then((m) => ({ default: m.SettingsPage })));
 export const PatientList = lazy(() => import("../pages/PatientList").then((m) => ({ default: m.PatientList })));
 export const WaitlistPage = lazy(() => import("../pages/WaitlistPage").then((m) => ({ default: m.WaitlistPage })));
+export const RecallsPage = lazy(() => import("../pages/RecallsPage").then((m) => ({ default: m.RecallsPage })));
 export const NotificationsPage = lazy(() =>
   import("../pages/NotificationsPage").then((m) => ({ default: m.NotificationsPage })),
 );

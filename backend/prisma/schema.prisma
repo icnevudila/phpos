@@ -170,6 +170,20 @@ enum SterilizationStatus {
   ABORTED
 }
 
+enum RecallStatus {
+  PENDING
+  SENT
+  COMPLETED
+  CANCELLED
+}
+
+enum TreatmentPlanStatus {
+  DRAFT
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}
+
 // ─── Models ───────────────────────────────────────────────────────────
 
 model Organization {
@@ -229,6 +243,8 @@ model Clinic {
   sterilizationLogs   SterilizationLog[]
   soapNotes           SoapNote[]
   patientReferrals    PatientReferral[]
+  recalls             Recall[]
+  treatmentPlans      TreatmentPlan[]
 
   @@index([createdAt])
 }
@@ -390,6 +406,8 @@ model Patient {
   consentForms    ConsentForm[]
   soapNotes       SoapNote[]
   referrals       PatientReferral[]
+  recalls         Recall[]
+  treatmentPlans  TreatmentPlan[]
 
   @@index([clinicId])
   @@index([phone])
@@ -581,16 +599,19 @@ model Treatment {
   rvuCode       String?  @db.VarChar(10)
   phase         String?  @db.VarChar(50)
   notes         String?
-  createdAt     DateTime @default(now())
+  createdAt       DateTime @default(now())
+  treatmentPlanId String?
 
   appointment   Appointment    @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
   patient       Patient        @relation(fields: [patientId], references: [id], onDelete: Cascade)
   dentist       User           @relation("TreatmentDentist", fields: [dentistId], references: [id], onDelete: Restrict)
+  treatmentPlan TreatmentPlan? @relation(fields: [treatmentPlanId], references: [id], onDelete: SetNull)
   hmoClaimLines HmoClaimLine[]
 
   @@index([appointmentId])
   @@index([patientId])
   @@index([dentistId])
+  @@index([treatmentPlanId])
   @@index([createdAt])
 }
 
@@ -1151,6 +1172,29 @@ model PatientReferral {
   @@index([createdAt])
 }
 
+/// Recall / hatırlatma takibi — rutin kontrol, temizlik, takip vb. periyodik hatırlatmalar.
+model Recall {
+  id                String       @id @default(cuid())
+  clinicId          String
+  patientId         String
+  recallType        String
+  intervalMonths    Int          @default(6)
+  nextDueDate       DateTime
+  lastCompletedDate DateTime?
+  status            RecallStatus @default(PENDING)
+  notes             String?
+  notifiedAt        DateTime?
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+
+  clinic  Clinic  @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  patient Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
+  @@index([clinicId, status])
+  @@index([patientId])
+  @@index([nextDueDate])
+}
+
 model Family {
   id        String    @id @default(cuid())
   name      String
@@ -1162,4 +1206,22 @@ model Family {
   updatedAt DateTime  @updatedAt
 
   @@index([clinicId])
+}
+
+model TreatmentPlan {
+  id          String              @id @default(cuid())
+  clinicId    String
+  patientId   String
+  title       String
+  notes       String?
+  status      TreatmentPlanStatus @default(DRAFT)
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+
+  clinic     Clinic      @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  patient    Patient     @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  treatments Treatment[]
+
+  @@index([clinicId])
+  @@index([patientId])
 }

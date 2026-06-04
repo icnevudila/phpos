@@ -52,7 +52,9 @@ import {
   SettingsPage,
   StaffPage,
   WaitlistPage,
+  RecallsPage,
 } from "./routes/lazyPages";
+import { CookieConsent } from "./components/CookieConsent";
 
 function L({ children }: { children: ReactNode }): JSX.Element {
   return <SuspenseRoute>{children}</SuspenseRoute>;
@@ -136,6 +138,16 @@ export default function App(): JSX.Element {
                 </RoleGuard>
               }
             />
+            <Route
+              path="/recalls"
+              element={
+                <RoleGuard roles={["ADMIN", "DENTIST", "RECEPTIONIST"]}>
+                  <L>
+                    <RecallsPage />
+                  </L>
+                </RoleGuard>
+              }
+            />
             <Route path="/patients" element={<L><PatientList /></L>} />
             <Route path="/patients/:id" element={<L><PatientDetailPage /></L>} />
             <Route path="/patients/:id/presentation" element={<L><PatientPresentationPage /></L>} />
@@ -179,6 +191,7 @@ export default function App(): JSX.Element {
         </Route>
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
+      <CookieConsent />
     </RouteErrorBoundary>
   );
 }

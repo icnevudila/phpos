@@ -16,6 +16,23 @@ import { startNotificationScheduler } from "./services/notification/scheduler.js
 import { setupSwagger } from "./utils/swagger.js";
 import { AppError } from "./utils/errors.js";
 
+/** Optional Sentry error tracking — set SENTRY_DSN in env. */
+let Sentry: any;
+try {
+  if (process.env.SENTRY_DSN?.trim()) {
+    const pkg = "@sentry/node";
+    const mod = await import(pkg) as any;
+    Sentry = mod;
+    Sentry.init({
+      dsn: process.env.SENTRY_DSN.trim(),
+      environment: process.env.NODE_ENV ?? "development",
+      tracesSampleRate: 0.1,
+    });
+  }
+} catch {
+  console.warn("[sentry] @sentry/node not installed — skip init");
+}
+
 let listenersRegistered = false;
 let schedulerStarted = false;
 
@@ -125,6 +142,7 @@ export function createApp(): Express {
       });
       return;
     }
+    Sentry?.captureException(err);
     console.error(requestId ? `[${requestId}]` : "", err);
     res.status(500).json({
       success: false,
