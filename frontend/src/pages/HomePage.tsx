@@ -4,196 +4,6 @@ import { Check, Users, FileText, Package, Activity, MonitorPlay, ShieldCheck } f
 import { DentQLLogo } from '../components/ui/DentQLLogo';
 import { toast } from 'sonner';
 
-// --- REUSABLE PREVIEW COMPONENTS (Restored from previous history, styled with Curve DNA) ---
-function TodayBoardPreview() {
-  return (
-    <div className="w-full h-full bg-[var(--color-paper-subtle)] rounded-xl border border-[var(--color-rule)] overflow-hidden shadow-card flex flex-col pointer-events-none select-none text-left">
-      <div className="h-12 border-b border-[var(--color-rule)] flex items-center px-4 bg-[var(--color-paper)] justify-between">
-        <div className="font-[family-name:var(--font-display)] font-bold text-[var(--color-ink)]">Today Board</div>
-        <div className="flex gap-2">
-          <div className="h-6 w-24 bg-[var(--color-paper-subtle)] rounded-md border border-[var(--color-rule)]" />
-          <div className="h-6 w-6 rounded-md bg-[var(--color-accent)]/10 text-[var(--color-accent)] flex items-center justify-center border border-[var(--color-accent)]/20"><Activity size={12}/></div>
-        </div>
-      </div>
-      <div className="p-4 grid grid-cols-3 gap-4 bg-[var(--color-paper-subtle)] flex-1">
-        <div className="col-span-2 space-y-4">
-           <div className="flex gap-4">
-             <div className="flex-1 bg-[var(--color-paper)] p-3 rounded-xl border border-[var(--color-rule)] shadow-sm">
-                <div className="text-[10px] font-mono font-bold text-[var(--color-ink-2)] uppercase tracking-wider">Scheduled Chairs</div>
-                <div className="text-2xl font-black text-[var(--color-ink)] mt-1 tracking-tight font-[family-name:var(--font-display)]">24</div>
-             </div>
-             <div className="flex-1 bg-[var(--color-paper)] p-3 rounded-xl border border-[var(--color-rule)] shadow-sm">
-                <div className="text-[10px] font-mono font-bold text-[var(--color-ink-2)] uppercase tracking-wider">Waiting Now</div>
-                <div className="text-2xl font-black text-[var(--color-ink)] mt-1 tracking-tight font-[family-name:var(--font-display)]">3</div>
-             </div>
-           </div>
-           <div className="bg-[var(--color-paper)] border border-[var(--color-rule)] rounded-xl shadow-sm h-32 p-3">
-              <div className="text-xs font-bold text-[var(--color-ink)] mb-2 font-[family-name:var(--font-display)]">Chair Schedule</div>
-              <div className="space-y-2">
-                <div className="h-6 bg-[var(--color-accent)]/10 rounded-md border border-[var(--color-accent)]/20 flex items-center px-2">
-                  <div className="h-2 w-16 bg-[var(--color-accent)]/40 rounded-full" />
-                </div>
-                <div className="h-6 bg-[var(--color-paper-subtle)] rounded-md border border-[var(--color-rule)] flex items-center px-2">
-                  <div className="h-2 w-12 bg-[var(--color-rule-2)] rounded-full" />
-                </div>
-              </div>
-           </div>
-        </div>
-        <div className="bg-[var(--color-paper)] border border-[var(--color-rule)] rounded-xl shadow-sm p-3">
-           <div className="text-xs font-bold text-[var(--color-ink)] mb-3 font-[family-name:var(--font-display)]">Action Center</div>
-           <div className="space-y-2">
-              <div className="h-10 bg-amber-50 rounded-lg border border-amber-200 p-2 flex items-center gap-2">
-                 <div className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />
-                 <div className="space-y-1 w-full"><div className="h-1.5 bg-amber-200 rounded-full w-3/4" /><div className="h-1.5 bg-amber-100 rounded-full w-1/2" /></div>
-              </div>
-              <div className="h-10 bg-rose-50 rounded-lg border border-rose-200 p-2 flex items-center gap-2">
-                 <div className="w-1.5 h-1.5 rounded-full bg-rose-500 shrink-0" />
-                 <div className="space-y-1 w-full"><div className="h-1.5 bg-rose-200 rounded-full w-3/4" /><div className="h-1.5 bg-rose-100 rounded-full w-1/2" /></div>
-              </div>
-           </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function ChairSchedulePreview() {
-  return (
-    <div className="w-full h-full bg-[var(--color-paper-subtle)] rounded-xl border border-[var(--color-rule)] overflow-hidden shadow-card flex flex-col pointer-events-none select-none text-left">
-      <div className="h-10 border-b border-[var(--color-rule)] flex items-center px-4 bg-[var(--color-paper)] gap-4">
-        <div className="font-[family-name:var(--font-display)] font-bold text-[var(--color-ink)] text-sm">Chair Schedule</div>
-      </div>
-      <div className="flex-1 p-2 flex gap-2">
-         <div className="w-12 border-r border-[var(--color-rule)] flex flex-col gap-5 pt-7 text-[9px] text-[var(--color-ink-2)] font-medium items-end pr-2">
-            <div>08:00</div><div>09:00</div><div>10:00</div>
-         </div>
-         <div className="flex-1 grid grid-cols-3 gap-2">
-            <div className="bg-[var(--color-paper)] rounded-lg border border-[var(--color-rule)] p-1 relative shadow-sm">
-               <div className="text-[10px] font-bold text-center border-b border-[var(--color-rule)] pb-1 mb-1 text-[var(--color-ink)]">Chair 1</div>
-               <div className="absolute top-8 left-1 right-1 h-16 bg-[var(--color-accent)]/10 border border-[var(--color-accent)]/30 rounded-md p-1.5 flex flex-col justify-between shadow-sm">
-                 <div>
-                    <div className="text-[8px] font-bold text-[var(--color-accent)]">M. Santos</div>
-                    <div className="text-[7px] text-[var(--color-accent)]/80">Extraction</div>
-                 </div>
-                 <div className="text-[6px] bg-[var(--color-accent)] text-white self-start px-1 rounded-sm">PAID</div>
-               </div>
-            </div>
-            <div className="bg-[var(--color-paper)] rounded-lg border border-[var(--color-rule)] p-1 relative shadow-sm">
-               <div className="text-[10px] font-bold text-center border-b border-[var(--color-rule)] pb-1 mb-1 text-[var(--color-ink)]">Chair 2</div>
-               <div className="absolute top-14 left-1 right-1 h-12 bg-[var(--color-secondary)]/20 border border-[var(--color-secondary)]/40 rounded-md p-1.5 shadow-sm">
-                 <div className="text-[8px] font-bold text-[var(--color-ink)]">J. Dela Cruz</div>
-                 <div className="text-[7px] text-[var(--color-ink-2)]">Cleaning</div>
-               </div>
-            </div>
-            <div className="bg-[var(--color-paper)] rounded-lg border border-[var(--color-rule)] p-1 relative shadow-sm">
-               <div className="text-[10px] font-bold text-center border-b border-[var(--color-rule)] pb-1 mb-1 text-[var(--color-ink)]">X-Ray</div>
-            </div>
-         </div>
-      </div>
-    </div>
-  );
-}
-
-function PatientRecordPreview() {
-  return (
-    <div className="w-full h-full bg-[var(--color-paper)] rounded-xl border border-[var(--color-rule)] overflow-hidden shadow-card flex pointer-events-none select-none text-left">
-      <div className="w-[30%] border-r border-[var(--color-rule)] bg-[var(--color-paper-subtle)] p-3 flex flex-col">
-         <div className="flex items-center gap-2 mb-4">
-            <div className="h-8 w-8 rounded-full bg-[var(--color-accent)] text-white flex items-center justify-center text-xs font-bold shadow-sm">MS</div>
-            <div>
-               <div className="text-xs font-bold text-[var(--color-ink)] leading-tight font-[family-name:var(--font-display)]">Maria Santos</div>
-               <div className="text-[9px] text-[var(--color-ink-2)]">PID-10492</div>
-            </div>
-         </div>
-         <div className="space-y-1">
-            <div className="h-6 rounded-md bg-[var(--color-accent)]/10 border border-[var(--color-accent)]/20 text-[9px] font-bold text-[var(--color-accent)] flex items-center px-2 shadow-sm">Overview</div>
-            <div className="h-6 rounded-md bg-transparent text-[9px] font-medium text-[var(--color-ink-2)] flex items-center px-2">Medical History</div>
-            <div className="h-6 rounded-md bg-transparent text-[9px] font-medium text-[var(--color-ink-2)] flex items-center px-2">Dental Chart</div>
-         </div>
-      </div>
-      <div className="flex-1 p-4 bg-[var(--color-paper-subtle)] space-y-3">
-         <div className="bg-[var(--color-paper)] border border-[var(--color-rule)] p-3 rounded-xl shadow-sm">
-            <div className="text-[10px] font-bold text-[var(--color-ink)] mb-2 border-b border-[var(--color-rule)] pb-1">Clinical Snapshot</div>
-            <div className="grid grid-cols-2 gap-2 text-[9px]">
-               <div><span className="text-[var(--color-ink-2)]">Last Visit:</span> <span className="font-bold text-[var(--color-ink)]">Oct 12, 2023</span></div>
-               <div><span className="text-[var(--color-ink-2)]">Alerts:</span> <span className="text-rose-600 font-bold bg-rose-50 px-1 rounded-sm border border-rose-200">Penicillin Allergy</span></div>
-            </div>
-         </div>
-         <div className="bg-[var(--color-paper)] border border-[var(--color-rule)] p-3 rounded-xl flex-1 shadow-sm">
-            <div className="text-[10px] font-bold text-[var(--color-ink)] mb-2 border-b border-[var(--color-rule)] pb-1">Treatment Plan</div>
-            <div className="h-2 w-3/4 bg-[var(--color-rule)] rounded-full mt-2" />
-            <div className="h-2 w-1/2 bg-[var(--color-rule)] rounded-full mt-1.5" />
-            <div className="h-2 w-2/3 bg-[var(--color-rule)] rounded-full mt-1.5" />
-         </div>
-      </div>
-    </div>
-  );
-}
-
-function PaymentPreview() {
-  return (
-    <div className="w-full h-full bg-[var(--color-paper-subtle)] rounded-xl border border-[var(--color-rule)] overflow-hidden shadow-card flex flex-col pointer-events-none select-none text-left">
-      <div className="h-10 border-b border-[var(--color-rule)] flex items-center px-4 bg-[var(--color-paper)] gap-4 justify-between">
-        <div className="font-[family-name:var(--font-display)] font-bold text-[var(--color-ink)] text-sm">Invoice #INV-2938</div>
-        <div className="text-[9px] bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full font-bold border border-amber-200">PARTIAL</div>
-      </div>
-      <div className="flex-1 flex">
-         <div className="w-[60%] p-4 space-y-3 border-r border-[var(--color-rule)] bg-[var(--color-paper-subtle)]">
-            <div className="bg-[var(--color-paper)] p-3 border border-[var(--color-rule)] rounded-xl shadow-sm">
-               <div className="flex justify-between text-[9px] border-b border-[var(--color-rule)] pb-1 mb-2 font-bold text-[var(--color-ink-2)] uppercase tracking-wider">
-                 <span>Treatment</span><span>Amount</span>
-               </div>
-               <div className="flex justify-between text-[11px] font-bold text-[var(--color-ink)] mb-1">
-                 <span>Root Canal (Tooth 24)</span><span>₱8,500</span>
-               </div>
-               <div className="flex justify-between text-[11px] font-bold text-[var(--color-ink)]">
-                 <span>X-Ray</span><span>₱1,200</span>
-               </div>
-            </div>
-         </div>
-         <div className="w-[40%] bg-[var(--color-paper)] p-4 flex flex-col shadow-sm">
-            <div className="text-[9px] text-[var(--color-ink-2)] font-bold uppercase tracking-wider font-mono">Balance</div>
-            <div className="text-2xl font-black text-[var(--color-ink)] mb-4 tracking-tight font-[family-name:var(--font-display)]">₱4,500</div>
-            <div className="space-y-2 mt-auto">
-               <div className="h-8 bg-[var(--color-accent)] rounded-md text-white text-[10px] font-bold flex items-center justify-center shadow-sm">Record Payment</div>
-               <div className="h-8 bg-[var(--color-paper)] border border-[var(--color-rule)] rounded-md text-[var(--color-ink)] text-[10px] font-bold flex items-center justify-center shadow-sm">Submit Claim</div>
-            </div>
-         </div>
-      </div>
-    </div>
-  );
-}
-
-function ReportsPreview() {
-  return (
-    <div className="w-full h-full bg-[var(--color-paper-subtle)] rounded-xl border border-[var(--color-rule)] overflow-hidden shadow-card flex pointer-events-none select-none text-left">
-      <div className="w-[30%] border-r border-[var(--color-rule)] bg-[var(--color-paper)] p-3">
-         <div className="text-xs font-[family-name:var(--font-display)] font-bold text-[var(--color-ink)] mb-3">Report Library</div>
-         <div className="space-y-1">
-            <div className="text-[8px] font-mono font-bold text-[var(--color-ink-2)] uppercase mt-2 mb-1 tracking-wider">Finance</div>
-            <div className="h-6 rounded-md bg-[var(--color-paper-subtle)] border border-[var(--color-rule)] shadow-sm text-[9px] font-bold text-[var(--color-ink)] flex items-center px-2">Aged Receivables</div>
-            <div className="h-6 rounded-md bg-transparent text-[9px] font-medium text-[var(--color-ink-2)] flex items-center px-2">HMO Revenue</div>
-         </div>
-      </div>
-      <div className="flex-1 p-4 bg-[var(--color-paper)] flex flex-col">
-         <div className="flex justify-between items-center border-b border-[var(--color-rule)] pb-2 mb-4">
-            <div className="text-sm font-[family-name:var(--font-display)] font-bold text-[var(--color-ink)]">Aged Receivables</div>
-            <div className="h-6 w-16 bg-[var(--color-paper-subtle)] rounded-md border border-[var(--color-rule)] flex items-center px-2">
-               <div className="h-1.5 w-10 bg-[var(--color-rule-2)] rounded-full" />
-            </div>
-         </div>
-         <div className="flex-1 border border-[var(--color-rule)] rounded-xl bg-[var(--color-paper-subtle)] flex items-end p-4 gap-3 shadow-sm">
-            <div className="flex-1 bg-[var(--color-secondary)]/30 h-1/2 rounded-t border border-[var(--color-secondary)]/40 border-b-0" />
-            <div className="flex-1 bg-[var(--color-secondary)]/50 h-3/4 rounded-t border border-[var(--color-secondary)]/60 border-b-0" />
-            <div className="flex-1 bg-[var(--color-accent)] h-full rounded-t border border-[#d65000] border-b-0 shadow-sm" />
-            <div className="flex-1 bg-[var(--color-secondary)]/70 h-2/3 rounded-t border border-[var(--color-secondary)]/80 border-b-0" />
-         </div>
-      </div>
-    </div>
-  );
-}
-
-
 // --- MAIN PAGE ---
 
 export const HomePage: React.FC = () => {
@@ -318,7 +128,7 @@ export const HomePage: React.FC = () => {
         <section className="relative px-6 max-w-[1200px] mx-auto -mt-10 mb-24 z-10 animate-float">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] bg-gradient-to-r from-[var(--color-accent)] to-[var(--color-secondary)] opacity-20 blur-[100px] rounded-full -z-10" />
           <div className="relative aspect-[16/9] w-full rounded-[24px] bg-[var(--color-paper)]/80 backdrop-blur-xl p-2 border border-white/40 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] overflow-hidden ring-8 ring-white/30">
-             <TodayBoardPreview />
+             <img src="/hero_mockup.png" className="w-full h-full object-cover rounded-[16px] shadow-inner" alt="Today Board Screenshot" />
           </div>
         </section>
 
@@ -374,7 +184,7 @@ export const HomePage: React.FC = () => {
               <div className="lg:w-1/2 w-full relative">
                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[110%] h-[110%] bg-[var(--color-accent)] opacity-10 blur-[80px] rounded-full -z-10" />
                  <div className="relative aspect-[4/3] w-full rounded-[24px] bg-[var(--color-paper)]/80 backdrop-blur-xl p-2 border border-white/50 shadow-2xl ring-4 ring-white/50 animate-float-delayed">
-                    <TodayBoardPreview />
+                    <img src="/hero_mockup.png" className="w-full h-full object-cover rounded-[16px] shadow-inner" alt="Today Board Screenshot" />
                  </div>
               </div>
             </div>
@@ -388,7 +198,7 @@ export const HomePage: React.FC = () => {
               <div className="lg:w-1/2 w-full relative">
                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[110%] h-[110%] bg-[var(--color-secondary)] opacity-20 blur-[80px] rounded-full -z-10" />
                  <div className="relative aspect-[4/3] w-full rounded-[24px] bg-[var(--color-paper)]/80 backdrop-blur-xl p-2 border border-white/50 shadow-2xl ring-4 ring-white/50 animate-float">
-                    <ChairSchedulePreview />
+                    <img src="/hero_mockup.png" className="w-full h-full object-cover rounded-[16px] shadow-inner" alt="Chair Schedule Screenshot" />
                  </div>
               </div>
               <div className="lg:w-1/2">
@@ -416,7 +226,7 @@ export const HomePage: React.FC = () => {
               <div className="lg:w-1/2 w-full relative">
                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[110%] h-[110%] bg-[var(--color-accent)] opacity-10 blur-[80px] rounded-full -z-10" />
                  <div className="relative aspect-[4/3] w-full rounded-[24px] bg-[var(--color-paper)]/80 backdrop-blur-xl p-2 border border-white/50 shadow-2xl ring-4 ring-white/50 animate-float-delayed">
-                    <PatientRecordPreview />
+                    <img src="/hero_mockup.png" className="w-full h-full object-cover rounded-[16px] shadow-inner" alt="Patient Record Screenshot" />
                  </div>
               </div>
             </div>
@@ -430,7 +240,7 @@ export const HomePage: React.FC = () => {
               <div className="lg:w-1/2 w-full relative">
                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[110%] h-[110%] bg-[var(--color-secondary)] opacity-20 blur-[80px] rounded-full -z-10" />
                  <div className="relative aspect-[4/3] w-full rounded-[24px] bg-[var(--color-paper)]/80 backdrop-blur-xl p-2 border border-white/50 shadow-2xl ring-4 ring-white/50 animate-float">
-                    <PaymentPreview />
+                    <img src="/hero_mockup.png" className="w-full h-full object-cover rounded-[16px] shadow-inner" alt="Payment Ledger Screenshot" />
                  </div>
               </div>
               <div className="lg:w-1/2">
@@ -458,7 +268,7 @@ export const HomePage: React.FC = () => {
               <div className="lg:w-1/2 w-full relative">
                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[110%] h-[110%] bg-[var(--color-accent)] opacity-10 blur-[80px] rounded-full -z-10" />
                  <div className="relative aspect-[4/3] w-full rounded-[24px] bg-[var(--color-paper)]/80 backdrop-blur-xl p-2 border border-white/50 shadow-2xl ring-4 ring-white/50 animate-float-delayed">
-                    <ReportsPreview />
+                    <img src="/hero_mockup.png" className="w-full h-full object-cover rounded-[16px] shadow-inner" alt="Reports Screenshot" />
                  </div>
               </div>
             </div>
