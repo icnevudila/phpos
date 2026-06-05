@@ -1,51 +1,200 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { Check, Users, FileText, Package, Activity, MonitorPlay, ShieldCheck } from 'lucide-react';
+import { DentQLLogo } from '../components/ui/DentQLLogo';
+import { toast } from 'sonner';
 
-const navLinks = [
-  { label: 'Product', href: '#product' },
-  { label: 'Solutions', href: '#solutions' },
-  { label: 'Pricing', href: '#pricing' },
-  { label: 'Resources', href: '#resources' }
-];
+// --- REUSABLE PREVIEW COMPONENTS (Restored from previous history, styled with Curve DNA) ---
+function TodayBoardPreview() {
+  return (
+    <div className="w-full h-full bg-[var(--color-paper-subtle)] rounded-xl border border-[var(--color-rule)] overflow-hidden shadow-card flex flex-col pointer-events-none select-none text-left">
+      <div className="h-12 border-b border-[var(--color-rule)] flex items-center px-4 bg-[var(--color-paper)] justify-between">
+        <div className="font-[family-name:var(--font-display)] font-bold text-[var(--color-ink)]">Today Board</div>
+        <div className="flex gap-2">
+          <div className="h-6 w-24 bg-[var(--color-paper-subtle)] rounded-md border border-[var(--color-rule)]" />
+          <div className="h-6 w-6 rounded-md bg-[var(--color-accent)]/10 text-[var(--color-accent)] flex items-center justify-center border border-[var(--color-accent)]/20"><Activity size={12}/></div>
+        </div>
+      </div>
+      <div className="p-4 grid grid-cols-3 gap-4 bg-[var(--color-paper-subtle)] flex-1">
+        <div className="col-span-2 space-y-4">
+           <div className="flex gap-4">
+             <div className="flex-1 bg-[var(--color-paper)] p-3 rounded-xl border border-[var(--color-rule)] shadow-sm">
+                <div className="text-[10px] font-mono font-bold text-[var(--color-ink-2)] uppercase tracking-wider">Scheduled Chairs</div>
+                <div className="text-2xl font-black text-[var(--color-ink)] mt-1 tracking-tight font-[family-name:var(--font-display)]">24</div>
+             </div>
+             <div className="flex-1 bg-[var(--color-paper)] p-3 rounded-xl border border-[var(--color-rule)] shadow-sm">
+                <div className="text-[10px] font-mono font-bold text-[var(--color-ink-2)] uppercase tracking-wider">Waiting Now</div>
+                <div className="text-2xl font-black text-[var(--color-ink)] mt-1 tracking-tight font-[family-name:var(--font-display)]">3</div>
+             </div>
+           </div>
+           <div className="bg-[var(--color-paper)] border border-[var(--color-rule)] rounded-xl shadow-sm h-32 p-3">
+              <div className="text-xs font-bold text-[var(--color-ink)] mb-2 font-[family-name:var(--font-display)]">Chair Schedule</div>
+              <div className="space-y-2">
+                <div className="h-6 bg-[var(--color-accent)]/10 rounded-md border border-[var(--color-accent)]/20 flex items-center px-2">
+                  <div className="h-2 w-16 bg-[var(--color-accent)]/40 rounded-full" />
+                </div>
+                <div className="h-6 bg-[var(--color-paper-subtle)] rounded-md border border-[var(--color-rule)] flex items-center px-2">
+                  <div className="h-2 w-12 bg-[var(--color-rule-2)] rounded-full" />
+                </div>
+              </div>
+           </div>
+        </div>
+        <div className="bg-[var(--color-paper)] border border-[var(--color-rule)] rounded-xl shadow-sm p-3">
+           <div className="text-xs font-bold text-[var(--color-ink)] mb-3 font-[family-name:var(--font-display)]">Action Center</div>
+           <div className="space-y-2">
+              <div className="h-10 bg-amber-50 rounded-lg border border-amber-200 p-2 flex items-center gap-2">
+                 <div className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />
+                 <div className="space-y-1 w-full"><div className="h-1.5 bg-amber-200 rounded-full w-3/4" /><div className="h-1.5 bg-amber-100 rounded-full w-1/2" /></div>
+              </div>
+              <div className="h-10 bg-rose-50 rounded-lg border border-rose-200 p-2 flex items-center gap-2">
+                 <div className="w-1.5 h-1.5 rounded-full bg-rose-500 shrink-0" />
+                 <div className="space-y-1 w-full"><div className="h-1.5 bg-rose-200 rounded-full w-3/4" /><div className="h-1.5 bg-rose-100 rounded-full w-1/2" /></div>
+              </div>
+           </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
-const footerLinks = [
-  {
-    category: 'Product',
-    links: [
-      { label: 'Features', href: '#' },
-      { label: 'Integrations', href: '#' },
-      { label: 'Pricing', href: '#' },
-      { label: 'Changelog', href: '#' }
-    ]
-  },
-  {
-    category: 'Solutions',
-    links: [
-      { label: 'Startups', href: '#' },
-      { label: 'Enterprise', href: '#' },
-      { label: 'DSOs', href: '#' },
-      { label: 'Specialists', href: '#' }
-    ]
-  },
-  {
-    category: 'Resources',
-    links: [
-      { label: 'Blog', href: '#' },
-      { label: 'Customer Stories', href: '#' },
-      { label: 'Help Center', href: '#' },
-      { label: 'Webinars', href: '#' }
-    ]
-  },
-  {
-    category: 'Company',
-    links: [
-      { label: 'About Us', href: '#' },
-      { label: 'Careers', href: '#' },
-      { label: 'Contact', href: '#' },
-      { label: 'Legal', href: '#' }
-    ]
-  }
-];
+function ChairSchedulePreview() {
+  return (
+    <div className="w-full h-full bg-[var(--color-paper-subtle)] rounded-xl border border-[var(--color-rule)] overflow-hidden shadow-card flex flex-col pointer-events-none select-none text-left">
+      <div className="h-10 border-b border-[var(--color-rule)] flex items-center px-4 bg-[var(--color-paper)] gap-4">
+        <div className="font-[family-name:var(--font-display)] font-bold text-[var(--color-ink)] text-sm">Chair Schedule</div>
+      </div>
+      <div className="flex-1 p-2 flex gap-2">
+         <div className="w-12 border-r border-[var(--color-rule)] flex flex-col gap-5 pt-7 text-[9px] text-[var(--color-ink-2)] font-medium items-end pr-2">
+            <div>08:00</div><div>09:00</div><div>10:00</div>
+         </div>
+         <div className="flex-1 grid grid-cols-3 gap-2">
+            <div className="bg-[var(--color-paper)] rounded-lg border border-[var(--color-rule)] p-1 relative shadow-sm">
+               <div className="text-[10px] font-bold text-center border-b border-[var(--color-rule)] pb-1 mb-1 text-[var(--color-ink)]">Chair 1</div>
+               <div className="absolute top-8 left-1 right-1 h-16 bg-[var(--color-accent)]/10 border border-[var(--color-accent)]/30 rounded-md p-1.5 flex flex-col justify-between shadow-sm">
+                 <div>
+                    <div className="text-[8px] font-bold text-[var(--color-accent)]">M. Santos</div>
+                    <div className="text-[7px] text-[var(--color-accent)]/80">Extraction</div>
+                 </div>
+                 <div className="text-[6px] bg-[var(--color-accent)] text-white self-start px-1 rounded-sm">PAID</div>
+               </div>
+            </div>
+            <div className="bg-[var(--color-paper)] rounded-lg border border-[var(--color-rule)] p-1 relative shadow-sm">
+               <div className="text-[10px] font-bold text-center border-b border-[var(--color-rule)] pb-1 mb-1 text-[var(--color-ink)]">Chair 2</div>
+               <div className="absolute top-14 left-1 right-1 h-12 bg-[var(--color-secondary)]/20 border border-[var(--color-secondary)]/40 rounded-md p-1.5 shadow-sm">
+                 <div className="text-[8px] font-bold text-[var(--color-ink)]">J. Dela Cruz</div>
+                 <div className="text-[7px] text-[var(--color-ink-2)]">Cleaning</div>
+               </div>
+            </div>
+            <div className="bg-[var(--color-paper)] rounded-lg border border-[var(--color-rule)] p-1 relative shadow-sm">
+               <div className="text-[10px] font-bold text-center border-b border-[var(--color-rule)] pb-1 mb-1 text-[var(--color-ink)]">X-Ray</div>
+            </div>
+         </div>
+      </div>
+    </div>
+  );
+}
+
+function PatientRecordPreview() {
+  return (
+    <div className="w-full h-full bg-[var(--color-paper)] rounded-xl border border-[var(--color-rule)] overflow-hidden shadow-card flex pointer-events-none select-none text-left">
+      <div className="w-[30%] border-r border-[var(--color-rule)] bg-[var(--color-paper-subtle)] p-3 flex flex-col">
+         <div className="flex items-center gap-2 mb-4">
+            <div className="h-8 w-8 rounded-full bg-[var(--color-accent)] text-white flex items-center justify-center text-xs font-bold shadow-sm">MS</div>
+            <div>
+               <div className="text-xs font-bold text-[var(--color-ink)] leading-tight font-[family-name:var(--font-display)]">Maria Santos</div>
+               <div className="text-[9px] text-[var(--color-ink-2)]">PID-10492</div>
+            </div>
+         </div>
+         <div className="space-y-1">
+            <div className="h-6 rounded-md bg-[var(--color-accent)]/10 border border-[var(--color-accent)]/20 text-[9px] font-bold text-[var(--color-accent)] flex items-center px-2 shadow-sm">Overview</div>
+            <div className="h-6 rounded-md bg-transparent text-[9px] font-medium text-[var(--color-ink-2)] flex items-center px-2">Medical History</div>
+            <div className="h-6 rounded-md bg-transparent text-[9px] font-medium text-[var(--color-ink-2)] flex items-center px-2">Dental Chart</div>
+         </div>
+      </div>
+      <div className="flex-1 p-4 bg-[var(--color-paper-subtle)] space-y-3">
+         <div className="bg-[var(--color-paper)] border border-[var(--color-rule)] p-3 rounded-xl shadow-sm">
+            <div className="text-[10px] font-bold text-[var(--color-ink)] mb-2 border-b border-[var(--color-rule)] pb-1">Clinical Snapshot</div>
+            <div className="grid grid-cols-2 gap-2 text-[9px]">
+               <div><span className="text-[var(--color-ink-2)]">Last Visit:</span> <span className="font-bold text-[var(--color-ink)]">Oct 12, 2023</span></div>
+               <div><span className="text-[var(--color-ink-2)]">Alerts:</span> <span className="text-rose-600 font-bold bg-rose-50 px-1 rounded-sm border border-rose-200">Penicillin Allergy</span></div>
+            </div>
+         </div>
+         <div className="bg-[var(--color-paper)] border border-[var(--color-rule)] p-3 rounded-xl flex-1 shadow-sm">
+            <div className="text-[10px] font-bold text-[var(--color-ink)] mb-2 border-b border-[var(--color-rule)] pb-1">Treatment Plan</div>
+            <div className="h-2 w-3/4 bg-[var(--color-rule)] rounded-full mt-2" />
+            <div className="h-2 w-1/2 bg-[var(--color-rule)] rounded-full mt-1.5" />
+            <div className="h-2 w-2/3 bg-[var(--color-rule)] rounded-full mt-1.5" />
+         </div>
+      </div>
+    </div>
+  );
+}
+
+function PaymentPreview() {
+  return (
+    <div className="w-full h-full bg-[var(--color-paper-subtle)] rounded-xl border border-[var(--color-rule)] overflow-hidden shadow-card flex flex-col pointer-events-none select-none text-left">
+      <div className="h-10 border-b border-[var(--color-rule)] flex items-center px-4 bg-[var(--color-paper)] gap-4 justify-between">
+        <div className="font-[family-name:var(--font-display)] font-bold text-[var(--color-ink)] text-sm">Invoice #INV-2938</div>
+        <div className="text-[9px] bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full font-bold border border-amber-200">PARTIAL</div>
+      </div>
+      <div className="flex-1 flex">
+         <div className="w-[60%] p-4 space-y-3 border-r border-[var(--color-rule)] bg-[var(--color-paper-subtle)]">
+            <div className="bg-[var(--color-paper)] p-3 border border-[var(--color-rule)] rounded-xl shadow-sm">
+               <div className="flex justify-between text-[9px] border-b border-[var(--color-rule)] pb-1 mb-2 font-bold text-[var(--color-ink-2)] uppercase tracking-wider">
+                 <span>Treatment</span><span>Amount</span>
+               </div>
+               <div className="flex justify-between text-[11px] font-bold text-[var(--color-ink)] mb-1">
+                 <span>Root Canal (Tooth 24)</span><span>₱8,500</span>
+               </div>
+               <div className="flex justify-between text-[11px] font-bold text-[var(--color-ink)]">
+                 <span>X-Ray</span><span>₱1,200</span>
+               </div>
+            </div>
+         </div>
+         <div className="w-[40%] bg-[var(--color-paper)] p-4 flex flex-col shadow-sm">
+            <div className="text-[9px] text-[var(--color-ink-2)] font-bold uppercase tracking-wider font-mono">Balance</div>
+            <div className="text-2xl font-black text-[var(--color-ink)] mb-4 tracking-tight font-[family-name:var(--font-display)]">₱4,500</div>
+            <div className="space-y-2 mt-auto">
+               <div className="h-8 bg-[var(--color-accent)] rounded-md text-white text-[10px] font-bold flex items-center justify-center shadow-sm">Record Payment</div>
+               <div className="h-8 bg-[var(--color-paper)] border border-[var(--color-rule)] rounded-md text-[var(--color-ink)] text-[10px] font-bold flex items-center justify-center shadow-sm">Submit Claim</div>
+            </div>
+         </div>
+      </div>
+    </div>
+  );
+}
+
+function ReportsPreview() {
+  return (
+    <div className="w-full h-full bg-[var(--color-paper-subtle)] rounded-xl border border-[var(--color-rule)] overflow-hidden shadow-card flex pointer-events-none select-none text-left">
+      <div className="w-[30%] border-r border-[var(--color-rule)] bg-[var(--color-paper)] p-3">
+         <div className="text-xs font-[family-name:var(--font-display)] font-bold text-[var(--color-ink)] mb-3">Report Library</div>
+         <div className="space-y-1">
+            <div className="text-[8px] font-mono font-bold text-[var(--color-ink-2)] uppercase mt-2 mb-1 tracking-wider">Finance</div>
+            <div className="h-6 rounded-md bg-[var(--color-paper-subtle)] border border-[var(--color-rule)] shadow-sm text-[9px] font-bold text-[var(--color-ink)] flex items-center px-2">Aged Receivables</div>
+            <div className="h-6 rounded-md bg-transparent text-[9px] font-medium text-[var(--color-ink-2)] flex items-center px-2">HMO Revenue</div>
+         </div>
+      </div>
+      <div className="flex-1 p-4 bg-[var(--color-paper)] flex flex-col">
+         <div className="flex justify-between items-center border-b border-[var(--color-rule)] pb-2 mb-4">
+            <div className="text-sm font-[family-name:var(--font-display)] font-bold text-[var(--color-ink)]">Aged Receivables</div>
+            <div className="h-6 w-16 bg-[var(--color-paper-subtle)] rounded-md border border-[var(--color-rule)] flex items-center px-2">
+               <div className="h-1.5 w-10 bg-[var(--color-rule-2)] rounded-full" />
+            </div>
+         </div>
+         <div className="flex-1 border border-[var(--color-rule)] rounded-xl bg-[var(--color-paper-subtle)] flex items-end p-4 gap-3 shadow-sm">
+            <div className="flex-1 bg-[var(--color-secondary)]/30 h-1/2 rounded-t border border-[var(--color-secondary)]/40 border-b-0" />
+            <div className="flex-1 bg-[var(--color-secondary)]/50 h-3/4 rounded-t border border-[var(--color-secondary)]/60 border-b-0" />
+            <div className="flex-1 bg-[var(--color-accent)] h-full rounded-t border border-[#d65000] border-b-0 shadow-sm" />
+            <div className="flex-1 bg-[var(--color-secondary)]/70 h-2/3 rounded-t border border-[var(--color-secondary)]/80 border-b-0" />
+         </div>
+      </div>
+    </div>
+  );
+}
+
+
+// --- MAIN PAGE ---
 
 export const HomePage: React.FC = () => {
   const navigate = useNavigate();
@@ -66,9 +215,21 @@ export const HomePage: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const handleRequestDemo = (e: React.MouseEvent) => {
+    e.preventDefault();
+    toast.info("Request Demo is disabled in Demo Mode. Please check our Patient Booking or Staff Login features.");
+  };
+
+  const navLinks = [
+    { label: 'Product', href: '#product' },
+    { label: 'Workflows', href: '#workflows' },
+    { label: 'Pricing', href: '#pricing' },
+    { label: 'FAQ', href: '#faq' }
+  ];
+
   return (
     <div className="min-h-screen bg-[var(--color-paper)] font-[family-name:var(--font-body)] text-[var(--color-ink-2)] selection:bg-[var(--color-accent)] selection:text-white">
-      {/* N1b SaaS three-section Nav */}
+      {/* 1. NAVBAR (N1b SaaS three-section Nav) */}
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-240 ${
           scrolled
@@ -78,8 +239,8 @@ export const HomePage: React.FC = () => {
       >
         <div className="max-w-[1400px] mx-auto px-6 h-16 grid grid-cols-[1fr_auto_1fr] items-center">
           {/* Brand */}
-          <div className="justify-self-start font-[family-name:var(--font-display)] font-bold text-xl tracking-tight text-[var(--color-ink)] flex items-center gap-2">
-            <div className="w-6 h-6 rounded-md bg-[var(--color-accent)]" />
+          <div className="justify-self-start font-[family-name:var(--font-display)] font-bold text-xl tracking-tight text-[var(--color-ink)] flex items-center gap-2 cursor-pointer" onClick={() => window.scrollTo(0,0)}>
+            <DentQLLogo size="sm" />
             DentQL
           </div>
 
@@ -89,124 +250,370 @@ export const HomePage: React.FC = () => {
               <a
                 key={link.label}
                 href={link.href}
-                className="text-sm font-medium text-[var(--color-ink-2)] hover:text-[var(--color-ink)] transition-colors"
+                className="text-sm font-semibold text-[var(--color-ink-2)] hover:text-[var(--color-ink)] transition-colors"
               >
                 {link.label}
               </a>
             ))}
+            <Link to="/booking" className="text-sm font-semibold text-[var(--color-ink-2)] hover:text-[var(--color-ink)] transition-colors">
+              Patient Booking
+            </Link>
           </nav>
 
           {/* Right CTAs */}
-          <div className="justify-self-end flex items-center gap-3">
+          <div className="justify-self-end flex items-center gap-4">
             <button
               onClick={() => navigate('/login')}
-              className="text-sm font-medium text-[var(--color-ink-2)] hover:text-[var(--color-ink)] transition-colors hidden sm:block"
+              className="text-sm font-bold text-[var(--color-ink)] hover:text-[var(--color-accent)] transition-colors hidden sm:block"
             >
-              Log in
+              Sign in
             </button>
             <button
-              onClick={() => navigate('/login')}
-              className="h-9 px-4 rounded-full bg-[var(--color-accent)] text-white text-sm font-semibold hover:opacity-90 transition-opacity active:scale-95"
+              onClick={handleRequestDemo}
+              className="h-10 px-5 rounded-full bg-[var(--color-accent)] text-white text-sm font-bold hover:opacity-90 transition-opacity active:scale-95 shadow-sm"
             >
-              Get Started
+              Request Demo
             </button>
           </div>
         </div>
       </header>
 
       <main>
-        {/* H1 Marquee Hero */}
-        <section className="relative min-h-[85vh] flex flex-col justify-end pb-24 px-6 max-w-[1400px] mx-auto overflow-hidden">
+        {/* 2. HERO SECTION (H1 Marquee) */}
+        <section className="relative min-h-[85vh] flex flex-col justify-center pt-24 pb-16 px-6 max-w-[1400px] mx-auto overflow-hidden">
           {/* Abstract Teal Curve Background element */}
-          <div className="absolute top-0 right-0 -z-10 w-[80vw] h-[80vw] max-w-[1000px] max-h-[1000px] bg-[var(--color-secondary)] opacity-20 rounded-full blur-3xl translate-x-1/3 -translate-y-1/3 pointer-events-none" />
+          <div className="absolute top-0 right-0 -z-10 w-[80vw] h-[80vw] max-w-[1000px] max-h-[1000px] bg-[var(--color-secondary)] opacity-[0.15] rounded-full blur-3xl translate-x-1/3 -translate-y-1/3 pointer-events-none" />
           
-          <div className="max-w-4xl pt-40 reveal is-in">
-            <h1 className="font-[family-name:var(--font-display)] text-[clamp(3rem,8vw,6rem)] font-bold leading-[1.05] tracking-tight text-[var(--color-ink)]">
-              Revolutionize your dental practice with DentQL.
+          <div className="text-center max-w-4xl mx-auto reveal is-in z-10 pt-10">
+            <h1 className="font-[family-name:var(--font-display)] text-[clamp(2.5rem,6vw,5rem)] font-black leading-[1.05] tracking-tight text-[var(--color-ink)]">
+              Run the clinic day from <br className="hidden md:block"/> one operating desk.
             </h1>
-            <p className="mt-8 text-xl text-[var(--color-ink-2)] max-w-2xl leading-relaxed">
-              Streamline workflows, enhance communication, and empower your team with our all-in-one cloud platform.
+            <p className="mt-8 text-lg md:text-xl text-[var(--color-ink-2)] max-w-2xl mx-auto leading-relaxed font-medium">
+              Manage chair schedules, waiting room flow, patient records, payments, claims, inventory, sterilization, and online booking without jumping between tools.
             </p>
-            <div className="mt-10 flex flex-wrap gap-4 items-center">
+            <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
               <button 
-                onClick={() => navigate('/login')}
-                className="h-12 px-8 rounded-full bg-[var(--color-accent)] text-white text-base font-semibold hover:opacity-90 transition-opacity active:scale-95 shadow-lg shadow-[var(--color-accent)]/20"
+                onClick={handleRequestDemo}
+                className="h-12 px-8 rounded-full bg-[var(--color-accent)] text-white text-base font-bold hover:opacity-90 transition-opacity active:scale-95 shadow-md shadow-[var(--color-accent)]/20"
               >
-                See it in action
+                Request a demo
               </button>
-              <button className="h-12 px-8 rounded-full bg-white text-[var(--color-ink)] border border-[var(--color-rule)] text-base font-semibold hover:bg-[var(--color-paper-subtle)] transition-colors active:scale-95">
-                Read the docs
-              </button>
+              <Link to="/booking" className="h-12 px-8 flex items-center justify-center rounded-full bg-white text-[var(--color-ink)] border border-[var(--color-rule)] text-base font-bold hover:bg-[var(--color-paper-subtle)] transition-colors active:scale-95 shadow-sm">
+                See patient booking
+              </Link>
+            </div>
+            
+            <div className="mt-12 flex flex-wrap justify-center gap-3 text-xs font-bold text-[var(--color-ink-2)]">
+              {['Chair Schedule', 'Patient Records', 'Payment Ledger', 'Claims', 'Inventory Risk', 'Online Booking'].map(chip => (
+                <span key={chip} className="px-3 py-1.5 rounded-full bg-[var(--color-paper)] border border-[var(--color-rule)] shadow-sm flex items-center gap-1.5 text-[var(--color-ink)]">
+                  <Check size={14} className="text-[var(--color-accent)]"/> {chip}
+                </span>
+              ))}
             </div>
           </div>
         </section>
 
-        {/* Example Content Section to show off the generous padding and geometric structure */}
-        <section className="py-32 px-6 bg-[var(--color-paper-subtle)]">
-          <div className="max-w-[1400px] mx-auto">
-            <div className="grid lg:grid-cols-2 gap-16 items-center">
-              <div>
-                <h2 className="font-[family-name:var(--font-display)] text-4xl font-bold text-[var(--color-ink)] leading-tight tracking-tight">
-                  Everything you need, nothing you don't.
-                </h2>
-                <p className="mt-6 text-lg text-[var(--color-ink-2)] leading-relaxed">
-                  We stripped away the legacy bloat to build a practice management system that actually feels good to use. 
-                  Zero training required.
+        {/* Hero Visual Preview */}
+        <section className="relative px-6 max-w-[1200px] mx-auto -mt-10 mb-24 z-10">
+          <div className="aspect-[16/9] w-full rounded-[24px] bg-[var(--color-paper)] p-2 border border-[var(--color-rule)] shadow-popover overflow-hidden ring-8 ring-[var(--color-paper-subtle)]">
+             <TodayBoardPreview />
+          </div>
+        </section>
+
+        {/* 3. PROBLEM SECTION */}
+        <section className="py-24 bg-[var(--color-paper-subtle)] border-y border-[var(--color-rule)] px-6">
+          <div className="max-w-[1200px] mx-auto text-center">
+            <h2 className="text-3xl md:text-4xl font-bold font-[family-name:var(--font-display)] text-[var(--color-ink)] mb-12 tracking-tight">Dental clinics do not need another generic dashboard.</h2>
+            <div className="grid md:grid-cols-3 gap-6 text-left">
+              <div className="p-8 rounded-[24px] bg-[var(--color-paper)] border border-[var(--color-rule)] shadow-sm">
+                <Users className="w-8 h-8 text-[var(--color-accent)] mb-6" />
+                <h3 className="font-bold text-[var(--color-ink)] mb-3 text-xl font-[family-name:var(--font-display)]">Front Desk Chaos</h3>
+                <p className="text-[var(--color-ink-2)] leading-relaxed font-medium">Front desk loses time switching between appointments, payments, and patient records.</p>
+              </div>
+              <div className="p-8 rounded-[24px] bg-[var(--color-paper)] border border-[var(--color-rule)] shadow-sm">
+                <FileText className="w-8 h-8 text-[var(--color-accent)] mb-6" />
+                <h3 className="font-bold text-[var(--color-ink)] mb-3 text-xl font-[family-name:var(--font-display)]">Fragmented Context</h3>
+                <p className="text-[var(--color-ink-2)] leading-relaxed font-medium">Dentists need faster access to treatment context and clinical notes without clicking through 5 tabs.</p>
+              </div>
+              <div className="p-8 rounded-[24px] bg-[var(--color-paper)] border border-[var(--color-rule)] shadow-sm">
+                <ShieldCheck className="w-8 h-8 text-[var(--color-accent)] mb-6" />
+                <h3 className="font-bold text-[var(--color-ink)] mb-3 text-xl font-[family-name:var(--font-display)]">Hidden Risks</h3>
+                <p className="text-[var(--color-ink-2)] leading-relaxed font-medium">Admin teams need claims, stock, sterilization, and revenue risks visible before they become problems.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 4. TODAY BOARD SECTION */}
+        <section id="product" className="py-24 px-6 bg-[var(--color-paper)]">
+          <div className="max-w-[1200px] mx-auto">
+            <div className="flex flex-col lg:flex-row items-center gap-16">
+              <div className="lg:w-1/2">
+                <div className="text-xs font-bold text-[var(--color-accent)] uppercase tracking-widest mb-3 font-mono">Today Board</div>
+                <h2 className="text-3xl md:text-4xl font-bold font-[family-name:var(--font-display)] text-[var(--color-ink)] mb-6 tracking-tight">Start every morning with the Today Board.</h2>
+                <p className="text-lg text-[var(--color-ink-2)] mb-10 font-medium leading-relaxed">
+                  Get a complete operational picture the moment you log in. Chair load, waiting room flow, action center, stock risks, and claims queue—all in one place.
                 </p>
-                <ul className="mt-8 space-y-4">
-                  {['Cloud-based imaging & charting', 'Patient self-scheduling', 'Integrated payment processing'].map((item) => (
-                    <li key={item} className="flex items-center gap-3 text-[var(--color-ink)] font-medium">
-                      <div className="flex-shrink-0 w-6 h-6 rounded-full bg-[var(--color-secondary)]/20 flex items-center justify-center text-[var(--color-secondary)]">
-                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                        </svg>
-                      </div>
-                      {item}
-                    </li>
-                  ))}
+                <ul className="space-y-5">
+                  <li className="flex gap-4 items-start">
+                    <div className="mt-1 bg-[var(--color-accent)]/10 text-[var(--color-accent)] p-1 rounded-full"><Check size={16} strokeWidth={3} /></div>
+                    <span className="text-[var(--color-ink)] font-semibold text-lg">See exactly what needs action today.</span>
+                  </li>
+                  <li className="flex gap-4 items-start">
+                    <div className="mt-1 bg-[var(--color-accent)]/10 text-[var(--color-accent)] p-1 rounded-full"><Check size={16} strokeWidth={3} /></div>
+                    <span className="text-[var(--color-ink)] font-semibold text-lg">Pull patients from the waiting room directly into chairs.</span>
+                  </li>
+                  <li className="flex gap-4 items-start">
+                    <div className="mt-1 bg-[var(--color-accent)]/10 text-[var(--color-accent)] p-1 rounded-full"><Check size={16} strokeWidth={3} /></div>
+                    <span className="text-[var(--color-ink)] font-semibold text-lg">Catch billing, claims, stock, and sterilization risks early.</span>
+                  </li>
                 </ul>
               </div>
-              <div className="bg-white rounded-[24px] p-8 shadow-xl shadow-black/5 border border-[var(--color-rule)] h-[400px] flex items-center justify-center">
-                <p className="text-[var(--color-ink-2)] text-sm font-mono uppercase tracking-widest">[ UI Mockup Placeholder ]</p>
+              <div className="lg:w-1/2 w-full">
+                 <div className="aspect-[4/3] w-full rounded-[24px] bg-[var(--color-paper-subtle)] p-2 border border-[var(--color-rule)] shadow-xl ring-4 ring-[var(--color-paper-subtle)]">
+                    <TodayBoardPreview />
+                 </div>
               </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 5. CHAIR SCHEDULE SECTION */}
+        <section className="py-24 px-6 bg-[var(--color-paper-subtle)] border-y border-[var(--color-rule)]">
+          <div className="max-w-[1200px] mx-auto">
+            <div className="flex flex-col-reverse lg:flex-row items-center gap-16">
+              <div className="lg:w-1/2 w-full">
+                 <div className="aspect-[4/3] w-full rounded-[24px] bg-[var(--color-paper)] p-2 border border-[var(--color-rule)] shadow-xl ring-4 ring-white">
+                    <ChairSchedulePreview />
+                 </div>
+              </div>
+              <div className="lg:w-1/2">
+                <div className="text-xs font-bold text-[var(--color-accent)] uppercase tracking-widest mb-3 font-mono">Chair Schedule</div>
+                <h2 className="text-3xl md:text-4xl font-bold font-[family-name:var(--font-display)] text-[var(--color-ink)] mb-6 tracking-tight">Schedule by chair, room, and dentist — not just calendar boxes.</h2>
+                <p className="text-lg text-[var(--color-ink-2)] font-medium leading-relaxed">
+                  A real dental clinic runs on chairs. Our schedule view is built for clinic flow, showing dentist filters, urgent cases, and payment/claim flags right on the appointment block.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 6. PATIENT RECORD SECTION */}
+        <section className="py-24 px-6 bg-[var(--color-paper)]">
+          <div className="max-w-[1200px] mx-auto">
+            <div className="flex flex-col lg:flex-row items-center gap-16">
+              <div className="lg:w-1/2">
+                <div className="text-xs font-bold text-[var(--color-accent)] uppercase tracking-widest mb-3 font-mono">Patient Record Workbench</div>
+                <h2 className="text-3xl md:text-4xl font-bold font-[family-name:var(--font-display)] text-[var(--color-ink)] mb-6 tracking-tight">Every patient record feels like a clinical file.</h2>
+                <p className="text-lg text-[var(--color-ink-2)] font-medium leading-relaxed">
+                  Stop using generic CRMs. DentQL gives you a clinical patient file with integrated medical history, SOAP notes, dental charts, treatment plans, and invoices in one dense, readable workbench.
+                </p>
+              </div>
+              <div className="lg:w-1/2 w-full">
+                 <div className="aspect-[4/3] w-full rounded-[24px] bg-[var(--color-paper-subtle)] p-2 border border-[var(--color-rule)] shadow-xl ring-4 ring-[var(--color-paper-subtle)]">
+                    <PatientRecordPreview />
+                 </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 7. PAYMENT COLLECTION SECTION */}
+        <section className="py-24 px-6 bg-[var(--color-paper-subtle)] border-y border-[var(--color-rule)]">
+          <div className="max-w-[1200px] mx-auto">
+            <div className="flex flex-col-reverse lg:flex-row items-center gap-16">
+              <div className="lg:w-1/2 w-full">
+                 <div className="aspect-[4/3] w-full rounded-[24px] bg-[var(--color-paper)] p-2 border border-[var(--color-rule)] shadow-xl ring-4 ring-white">
+                    <PaymentPreview />
+                 </div>
+              </div>
+              <div className="lg:w-1/2">
+                <div className="text-xs font-bold text-[var(--color-accent)] uppercase tracking-widest mb-3 font-mono">Payment Collection Workbench</div>
+                <h2 className="text-3xl md:text-4xl font-bold font-[family-name:var(--font-display)] text-[var(--color-ink)] mb-6 tracking-tight">Collect balances before patients leave.</h2>
+                <p className="text-lg text-[var(--color-ink-2)] font-medium leading-relaxed">
+                  A dedicated workbench for money. Instantly see treatment ledgers, paid vs remaining balances, and HMO/claim statuses so nothing slips through the cracks.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 8. REPORTS WORKBENCH SECTION */}
+        <section className="py-24 px-6 bg-[var(--color-paper)]">
+          <div className="max-w-[1200px] mx-auto">
+            <div className="flex flex-col lg:flex-row items-center gap-16">
+              <div className="lg:w-1/2">
+                <div className="text-xs font-bold text-[var(--color-accent)] uppercase tracking-widest mb-3 font-mono">Reports Workbench</div>
+                <h2 className="text-3xl md:text-4xl font-bold font-[family-name:var(--font-display)] text-[var(--color-ink)] mb-6 tracking-tight">Reports built for clinic decisions.</h2>
+                <p className="text-lg text-[var(--color-ink-2)] font-medium leading-relaxed">
+                  Finance reports, claims tracking, inventory utilization, and compliance audits ready to export. Built for practical, everyday operational oversight.
+                </p>
+              </div>
+              <div className="lg:w-1/2 w-full">
+                 <div className="aspect-[4/3] w-full rounded-[24px] bg-[var(--color-paper-subtle)] p-2 border border-[var(--color-rule)] shadow-xl ring-4 ring-[var(--color-paper-subtle)]">
+                    <ReportsPreview />
+                 </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 9. WAITING ROOM & KIOSK SECTION */}
+        <section className="py-32 px-6 bg-[var(--color-paper-subtle)] border-y border-[var(--color-rule)]">
+          <div className="max-w-[1200px] mx-auto text-center">
+             <div className="w-20 h-20 bg-[var(--color-accent)]/10 text-[var(--color-accent)] rounded-2xl flex items-center justify-center mx-auto mb-8 shadow-sm">
+                <MonitorPlay className="w-10 h-10" />
+             </div>
+             <h2 className="text-3xl md:text-4xl font-bold font-[family-name:var(--font-display)] text-[var(--color-ink)] mb-6 tracking-tight">Connect the front desk to the waiting room.</h2>
+             <p className="text-xl text-[var(--color-ink-2)] max-w-2xl mx-auto mb-16 font-medium leading-relaxed">
+               Deploy our Patient Terminal Kiosk for self check-ins and the TV Waiting Room Board to display "now serving" announcements.
+             </p>
+             <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                <div className="bg-[var(--color-paper)] p-8 rounded-[24px] shadow-md border border-[var(--color-rule)] text-left hover:shadow-lg transition-shadow">
+                   <h3 className="font-bold font-[family-name:var(--font-display)] text-[var(--color-ink)] mb-3 text-xl">Patient Terminal</h3>
+                   <p className="text-base text-[var(--color-ink-2)] leading-relaxed font-medium">Allow patients to check in, book visits, and manage appointments on a touch-friendly tablet display.</p>
+                </div>
+                <div className="bg-[var(--color-paper)] p-8 rounded-[24px] shadow-md border border-[var(--color-rule)] text-left hover:shadow-lg transition-shadow">
+                   <h3 className="font-bold font-[family-name:var(--font-display)] text-[var(--color-ink)] mb-3 text-xl">Waiting Room Board</h3>
+                   <p className="text-base text-[var(--color-ink-2)] leading-relaxed font-medium">Large TV display showing the current queue, announcements, and clinic branding readable from a distance.</p>
+                </div>
+             </div>
+          </div>
+        </section>
+
+        {/* 11. WORKFLOW CARDS SECTION */}
+        <section id="workflows" className="py-24 px-6 bg-[var(--color-paper)]">
+          <div className="max-w-[1400px] mx-auto">
+            <h2 className="text-3xl md:text-4xl font-bold font-[family-name:var(--font-display)] text-[var(--color-ink)] text-center mb-16 tracking-tight">Built for every role in the clinic.</h2>
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {[
+                {
+                  title: "Front Desk",
+                  icon: <Users size={20}/>,
+                  items: ["Check patients in", "Manage waiting room", "Collect balances", "Book follow-ups"]
+                },
+                {
+                  title: "Dentist",
+                  icon: <Activity size={20}/>,
+                  items: ["View patient record", "Open dental chart", "Add SOAP notes", "Review treatment plan"]
+                },
+                {
+                  title: "Billing/Admin",
+                  icon: <FileText size={20}/>,
+                  items: ["Track invoices", "Submit claims", "Monitor receivables", "Export reports"]
+                },
+                {
+                  title: "Operations",
+                  icon: <Package size={20}/>,
+                  items: ["Monitor stock risk", "Log sterilization", "Send SMS reminders", "Manage queue display"]
+                }
+              ].map(w => (
+                <div key={w.title} className="p-8 bg-[var(--color-paper-subtle)] border border-[var(--color-rule)] rounded-[24px] shadow-sm">
+                   <div className="w-12 h-12 rounded-xl bg-[var(--color-accent)]/10 border border-[var(--color-accent)]/20 text-[var(--color-accent)] flex items-center justify-center mb-6 shadow-sm">
+                      {w.icon}
+                   </div>
+                   <h3 className="font-bold font-[family-name:var(--font-display)] text-[var(--color-ink)] mb-5 text-xl">{w.title}</h3>
+                   <ul className="space-y-4">
+                     {w.items.map(item => (
+                       <li key={item} className="flex gap-3 text-base text-[var(--color-ink-2)]">
+                          <Check size={18} className="text-[var(--color-accent)] shrink-0 mt-0.5"/> <span className="font-medium">{item}</span>
+                       </li>
+                     ))}
+                   </ul>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* 12. DEMO / CTA SECTION */}
+        <section id="demo" className="py-32 px-6 bg-[var(--color-secondary)]/10 border-y border-[var(--color-secondary)]/20">
+          <div className="max-w-4xl mx-auto text-center">
+            <h2 className="text-4xl md:text-5xl font-black font-[family-name:var(--font-display)] text-[var(--color-ink)] mb-8 tracking-tight">Ready to run your clinic day from one workbench?</h2>
+            <p className="text-xl text-[var(--color-ink-2)] mb-12 font-medium leading-relaxed">Pricing depends on clinic size, number of users, and modules. Request a demo to see how DentQL fits your operation.</p>
+            <div className="flex flex-col sm:flex-row justify-center gap-4">
+               <button onClick={handleRequestDemo} className="h-14 px-10 rounded-full bg-[var(--color-accent)] text-white text-lg font-bold shadow-lg hover:opacity-90 transition-opacity active:scale-95">Request Demo</button>
+               <Link to="/booking" className="h-14 px-10 flex items-center justify-center rounded-full bg-white text-[var(--color-ink)] border border-[var(--color-rule)] text-lg font-bold hover:bg-[var(--color-paper-subtle)] transition-colors shadow-sm active:scale-95">Open Patient Booking</Link>
+            </div>
+          </div>
+        </section>
+
+        {/* 13. FAQ SECTION */}
+        <section id="faq" className="py-24 px-6 bg-[var(--color-paper)]">
+          <div className="max-w-[800px] mx-auto">
+            <h2 className="text-3xl md:text-4xl font-bold font-[family-name:var(--font-display)] text-[var(--color-ink)] text-center mb-16 tracking-tight">Frequently Asked Questions</h2>
+            <div className="space-y-4">
+              {[
+                {q: "Can patients book appointments online?", a: "Yes, our Patient Appointment Builder provides a fast, mobile-friendly experience for patients to choose services, dentists, and available times."},
+                {q: "Can we manage multiple dentists and chairs?", a: "Absolutely. The Chair Schedule is designed specifically to handle multiple chairs, rooms, and providers concurrently."},
+                {q: "Does DentQL support invoices and payments?", a: "Yes. The Payment Collection Workbench tracks detailed treatment ledgers, partial payments, and multiple payment methods (Cash, GCash, Maya, Card)."},
+                {q: "Can we track HMO or claim workflows?", a: "Yes, the Claims Runbook allows you to track HMO and PhilHealth claims from submission to payment, reducing outstanding receivables."},
+                {q: "Is there a waiting room display or kiosk?", a: "Yes, we offer both a Patient Terminal Kiosk for self-service and a TV Waiting Room Board to display queue statuses."},
+                {q: "Can staff roles be controlled?", a: "Yes, DentQL includes detailed role-based access control for dentists, receptionists, billing, and admins."},
+              ].map((faq, i) => (
+                <div key={i} className="p-8 bg-[var(--color-paper-subtle)] border border-[var(--color-rule)] rounded-[24px] shadow-sm">
+                   <h3 className="font-bold font-[family-name:var(--font-display)] text-[var(--color-ink)] mb-3 text-lg">
+                     {faq.q}
+                   </h3>
+                   <p className="text-base text-[var(--color-ink-2)] leading-relaxed font-medium">{faq.a}</p>
+                </div>
+              ))}
             </div>
           </div>
         </section>
       </main>
 
-      {/* Ft3 Index Footer with Dark Graphite background */}
+      {/* 14. FOOTER (Ft3 Index Footer with Dark Graphite background) */}
       <footer className="bg-[var(--color-graphite)] text-[var(--color-graphite-ink)] pt-20 pb-10 px-6">
         <div className="max-w-[1400px] mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-10 mb-16">
             <div className="col-span-2 lg:col-span-1">
               <div className="font-[family-name:var(--font-display)] font-bold text-xl tracking-tight text-white flex items-center gap-2 mb-6">
-                <div className="w-6 h-6 rounded-md bg-[var(--color-accent)]" />
+                <div className="w-8 h-8 rounded-md bg-white text-[var(--color-graphite)] flex items-center justify-center">
+                   <DentQLLogo size="sm" />
+                </div>
                 DentQL
               </div>
-              <p className="text-sm text-[var(--color-graphite-rule)] max-w-xs">
-                The modern operating system for ambitious dental practices.
+              <p className="text-sm text-[var(--color-graphite-rule)] max-w-xs font-medium leading-relaxed">
+                The clinical workbench for modern dental operations.
               </p>
             </div>
             
-            {footerLinks.map((col) => (
-              <div key={col.category}>
-                <p className="font-mono text-xs uppercase tracking-[0.08em] text-[var(--color-graphite-rule)] mb-6 font-semibold">
-                  {col.category}
-                </p>
-                <ul className="space-y-4">
-                  {col.links.map((link) => (
-                    <li key={link.label}>
-                      <a href={link.href} className="text-sm text-[color-mix(in_oklch,var(--color-graphite-ink)_80%,transparent)] hover:text-white transition-colors">
-                        {link.label}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+            <div>
+              <p className="font-mono text-xs uppercase tracking-widest text-[var(--color-graphite-rule)] mb-6 font-bold">
+                Product
+              </p>
+              <ul className="space-y-4 font-medium">
+                <li><a href="#workflows" className="text-sm text-[color-mix(in_oklch,var(--color-graphite-ink)_80%,transparent)] hover:text-white transition-colors">Workflows</a></li>
+                <li><a href="#product" className="text-sm text-[color-mix(in_oklch,var(--color-graphite-ink)_80%,transparent)] hover:text-white transition-colors">Today Board</a></li>
+                <li><a href="#product" className="text-sm text-[color-mix(in_oklch,var(--color-graphite-ink)_80%,transparent)] hover:text-white transition-colors">Reports Workbench</a></li>
+              </ul>
+            </div>
+
+            <div>
+              <p className="font-mono text-xs uppercase tracking-widest text-[var(--color-graphite-rule)] mb-6 font-bold">
+                Features
+              </p>
+              <ul className="space-y-4 font-medium">
+                <li><Link to="/booking" className="text-sm text-[color-mix(in_oklch,var(--color-graphite-ink)_80%,transparent)] hover:text-white transition-colors">Patient Booking</Link></li>
+                <li><Link to="/kiosk" className="text-sm text-[color-mix(in_oklch,var(--color-graphite-ink)_80%,transparent)] hover:text-white transition-colors">Kiosk</Link></li>
+                <li><Link to="/login" className="text-sm text-[color-mix(in_oklch,var(--color-graphite-ink)_80%,transparent)] hover:text-white transition-colors">Staff Login</Link></li>
+              </ul>
+            </div>
+
+            <div>
+              <p className="font-mono text-xs uppercase tracking-widest text-[var(--color-graphite-rule)] mb-6 font-bold">
+                Legal
+              </p>
+              <ul className="space-y-4 font-medium">
+                <li><Link to="/privacy" className="text-sm text-[color-mix(in_oklch,var(--color-graphite-ink)_80%,transparent)] hover:text-white transition-colors">Privacy Policy</Link></li>
+                <li><Link to="/terms" className="text-sm text-[color-mix(in_oklch,var(--color-graphite-ink)_80%,transparent)] hover:text-white transition-colors">Terms of Service</Link></li>
+                <li><Link to="/contact" className="text-sm text-[color-mix(in_oklch,var(--color-graphite-ink)_80%,transparent)] hover:text-white transition-colors">Contact</Link></li>
+              </ul>
+            </div>
           </div>
           
-          <div className="border-t border-[var(--color-graphite-rule)] pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-[var(--color-graphite-rule)]">
+          <div className="border-t border-[var(--color-graphite-rule)] pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-[color-mix(in_oklch,var(--color-graphite-ink)_60%,transparent)] font-medium">
             <p>© {new Date().getFullYear()} DentQL Inc. All rights reserved.</p>
             <div className="flex items-center gap-6">
               <a href="#" className="hover:text-white transition-colors">Twitter</a>
