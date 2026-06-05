@@ -281,8 +281,9 @@ export const HomePage: React.FC = () => {
       <main>
         {/* 2. HERO SECTION (H1 Marquee) */}
         <section className="relative min-h-[85vh] flex flex-col justify-center pt-24 pb-16 px-6 max-w-[1400px] mx-auto overflow-hidden">
-          {/* Abstract Teal Curve Background element */}
-          <div className="absolute top-0 right-0 -z-10 w-[80vw] h-[80vw] max-w-[1000px] max-h-[1000px] bg-[var(--color-secondary)] opacity-[0.15] rounded-full blur-3xl translate-x-1/3 -translate-y-1/3 pointer-events-none" />
+          {/* Vibrant Gradient Backgrounds */}
+          <div className="absolute top-[-10%] right-[-5%] w-[50vw] h-[50vw] max-w-[800px] max-h-[800px] bg-[var(--color-secondary)] opacity-30 rounded-full blur-[120px] pointer-events-none" />
+          <div className="absolute bottom-[10%] left-[-10%] w-[40vw] h-[40vw] max-w-[600px] max-h-[600px] bg-[var(--color-accent)] opacity-20 rounded-full blur-[120px] pointer-events-none" />
           
           <div className="text-center max-w-4xl mx-auto reveal is-in z-10 pt-10">
             <h1 className="font-[family-name:var(--font-display)] text-[clamp(2.5rem,6vw,5rem)] font-black leading-[1.05] tracking-tight text-[var(--color-ink)]">
@@ -314,8 +315,9 @@ export const HomePage: React.FC = () => {
         </section>
 
         {/* Hero Visual Preview */}
-        <section className="relative px-6 max-w-[1200px] mx-auto -mt-10 mb-24 z-10">
-          <div className="aspect-[16/9] w-full rounded-[24px] bg-[var(--color-paper)] p-2 border border-[var(--color-rule)] shadow-popover overflow-hidden ring-8 ring-[var(--color-paper-subtle)]">
+        <section className="relative px-6 max-w-[1200px] mx-auto -mt-10 mb-24 z-10 animate-float">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] bg-gradient-to-r from-[var(--color-accent)] to-[var(--color-secondary)] opacity-20 blur-[100px] rounded-full -z-10" />
+          <div className="relative aspect-[16/9] w-full rounded-[24px] bg-[var(--color-paper)]/80 backdrop-blur-xl p-2 border border-white/40 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] overflow-hidden ring-8 ring-white/30">
              <TodayBoardPreview />
           </div>
         </section>
@@ -369,8 +371,9 @@ export const HomePage: React.FC = () => {
                   </li>
                 </ul>
               </div>
-              <div className="lg:w-1/2 w-full">
-                 <div className="aspect-[4/3] w-full rounded-[24px] bg-[var(--color-paper-subtle)] p-2 border border-[var(--color-rule)] shadow-xl ring-4 ring-[var(--color-paper-subtle)]">
+              <div className="lg:w-1/2 w-full relative">
+                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[110%] h-[110%] bg-[var(--color-accent)] opacity-10 blur-[80px] rounded-full -z-10" />
+                 <div className="relative aspect-[4/3] w-full rounded-[24px] bg-[var(--color-paper)]/80 backdrop-blur-xl p-2 border border-white/50 shadow-2xl ring-4 ring-white/50 animate-float-delayed">
                     <TodayBoardPreview />
                  </div>
               </div>
@@ -382,8 +385,9 @@ export const HomePage: React.FC = () => {
         <section className="py-24 px-6 bg-[var(--color-paper-subtle)] border-y border-[var(--color-rule)]">
           <div className="max-w-[1200px] mx-auto">
             <div className="flex flex-col-reverse lg:flex-row items-center gap-16">
-              <div className="lg:w-1/2 w-full">
-                 <div className="aspect-[4/3] w-full rounded-[24px] bg-[var(--color-paper)] p-2 border border-[var(--color-rule)] shadow-xl ring-4 ring-white">
+              <div className="lg:w-1/2 w-full relative">
+                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[110%] h-[110%] bg-[var(--color-secondary)] opacity-20 blur-[80px] rounded-full -z-10" />
+                 <div className="relative aspect-[4/3] w-full rounded-[24px] bg-[var(--color-paper)]/80 backdrop-blur-xl p-2 border border-white/50 shadow-2xl ring-4 ring-white/50 animate-float">
                     <ChairSchedulePreview />
                  </div>
               </div>
@@ -409,8 +413,9 @@ export const HomePage: React.FC = () => {
                   Stop using generic CRMs. DentQL gives you a clinical patient file with integrated medical history, SOAP notes, dental charts, treatment plans, and invoices in one dense, readable workbench.
                 </p>
               </div>
-              <div className="lg:w-1/2 w-full">
-                 <div className="aspect-[4/3] w-full rounded-[24px] bg-[var(--color-paper-subtle)] p-2 border border-[var(--color-rule)] shadow-xl ring-4 ring-[var(--color-paper-subtle)]">
+              <div className="lg:w-1/2 w-full relative">
+                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[110%] h-[110%] bg-[var(--color-accent)] opacity-10 blur-[80px] rounded-full -z-10" />
+                 <div className="relative aspect-[4/3] w-full rounded-[24px] bg-[var(--color-paper)]/80 backdrop-blur-xl p-2 border border-white/50 shadow-2xl ring-4 ring-white/50 animate-float-delayed">
                     <PatientRecordPreview />
                  </div>
               </div>
@@ -422,8 +427,9 @@ export const HomePage: React.FC = () => {
         <section className="py-24 px-6 bg-[var(--color-paper-subtle)] border-y border-[var(--color-rule)]">
           <div className="max-w-[1200px] mx-auto">
             <div className="flex flex-col-reverse lg:flex-row items-center gap-16">
-              <div className="lg:w-1/2 w-full">
-                 <div className="aspect-[4/3] w-full rounded-[24px] bg-[var(--color-paper)] p-2 border border-[var(--color-rule)] shadow-xl ring-4 ring-white">
+              <div className="lg:w-1/2 w-full relative">
+                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[110%] h-[110%] bg-[var(--color-secondary)] opacity-20 blur-[80px] rounded-full -z-10" />
+                 <div className="relative aspect-[4/3] w-full rounded-[24px] bg-[var(--color-paper)]/80 backdrop-blur-xl p-2 border border-white/50 shadow-2xl ring-4 ring-white/50 animate-float">
                     <PaymentPreview />
                  </div>
               </div>
@@ -449,8 +455,9 @@ export const HomePage: React.FC = () => {
                   Finance reports, claims tracking, inventory utilization, and compliance audits ready to export. Built for practical, everyday operational oversight.
                 </p>
               </div>
-              <div className="lg:w-1/2 w-full">
-                 <div className="aspect-[4/3] w-full rounded-[24px] bg-[var(--color-paper-subtle)] p-2 border border-[var(--color-rule)] shadow-xl ring-4 ring-[var(--color-paper-subtle)]">
+              <div className="lg:w-1/2 w-full relative">
+                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[110%] h-[110%] bg-[var(--color-accent)] opacity-10 blur-[80px] rounded-full -z-10" />
+                 <div className="relative aspect-[4/3] w-full rounded-[24px] bg-[var(--color-paper)]/80 backdrop-blur-xl p-2 border border-white/50 shadow-2xl ring-4 ring-white/50 animate-float-delayed">
                     <ReportsPreview />
                  </div>
               </div>

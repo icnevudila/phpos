@@ -134,6 +134,20 @@
   .card {
     @apply bg-brand-surface rounded-[var(--radius-lg)] shadow-card border border-brand-border p-6 transition-colors hover:border-brand-border-strong;
   }
+
+  /* Premium Micro-animations */
+  @keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-12px); }
+    100% { transform: translateY(0px); }
+  }
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+  .animate-float-delayed {
+    animation: float 6s ease-in-out infinite;
+    animation-delay: -3s;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
