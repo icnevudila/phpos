@@ -44,7 +44,7 @@ export function AppSidebar({
       : "text-brand-text-soft hover:bg-brand-surface-muted hover:text-brand-text font-medium transition-colors";
 
     return (
-      `group relative flex w-full items-center rounded-xl transition-all duration-200 ` +
+      `group relative flex w-full items-center rounded-[var(--radius-md)] transition-all duration-200 ` +
       `focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-1 ` +
       `${size} ${color}`
     );
@@ -60,7 +60,7 @@ export function AppSidebar({
         className={`flex items-center gap-3 px-4 ${ isDrawer ? "min-h-[3.5rem] py-2 sm:min-h-16" : "h-16" }`}
       >
         <div className="flex items-center justify-center shrink-0">
-          <div className="h-8 w-8 sm:h-9 sm:w-9 rounded-xl bg-brand-primary flex items-center justify-center shadow-sm text-white font-black text-xl leading-none">
+          <div className="h-8 w-8 sm:h-9 sm:w-9 rounded-[var(--radius-md)] bg-brand-primary flex items-center justify-center shadow-sm text-white font-black text-xl leading-none font-display">
             D
           </div>
         </div>
@@ -127,7 +127,7 @@ export function AppSidebar({
           <button
             type="button"
             onClick={onToggleCollapse}
-            className="flex min-h-10 w-full items-center justify-center gap-2 rounded-xl px-3 text-xs font-semibold text-brand-muted transition hover:bg-brand-surface-muted hover:text-brand-text sm:text-sm border border-transparent hover:border-brand-border"
+            className="flex min-h-10 w-full items-center justify-center gap-2 rounded-[var(--radius-md)] px-3 text-[10px] font-mono-label text-brand-muted transition hover:bg-brand-surface-muted hover:text-brand-text sm:text-xs border border-transparent hover:border-brand-border"
             aria-label={collapsed ? t("nav.sidebarExpand", { defaultValue: "Sidebar Expand" }) : t("nav.sidebarCollapse", { defaultValue: "Sidebar Collapse" })}
           >
             {collapsed ? <ChevronRightIcon size={18} /> : (

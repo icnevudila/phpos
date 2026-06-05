@@ -1,4 +1,5 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap");
+/* Hallmark · genre: modern-minimal · macrostructure: 05-workbench · theme: studied-DNA (source: https://www.curvedental.com) · nav: N1 · footer: Ft3 */
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -8,194 +9,135 @@
   :root {
     color-scheme: light;
     
-    --bg: #F8FAFC;
+    /* Curve Dental Studied DNA */
+    --color-paper: #ffffff;
+    --color-paper-subtle: #f9fafb;
+    --color-ink: #313131;
+    --color-ink-2: #4b5563;
+    --color-rule: #e5e7eb;
+    --color-rule-2: #d1d5db;
+    
+    /* Accents: Orange & Teal */
+    --color-accent: #fe5f00;
+    --color-accent-ink: #FFFFFF;
+    --color-secondary: #9ec4c8;
+    
+    /* Header/Footer dark band */
+    --color-graphite: #313131;
+    --color-graphite-ink: #ffffff;
+    --color-graphite-rule: #4b5563;
+
+    /* Map to DentQL standard vars so we don't break everything instantly */
+    --bg: var(--color-paper);
     --surface: #FFFFFF;
-    --surface-soft: #F8FAFC;
-    --surface-muted: #F1F5F9;
-    --border: #E2E8F0;
-    --border-strong: #CBD5E1;
+    --surface-soft: var(--color-paper-subtle);
+    --surface-muted: #f3f4f6;
+    --border: var(--color-rule);
+    --border-strong: var(--color-rule-2);
+    --text: var(--color-ink);
+    --text-soft: var(--color-ink-2);
+    --muted: #6b7280;
+    --muted-2: #9ca3af;
 
-    --text: #111827;
-    --text-soft: #475569;
-    --muted: #64748B;
-    --muted-2: #94A3B8;
+    --primary: var(--color-accent);
+    --primary-hover: #e55500;
+    --primary-soft: #fff7f2;
+    
+    --success: #10B981; --success-soft: #ECFDF5;
+    --warning: #F59E0B; --warning-soft: #FFFBEB;
+    --danger: #E11D48; --danger-soft: #FFF1F2;
+    --info: #0EA5E9; --info-soft: #F0F9FF;
 
-    --primary: #0F9F9A;
-    --primary-hover: #0F766E;
-    --primary-soft: #E6FDFB;
+    /* Generous, soft radii for Curve DNA */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
 
-    --success: #10B981;
-    --success-soft: #ECFDF5;
+    /* Soft shadows */
+    --shadow-card: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-popover: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
 
-    --warning: #F59E0B;
-    --warning-soft: #FFFBEB;
-
-    --danger: #E11D48;
-    --danger-soft: #FFF1F2;
-
-    --info: #0EA5E9;
-    --info-soft: #F0F9FF;
-
-    --radius-sm: 6px;
-    --radius-md: 8px;
-    --radius-lg: 12px;
-    --radius-xl: 16px;
-
-    --shadow-card: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-    --shadow-popover: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+    /* Fonts (Soft Geometric Sans) */
+    --font-display: 'Plus Jakarta Sans', system-ui, sans-serif;
+    --font-body: 'Plus Jakarta Sans', system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
   }
 
-  html {
+  html, body {
+    overflow-x: clip;
     scroll-behavior: smooth;
-    -webkit-text-size-adjust: 100%;
-    text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
   }
 
   body {
-    @apply font-sans bg-brand-bg text-brand-text;
+    background: var(--color-paper);
+    color: var(--color-ink-2);
+    font-family: var(--font-body);
+    font-weight: 400;
   }
 
-  :focus-visible {
-    @apply outline-none ring-2 ring-brand-primary ring-offset-2 ring-offset-brand-bg transition-shadow;
-  }
-
-  button:focus:not(:focus-visible),
-  a:focus:not(:focus-visible) {
-    outline: none;
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    color: var(--color-ink);
+    letter-spacing: -0.02em;
   }
 
   ::selection {
-    @apply bg-brand-primary-soft text-brand-primary;
-  }
-
-  :where(img) {
-    @apply max-w-full;
+    background: var(--color-accent);
+    color: var(--color-accent-ink);
   }
 }
 
-/* ─── Scrollbar ──────────────────────────────────────────── */
 @layer utilities {
-  .animate-nav-drawer-in {
-    animation: nav-drawer-in 220ms ease-out;
+  /* Reveal motion engine */
+  .reveal {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity .6s cubic-bezier(0.16,1,0.3,1), transform .6s cubic-bezier(0.16,1,0.3,1);
+  }
+  .reveal.is-in {
+    opacity: 1;
+    transform: none;
   }
 
-  .text-balance { text-wrap: balance; }
-  .text-pretty  { text-wrap: pretty; }
-
-  .scrollbar-thin {
-    scrollbar-width: thin;
-  }
-  .scrollbar-thin::-webkit-scrollbar {
-    width: 4px;
-    height: 4px;
-  }
-  .scrollbar-thin::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  .scrollbar-thin::-webkit-scrollbar-thumb {
-    @apply rounded-full bg-brand-muted-2;
-  }
-  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-    @apply bg-brand-muted;
+  /* Typography utilities */
+  .font-mono-label {
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
   }
 
-  /* ── Shared card surface ── */
-  .card {
-    @apply bg-brand-surface rounded-[var(--radius-lg)] shadow-card border border-brand-border p-5 sm:p-6 transition-shadow hover:shadow-popover;
+  /* Nav N1 */
+  .nav-bar {
+    border-bottom: 1px solid var(--color-rule);
+    background: var(--color-paper);
   }
 
-  /* ── Page layout ── */
-  .page-container {
-    @apply max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-10 space-y-8;
-  }
-
-  /* ── Page header ── */
-  .page-header-title {
-    @apply text-[28px] leading-[36px] font-bold tracking-tight text-brand-text;
-  }
-
-  .page-header-sub {
-    @apply text-sm text-brand-muted mt-1 font-medium;
-  }
-
-  /* ── Stat card ── */
-  .stat-card {
-    @apply bg-brand-surface rounded-[var(--radius-lg)] shadow-card border border-brand-border p-5 flex flex-col gap-3 transition-transform hover:-translate-y-0.5 hover:shadow-popover;
-  }
-
-  .stat-card-label {
-    @apply text-xs font-bold uppercase tracking-wider text-brand-muted;
-  }
-
-  .stat-card-value {
-    @apply text-[30px] leading-[38px] font-bold text-brand-text tracking-tight;
-  }
-
-  /* ── Table ── */
-  .data-table-wrapper {
-    @apply overflow-x-auto rounded-[var(--radius-lg)] border border-brand-border bg-brand-surface shadow-card;
-  }
-
-  .data-table {
-    @apply w-full text-left text-sm border-collapse;
-  }
-
-  .data-table thead tr {
-    @apply border-b border-brand-border bg-brand-surface-soft;
-  }
-
-  .data-table thead th {
-    @apply px-4 py-3 text-[11px] leading-[16px] font-bold uppercase tracking-wider text-brand-muted whitespace-nowrap;
-  }
-
-  .data-table tbody tr {
-    @apply border-b border-brand-border transition-colors cursor-pointer;
-  }
-
-  .data-table tbody tr:last-child {
-    @apply border-b-0;
-  }
-
-  .data-table tbody tr:hover {
-    @apply bg-brand-surface-muted;
-  }
-
-  .data-table td {
-    @apply px-4 py-3.5 text-brand-text-soft font-normal;
-  }
-
-  /* ── Pill/Badge ── */
-  .badge {
-    @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold;
-  }
-
-  .badge-primary { @apply bg-brand-primary-soft text-brand-primary; }
-  .badge-success { @apply bg-brand-success-soft text-brand-success; }
-  .badge-warning { @apply bg-brand-warning-soft text-brand-warning; }
-  .badge-danger  { @apply bg-brand-danger-soft text-brand-danger; }
-  .badge-info    { @apply bg-brand-info-soft text-brand-info; }
-  .badge-slate   { @apply bg-brand-surface-muted text-brand-text-soft; }
-
-  /* ── Button primary ── */
+  /* Buttons */
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 h-[38px] px-4 rounded-[var(--radius-md)] bg-brand-primary text-white text-sm font-semibold transition-all hover:bg-brand-primary-hover active:scale-95 shadow-[0_1px_2px_rgba(0,0,0,0.05)];
+    @apply inline-flex items-center justify-center gap-2 h-10 px-6 rounded-full bg-brand-primary text-white text-sm font-semibold transition-all hover:bg-opacity-90 active:scale-[0.98] shadow-sm;
+    font-family: var(--font-body);
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 h-[38px] px-4 rounded-[var(--radius-md)] bg-brand-surface text-brand-text text-sm font-semibold transition-all hover:bg-brand-surface-muted active:scale-95 shadow-[0_1px_2px_rgba(0,0,0,0.05)] border border-brand-border;
+    @apply inline-flex items-center justify-center gap-2 h-10 px-6 rounded-full bg-brand-surface text-brand-text text-sm font-semibold transition-all hover:bg-brand-surface-muted active:scale-[0.98] shadow-sm border border-brand-border;
+    font-family: var(--font-body);
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 h-10 px-4 rounded-full text-brand-text-soft text-sm font-semibold transition-all hover:bg-brand-surface-muted active:scale-[0.98];
+    font-family: var(--font-body);
+  }
+
+  /* Backwards comp cards */
+  .card {
+    @apply bg-brand-surface rounded-[var(--radius-lg)] shadow-card border border-brand-border p-6 transition-colors hover:border-brand-border-strong;
   }
 }
 
-/* ─── Nav drawer animation ────────────────────────────────── */
-@keyframes nav-drawer-in {
-  from { transform: translateX(-100%); opacity: 0.85; }
-  to   { transform: translateX(0);     opacity: 1; }
-}
-
-/* ─── Reduced motion ──────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; transition: none; }
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;

@@ -65,149 +65,162 @@ export function LoginPage(): JSX.Element {
   }
 
   return (
-    <div className="relative min-h-[100dvh] bg-[#f5f7f9]">
+    <div className="relative min-h-[100dvh] bg-[var(--color-paper)] font-body text-[var(--color-ink-2)] selection:bg-[var(--color-accent)] selection:text-[var(--color-accent-ink)]">
+      {/* 
+        /* Hallmark · genre: modern-minimal · macrostructure: 05-workbench · theme: cobalt · enrichment: E0 · nav: none · footer: none */
+      */}
       <div className="absolute right-4 top-[max(1rem,env(safe-area-inset-top))] z-20 flex items-center gap-2 sm:right-6 sm:top-6">
         <LanguageSwitcher />
       </div>
 
-      <main className="relative mx-auto flex min-h-[100dvh] w-full max-w-6xl flex-col lg:flex-row">
-        <section className="relative hidden min-h-0 flex-[1.2] flex-col justify-between overflow-hidden bg-white px-10 py-12 text-slate-900 lg:flex xl:px-16 xl:py-20 border-r border-slate-100">
+      <main className="relative mx-auto flex min-h-[100dvh] w-full flex-col lg:flex-row">
+        {/* Left Side: Split Diptych Content */}
+        <section className="relative hidden min-h-0 lg:flex w-full lg:w-[45%] flex-col justify-between overflow-hidden bg-[var(--color-paper-subtle)] px-10 py-12 xl:px-16 xl:py-20 border-r border-[var(--color-rule)]">
           <div className="relative z-10 mx-auto w-full max-w-lg">
-            <div className="relative">
-              <div className="flex items-center gap-3">
+            <div className="relative reveal is-in">
+              <div className="flex items-center gap-3 mb-16">
                 <DentQLLogo size="md" />
               </div>
 
-              <h1 className="mt-16 max-w-md text-2xl font-bold leading-[1.1] tracking-tight text-slate-800">
-                {t("auth.loginHeroTitle", { defaultValue: "Login Hero Title" })}
+              <div className="font-mono-label text-[10px] text-[var(--color-muted)] mb-4">DENTQL · SECURE LOGIN</div>
+              <h1 className="max-w-md text-3xl font-semibold leading-[1.1] tracking-tight text-[var(--color-ink)] font-display">
+                {t("auth.loginHeroTitle", { defaultValue: "Welcome back." })}
               </h1>
-              <p className="mt-6 max-w-sm text-base leading-relaxed text-slate-500">
-                {t("auth.loginHeroSub", { defaultValue: "Login Hero Sub" })}
+              <p className="mt-4 max-w-sm text-sm leading-relaxed text-[var(--color-ink-2)]">
+                {t("auth.loginHeroSub", { defaultValue: "Sign in to manage your clinic, schedules, and patient records from one secure workbench." })}
               </p>
             </div>
 
-            <div className="mt-16 space-y-6">
+            <div className="mt-16 space-y-6 reveal is-in" style={{transitionDelay: '100ms'}}>
               <div className="grid gap-4">
                 {heroPoints.map((text, i) => (
                   <div
                     key={i}
-                    className="flex items-center gap-3 text-sm font-medium text-slate-600"
+                    className="flex items-center gap-3 text-sm font-medium text-[var(--color-ink)]"
                   >
-                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-teal-100 text-teal-600 text-[10px]">
-                      ✓
+                    <span className="flex h-5 w-5 items-center justify-center rounded-[4px] bg-[var(--color-accent)]/10 text-[var(--color-accent)] text-[10px] border border-[var(--color-accent)]/20 font-mono">
+                      {`0${i + 1}`}
                     </span>
                     <span>{text}</span>
                   </div>
                 ))}
               </div>
 
-              <div className="pt-8 border-t border-slate-200">
-                <p className="text-xs font-semibold uppercase tracking-widest text-slate-400">
-                  {t("auth.loginHeroFoot", { defaultValue: "Login Hero Foot" })}
+              <div className="pt-8 border-t border-[var(--color-rule)] mt-12">
+                <p className="font-mono-label text-[10px] text-[var(--color-muted)]">
+                  {t("auth.loginHeroFoot", { defaultValue: "HIPAA COMPLIANT · SOC2 READY" })}
                 </p>
               </div>
             </div>
           </div>
         </section>
 
-        <section className="flex flex-1 flex-col justify-center px-4 pb-8 pt-20 sm:px-8 lg:px-12 lg:py-12">
-          <div className="mx-auto w-full max-w-md">
-            <div className="card">
-              <div className="mb-6 text-center">
-                <DentQLLogo size="md" className="mx-auto mb-4" />
-                <h2 className="text-2xl font-bold tracking-tight text-slate-800">
-                  {t("auth.loginTitle", { defaultValue: "Login Title" })}
-                </h2>
-                <p className="mt-1 text-sm text-slate-500">{t("auth.loginSubtitle", { defaultValue: "Login Subtitle" })}</p>
+        {/* Right Side: Form */}
+        <section className="flex flex-1 flex-col justify-center px-4 pb-8 pt-20 sm:px-8 lg:px-12 lg:py-12 bg-[var(--color-paper)]">
+          <div className="mx-auto w-full max-w-sm reveal is-in">
+            <div className="lg:hidden mb-12 text-center">
+              <DentQLLogo size="md" className="mx-auto mb-4" />
+            </div>
+
+            <div className="mb-8">
+              <h2 className="text-2xl font-semibold tracking-tight text-[var(--color-ink)] font-display">
+                {t("auth.loginTitle", { defaultValue: "Sign in" })}
+              </h2>
+              <p className="mt-2 text-sm text-[var(--color-ink-2)]">
+                {t("auth.loginSubtitle", { defaultValue: "Enter your credentials to access your terminal." })}
+              </p>
+            </div>
+
+            <form className="space-y-5" onSubmit={handleSubmit}>
+              <div>
+                <label className="block text-[10px] font-mono-label text-[var(--color-muted)] mb-2">
+                  {t("auth.emailLabel", { defaultValue: "Email" })}
+                </label>
+                <input
+                  type="email"
+                  required
+                  data-testid="login-email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full rounded-[var(--radius-md)] border border-[var(--color-rule-2)] bg-[var(--color-paper)] px-3 py-2 text-sm text-[var(--color-ink)] placeholder-[var(--color-muted-2)] focus:ring-1 focus:ring-[var(--color-accent)] focus:border-[var(--color-accent)] outline-none transition-shadow"
+                  placeholder="admin@dentease.ph"
+                />
+              </div>
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <label className="block text-[10px] font-mono-label text-[var(--color-muted)]">
+                    {t("auth.password", { defaultValue: "Password" })}
+                  </label>
+                  <Link
+                    to="/forgot-password"
+                    className="text-[10px] font-mono-label text-[var(--color-accent)] hover:opacity-80 transition-opacity"
+                  >
+                    {t("auth.forgotLink", { defaultValue: "Reset" })}
+                  </Link>
+                </div>
+                <input
+                  type="password"
+                  required
+                  data-testid="login-password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full rounded-[var(--radius-md)] border border-[var(--color-rule-2)] bg-[var(--color-paper)] px-3 py-2 text-sm text-[var(--color-ink)] placeholder-[var(--color-muted-2)] focus:ring-1 focus:ring-[var(--color-accent)] focus:border-[var(--color-accent)] outline-none transition-shadow"
+                  placeholder="••••••••"
+                />
               </div>
 
-              <form className="mt-6 space-y-5" onSubmit={handleSubmit}>
-                <div>
-                  <label className="block text-xs font-semibold uppercase tracking-widest text-slate-400">
-                    {t("auth.emailLabel", { defaultValue: "Email Label" })}
-                  </label>
-                  <input
-                    type="email"
-                    required
-                    data-testid="login-email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="mt-1.5 rounded-xl border border-slate-200 px-4 py-3 text-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-400 outline-none w-full transition"
-                    placeholder="admin@dentease.ph"
-                  />
-                </div>
-                <div>
-                  <div className="flex items-center justify-between">
-                    <label className="block text-xs font-semibold uppercase tracking-widest text-slate-400">
-                      {t("auth.password", { defaultValue: "Password" })}
-                    </label>
-                    <Link
-                      to="/forgot-password"
-                      className="text-xs font-semibold text-teal-600 hover:underline"
-                    >
-                      {t("auth.forgotLink", { defaultValue: "Forgot Link" })}
-                    </Link>
-                  </div>
-                  <input
-                    type="password"
-                    required
-                    data-testid="login-password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="mt-1.5 rounded-xl border border-slate-200 px-4 py-3 text-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-400 outline-none w-full transition"
-                    placeholder="••••••••"
-                  />
-                </div>
-
-                <div className="flex items-center">
-                  <input
-                    id="remember-me"
-                    name="remember-me"
-                    type="checkbox"
-                    checked={remember}
-                    onChange={(e) => setRemember(e.target.checked)}
-                    className="h-4 w-4 rounded border-gray-300 text-teal-600 focus:ring-teal-500"
-                  />
-                  <label
-                    htmlFor="remember-me"
-                    className="ml-2 block text-xs font-medium text-slate-600"
-                  >
-                    {t("auth.rememberMe", { defaultValue: "Remember Me" })}
-                  </label>
-                </div>
-
-                {registerBanner && (
-                  <p className="rounded-xl bg-teal-50 px-3 py-2 text-xs font-bold text-teal-800">
-                    {registerBanner}
-                  </p>
-                )}
-
-                {error && (
-                  <p className="rounded-xl bg-rose-50 px-3 py-2 text-xs font-bold text-rose-800">{error}</p>
-                )}
-
-                <button
-                  type="submit"
-                  data-testid="login-submit"
-                  disabled={loading}
-                  className="btn-primary w-full justify-center"
+              <div className="flex items-center">
+                <input
+                  id="remember-me"
+                  name="remember-me"
+                  type="checkbox"
+                  checked={remember}
+                  onChange={(e) => setRemember(e.target.checked)}
+                  className="h-3.5 w-3.5 rounded-[2px] border-[var(--color-rule-2)] text-[var(--color-accent)] focus:ring-[var(--color-accent)] bg-[var(--color-paper)] accent-[var(--color-accent)]"
+                />
+                <label
+                  htmlFor="remember-me"
+                  className="ml-2 block text-xs font-medium text-[var(--color-ink)]"
                 >
-                  {loading ? t("auth.signingIn", { defaultValue: "Signing In" }) : t("auth.submit", { defaultValue: "Submit" })}
-                </button>
-              </form>
+                  {t("auth.rememberMe", { defaultValue: "Remember me for 30 days" })}
+                </label>
+              </div>
 
-              <div className="mt-8 space-y-4 text-center">
-                <p className="text-xs text-slate-500">
-                  {t("auth.noAccount", { defaultValue: "No Account" })}{" "}
-                  <Link to="/register" className="font-bold text-teal-600 hover:underline">
-                    {t("auth.signUp", { defaultValue: "Sign Up" })}
-                  </Link>
-                </p>
+              {registerBanner && (
+                <div className="rounded-[var(--radius-md)] bg-[var(--color-accent)]/10 border border-[var(--color-accent)]/20 px-3 py-2 text-xs font-medium text-[var(--color-ink)]">
+                  {registerBanner}
+                </div>
+              )}
+
+              {error && (
+                <div className="rounded-[var(--radius-md)] bg-rose-50 border border-rose-200 px-3 py-2 text-xs font-medium text-rose-800">
+                  {error}
+                </div>
+              )}
+
+              <button
+                type="submit"
+                data-testid="login-submit"
+                disabled={loading}
+                className="btn-primary w-full justify-center mt-2"
+              >
+                {loading ? t("auth.signingIn", { defaultValue: "Signing In..." }) : t("auth.submit", { defaultValue: "Sign In →" })}
+              </button>
+            </form>
+
+            <div className="mt-8 pt-8 border-t border-[var(--color-rule)] space-y-4 text-left">
+              <p className="text-xs text-[var(--color-ink-2)]">
+                {t("auth.noAccount", { defaultValue: "Don't have an account?" })}{" "}
+                <Link to="/register" className="font-medium text-[var(--color-accent)] hover:underline">
+                  {t("auth.signUp", { defaultValue: "Request access." })}
+                </Link>
+              </p>
+              <div>
                 <Link
                   to="/"
-                  className="inline-flex items-center gap-2 text-xs font-bold text-slate-400 hover:text-slate-600"
+                  className="inline-flex items-center gap-1 text-xs font-medium text-[var(--color-muted)] hover:text-[var(--color-ink)] transition-colors"
                 >
-                  {t("auth.backToMarketing", { defaultValue: "Back To Marketing" })}
+                  ← {t("auth.backToMarketing", { defaultValue: "Back to Home" })}
                 </Link>
               </div>
             </div>

@@ -36,7 +36,7 @@ export function AppTopbar({ profile, onOpenDrawer }: AppTopbarProps): JSX.Elemen
         <button
           type="button"
           onClick={onOpenDrawer}
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-brand-muted transition hover:bg-brand-surface-muted hover:text-brand-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary lg:hidden"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[var(--radius-md)] text-brand-muted transition hover:bg-brand-surface-muted hover:text-brand-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary lg:hidden"
           aria-label={t("nav.openMenu", { defaultValue: "Open Menu" })}
         >
           <Menu size={22} />
@@ -59,7 +59,7 @@ export function AppTopbar({ profile, onOpenDrawer }: AppTopbarProps): JSX.Elemen
           <input
             type="text"
             placeholder={t("nav.searchPlaceholder", { defaultValue: "Search patients, invoices..." })}
-            className="h-10 w-full rounded-xl border border-brand-border bg-brand-surface-soft pl-9 pr-4 text-sm font-medium text-brand-text placeholder-brand-muted transition-colors focus:border-brand-primary focus:outline-none focus:ring-1 focus:ring-brand-primary"
+            className="h-10 w-full rounded-[var(--radius-md)] border border-brand-border bg-brand-surface-soft pl-9 pr-4 text-sm font-medium text-brand-text placeholder-brand-muted transition-colors focus:border-brand-primary focus:outline-none focus:ring-1 focus:ring-brand-primary"
           />
         </div>
 
